@@ -7,6 +7,7 @@
 <meta name="description" content="Automatizaciones, asistentes con IA y webs para negocios. Tus clientes reciben respuesta al momento, también cuando tu negocio está cerrado.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="vendor/n8n-chat/style.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -128,7 +129,16 @@ a{color:inherit}
 .panel-cabecera small{display:block;font-family:var(--texto);font-weight:400;font-size:.78rem;color:#CFE9DF}
 .panel-cabecera small a{color:#7CF0C4 !important}
 .cerrar{background:transparent;border:0;color:#fff;font-size:1.6rem;line-height:1;cursor:pointer;padding:4px 10px;border-radius:8px}
-.panel iframe{flex:1;border:0;width:100%}
+#chat-eris{flex:1;min-height:0;position:relative}
+#chat-eris{
+  --chat--color--primary:#D1104A;--chat--color--primary-shade-50:#B80E41;--chat--color--primary--shade-100:#9E0C38;
+  --chat--color--secondary:#0E9F6E;--chat--color-secondary-shade-50:#0B7A57;
+  --chat--font-family:'Figtree',system-ui,sans-serif;
+  --chat--message--bot--background:#EAF7F1;--chat--message--bot--color:#0B2A20;
+  --chat--message--user--background:#0E9F6E;--chat--message--user--color:#fff;
+  --chat--border-radius:12px;
+}
+#chat-eris .chat-header{display:none}
 
 @media (max-width:860px){
   .portada .envoltura{grid-template-columns:1fr;gap:48px}
@@ -261,9 +271,10 @@ a{color:inherit}
 
 <div class="panel" id="panel-eris" role="dialog" aria-label="Chat con Eris">
   <div class="panel-cabecera">
-    <div>Eris<small>Asistente con IA · <a href="https://erisproject.app.n8n.cloud/webhook/b459bdf5-8285-4273-b78c-3c095c33fa35/chat" target="_blank" rel="noopener" >abrir en pantalla completa</a></small></div>
+    <div>Eris<small>Asistente con inteligencia artificial</small></div>
     <button class="cerrar" type="button" aria-label="Cerrar el chat">×</button>
   </div>
+  <div id="chat-eris"></div>
 </div>
 
 <script>
@@ -343,12 +354,22 @@ a{color:inherit}
 
   function abrir(){
     if(!cargado){
-      var marco = document.createElement('iframe');
-      marco.src = URL_CHAT;
-      marco.title = 'Chat con Eris';
-      marco.allow = 'clipboard-write';
-      panel.appendChild(marco);
       cargado = true;
+      import('./vendor/n8n-chat/chat.bundle.es.js').then(function(m){
+        m.createChat({
+          webhookUrl: URL_CHAT,
+          target: '#chat-eris',
+          mode: 'fullscreen',
+          loadPreviousSession: false,
+          showWelcomeScreen: false,
+          enableStreaming: true,
+          defaultLanguage: 'en',
+          initialMessages: ['¡Hola! Soy Eris, de Soluciones Digitales JMG 👋', 'Cuéntame, ¿a qué se dedica tu negocio?'],
+          i18n: { en: { title: 'Eris', subtitle: '', footer: '', getStarted: 'Empezar', inputPlaceholder: 'Escribe tu mensaje...', closeButtonTooltip: 'Cerrar' } }
+        });
+      }).catch(function(){
+        document.getElementById('chat-eris').innerHTML = '<p style="padding:20px;color:#0B2A20">No se ha podido cargar el chat. Escríbenos a <a href="mailto:soluciones.digitales.jmg@gmail.com">soluciones.digitales.jmg@gmail.com</a>.</p>';
+      });
     }
     panel.classList.add('abierto');
     lanzador.setAttribute('aria-expanded','true');
