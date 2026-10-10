@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soluciones Digitales JMG</title>
+<meta name="description" content="Automatizaciones, asistentes con IA y webs para negocios. Tus clientes reciben respuesta al momento, también cuando tu negocio está cerrado.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noche:#1C1B3A;      /* el negocio cerrado */
+  --noche-2:#2A2950;
+  --lampara:#F2C14E;    /* la luz que se queda encendida */
+  --niebla:#EEF0F6;
+  --papel:#FFFFFF;
+  --tinta:#23223F;
+  --gris:#5E5D7A;
+  --linea:#D9DBE7;
+  --burbuja:#3A3966;
+  --display:'Bricolage Grotesque',system-ui,sans-serif;
+  --texto:'Figtree',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--niebla);color:var(--tinta);font-family:var(--texto);font-size:1.0625rem;line-height:1.6}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--lampara);outline-offset:3px;border-radius:4px}
+.envoltura{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* Cabecera */
+.cabecera{background:var(--noche);color:var(--papel)}
+.cabecera .envoltura{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:20px;padding-bottom:20px}
+.marca{font-family:var(--display);font-weight:700;font-size:1.15rem;letter-spacing:-.01em;text-decoration:none}
+.marca span{color:var(--lampara)}
+.boton{display:inline-flex;align-items:center;gap:10px;font-family:var(--texto);font-weight:600;font-size:1rem;border:0;cursor:pointer;text-decoration:none;border-radius:999px;padding:14px 24px;transition:transform .15s ease,background-color .15s ease}
+.boton:active{transform:scale(.98)}
+.boton-luz{background:var(--lampara);color:var(--noche)}
+.boton-luz:hover{background:#F6CF6E}
+.boton-borde{background:transparent;color:var(--papel);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.45);padding:10px 18px;font-size:.95rem}
+.boton-borde:hover{box-shadow:inset 0 0 0 1.5px var(--lampara)}
+
+/* Portada: la noche */
+.portada{background:var(--noche);color:var(--papel);padding:48px 0 96px;overflow:hidden}
+.portada .envoltura{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.portada h1{font-family:var(--display);font-weight:800;font-size:clamp(2.6rem,5.6vw,4.4rem);line-height:1.02;letter-spacing:-.03em;margin:0 0 24px}
+.portada p.intro{font-size:1.2rem;color:#C9C8E3;max-width:34ch;margin:0 0 36px}
+.portada .nota{font-size:.9rem;color:#9E9DC2;margin-top:18px}
+
+/* La conversación de las 23:47 */
+.movil{background:var(--noche-2);border-radius:28px;padding:22px 20px 26px;max-width:420px;margin-left:auto;box-shadow:0 30px 60px -25px rgba(0,0,0,.6);position:relative}
+.reloj{font-family:var(--display);font-weight:800;font-size:clamp(4rem,9vw,6.5rem);line-height:1;color:var(--lampara);letter-spacing:-.04em;margin:0 0 4px}
+.reloj-pie{font-size:.92rem;color:#B5B4D6;margin:0 0 22px}
+.hilo{display:flex;flex-direction:column;gap:10px}
+.msg{max-width:84%;padding:11px 15px;border-radius:18px;font-size:.98rem;line-height:1.45}
+.msg small{display:block;font-size:.75rem;opacity:.65;margin-top:4px}
+.cliente{align-self:flex-start;background:var(--burbuja);border-bottom-left-radius:6px}
+.eris{align-self:flex-end;background:var(--papel);color:var(--tinta);border-bottom-right-radius:6px}
+.eris b{font-weight:600}
+.hecho{align-self:flex-end;font-size:.85rem;color:var(--lampara);display:flex;align-items:center;gap:8px;margin-top:4px}
+.hecho::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--lampara)}
+.hilo{min-height:330px}
+.canal{display:inline-block;font-size:.78rem;font-weight:600;color:var(--noche);background:var(--lampara);border-radius:999px;padding:2px 10px;margin-left:6px;vertical-align:1px}
+.selector{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:0;list-style:none}
+.selector button{font:inherit;font-size:.88rem;font-weight:500;color:#C9C8E3;background:transparent;border:1px solid #4A4978;border-radius:999px;padding:6px 14px;cursor:pointer;transition:background-color .15s ease,color .15s ease}
+.selector button:hover{border-color:var(--lampara);color:var(--papel)}
+.selector button[aria-pressed="true"]{background:var(--papel);color:var(--noche);border-color:var(--papel)}
+@media (prefers-reduced-motion:no-preference){
+  .hilo.animar > *{opacity:0;transform:translateY(8px);animation:aparece .45s ease forwards}
+}
+@keyframes aparece{to{opacity:1;transform:none}}
+
+/* Secciones claras */
+.seccion{padding:96px 0}
+.seccion h2{font-family:var(--display);font-weight:700;font-size:clamp(2rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:-.02em;margin:0 0 16px;max-width:22ch}
+.seccion .bajada{color:var(--gris);font-size:1.15rem;max-width:56ch;margin:0 0 56px}
+
+/* Qué montamos: filas, no tarjetas */
+.servicios{border-top:1.5px solid var(--tinta)}
+.servicio{display:grid;grid-template-columns:minmax(200px,.8fr) 1.2fr 1fr;gap:32px;padding:32px 0;border-bottom:1px solid var(--linea)}
+.servicio h3{font-family:var(--display);font-weight:700;font-size:1.5rem;line-height:1.15;margin:0;letter-spacing:-.01em}
+.servicio p{margin:0}
+.servicio .ejemplo{color:var(--gris);font-size:.98rem;border-left:3px solid var(--lampara);padding-left:16px}
+
+/* Cómo trabajamos: sí es una secuencia */
+.pasos-fondo{background:var(--papel)}
+.pasos{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:40px;counter-reset:paso}
+.pasos li{counter-increment:paso}
+.pasos li::before{content:counter(paso);display:block;font-family:var(--display);font-weight:800;font-size:3.4rem;line-height:1;color:var(--noche);margin-bottom:14px}
+.pasos h3{font-family:var(--display);font-weight:700;font-size:1.3rem;margin:0 0 8px}
+.pasos p{margin:0;color:var(--gris)}
+
+/* Sectores */
+.sectores{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;list-style:none}
+.sectores li{background:var(--papel);border:1px solid var(--linea);border-radius:999px;padding:9px 18px;font-weight:500}
+
+/* Cierre */
+.cierre{background:var(--noche);color:var(--papel);text-align:left}
+.cierre h2{color:var(--papel)}
+.cierre .bajada{color:#C9C8E3;margin-bottom:36px}
+.cierre .alternativa{margin-top:22px;color:#B5B4D6;font-size:.98rem}
+.cierre .alternativa a{color:var(--lampara)}
+.pie{background:var(--noche);color:#8F8EB4;font-size:.9rem;border-top:1px solid #33325C}
+.pie .envoltura{padding-top:28px;padding-bottom:28px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+
+/* Ventana de Eris */
+.lanzador{position:fixed;right:22px;bottom:22px;z-index:20;box-shadow:0 12px 30px -10px rgba(28,27,58,.55)}
+.lanzador .punto{width:10px;height:10px;border-radius:50%;background:#3DBE7A;box-shadow:0 0 0 3px rgba(61,190,122,.25)}
+.panel{position:fixed;right:22px;bottom:92px;width:380px;height:min(600px,calc(100vh - 120px));background:var(--papel);border-radius:20px;overflow:hidden;z-index:30;box-shadow:0 30px 70px -20px rgba(28,27,58,.55);display:none;flex-direction:column}
+.panel.abierto{display:flex}
+.panel-cabecera{background:var(--noche);color:var(--papel);display:flex;justify-content:space-between;align-items:center;padding:12px 14px 12px 18px;font-family:var(--display);font-weight:700}
+.panel-cabecera small{display:block;font-family:var(--texto);font-weight:400;font-size:.78rem;color:#B5B4D6}
+.cerrar{background:transparent;border:0;color:var(--papel);font-size:1.6rem;line-height:1;cursor:pointer;padding:4px 10px;border-radius:8px}
+.panel iframe{flex:1;border:0;width:100%}
+
+@media (max-width:860px){
+  .portada .envoltura{grid-template-columns:1fr;gap:48px}
+  .movil{margin-left:0;max-width:none}
+  .servicio{grid-template-columns:1fr;gap:12px}
+  .pasos{grid-template-columns:1fr;gap:36px}
+  .seccion{padding:72px 0}
+}
+@media (max-width:520px){
+  .envoltura{padding:0 16px}
+  .cabecera .boton-borde{display:none}
+  .panel{right:0;bottom:0;width:100%;height:100%;border-radius:0}
+  .lanzador{right:16px;bottom:16px}
+}
+</style>
+</head>
+<body>
+
+<header class="cabecera">
+  <div class="envoltura">
+    <a class="marca" href="#">Soluciones Digitales <span>JMG</span></a>
+    <button class="boton boton-borde" type="button" data-abrir-eris>Hablar con Eris</button>
+  </div>
+</header>
+
+<main>
+  <section class="portada">
+    <div class="envoltura">
+      <div>
+        <h1>Tu negocio cierra. Tus clientes siguen escribiendo.</h1>
+        <p class="intro">Montamos asistentes con IA y automatizaciones que contestan, apuntan y avisan por ti, para que dejes de responder mensajes a mano.</p>
+        <button class="boton boton-luz" type="button" data-abrir-eris>Habla con Eris ahora</button>
+        <p class="nota">Eris es nuestra asistente con IA. Pruébala: es lo mismo que montamos para tu negocio.</p>
+      </div>
+
+      <div class="movil" aria-label="Ejemplos de conversaciones fuera de horario">
+        <ul class="selector" aria-label="Elige un tipo de negocio"></ul>
+        <p class="reloj" id="reloj">23:47</p>
+        <p class="reloj-pie" id="reloj-pie"></p>
+        <div class="hilo" id="hilo" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" id="servicios">
+    <div class="envoltura">
+      <h2>Lo que montamos para tu negocio</h2>
+      <p class="bajada">Lo hacemos a medida, con las herramientas que ya usas: WhatsApp, Instagram, Gmail, Google Calendar y hojas de cálculo.</p>
+      <div class="servicios">
+        <article class="servicio">
+          <h3>Asistentes con IA</h3>
+          <p>Atienden a tus clientes por la web, WhatsApp, Instagram o Telegram. Responden dudas, recogen los datos que necesitas y te pasan la conversación cuando hace falta una persona.</p>
+          <p class="ejemplo">Una clínica deja de perder pacientes que escriben fuera de horario.</p>
+        </article>
+        <article class="servicio">
+          <h3>Automatizaciones</h3>
+          <p>Las tareas repetitivas se hacen solas: un cliente rellena un formulario, sus datos se guardan, recibe la confirmación por email y un recordatorio antes de su cita.</p>
+          <p class="ejemplo">Un estudio de tatuajes recibe cada solicitud ordenada, con la idea, la zona y el tamaño.</p>
+        </article>
+        <article class="servicio">
+          <h3>Webs y apps sencillas</h3>
+          <p>Tu web, con formularios de reserva o de contacto conectados a lo anterior, para que todo llegue al mismo sitio.</p>
+          <p class="ejemplo">Una academia gestiona matrículas y dudas de alumnos desde una sola hoja.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion pasos-fondo">
+    <div class="envoltura">
+      <h2>Cómo trabajamos</h2>
+      <p class="bajada">Sin tecnicismos y sin que tengas que aprender nada nuevo.</p>
+      <ol class="pasos">
+        <li>
+          <h3>Hablamos de tu día a día</h3>
+          <p>Una llamada corta y sin compromiso para ver qué tareas te roban más tiempo.</p>
+        </li>
+        <li>
+          <h3>Lo montamos a tu medida</h3>
+          <p>Preparamos el sistema con tus datos, tus textos y tu forma de atender a los clientes.</p>
+        </li>
+        <li>
+          <h3>Lo mantenemos y mejoramos</h3>
+          <p>Cada mes revisamos cómo funciona y lo ajustamos para que siga ahorrándote tiempo.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="envoltura">
+      <h2>Para negocios de cualquier sector</h2>
+      <p class="bajada">Si recibes mensajes, citas o pedidos, hay algo que se puede automatizar.</p>
+      <ul class="sectores">
+        <li>Estudios de tatuajes</li>
+        <li>Clínicas y fisioterapia</li>
+        <li>Centros de estética</li>
+        <li>Inmobiliarias</li>
+        <li>Academias y autoescuelas</li>
+        <li>Gimnasios</li>
+        <li>Tiendas online</li>
+        <li>Gestorías</li>
+        <li>Bares y restaurantes</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="seccion cierre">
+    <div class="envoltura">
+      <h2>Cuéntanos qué te quita tiempo</h2>
+      <p class="bajada">Eris te atiende ahora mismo y el equipo te contacta para preparar un presupuesto a medida, sin compromiso.</p>
+      <button class="boton boton-luz" type="button" data-abrir-eris>Habla con Eris</button>
+      <p class="alternativa">¿Prefieres el correo? Escríbenos a <a href="mailto:soluciones.digitales.jmg@gmail.com">soluciones.digitales.jmg@gmail.com</a></p>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="envoltura">
+    <span>© 2026 Soluciones Digitales JMG</span>
+    <span>Eris es una asistente con inteligencia artificial.</span>
+  </div>
+</footer>
+
+<button class="boton boton-luz lanzador" type="button" data-abrir-eris aria-controls="panel-eris" aria-expanded="false">
+  <span class="punto" aria-hidden="true"></span>Habla con Eris
+</button>
+
+<div class="panel" id="panel-eris" role="dialog" aria-label="Chat con Eris">
+  <div class="panel-cabecera">
+    <div>Eris<small>Asistente con IA · <a href="https://erisproject.app.n8n.cloud/webhook/b459bdf5-8285-4273-b78c-3c095c33fa35/chat" target="_blank" rel="noopener" style="color:#F2C14E">abrir en pantalla completa</a></small></div>
+    <button class="cerrar" type="button" aria-label="Cerrar el chat">×</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var escenas = [
+    { sector:'Tatuajes', hora:'23:47', canal:'Instagram', pie:'Estudio cerrado. Un cliente escribe por',
+      msgs:[['c','Hola! Quería pedir presupuesto para un tatuaje en el antebrazo 🙏','23:47'],
+            ['e','¡Hola! Claro. ¿Me cuentas tu idea, el tamaño aproximado y si lo quieres en color o en negro?','23:47'],
+            ['c','Una rosa en negro, unos 10 cm','23:48'],
+            ['e','Apuntado. Mañana el tatuador te pasa el presupuesto por aquí. <b>¡Gracias por escribirnos!</b>','23:48']],
+      hecho:'Solicitud guardada y estudio avisado' },
+    { sector:'Clínicas', hora:'21:30', canal:'WhatsApp', pie:'Consulta cerrada. Un paciente escribe por',
+      msgs:[['c','Buenas, ¿tenéis cita de fisio esta semana? Me duele la espalda','21:30'],
+            ['e','Sí. Tenemos hueco el jueves a las 10:00 o a las 17:30. ¿Cuál te viene mejor?','21:30'],
+            ['c','El jueves a las 17:30','21:31'],
+            ['e','Hecho: cita el jueves a las 17:30. <b>Te enviaremos un recordatorio el día antes.</b>','21:31']],
+      hecho:'Cita en el calendario y recordatorio programado' },
+    { sector:'Restaurantes', hora:'01:12', canal:'la web', pie:'Cocina cerrada. Un cliente escribe desde',
+      msgs:[['c','¿Hay mesa para 6 el sábado a las 21:30?','01:12'],
+            ['e','¡Sí, hay hueco! ¿A nombre de quién? ¿Alguna alergia que debamos saber?','01:12'],
+            ['c','A nombre de Laura. Uno de nosotros es celíaco','01:13'],
+            ['e','Reservado: sábado a las 21:30, 6 personas, a nombre de Laura. <b>Lo de la celiaquía queda anotado para cocina.</b>','01:13']],
+      hecho:'Reserva guardada y cocina avisada' },
+    { sector:'Inmobiliarias', hora:'22:05', canal:'WhatsApp', pie:'Oficina cerrada. Un interesado escribe por',
+      msgs:[['c','Me interesa el piso de la calle Mayor, ¿sigue disponible?','22:05'],
+            ['e','Sigue disponible. ¿Te gustaría visitarlo? Hay huecos el martes por la tarde.','22:05'],
+            ['c','El martes me va bien. Soy Carlos','22:06'],
+            ['e','Perfecto, Carlos. <b>Mañana un agente te confirma la hora exacta de la visita.</b>','22:06']],
+      hecho:'Interesado guardado y agente avisado' },
+    { sector:'Tiendas online', hora:'00:20', canal:'la web', pie:'Atención al cliente cerrada. Un comprador escribe desde',
+      msgs:[['c','¿Dónde está mi pedido 4821?','00:20'],
+            ['e','Tu pedido 4821 salió ayer y llega mañana antes de las 14:00. ¿Te paso el enlace de seguimiento?','00:20'],
+            ['c','Sí, porfa','00:21'],
+            ['e','Aquí lo tienes. <b>¡Gracias por tu compra!</b>','00:21']],
+      hecho:'Consulta resuelta sin esperar a mañana' }
+  ];
+  var selector = document.querySelector('.selector');
+  var hilo = document.getElementById('hilo');
+  var reloj = document.getElementById('reloj');
+  var pie = document.getElementById('reloj-pie');
+  var actual = 0, temporizador = null;
+  var sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  escenas.forEach(function(e, i){
+    var li = document.createElement('li');
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = e.sector;
+    b.addEventListener('click', function(){ parar(); mostrar(i); });
+    li.appendChild(b); selector.appendChild(li);
+  });
+
+  function mostrar(i){
+    actual = i;
+    var e = escenas[i];
+    selector.querySelectorAll('button').forEach(function(b, j){ b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+    reloj.textContent = e.hora;
+    pie.innerHTML = e.pie + ' <span class="canal">' + e.canal + '</span>';
+    var html = '';
+    e.msgs.forEach(function(m, k){
+      html += '<div class="msg ' + (m[0] === 'c' ? 'cliente' : 'eris') + '" style="animation-delay:' + (0.3 + k * 0.9) + 's">' + m[1] + '<small>' + m[2] + '</small></div>';
+    });
+    html += '<div class="hecho" style="animation-delay:' + (0.3 + e.msgs.length * 0.9) + 's">' + e.hecho + '</div>';
+    hilo.classList.remove('animar'); void hilo.offsetWidth;
+    hilo.innerHTML = html;
+    if(!sinMovimiento) hilo.classList.add('animar');
+  }
+  function parar(){ if(temporizador){ clearInterval(temporizador); temporizador = null; } }
+  mostrar(0);
+  if(!sinMovimiento){ temporizador = setInterval(function(){ mostrar((actual + 1) % escenas.length); }, 9000); }
+})();
+
+(function(){
+  var URL_CHAT = 'https://erisproject.app.n8n.cloud/webhook/b459bdf5-8285-4273-b78c-3c095c33fa35/chat';
+  var panel = document.getElementById('panel-eris');
+  var lanzador = document.querySelector('.lanzador');
+  var cargado = false;
+
+  function abrir(){
+    if(!cargado){
+      var marco = document.createElement('iframe');
+      marco.src = URL_CHAT;
+      marco.title = 'Chat con Eris';
+      marco.allow = 'clipboard-write';
+      panel.appendChild(marco);
+      cargado = true;
+    }
+    panel.classList.add('abierto');
+    lanzador.setAttribute('aria-expanded','true');
+    lanzador.style.display = window.innerWidth <= 520 ? 'none' : '';
+  }
+  function cerrar(){
+    panel.classList.remove('abierto');
+    lanzador.setAttribute('aria-expanded','false');
+    lanzador.style.display = '';
+    lanzador.focus();
+  }
+  document.querySelectorAll('[data-abrir-eris]').forEach(function(b){ b.addEventListener('click', abrir); });
+  panel.querySelector('.cerrar').addEventListener('click', cerrar);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && panel.classList.contains('abierto')) cerrar(); });
+})();
+</script>
+</body>
+</html>
