@@ -111,10 +111,13 @@ a{color:inherit}
 
 /* Sectores */
 .sectores{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;list-style:none}
-.sectores .tu-sector{padding:0;border:0;background:none}
-.sectores .tu-sector button{font:inherit;font-weight:600;color:#fff;background:var(--rubi);border:0;border-radius:10px;padding:10px 18px;cursor:pointer;box-shadow:0 8px 24px -10px rgba(209,16,74,.8)}
-.sectores .tu-sector button:hover{background:var(--rubi-luz)}
-.sectores li{background:rgba(16,185,129,.06);border:1px solid var(--linea);border-radius:10px;padding:9px 18px;font-weight:500;color:#CFE9DF}
+.grupos{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--linea);border:1px solid var(--linea);border-radius:14px;overflow:hidden}
+.grupo{background:var(--fondo);padding:24px 24px 26px}
+.grupo h3{font-family:var(--display);font-weight:600;font-size:1.1rem;margin:0 0 8px;color:var(--esmeralda-luz)}
+.grupo p{margin:0;color:#CFE9DF;font-size:.98rem;line-height:1.55}
+.tu-sector-linea{margin:28px 0 0;color:var(--apagado);display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.tu-sector-linea button{font:inherit;font-weight:600;color:#fff;background:var(--rubi);border:0;border-radius:10px;padding:10px 18px;cursor:pointer;box-shadow:0 8px 24px -10px rgba(209,16,74,.8)}
+.tu-sector-linea button:hover{background:var(--rubi-luz)}
 
 /* Cierre */
 .cierre{overflow:hidden;isolation:isolate}
@@ -151,11 +154,13 @@ a{color:inherit}
   .movil{margin-left:0;max-width:none}
   .servicio{grid-template-columns:1fr;gap:12px}
   .pasos{grid-template-columns:1fr;gap:36px}
+  .grupos{grid-template-columns:1fr 1fr}
   .seccion{padding:72px 0}
 }
 @media (max-width:520px){
   .envoltura{padding:0 16px}
   .cabecera .boton-borde{display:none}
+  .grupos{grid-template-columns:1fr}
   .panel{right:0;bottom:0;width:100%;height:100%;border-radius:0}
   .lanzador{right:16px;bottom:16px}
 }
@@ -248,24 +253,15 @@ a{color:inherit}
     <div class="envoltura">
       <h2>Para cualquier negocio que atienda clientes</h2>
       <p class="bajada">Si recibes mensajes, citas, reservas o pedidos, hay algo que se puede automatizar. Estos son solo algunos ejemplos.</p>
-      <ul class="sectores">
-        <li>Talleres mecánicos</li>
-        <li>Peluquerías y salones de belleza</li>
-        <li>Guarderías y escuelas infantiles</li>
-        <li>Clínicas dentales</li>
-        <li>Centros médicos y sanidad privada</li>
-        <li>Fisioterapia y psicología</li>
-        <li>Veterinarios</li>
-        <li>Bares y restaurantes</li>
-        <li>Hoteles y casas rurales</li>
-        <li>Inmobiliarias</li>
-        <li>Academias y autoescuelas</li>
-        <li>Gimnasios</li>
-        <li>Tiendas online y comercios</li>
-        <li>Gestorías y asesorías</li>
-        <li>Reformas y oficios</li>
-        <li class="tu-sector"><button type="button" data-abrir-eris>¿No ves el tuyo? Cuéntanos</button></li>
-      </ul>
+      <div class="grupos">
+        <div class="grupo"><h3>Salud</h3><p>Clínicas dentales, centros médicos y sanidad privada, fisioterapia, psicología, ópticas, veterinarios</p></div>
+        <div class="grupo"><h3>Belleza y bienestar</h3><p>Peluquerías, barberías, centros de estética, uñas y pestañas, spas</p></div>
+        <div class="grupo"><h3>Comercio</h3><p>Tiendas de alimentación, fruterías y carnicerías, tiendas de segunda mano, moda, tiendas online</p></div>
+        <div class="grupo"><h3>Hostelería y turismo</h3><p>Bares, restaurantes, cafeterías, hoteles, casas rurales</p></div>
+        <div class="grupo"><h3>Servicios</h3><p>Talleres, reformas, fontaneros y electricistas, limpieza, inmobiliarias, gestorías y asesorías</p></div>
+        <div class="grupo"><h3>Educación, deporte y ocio</h3><p>Guarderías, academias, autoescuelas, gimnasios, escuelas de baile y música</p></div>
+      </div>
+      <p class="tu-sector-linea">¿Tu negocio no aparece? También funciona. <button type="button" data-abrir-eris>Cuéntanos qué haces</button></p>
     </div>
   </section>
 
@@ -301,18 +297,36 @@ a{color:inherit}
 <script>
 (function(){
   var escenas = [
-    { sector:'Clínicas dentales', hora:'22:30', canal:'la web', pie:'Clínica cerrada. Un paciente escribe desde',
-      msgs:[['c','Se me ha roto un empaste, ¿me podéis ver pronto?','22:30'],
-            ['e','Vaya, lo siento. Hay hueco mañana a las 10:30 para una revisión urgente. ¿Te lo reservo?','22:30'],
-            ['c','Sí, por favor. Soy Lucía','22:31'],
-            ['e','Reservado, Lucía: mañana a las 10:30. <b>Te enviamos un recordatorio por la mañana.</b>','22:31']],
+    { sector:'Clínicas dentales', hora:'22:15', canal:'WhatsApp', pie:'Clínica cerrada. Un paciente escribe por',
+      msgs:[['c','Me duele mucho una muela, ¿tenéis cita mañana?','22:15'],
+            ['e','Siento el dolor. Mañana a las 10:30 hay un hueco para urgencias. ¿Te lo reservo?','22:15'],
+            ['c','Sí, por favor. Soy Javier','22:16'],
+            ['e','Reservado, Javier: mañana a las 10:30. <b>Te enviamos un recordatorio por la mañana.</b>','22:16']],
       hecho:'Cita urgente en la agenda de la clínica' },
-    { sector:'Sanidad privada', hora:'20:50', canal:'WhatsApp', pie:'Centro médico cerrado. Una paciente escribe por',
-      msgs:[['c','¿Tenéis consulta de dermatología esta semana?','20:50'],
-            ['e','Sí. Hay hueco el jueves a las 12:00 o a las 18:00. ¿Cuál te viene mejor?','20:50'],
-            ['c','El jueves a las 18:00','20:51'],
-            ['e','Hecho. <b>Te enviamos la confirmación y las indicaciones por email.</b>','20:51']],
-      hecho:'Cita con especialista confirmada' },
+    { sector:'Centros médicos', hora:'21:30', canal:'la web', pie:'Consulta cerrada. Una paciente escribe desde',
+      msgs:[['c','Quería pedir cita con el dermatólogo','21:30'],
+            ['e','Claro. Hay consulta el lunes a las 12:00 o el martes a las 18:00. ¿Cuál te viene mejor?','21:30'],
+            ['c','El martes a las 18:00','21:31'],
+            ['e','Hecho: martes a las 18:00 con dermatología. <b>Te llegará la confirmación por email.</b>','21:31']],
+      hecho:'Cita registrada y confirmación enviada' },
+    { sector:'Peluquerías', hora:'23:05', canal:'Instagram', pie:'Peluquería cerrada. Una clienta escribe por',
+      msgs:[['c','¿Tenéis hueco para corte y mechas el sábado?','23:05'],
+            ['e','El sábado a las 10:00 podemos hacer las dos cosas. ¿Te lo reservo?','23:05'],
+            ['c','¡Sí, porfa! Soy Marta','23:06'],
+            ['e','Reservado, Marta: sábado a las 10:00, corte y mechas. <b>¡Te esperamos!</b>','23:06']],
+      hecho:'Cita reservada y recordatorio programado' },
+    { sector:'Tiendas de alimentación', hora:'22:40', canal:'WhatsApp', pie:'Tienda cerrada. Un cliente escribe por',
+      msgs:[['c','¿Me preparáis un pedido para recoger mañana? Un kilo de tomates y una docena de huevos','22:40'],
+            ['e','¡Claro! Lo tendrás listo mañana desde las 9:00. ¿A nombre de quién?','22:40'],
+            ['c','De Lucía','22:41'],
+            ['e','Apuntado para Lucía. <b>Mañana desde las 9:00 lo tienes preparado.</b>','22:41']],
+      hecho:'Pedido apuntado para preparar' },
+    { sector:'Tiendas de segunda mano', hora:'20:55', canal:'Instagram', pie:'Tienda cerrada. Una clienta escribe por',
+      msgs:[['c','¿Seguís teniendo la chaqueta vaquera del escaparate en talla M?','20:55'],
+            ['e','Sí, queda una en talla M. ¿Quieres que te la guardemos hasta mañana?','20:55'],
+            ['c','¡Sí! Me llamo Sara','20:56'],
+            ['e','Guardada a nombre de Sara. <b>Puedes pasar a por ella mañana hasta las 20:00.</b>','20:56']],
+      hecho:'Prenda reservada y tienda avisada' },
     { sector:'Restaurantes', hora:'01:12', canal:'la web', pie:'Cocina cerrada. Un cliente escribe desde',
       msgs:[['c','¿Hay mesa para 6 el sábado a las 21:30?','01:12'],
             ['e','¡Sí, hay hueco! ¿A nombre de quién? ¿Alguna alergia que debamos saber?','01:12'],
@@ -325,18 +339,6 @@ a{color:inherit}
             ['c','Seat León de 2016','22:11'],
             ['e','Apuntado: miércoles a las 9:00, Seat León 2016. <b>Te recordamos la cita el día antes.</b>','22:11']],
       hecho:'Cita en el calendario del taller' },
-    { sector:'Salones de belleza', hora:'23:05', canal:'Instagram', pie:'Salón cerrado. Una clienta escribe por',
-      msgs:[['c','¿Tenéis hueco para uñas y pestañas el viernes?','23:05'],
-            ['e','El viernes a las 17:00 podemos hacer las dos cosas seguidas. ¿Te lo reservo?','23:05'],
-            ['c','¡Sí, porfa! Soy Marta','23:06'],
-            ['e','Reservado, Marta: viernes a las 17:00, uñas y pestañas. <b>¡Te esperamos!</b>','23:06']],
-      hecho:'Cita reservada y recordatorio programado' },
-    { sector:'Fisioterapia', hora:'21:30', canal:'WhatsApp', pie:'Consulta cerrada. Un paciente escribe por',
-      msgs:[['c','Buenas, ¿tenéis cita de fisio esta semana? Me duele la espalda','21:30'],
-            ['e','Sí. Tenemos hueco el jueves a las 10:00 o a las 17:30. ¿Cuál te viene mejor?','21:30'],
-            ['c','El jueves a las 17:30','21:31'],
-            ['e','Hecho: cita el jueves a las 17:30. <b>Te enviaremos un recordatorio el día antes.</b>','21:31']],
-      hecho:'Cita en el calendario y recordatorio programado' },
     { sector:'Inmobiliarias', hora:'22:05', canal:'WhatsApp', pie:'Oficina cerrada. Un interesado escribe por',
       msgs:[['c','Me interesa el piso de la calle Mayor, ¿sigue disponible?','22:05'],
             ['e','Sigue disponible. ¿Te gustaría visitarlo? Hay huecos el martes por la tarde.','22:05'],
