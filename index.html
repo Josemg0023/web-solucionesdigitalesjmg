@@ -192,7 +192,7 @@ a{color:inherit}
           </span>
         </div>
         <p class="contador" id="contador"></p>
-        <p class="reloj" id="reloj">23:47</p>
+        <p class="reloj" id="reloj">22:30</p>
         <p class="reloj-pie" id="reloj-pie"></p>
         <div class="hilo" id="hilo" aria-live="polite"></div>
       </div>
@@ -252,7 +252,9 @@ a{color:inherit}
         <li>Talleres mecánicos</li>
         <li>Peluquerías y salones de belleza</li>
         <li>Guarderías y escuelas infantiles</li>
-        <li>Clínicas, dentistas y fisioterapia</li>
+        <li>Clínicas dentales</li>
+        <li>Centros médicos y sanidad privada</li>
+        <li>Fisioterapia y psicología</li>
         <li>Veterinarios</li>
         <li>Bares y restaurantes</li>
         <li>Hoteles y casas rurales</li>
@@ -299,24 +301,24 @@ a{color:inherit}
 <script>
 (function(){
   var escenas = [
-    { sector:'Clínicas', hora:'21:30', canal:'WhatsApp', pie:'Consulta cerrada. Un paciente escribe por',
-      msgs:[['c','Buenas, ¿tenéis cita de fisio esta semana? Me duele la espalda','21:30'],
-            ['e','Sí. Tenemos hueco el jueves a las 10:00 o a las 17:30. ¿Cuál te viene mejor?','21:30'],
-            ['c','El jueves a las 17:30','21:31'],
-            ['e','Hecho: cita el jueves a las 17:30. <b>Te enviaremos un recordatorio el día antes.</b>','21:31']],
-      hecho:'Cita en el calendario y recordatorio programado' },
+    { sector:'Clínicas dentales', hora:'22:30', canal:'la web', pie:'Clínica cerrada. Un paciente escribe desde',
+      msgs:[['c','Se me ha roto un empaste, ¿me podéis ver pronto?','22:30'],
+            ['e','Vaya, lo siento. Hay hueco mañana a las 10:30 para una revisión urgente. ¿Te lo reservo?','22:30'],
+            ['c','Sí, por favor. Soy Lucía','22:31'],
+            ['e','Reservado, Lucía: mañana a las 10:30. <b>Te enviamos un recordatorio por la mañana.</b>','22:31']],
+      hecho:'Cita urgente en la agenda de la clínica' },
+    { sector:'Sanidad privada', hora:'20:50', canal:'WhatsApp', pie:'Centro médico cerrado. Una paciente escribe por',
+      msgs:[['c','¿Tenéis consulta de dermatología esta semana?','20:50'],
+            ['e','Sí. Hay hueco el jueves a las 12:00 o a las 18:00. ¿Cuál te viene mejor?','20:50'],
+            ['c','El jueves a las 18:00','20:51'],
+            ['e','Hecho. <b>Te enviamos la confirmación y las indicaciones por email.</b>','20:51']],
+      hecho:'Cita con especialista confirmada' },
     { sector:'Restaurantes', hora:'01:12', canal:'la web', pie:'Cocina cerrada. Un cliente escribe desde',
       msgs:[['c','¿Hay mesa para 6 el sábado a las 21:30?','01:12'],
             ['e','¡Sí, hay hueco! ¿A nombre de quién? ¿Alguna alergia que debamos saber?','01:12'],
             ['c','A nombre de Laura. Uno de nosotros es celíaco','01:13'],
             ['e','Reservado: sábado a las 21:30, 6 personas, a nombre de Laura. <b>Lo de la celiaquía queda anotado para cocina.</b>','01:13']],
       hecho:'Reserva guardada y cocina avisada' },
-    { sector:'Inmobiliarias', hora:'22:05', canal:'WhatsApp', pie:'Oficina cerrada. Un interesado escribe por',
-      msgs:[['c','Me interesa el piso de la calle Mayor, ¿sigue disponible?','22:05'],
-            ['e','Sigue disponible. ¿Te gustaría visitarlo? Hay huecos el martes por la tarde.','22:05'],
-            ['c','El martes me va bien. Soy Carlos','22:06'],
-            ['e','Perfecto, Carlos. <b>Mañana un agente te confirma la hora exacta de la visita.</b>','22:06']],
-      hecho:'Interesado guardado y agente avisado' },
     { sector:'Talleres', hora:'22:10', canal:'WhatsApp', pie:'Taller cerrado. Un cliente escribe por',
       msgs:[['c','Se me ha encendido el testigo del motor, ¿tenéis hueco esta semana?','22:10'],
             ['e','Podemos verlo el miércoles a las 9:00. ¿Me dices la marca y el modelo del coche?','22:10'],
@@ -329,6 +331,18 @@ a{color:inherit}
             ['c','¡Sí, porfa! Soy Marta','23:06'],
             ['e','Reservado, Marta: viernes a las 17:00, uñas y pestañas. <b>¡Te esperamos!</b>','23:06']],
       hecho:'Cita reservada y recordatorio programado' },
+    { sector:'Fisioterapia', hora:'21:30', canal:'WhatsApp', pie:'Consulta cerrada. Un paciente escribe por',
+      msgs:[['c','Buenas, ¿tenéis cita de fisio esta semana? Me duele la espalda','21:30'],
+            ['e','Sí. Tenemos hueco el jueves a las 10:00 o a las 17:30. ¿Cuál te viene mejor?','21:30'],
+            ['c','El jueves a las 17:30','21:31'],
+            ['e','Hecho: cita el jueves a las 17:30. <b>Te enviaremos un recordatorio el día antes.</b>','21:31']],
+      hecho:'Cita en el calendario y recordatorio programado' },
+    { sector:'Inmobiliarias', hora:'22:05', canal:'WhatsApp', pie:'Oficina cerrada. Un interesado escribe por',
+      msgs:[['c','Me interesa el piso de la calle Mayor, ¿sigue disponible?','22:05'],
+            ['e','Sigue disponible. ¿Te gustaría visitarlo? Hay huecos el martes por la tarde.','22:05'],
+            ['c','El martes me va bien. Soy Carlos','22:06'],
+            ['e','Perfecto, Carlos. <b>Mañana un agente te confirma la hora exacta de la visita.</b>','22:06']],
+      hecho:'Interesado guardado y agente avisado' },
     { sector:'Guarderías', hora:'21:40', canal:'la web', pie:'Centro cerrado. Una familia escribe desde',
       msgs:[['c','¿Quedan plazas para un bebé de 1 año para septiembre?','21:40'],
             ['e','Sí, quedan plazas en el aula de 1 a 2 años. ¿Os gustaría visitar el centro?','21:40'],
