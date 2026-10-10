@@ -76,10 +76,13 @@ a{color:inherit}
 .hecho{align-self:flex-end;font-size:.85rem;color:var(--rubi-luz);display:flex;align-items:center;gap:8px;margin-top:4px}
 .hecho::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--rubi-luz);box-shadow:0 0 10px var(--rubi-luz)}
 .canal{display:inline-block;font-size:.76rem;font-weight:600;color:#fff;background:var(--rubi);border-radius:6px;padding:2px 9px;margin-left:6px;vertical-align:1px}
-.selector{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:0;list-style:none}
-.selector button{font:inherit;font-size:.86rem;font-weight:500;color:var(--apagado);background:rgba(255,255,255,.03);border:1px solid var(--linea);border-radius:8px;padding:6px 13px;cursor:pointer;transition:all .15s ease}
-.selector button:hover{border-color:var(--esmeralda);color:var(--claro)}
-.selector button[aria-pressed="true"]{background:rgba(16,185,129,.18);color:var(--claro);border-color:var(--esmeralda-luz);box-shadow:0 0 16px -4px rgba(52,211,153,.6)}
+.selector{display:flex;align-items:center;gap:10px;margin:0 0 16px}
+.selector .ejemplo-de{font-size:.8rem;color:var(--apagado)}
+.selector .sector-actual{font-family:var(--display);font-weight:600;font-size:.95rem;color:var(--claro);background:rgba(16,185,129,.16);border:1px solid var(--esmeralda-luz);border-radius:8px;padding:5px 12px;box-shadow:0 0 16px -4px rgba(52,211,153,.6)}
+.selector .flechas{margin-left:auto;display:flex;gap:6px}
+.selector .flechas button{font:inherit;width:34px;height:34px;border-radius:8px;border:1px solid var(--linea);background:rgba(255,255,255,.03);color:var(--claro);cursor:pointer;font-size:1.1rem;line-height:1}
+.selector .flechas button:hover{border-color:var(--esmeralda-luz)}
+.contador{font-size:.78rem;color:var(--apagado);margin:-8px 0 14px}
 @media (prefers-reduced-motion:no-preference){
   .hilo.animar > *{opacity:0;transform:translateY(8px);animation:aparece .45s ease forwards}
 }
@@ -108,6 +111,9 @@ a{color:inherit}
 
 /* Sectores */
 .sectores{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;list-style:none}
+.sectores .tu-sector{padding:0;border:0;background:none}
+.sectores .tu-sector button{font:inherit;font-weight:600;color:#fff;background:var(--rubi);border:0;border-radius:10px;padding:10px 18px;cursor:pointer;box-shadow:0 8px 24px -10px rgba(209,16,74,.8)}
+.sectores .tu-sector button:hover{background:var(--rubi-luz)}
 .sectores li{background:rgba(16,185,129,.06);border:1px solid var(--linea);border-radius:10px;padding:9px 18px;font-weight:500;color:#CFE9DF}
 
 /* Cierre */
@@ -177,7 +183,15 @@ a{color:inherit}
       </div>
 
       <div class="movil" aria-label="Ejemplos de conversaciones fuera de horario">
-        <ul class="selector" aria-label="Elige un tipo de negocio"></ul>
+        <div class="selector">
+          <span class="ejemplo-de">Ejemplo:</span>
+          <span class="sector-actual" id="sector-actual" aria-live="polite"></span>
+          <span class="flechas">
+            <button type="button" id="anterior" aria-label="Ejemplo anterior">‹</button>
+            <button type="button" id="siguiente" aria-label="Ejemplo siguiente">›</button>
+          </span>
+        </div>
+        <p class="contador" id="contador"></p>
         <p class="reloj" id="reloj">23:47</p>
         <p class="reloj-pie" id="reloj-pie"></p>
         <div class="hilo" id="hilo" aria-live="polite"></div>
@@ -232,18 +246,24 @@ a{color:inherit}
 
   <section class="seccion">
     <div class="envoltura">
-      <h2>Para negocios de cualquier sector</h2>
-      <p class="bajada">Si recibes mensajes, citas o pedidos, hay algo que se puede automatizar.</p>
+      <h2>Para cualquier negocio que atienda clientes</h2>
+      <p class="bajada">Si recibes mensajes, citas, reservas o pedidos, hay algo que se puede automatizar. Estos son solo algunos ejemplos.</p>
       <ul class="sectores">
+        <li>Talleres mecánicos</li>
+        <li>Peluquerías y salones de belleza</li>
+        <li>Guarderías y escuelas infantiles</li>
+        <li>Clínicas, dentistas y fisioterapia</li>
+        <li>Veterinarios</li>
         <li>Estudios de tatuajes</li>
-        <li>Clínicas y fisioterapia</li>
-        <li>Centros de estética</li>
+        <li>Bares y restaurantes</li>
+        <li>Hoteles y casas rurales</li>
         <li>Inmobiliarias</li>
         <li>Academias y autoescuelas</li>
         <li>Gimnasios</li>
-        <li>Tiendas online</li>
-        <li>Gestorías</li>
-        <li>Bares y restaurantes</li>
+        <li>Tiendas online y comercios</li>
+        <li>Gestorías y asesorías</li>
+        <li>Reformas y oficios</li>
+        <li class="tu-sector"><button type="button" data-abrir-eris>¿No ves el tuyo? Cuéntanos</button></li>
       </ul>
     </div>
   </section>
@@ -304,6 +324,30 @@ a{color:inherit}
             ['c','El martes me va bien. Soy Carlos','22:06'],
             ['e','Perfecto, Carlos. <b>Mañana un agente te confirma la hora exacta de la visita.</b>','22:06']],
       hecho:'Interesado guardado y agente avisado' },
+    { sector:'Talleres', hora:'22:10', canal:'WhatsApp', pie:'Taller cerrado. Un cliente escribe por',
+      msgs:[['c','Se me ha encendido el testigo del motor, ¿tenéis hueco esta semana?','22:10'],
+            ['e','Podemos verlo el miércoles a las 9:00. ¿Me dices la marca y el modelo del coche?','22:10'],
+            ['c','Seat León de 2016','22:11'],
+            ['e','Apuntado: miércoles a las 9:00, Seat León 2016. <b>Te recordamos la cita el día antes.</b>','22:11']],
+      hecho:'Cita en el calendario del taller' },
+    { sector:'Salones de belleza', hora:'23:05', canal:'Instagram', pie:'Salón cerrado. Una clienta escribe por',
+      msgs:[['c','¿Tenéis hueco para uñas y pestañas el viernes?','23:05'],
+            ['e','El viernes a las 17:00 podemos hacer las dos cosas seguidas. ¿Te lo reservo?','23:05'],
+            ['c','¡Sí, porfa! Soy Marta','23:06'],
+            ['e','Reservado, Marta: viernes a las 17:00, uñas y pestañas. <b>¡Te esperamos!</b>','23:06']],
+      hecho:'Cita reservada y recordatorio programado' },
+    { sector:'Guarderías', hora:'21:40', canal:'la web', pie:'Centro cerrado. Una familia escribe desde',
+      msgs:[['c','¿Quedan plazas para un bebé de 1 año para septiembre?','21:40'],
+            ['e','Sí, quedan plazas en el aula de 1 a 2 años. ¿Os gustaría visitar el centro?','21:40'],
+            ['c','Sí, ¿se puede por la mañana?','21:41'],
+            ['e','Claro. <b>Mañana la dirección os escribe para concretar el día de la visita.</b>','21:41']],
+      hecho:'Familia apuntada y dirección avisada' },
+    { sector:'Gimnasios', hora:'06:10', canal:'WhatsApp', pie:'Recepción sin abrir. Alguien escribe por',
+      msgs:[['c','¿Puedo probar una clase antes de apuntarme?','06:10'],
+            ['e','¡Claro! Hoy hay clase de funcional a las 19:00. ¿Te reservo plaza?','06:10'],
+            ['c','Venga, soy Álex','06:11'],
+            ['e','Reservada, Álex. <b>Trae ropa cómoda y agua 💪</b>','06:11']],
+      hecho:'Plaza reservada en la clase' },
     { sector:'Tiendas online', hora:'00:20', canal:'la web', pie:'Atención al cliente cerrada. Un comprador escribe desde',
       msgs:[['c','¿Dónde está mi pedido 4821?','00:20'],
             ['e','Tu pedido 4821 salió ayer y llega mañana antes de las 14:00. ¿Te paso el enlace de seguimiento?','00:20'],
@@ -311,25 +355,21 @@ a{color:inherit}
             ['e','Aquí lo tienes. <b>¡Gracias por tu compra!</b>','00:21']],
       hecho:'Consulta resuelta sin esperar a mañana' }
   ];
-  var selector = document.querySelector('.selector');
+  var etiqueta = document.getElementById('sector-actual');
+  var contador = document.getElementById('contador');
   var hilo = document.getElementById('hilo');
   var reloj = document.getElementById('reloj');
   var pie = document.getElementById('reloj-pie');
   var actual = 0, temporizador = null;
   var sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  escenas.forEach(function(e, i){
-    var li = document.createElement('li');
-    var b = document.createElement('button');
-    b.type = 'button'; b.textContent = e.sector;
-    b.addEventListener('click', function(){ parar(); mostrar(i); });
-    li.appendChild(b); selector.appendChild(li);
-  });
+  document.getElementById('anterior').addEventListener('click', function(){ parar(); mostrar((actual - 1 + escenas.length) % escenas.length); });
+  document.getElementById('siguiente').addEventListener('click', function(){ parar(); mostrar((actual + 1) % escenas.length); });
 
   function mostrar(i){
     actual = i;
     var e = escenas[i];
-    selector.querySelectorAll('button').forEach(function(b, j){ b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+    etiqueta.textContent = e.sector;
+    contador.textContent = (i + 1) + ' de ' + escenas.length + ' ejemplos · funciona igual para cualquier negocio';
     reloj.textContent = e.hora;
     pie.innerHTML = e.pie + ' <span class="canal">' + e.canal + '</span>';
     var html = '';
