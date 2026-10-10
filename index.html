@@ -137,6 +137,12 @@ a{color:inherit}
 .panel-cabecera{background:linear-gradient(120deg,#5E0A26,#0B5A42);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:12px 14px 12px 18px;font-family:var(--display);font-weight:700}
 .panel-cabecera small{display:block;font-family:var(--texto);font-weight:400;font-size:.78rem;color:#CFE9DF}
 .panel-cabecera small a{color:#7CF0C4 !important}
+.idiomas{display:flex;align-items:center;gap:6px;padding:8px 14px;background:#0A1F18;border-bottom:1px solid rgba(52,211,153,.25)}
+.idiomas span{font-size:.78rem;color:#9CC3B5;margin-right:2px}
+.idiomas button{font:inherit;font-size:.82rem;font-weight:600;color:#CFE9DF;background:transparent;border:1px solid rgba(52,211,153,.3);border-radius:7px;padding:4px 10px;cursor:pointer}
+.idiomas button[aria-pressed="true"]{background:#10B981;border-color:#10B981;color:#04120E}
+.idiomas select{font:inherit;font-size:.82rem;color:#CFE9DF;background:#0A1F18;border:1px solid rgba(52,211,153,.3);border-radius:7px;padding:4px 6px;cursor:pointer;margin-left:auto}
+.idiomas select.activo{border-color:#10B981;color:#fff}
 .cerrar{background:transparent;border:0;color:#fff;font-size:1.6rem;line-height:1;cursor:pointer;padding:4px 10px;border-radius:8px}
 #chat-eris{flex:1;min-height:0;position:relative}
 #chat-eris{
@@ -291,6 +297,22 @@ a{color:inherit}
     <div>Eris<small>Asistente con inteligencia artificial</small></div>
     <button class="cerrar" type="button" aria-label="Cerrar el chat">×</button>
   </div>
+  <div class="idiomas" role="group" aria-label="Idioma de la conversación">
+    <span>Idioma:</span>
+    <button type="button" data-idioma="es" aria-pressed="true">Español</button>
+    <button type="button" data-idioma="en" aria-pressed="false">English</button>
+    <select id="otros-idiomas" aria-label="Otros idiomas">
+      <option value="">Otros…</option>
+      <option value="ca">Català</option>
+      <option value="va">Valencià</option>
+      <option value="gl">Galego</option>
+      <option value="eu">Euskara</option>
+      <option value="fr">Français</option>
+      <option value="pt">Português</option>
+      <option value="de">Deutsch</option>
+      <option value="it">Italiano</option>
+    </select>
+  </div>
   <div id="chat-eris"></div>
 </div>
 
@@ -407,21 +429,66 @@ a{color:inherit}
   var lanzador = document.querySelector('.lanzador');
   var cargado = false;
 
+  var TEXTOS = {
+    es:{h:'¡Hola! Soy Eris 👋', p:'Cuéntame, ¿a qué se dedica tu negocio?', i:'Escribe tu mensaje...'},
+    en:{h:'Hi! I\'m Eris 👋', p:'Tell me, what does your business do?', i:'Type your message...'},
+    ca:{h:'Hola! Sóc l\'Eris 👋', p:'Explica\'m, a què es dedica el teu negoci?', i:'Escriu el teu missatge...'},
+    va:{h:'Hola! Soc Eris 👋', p:'Conta\'m, a què es dedica el teu negoci?', i:'Escriu el teu missatge...'},
+    gl:{h:'Ola! Son Eris 👋', p:'Cóntame, a que se dedica o teu negocio?', i:'Escribe a túa mensaxe...'},
+    eu:{h:'Kaixo! Eris naiz 👋', p:'Esadazu, zertan dihardu zure negozioak?', i:'Idatzi zure mezua...'},
+    fr:{h:'Bonjour ! Je suis Eris 👋', p:'Dites-moi, que fait votre entreprise ?', i:'Écrivez votre message...'},
+    pt:{h:'Olá! Sou a Eris 👋', p:'Conte-me, a que se dedica o seu negócio?', i:'Escreva a sua mensagem...'},
+    de:{h:'Hallo! Ich bin Eris 👋', p:'Erzählen Sie mir: Was macht Ihr Unternehmen?', i:'Nachricht schreiben...'},
+    it:{h:'Ciao! Sono Eris 👋', p:'Raccontami, di cosa si occupa la tua attività?', i:'Scrivi il tuo messaggio...'}
+  };
+  var modulo = null, appChat = null, idioma = 'es';
+  try { idioma = localStorage.getItem('eris-idioma') || ''; } catch(e) { idioma = ''; }
+  if(!TEXTOS[idioma]){
+    var nav = (navigator.language || 'es').slice(0,2).toLowerCase();
+    idioma = TEXTOS[nav] ? nav : 'es';
+  }
+  var botonesIdioma = document.querySelectorAll('[data-idioma]');
+  var otros = document.getElementById('otros-idiomas');
+  function marcarIdioma(){
+    botonesIdioma.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-idioma') === idioma ? 'true' : 'false'); });
+    var esOtro = idioma !== 'es' && idioma !== 'en';
+    otros.value = esOtro ? idioma : '';
+    otros.classList.toggle('activo', esOtro);
+  }
+  function montarChat(){
+    var t = TEXTOS[idioma];
+    if(appChat){ try { appChat.unmount(); } catch(e) {} }
+    var contenedor = document.getElementById('chat-eris');
+    contenedor.innerHTML = '';
+    appChat = modulo.createChat({
+      webhookUrl: URL_CHAT,
+      target: '#chat-eris',
+      mode: 'fullscreen',
+      loadPreviousSession: false,
+      showWelcomeScreen: false,
+      enableStreaming: true,
+      defaultLanguage: 'en',
+      initialMessages: [t.h, t.p],
+      i18n: { en: { title: 'Eris', subtitle: '', footer: '', getStarted: 'OK', inputPlaceholder: t.i, closeButtonTooltip: 'X' } }
+    });
+  }
+  function cambiarIdioma(nuevo){
+    if(!TEXTOS[nuevo] || nuevo === idioma) { marcarIdioma(); return; }
+    idioma = nuevo;
+    try { localStorage.setItem('eris-idioma', idioma); } catch(e) {}
+    marcarIdioma();
+    if(modulo) montarChat();
+  }
+  botonesIdioma.forEach(function(b){ b.addEventListener('click', function(){ cambiarIdioma(b.getAttribute('data-idioma')); }); });
+  otros.addEventListener('change', function(){ if(otros.value) cambiarIdioma(otros.value); });
+  marcarIdioma();
+
   function abrir(){
     if(!cargado){
       cargado = true;
       import('./vendor/n8n-chat/chat.bundle.es.js').then(function(m){
-        m.createChat({
-          webhookUrl: URL_CHAT,
-          target: '#chat-eris',
-          mode: 'fullscreen',
-          loadPreviousSession: false,
-          showWelcomeScreen: false,
-          enableStreaming: true,
-          defaultLanguage: 'en',
-          initialMessages: ['¡Hola! Soy Eris 👋', 'Cuéntame, ¿a qué se dedica tu negocio?'],
-          i18n: { en: { title: 'Eris', subtitle: '', footer: '', getStarted: 'Empezar', inputPlaceholder: 'Escribe tu mensaje...', closeButtonTooltip: 'Cerrar' } }
-        });
+        modulo = m;
+        montarChat();
       }).catch(function(){
         document.getElementById('chat-eris').innerHTML = '<p style="padding:20px;color:#0B2A20">No se ha podido cargar el chat. Escríbenos a <a href="mailto:soluciones.digitales.jmg@gmail.com">soluciones.digitales.jmg@gmail.com</a>.</p>';
       });
