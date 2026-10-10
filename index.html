@@ -145,6 +145,7 @@ a{color:inherit}
 .idiomas select.activo{border-color:#10B981;color:#fff}
 .cerrar{background:transparent;border:0;color:#fff;font-size:1.6rem;line-height:1;cursor:pointer;padding:4px 10px;border-radius:8px}
 #chat-eris{flex:1;min-height:0;position:relative}
+#chat-n8n{height:100%}
 #chat-eris{
   --chat--color--primary:#D1104A;--chat--color--primary-shade-50:#B80E41;--chat--color--primary--shade-100:#9E0C38;
   --chat--color--secondary:#0E9F6E;--chat--color-secondary-shade-50:#0B7A57;
@@ -154,6 +155,25 @@ a{color:inherit}
   --chat--border-radius:12px;
 }
 #chat-eris .chat-header{display:none}
+.acciones{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.boton-llamar{background:transparent;color:var(--claro);box-shadow:inset 0 0 0 1px var(--esmeralda)}
+.boton-llamar:hover{background:rgba(16,185,129,.12);box-shadow:inset 0 0 0 1px var(--esmeralda-luz),0 0 20px -4px rgba(52,211,153,.6)}
+.boton-llamar svg{width:18px;height:18px;flex:none}
+.barra-llamada{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px;background:linear-gradient(90deg,rgba(209,16,74,.14),rgba(16,185,129,.14)),#071A14;border-bottom:1px solid rgba(52,211,153,.25);color:#CFE9DF;font-size:.85rem}
+.barra-llamada button{display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:600;font-size:.85rem;color:#fff;background:var(--rubi);border:0;border-radius:8px;padding:6px 12px;cursor:pointer}
+.barra-llamada button:hover{background:var(--rubi-luz)}
+.barra-llamada svg{width:15px;height:15px}
+.vista-llamada{position:absolute;inset:0;z-index:5;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;text-align:center;background:radial-gradient(circle at 50% 38%,#0B3A2B,#04120E 70%);color:#EAF7F1}
+.vista-llamada.activa{display:flex}
+.orbe{width:128px;height:128px;border-radius:50%;background:conic-gradient(from 0deg,#D1104A,#10B981,#34D399,#F0386B,#D1104A);box-shadow:0 0 50px -6px rgba(16,185,129,.7),0 0 70px -10px rgba(209,16,74,.6);animation:girar 6s linear infinite}
+.orbe.hablando{animation:girar 2s linear infinite,latir 1s ease-in-out infinite}
+@keyframes girar{to{transform:rotate(360deg)}}
+@keyframes latir{50%{scale:1.08}}
+.vista-llamada .estado{font-family:var(--display);font-weight:600;font-size:1.1rem;margin:0}
+.vista-llamada .aviso{font-size:.82rem;color:#9CC3B5;max-width:280px;margin:0}
+.vista-llamada .colgar{font:inherit;font-weight:600;color:#fff;background:#B80E41;border:0;border-radius:999px;padding:12px 26px;cursor:pointer}
+.vista-llamada .colgar:hover{background:var(--rubi-luz)}
+@media (prefers-reduced-motion:reduce){.orbe,.orbe.hablando{animation:none}}
 
 @media (max-width:860px){
   .portada .envoltura{grid-template-columns:1fr;gap:48px}
@@ -189,8 +209,11 @@ a{color:inherit}
       <div>
         <h1>Tu negocio cierra. Tus clientes siguen escribiendo.</h1>
         <p class="intro">Creamos la web de tu negocio con una asistente con IA integrada y automatizamos lo repetitivo. Tus clientes reciben respuesta al momento y tú dejas de contestar mensajes a mano.</p>
-        <button class="boton boton-luz" type="button" data-abrir-eris>Contáctanos</button>
-        <p class="nota">Te responde al momento nuestra asistente con IA, y el equipo te contacta después.</p>
+        <div class="acciones">
+          <button class="boton boton-luz" type="button" data-abrir-eris>Contáctanos</button>
+          <button class="boton boton-llamar" type="button" data-llamar-eris><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Llamar a Eris</button>
+        </div>
+        <p class="nota">Escríbele o háblale por voz: te atiende al momento nuestra asistente con IA, y el equipo te contacta después.</p>
       </div>
 
       <div class="movil" aria-label="Ejemplos de conversaciones fuera de horario">
@@ -274,8 +297,11 @@ a{color:inherit}
   <section class="seccion cierre">
     <div class="envoltura">
       <h2>Cuéntanos qué te quita tiempo</h2>
-      <p class="bajada">Escríbenos y te respondemos al momento. Después preparamos un presupuesto a medida, sin compromiso.</p>
-      <button class="boton boton-luz" type="button" data-abrir-eris>Contáctanos</button>
+      <p class="bajada">Escríbenos o llama a Eris desde aquí mismo y te atendemos al momento. Después preparamos un presupuesto a medida, sin compromiso.</p>
+      <div class="acciones">
+        <button class="boton boton-luz" type="button" data-abrir-eris>Contáctanos</button>
+        <button class="boton boton-llamar" type="button" data-llamar-eris><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Llamar a Eris</button>
+      </div>
       <p class="alternativa">¿Prefieres el correo? Escríbenos a <a href="mailto:soluciones.digitales.jmg@gmail.com">soluciones.digitales.jmg@gmail.com</a></p>
     </div>
   </section>
@@ -284,7 +310,7 @@ a{color:inherit}
 <footer class="pie">
   <div class="envoltura">
     <span>© 2026 Soluciones Digitales JMG</span>
-    <span>El chat lo atiende Eris, una asistente con inteligencia artificial.</span>
+    <span>El chat y las llamadas los atiende Eris, una asistente con inteligencia artificial.</span>
   </div>
 </footer>
 
@@ -313,7 +339,19 @@ a{color:inherit}
       <option value="it">Italiano</option>
     </select>
   </div>
-  <div id="chat-eris"></div>
+  <div class="barra-llamada">
+    <span id="texto-barra">¿Prefieres hablar?</span>
+    <button type="button" id="boton-llamar-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span id="texto-boton-llamar">Llamar a Eris</span></button>
+  </div>
+  <div id="chat-eris">
+    <div class="vista-llamada" id="vista-llamada" role="status" aria-live="polite">
+      <div class="orbe" id="orbe" aria-hidden="true"></div>
+      <p class="estado" id="estado-llamada">Conectando…</p>
+      <p class="aviso" id="aviso-llamada">Hablas con Eris, una asistente con inteligencia artificial. Necesitas permitir el micrófono.</p>
+      <button type="button" class="colgar" id="colgar">Colgar</button>
+    </div>
+    <div id="chat-n8n"></div>
+  </div>
 </div>
 
 <script>
@@ -430,16 +468,16 @@ a{color:inherit}
   var cargado = false;
 
   var TEXTOS = {
-    es:{h:'¡Hola! Soy Eris 👋', p:'Cuéntame, ¿a qué se dedica tu negocio?', i:'Escribe tu mensaje...'},
-    en:{h:'Hi! I\'m Eris 👋', p:'Tell me, what does your business do?', i:'Type your message...'},
-    ca:{h:'Hola! Sóc l\'Eris 👋', p:'Explica\'m, a què es dedica el teu negoci?', i:'Escriu el teu missatge...'},
-    va:{h:'Hola! Soc Eris 👋', p:'Conta\'m, a què es dedica el teu negoci?', i:'Escriu el teu missatge...'},
-    gl:{h:'Ola! Son Eris 👋', p:'Cóntame, a que se dedica o teu negocio?', i:'Escribe a túa mensaxe...'},
-    eu:{h:'Kaixo! Eris naiz 👋', p:'Esadazu, zertan dihardu zure negozioak?', i:'Idatzi zure mezua...'},
-    fr:{h:'Bonjour ! Je suis Eris 👋', p:'Dites-moi, que fait votre entreprise ?', i:'Écrivez votre message...'},
-    pt:{h:'Olá! Sou a Eris 👋', p:'Conte-me, a que se dedica o seu negócio?', i:'Escreva a sua mensagem...'},
-    de:{h:'Hallo! Ich bin Eris 👋', p:'Erzählen Sie mir: Was macht Ihr Unternehmen?', i:'Nachricht schreiben...'},
-    it:{h:'Ciao! Sono Eris 👋', p:'Raccontami, di cosa si occupa la tua attività?', i:'Scrivi il tuo messaggio...'}
+    es:{h:'¡Hola! Soy Eris 👋', p:'Cuéntame, ¿a qué se dedica tu negocio?', i:'Escribe tu mensaje...', b:'¿Prefieres hablar?', l:'Llamar a Eris', c:'Conectando…', e:'Te escucho', s:'Eris está hablando', f:'Llamada terminada', m:'Para hablar con Eris, permite el uso del micrófono. Si no puedes, escríbele aquí.', a:'Hablas con Eris, una asistente con inteligencia artificial. Necesitas permitir el micrófono.', x:'Colgar'},
+    en:{h:'Hi! I\'m Eris 👋', p:'Tell me, what does your business do?', i:'Type your message...', b:'Rather talk?', l:'Call Eris', c:'Connecting…', e:'Listening', s:'Eris is speaking', f:'Call ended', m:'To talk to Eris, please allow the microphone. If you can\'t, just type here.', a:'You are talking to Eris, an AI assistant. Please allow the microphone.', x:'Hang up'},
+    ca:{h:'Hola! Sóc l\'Eris 👋', p:'Explica\'m, a què es dedica el teu negoci?', i:'Escriu el teu missatge...', b:'Prefereixes parlar?', l:'Truca a l\'Eris', c:'Connectant…', e:'T\'escolto', s:'L\'Eris està parlant', f:'Trucada acabada', m:'Per parlar amb l\'Eris, permet el micròfon. Si no pots, escriu-li aquí.', a:'Parles amb l\'Eris, una assistent amb intel·ligència artificial. Cal permetre el micròfon.', x:'Penjar'},
+    va:{h:'Hola! Soc Eris 👋', p:'Conta\'m, a què es dedica el teu negoci?', i:'Escriu el teu missatge...', b:'Preferixes parlar?', l:'Telefona a Eris', c:'Connectant…', e:'T\'escolte', s:'Eris està parlant', f:'Telefonada acabada', m:'Per a parlar amb Eris, permet el micròfon. Si no pots, escriu-li ací.', a:'Parles amb Eris, una assistent amb intel·ligència artificial. Cal permetre el micròfon.', x:'Penjar'},
+    gl:{h:'Ola! Son Eris 👋', p:'Cóntame, a que se dedica o teu negocio?', i:'Escribe a túa mensaxe...', b:'Prefires falar?', l:'Chamar a Eris', c:'Conectando…', e:'Escóitote', s:'Eris está falando', f:'Chamada rematada', m:'Para falar con Eris, permite o micrófono. Se non podes, escríbelle aquí.', a:'Falas con Eris, unha asistente con intelixencia artificial. Tes que permitir o micrófono.', x:'Colgar'},
+    eu:{h:'Kaixo! Eris naiz 👋', p:'Esadazu, zertan dihardu zure negozioak?', i:'Idatzi zure mezua...', b:'Hitz egin nahiago?', l:'Deitu Erisi', c:'Konektatzen…', e:'Entzuten', s:'Eris hitz egiten ari da', f:'Deia amaitu da', m:'Erisekin hitz egiteko, baimendu mikrofonoa. Ezin baduzu, idatzi hemen.', a:'Eris adimen artifizialeko laguntzailearekin ari zara. Mikrofonoa baimendu behar duzu.', x:'Eskegi'},
+    fr:{h:'Bonjour ! Je suis Eris 👋', p:'Dites-moi, que fait votre entreprise ?', i:'Écrivez votre message...', b:'Vous préférez parler ?', l:'Appeler Eris', c:'Connexion…', e:'Je vous écoute', s:'Eris parle', f:'Appel terminé', m:'Pour parler à Eris, autorisez le micro. Sinon, écrivez-lui ici.', a:'Vous parlez à Eris, une assistante IA. Autorisez le micro.', x:'Raccrocher'},
+    pt:{h:'Olá! Sou a Eris 👋', p:'Conte-me, a que se dedica o seu negócio?', i:'Escreva a sua mensagem...', b:'Prefere falar?', l:'Ligar à Eris', c:'A ligar…', e:'Estou a ouvir', s:'A Eris está a falar', f:'Chamada terminada', m:'Para falar com a Eris, permita o microfone. Se não puder, escreva aqui.', a:'Está a falar com a Eris, uma assistente com inteligência artificial. Permita o microfone.', x:'Desligar'},
+    de:{h:'Hallo! Ich bin Eris 👋', p:'Erzählen Sie mir: Was macht Ihr Unternehmen?', i:'Nachricht schreiben...', b:'Lieber sprechen?', l:'Eris anrufen', c:'Verbinde…', e:'Ich höre zu', s:'Eris spricht', f:'Anruf beendet', m:'Um mit Eris zu sprechen, erlauben Sie das Mikrofon. Sonst schreiben Sie hier.', a:'Sie sprechen mit Eris, einer KI-Assistentin. Bitte Mikrofon erlauben.', x:'Auflegen'},
+    it:{h:'Ciao! Sono Eris 👋', p:'Raccontami, di cosa si occupa la tua attività?', i:'Scrivi il tuo messaggio...', b:'Preferisci parlare?', l:'Chiama Eris', c:'Connessione…', e:'Ti ascolto', s:'Eris sta parlando', f:'Chiamata terminata', m:'Per parlare con Eris, consenti il microfono. Se non puoi, scrivile qui.', a:'Stai parlando con Eris, un\'assistente con intelligenza artificiale. Consenti il microfono.', x:'Riaggancia'}
   };
   var modulo = null, appChat = null, idioma = 'es';
   try { idioma = localStorage.getItem('eris-idioma') || ''; } catch(e) { idioma = ''; }
@@ -458,11 +496,11 @@ a{color:inherit}
   function montarChat(){
     var t = TEXTOS[idioma];
     if(appChat){ try { appChat.unmount(); } catch(e) {} }
-    var contenedor = document.getElementById('chat-eris');
+    var contenedor = document.getElementById('chat-n8n');
     contenedor.innerHTML = '';
     appChat = modulo.createChat({
       webhookUrl: URL_CHAT,
-      target: '#chat-eris',
+      target: '#chat-n8n',
       mode: 'fullscreen',
       loadPreviousSession: false,
       showWelcomeScreen: false,
@@ -478,10 +516,84 @@ a{color:inherit}
     try { localStorage.setItem('eris-idioma', idioma); } catch(e) {}
     marcarIdioma();
     if(modulo) montarChat();
+    textosLlamada();
   }
   botonesIdioma.forEach(function(b){ b.addEventListener('click', function(){ cambiarIdioma(b.getAttribute('data-idioma')); }); });
   otros.addEventListener('change', function(){ if(otros.value) cambiarIdioma(otros.value); });
   marcarIdioma();
+
+  // ---- Llamada por voz con Eris (ElevenLabs) ----
+  var AGENTE_VOZ = 'agent_8901m4k75gqqexvv2zvnm2s4v3cz';
+  var IDIOMAS_VOZ = {es:'es', en:'en', ca:'ca', va:'ca', fr:'fr', pt:'pt', de:'de', it:'it'};
+  var vista = document.getElementById('vista-llamada');
+  var orbe = document.getElementById('orbe');
+  var estado = document.getElementById('estado-llamada');
+  var aviso = document.getElementById('aviso-llamada');
+  var botonColgar = document.getElementById('colgar');
+  var botonPanel = document.getElementById('boton-llamar-panel');
+  var sesion = null, llamando = false;
+  function textosLlamada(){
+    var t = TEXTOS[idioma];
+    document.getElementById('texto-barra').textContent = t.b;
+    document.getElementById('texto-boton-llamar').textContent = t.l;
+    botonColgar.textContent = t.x;
+    if(!llamando) aviso.textContent = t.a;
+  }
+  textosLlamada();
+  function terminarVista(texto){
+    llamando = false; sesion = null;
+    orbe.classList.remove('hablando');
+    botonPanel.disabled = false;
+    if(texto){ estado.textContent = texto; setTimeout(function(){ if(!llamando) vista.classList.remove('activa'); }, 2200); }
+    else vista.classList.remove('activa');
+  }
+  function llamar(){
+    if(llamando) return;
+    var t = TEXTOS[idioma];
+    llamando = true;
+    botonPanel.disabled = true;
+    estado.textContent = t.c;
+    aviso.textContent = t.a;
+    vista.classList.add('activa');
+    var micro = (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ? navigator.mediaDevices.getUserMedia({audio:true}) : Promise.reject();
+    micro.then(function(stream){
+      stream.getTracks().forEach(function(p){ p.stop(); });
+      return import('./vendor/elevenlabs/client.js');
+    }, function(){ throw 'micro'; }).then(function(m){
+      if(!llamando) return;
+      var opciones = {
+        agentId: AGENTE_VOZ,
+        connectionType: 'webrtc',
+        onConnect: function(){ estado.textContent = TEXTOS[idioma].e; },
+        onModeChange: function(d){
+          var hablando = d && d.mode === 'speaking';
+          orbe.classList.toggle('hablando', hablando);
+          estado.textContent = hablando ? TEXTOS[idioma].s : TEXTOS[idioma].e;
+        },
+        onDisconnect: function(){ if(llamando) terminarVista(TEXTOS[idioma].f); },
+        onError: function(){ if(llamando) terminarVista(TEXTOS[idioma].f); }
+      };
+      if(IDIOMAS_VOZ[idioma] && IDIOMAS_VOZ[idioma] !== 'es'){ opciones.overrides = { agent: { language: IDIOMAS_VOZ[idioma] } }; }
+      return m.Conversation.startSession(opciones).then(function(s){
+        sesion = s;
+        if(!llamando){ s.endSession(); }
+      });
+    }).catch(function(err){
+      llamando = false;
+      botonPanel.disabled = false;
+      estado.textContent = err === 'micro' ? '🎙️' : TEXTOS[idioma].f;
+      aviso.textContent = TEXTOS[idioma].m;
+      setTimeout(function(){ if(!llamando){ vista.classList.remove('activa'); aviso.textContent = TEXTOS[idioma].a; } }, 5000);
+    });
+  }
+  function colgar(){
+    var s = sesion;
+    terminarVista(TEXTOS[idioma].f);
+    if(s){ try { s.endSession(); } catch(e) {} }
+  }
+  botonPanel.addEventListener('click', llamar);
+  botonColgar.addEventListener('click', colgar);
+  window.addEventListener('pagehide', function(){ if(sesion){ try { sesion.endSession(); } catch(e) {} } });
 
   function abrir(){
     if(!cargado){
@@ -490,7 +602,7 @@ a{color:inherit}
         modulo = m;
         montarChat();
       }).catch(function(){
-        document.getElementById('chat-eris').innerHTML = '<p style="padding:20px;color:#0B2A20">No se ha podido cargar el chat. Escríbenos a <a href="mailto:soluciones.digitales.jmg@gmail.com">soluciones.digitales.jmg@gmail.com</a>.</p>';
+        document.getElementById('chat-n8n').innerHTML = '<p style="padding:20px;color:#0B2A20">No se ha podido cargar el chat. Escríbenos a <a href="mailto:soluciones.digitales.jmg@gmail.com">soluciones.digitales.jmg@gmail.com</a>.</p>';
       });
     }
     panel.classList.add('abierto');
@@ -498,12 +610,14 @@ a{color:inherit}
     lanzador.style.display = window.innerWidth <= 520 ? 'none' : '';
   }
   function cerrar(){
+    if(llamando) colgar();
     panel.classList.remove('abierto');
     lanzador.setAttribute('aria-expanded','false');
     lanzador.style.display = '';
     lanzador.focus();
   }
   document.querySelectorAll('[data-abrir-eris]').forEach(function(b){ b.addEventListener('click', abrir); });
+  document.querySelectorAll('[data-llamar-eris]').forEach(function(b){ b.addEventListener('click', function(){ abrir(); llamar(); }); });
   panel.querySelector('.cerrar').addEventListener('click', cerrar);
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && panel.classList.contains('abierto')) cerrar(); });
 })();
