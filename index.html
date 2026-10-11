@@ -202,6 +202,41 @@ a{color:inherit}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important}}
 
+/* Precios */
+.precios-fondo{background:var(--fondo-2);border-top:1px solid var(--linea);border-bottom:1px solid var(--linea)}
+.periodo{display:inline-flex;gap:4px;padding:4px;border-radius:999px;border:1px solid var(--linea);background:rgba(255,255,255,.03);margin:0 0 36px}
+.periodo button{font:inherit;font-size:.95rem;font-weight:600;color:var(--apagado);background:transparent;border:0;border-radius:999px;padding:8px 18px;cursor:pointer}
+.periodo button[aria-pressed="true"]{background:var(--esmeralda);color:#04120E}
+.periodo .ahorro{font-size:.75rem;font-weight:700;color:var(--rubi-luz);margin-left:6px}
+.periodo button[aria-pressed="true"] .ahorro{color:#04120E}
+.packs{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.pack{position:relative;display:flex;flex-direction:column;border-radius:18px;padding:26px 22px;background:linear-gradient(160deg,rgba(13,48,38,.6),rgba(6,24,19,.8));border:1px solid var(--linea)}
+.pack.destacado{border-color:var(--esmeralda-luz);box-shadow:0 0 40px -14px rgba(52,211,153,.6)}
+.pack .etiqueta{position:absolute;top:-12px;left:22px;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--rubi);border-radius:6px;padding:3px 9px}
+.pack h3{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:0 0 4px}
+.pack .para{color:var(--apagado);font-size:.92rem;margin:0 0 18px;min-height:2.9em}
+.pack .cifra{font-family:var(--display);font-weight:800;font-size:2.4rem;line-height:1;letter-spacing:-.03em;margin:0}
+.pack .cifra small{font-family:var(--texto);font-weight:500;font-size:.95rem;color:var(--apagado);letter-spacing:0}
+.pack .equivale{font-size:.85rem;color:var(--esmeralda-luz);margin:6px 0 0;min-height:1.3em}
+.pack .alta{font-size:.88rem;color:var(--apagado);margin:4px 0 18px}
+.pack ul{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:8px;font-size:.93rem;color:#CFE9DF}
+.pack li{padding-left:22px;position:relative}
+.pack li::before{content:"";position:absolute;left:0;top:.55em;width:10px;height:10px;border-radius:3px;background:var(--esmeralda)}
+.pack li.no{color:#6E9286}
+.pack li.no::before{background:transparent;border:1px solid #4B6E62}
+.pack .boton{margin-top:auto;justify-content:center;padding:12px 18px;font-size:.95rem}
+.pack-medida{margin-top:22px;display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-radius:18px;padding:24px 26px;border:1px dashed rgba(16,185,129,.55);background:rgba(6,24,19,.55)}
+.pack-medida h3{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:0 0 6px}
+.pack-medida p{margin:0;color:#CFE9DF;font-size:.95rem;max-width:62ch}
+.pack-medida .precio-medida{display:block;margin-top:8px;color:var(--esmeralda-luz);font-size:.9rem}
+.pack-medida .boton{padding:12px 22px;font-size:.95rem;flex-shrink:0}
+.nota-precios{color:#7FA798;font-size:.9rem;margin:28px 0 0;max-width:70ch}
+@media (max-width:1000px){.packs{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.packs{grid-template-columns:1fr}.pack .para{min-height:0}}
+.menu-cabecera{display:flex;align-items:center;gap:22px}
+.menu-cabecera a{text-decoration:none;font-weight:600;color:var(--apagado)}
+.menu-cabecera a:hover{color:var(--claro)}
+
 /* Beta y opiniones */
 .aviso-beta{background:linear-gradient(90deg,rgba(209,16,74,.22),rgba(16,185,129,.18));border-bottom:1px solid var(--linea);font-size:.88rem;text-align:center;padding:8px 16px;color:var(--claro)}
 .aviso-beta a{color:var(--esmeralda-luz);font-weight:600;white-space:nowrap}
@@ -233,7 +268,7 @@ a{color:inherit}
 <header class="cabecera">
   <div class="envoltura">
     <a class="marca" href="#"><span>Euxenos</span><b class="insignia-beta">BETA</b></a>
-    <button class="boton boton-borde" type="button" data-abrir-eris>Contáctanos</button>
+    <nav class="menu-cabecera"><a href="#precios">Precios</a><button class="boton boton-borde" type="button" data-abrir-eris>Contáctanos</button></nav>
   </div>
 </header>
 
@@ -326,6 +361,76 @@ a{color:inherit}
       </div>
       <p class="tu-sector-linea">¿Tu negocio no aparece? También funciona. <button type="button" data-abrir-eris>Cuéntanos qué haces</button></p>
     </div>
+  </section>
+
+  <section class="seccion precios-fondo" id="precios">
+    <div class="envoltura">
+      <h2>Precios claros, sin sorpresas</h2>
+      <p class="bajada">Una cuota de alta para montarlo todo y una mensualidad que incluye el mantenimiento y las mejoras. Si pagas el año, te regalamos dos meses.</p>
+      <div class="periodo" role="group" aria-label="Forma de pago">
+        <button type="button" data-periodo="mes" aria-pressed="true">Mensual</button>
+        <button type="button" data-periodo="anual" aria-pressed="false">Anual <span class="ahorro">2 meses gratis</span></button>
+      </div>
+      <div class="packs">
+        <article class="pack destacado"><span class="etiqueta">Para empezar</span>
+          <h3>Esencial</h3>
+          <p class="para">Peluquerías, barberías y negocios de barrio</p>
+          <p class="cifra"><span data-mes="29" data-anual="290">29</span> <small data-mes="€/mes" data-anual="€/año">€/mes</small></p>
+          <p class="equivale" data-mes="" data-anual="Sale a unos 24 €/mes"></p>
+          <p class="alta">Alta desde 0 hasta 99 €</p>
+          <ul><li>Asistente por chat 24 horas</li><li>En tu Instagram, WhatsApp o Google</li><li>Recoge peticiones de cita</li><li>Te avisa al momento</li><li class="no">Web propia</li><li class="no">Llamadas de voz</li></ul>
+          <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
+        </article>
+        <article class="pack">
+          <h3>Básico</h3>
+          <p class="para">Negocios que quieren su propia web</p>
+          <p class="cifra"><span data-mes="49" data-anual="490">49</span> <small data-mes="€/mes" data-anual="€/año">€/mes</small></p>
+          <p class="equivale" data-mes="" data-anual="Sale a unos 41 €/mes"></p>
+          <p class="alta">Alta desde 250 €</p>
+          <ul><li>Web con diseño propio</li><li>Asistente por chat 24 horas</li><li>Recoge peticiones de cita</li><li>Te avisa al momento</li><li class="no">Llamadas de voz</li></ul>
+          <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
+        </article>
+        <article class="pack">
+          <h3>Completo</h3>
+          <p class="para">Clínicas y negocios con muchas llamadas</p>
+          <p class="cifra"><span data-mes="99" data-anual="990">99</span> <small data-mes="€/mes" data-anual="€/año">€/mes</small></p>
+          <p class="equivale" data-mes="" data-anual="Sale a unos 83 €/mes"></p>
+          <p class="alta">Alta desde 600 €</p>
+          <ul><li>Todo lo del Básico</li><li>Llamadas de voz con IA (150 min/mes)</li><li>Citas en tu calendario</li><li>Web de hasta 5 secciones</li></ul>
+          <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
+        </article>
+        <article class="pack">
+          <h3>Plus</h3>
+          <p class="para">Talleres, reformas y negocios con presupuestos</p>
+          <p class="cifra"><span data-mes="199" data-anual="1.990">199</span> <small data-mes="€/mes" data-anual="€/año">€/mes</small></p>
+          <p class="equivale" data-mes="" data-anual="Sale a unos 166 €/mes"></p>
+          <p class="alta">Alta desde 1.000 €</p>
+          <ul><li>Todo lo del Completo</li><li>Presupuestos automáticos en PDF</li><li>Tú los apruebas con un clic</li><li>Llamadas de voz (300 min/mes)</li></ul>
+          <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
+        </article>
+      </div>
+      <div class="pack-medida">
+        <div>
+          <h3>A medida</h3>
+          <p>¿Solo te interesa una parte? Elige únicamente lo que necesitas (el chat, las llamadas, las citas, los presupuestos o la web) y paga solo por eso. También lo integramos en la web que ya tengas.</p>
+          <span class="precio-medida">Precio según lo que elijas · te lo calculamos sin compromiso</span>
+        </div>
+        <button class="boton boton-luz" type="button" data-abrir-eris>Lo quiero a medida</button>
+      </div>
+      <p class="nota-precios">Precios de lanzamiento (fase beta), orientativos y sin IVA. El presupuesto exacto depende de tu negocio: cuéntanos qué necesitas y te preparamos una propuesta a medida, sin compromiso.</p>
+    </div>
+    <script>
+    (function(){
+      var botones=document.querySelectorAll('.periodo button');
+      function poner(p){
+        botones.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-periodo')===p ? 'true':'false'); });
+        document.querySelectorAll('#precios [data-mes]').forEach(function(el){
+          el.textContent = el.getAttribute(p==='anual' ? 'data-anual' : 'data-mes');
+        });
+      }
+      botones.forEach(function(b){ b.addEventListener('click', function(){ poner(b.getAttribute('data-periodo')); }); });
+    })();
+    </script>
   </section>
 
   <section class="seccion cierre">
