@@ -201,13 +201,38 @@ a{color:inherit}
   .lanzador{right:16px;bottom:16px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+
+/* Beta y opiniones */
+.aviso-beta{background:linear-gradient(90deg,rgba(209,16,74,.22),rgba(16,185,129,.18));border-bottom:1px solid var(--linea);font-size:.88rem;text-align:center;padding:8px 16px;color:var(--claro)}
+.aviso-beta a{color:var(--esmeralda-luz);font-weight:600;white-space:nowrap}
+.insignia-beta{font-family:var(--display);font-size:.68rem;font-weight:700;letter-spacing:.08em;color:#fff;background:var(--rubi);border-radius:6px;padding:2px 7px;margin-left:10px;vertical-align:2px;-webkit-text-fill-color:#fff}
+.opinion .bajada{margin-bottom:28px}
+.form-opinion{max-width:560px;display:grid;gap:14px}
+.form-opinion label{font-size:.92rem;color:var(--apagado);display:grid;gap:6px}
+.form-opinion input[type=text],.form-opinion input[type=email],.form-opinion textarea{font:inherit;color:var(--claro);background:rgba(255,255,255,.04);border:1px solid var(--linea);border-radius:10px;padding:10px 12px;width:100%}
+.form-opinion textarea{min-height:96px;resize:vertical}
+.form-opinion .dos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.form-opinion .dos{grid-template-columns:1fr}}
+.estrellas{display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:4px;border:0;padding:0;margin:0}
+.estrellas legend{font-size:.92rem;color:var(--apagado);margin-bottom:6px;padding:0}
+.estrellas input{position:absolute;opacity:0;width:1px;height:1px}
+.estrellas label{font-size:2rem;line-height:1;cursor:pointer;color:#35574A;display:block}
+.estrellas input:checked ~ label,.estrellas label:hover,.estrellas label:hover ~ label{color:#F5B83D}
+.estrellas input:focus-visible + label{outline:2px solid var(--esmeralda-luz);border-radius:6px}
+.falso{position:absolute;left:-9999px;height:0;overflow:hidden}
+.estado-opinion{min-height:1.4em;font-size:.95rem}
+.estado-opinion.ok{color:var(--esmeralda-luz)}
+.estado-opinion.error{color:var(--rubi-luz)}
+.form-opinion button[disabled]{opacity:.6;cursor:wait}
 </style>
 </head>
 <body>
 
+<div class="aviso-beta" role="note">Versión beta: el nombre, el dominio y el diseño de esta web son provisionales y pueden cambiar. <a href="#opinion">Déjanos tu opinión</a></div>
+
 <header class="cabecera">
   <div class="envoltura">
-    <a class="marca" href="#">Soluciones Digitales <span>JMG</span></a>
+    <a class="marca" href="#">Soluciones Digitales <span>JMG</span><b class="insignia-beta">BETA</b></a>
     <button class="boton boton-borde" type="button" data-abrir-eris>Contáctanos</button>
   </div>
 </header>
@@ -313,11 +338,35 @@ a{color:inherit}
       <p class="alternativa">¿Prefieres el correo? Escríbenos a <a href="mailto:soluciones.digitales.jmg@gmail.com">soluciones.digitales.jmg@gmail.com</a></p>
     </div>
   </section>
+  <section class="seccion opinion" id="opinion">
+    <div class="envoltura">
+      <h2>Déjanos tu opinión</h2>
+      <p class="bajada">Estamos en fase beta y cada comentario nos ayuda a mejorar. Cuéntanos qué tal te ha parecido la web o la atención de Eris. El nombre y el email son opcionales.</p>
+      <form class="form-opinion" id="form-opinion" novalidate>
+        <fieldset class="estrellas">
+          <legend>Tu valoración</legend>
+          <input type="radio" name="valoracion" id="e5" value="5"><label for="e5" title="5 estrellas" aria-label="5 estrellas">★</label>
+          <input type="radio" name="valoracion" id="e4" value="4"><label for="e4" title="4 estrellas" aria-label="4 estrellas">★</label>
+          <input type="radio" name="valoracion" id="e3" value="3"><label for="e3" title="3 estrellas" aria-label="3 estrellas">★</label>
+          <input type="radio" name="valoracion" id="e2" value="2"><label for="e2" title="2 estrellas" aria-label="2 estrellas">★</label>
+          <input type="radio" name="valoracion" id="e1" value="1"><label for="e1" title="1 estrella" aria-label="1 estrella">★</label>
+        </fieldset>
+        <label>Comentario <textarea name="comentario" maxlength="1000"></textarea></label>
+        <div class="dos">
+          <label>Nombre (opcional) <input type="text" name="nombre" maxlength="80" autocomplete="name"></label>
+          <label>Email (opcional) <input type="email" name="email" maxlength="120" autocomplete="email"></label>
+        </div>
+        <div class="falso" aria-hidden="true"><label>No rellenar <input type="text" name="web" tabindex="-1" autocomplete="off"></label></div>
+        <div class="estado-opinion" id="estado-opinion" role="status" aria-live="polite"></div>
+        <div><button class="boton boton-luz" type="submit">Enviar opinión</button></div>
+      </form>
+    </div>
+  </section>
 </main>
 
 <footer class="pie">
   <div class="envoltura">
-    <span>© 2026 Soluciones Digitales JMG</span>
+    <span>© 2026 Soluciones Digitales JMG · Versión beta (nombre y dominio provisionales)</span>
     <span>El chat y las llamadas los atiende Eris, una asistente con inteligencia artificial.</span>
   </div>
 </footer>
@@ -658,6 +707,25 @@ a{color:inherit}
   document.querySelectorAll('[data-abrir-eris]').forEach(function(b){ b.addEventListener('click', abrir); });
     panel.querySelector('.cerrar').addEventListener('click', cerrar);
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && panel.classList.contains('abierto')) cerrar(); });
+})();
+
+// Opiniones
+(function(){
+  var f=document.getElementById('form-opinion'); if(!f) return;
+  var est=document.getElementById('estado-opinion');
+  f.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    est.className='estado-opinion';
+    var d=new FormData(f), nota=d.get('valoracion');
+    if(!nota){est.textContent='Elige una valoración de 1 a 5 estrellas.';est.classList.add('error');return;}
+    var b=f.querySelector('button[type=submit]'); b.disabled=true; est.textContent='Enviando…';
+    fetch('https://erisproject.app.n8n.cloud/webhook/eris-opinion',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({valoracion:String(nota),comentario:d.get('comentario')||'',nombre:d.get('nombre')||'',email:d.get('email')||'',web:d.get('web')||'',origen:'web'})
+    }).then(function(r){ if(!r.ok) throw 0; f.reset(); est.textContent='¡Gracias! Hemos recibido tu opinión.'; est.classList.add('ok'); })
+    .catch(function(){ est.textContent='No hemos podido enviarla. Inténtalo de nuevo o escríbenos por correo.'; est.classList.add('error'); })
+    .then(function(){ b.disabled=false; });
+  });
 })();
 </script>
 </body>
