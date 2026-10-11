@@ -225,11 +225,20 @@ a{color:inherit}
 .pack li.no{color:#6E9286}
 .pack li.no::before{background:transparent;border:1px solid #4B6E62}
 .pack .boton{margin-top:auto;justify-content:center;padding:12px 18px;font-size:.95rem}
-.pack-medida{margin-top:22px;display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-radius:18px;padding:24px 26px;border:1px dashed rgba(16,185,129,.55);background:rgba(6,24,19,.55)}
+.pack-medida{margin-top:22px;border-radius:18px;padding:26px;border:1px dashed rgba(16,185,129,.55);background:rgba(6,24,19,.55)}
+.medida-cabeza{display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}
 .pack-medida h3{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:0 0 6px}
-.pack-medida p{margin:0;color:#CFE9DF;font-size:.95rem;max-width:62ch}
-.pack-medida .precio-medida{display:block;margin-top:8px;color:var(--esmeralda-luz);font-size:.9rem}
+.medida-cabeza p{margin:0;color:#CFE9DF;font-size:.95rem;max-width:62ch}
 .pack-medida .boton{padding:12px 22px;font-size:.95rem;flex-shrink:0}
+.modulos{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;column-gap:32px}
+.modulos li{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;padding:12px 0;border-top:1px solid var(--linea)}
+.modulos b{display:block;font-weight:600;font-size:.97rem}
+.modulos li div span{display:block;color:var(--apagado);font-size:.85rem;margin-top:2px}
+.m-alta{color:var(--apagado);font-size:.88rem;text-align:right;white-space:nowrap}
+.m-alta small{display:block;font-size:.72rem;opacity:.8}
+.m-mes{font-family:var(--display);font-weight:700;font-size:1.02rem;white-space:nowrap;text-align:right;min-width:78px}
+@media (max-width:860px){.modulos{grid-template-columns:1fr}}
+@media (max-width:620px){.pack-medida{padding:20px 16px}.modulos li{grid-template-columns:1fr auto;row-gap:6px}.modulos li>div{grid-column:1/-1}.m-alta{text-align:left}.m-alta small{display:inline;margin-left:4px}}
 .nota-precios{color:#7FA798;font-size:.9rem;margin:28px 0 0;max-width:70ch}
 @media (max-width:1000px){.packs{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:620px){.packs{grid-template-columns:1fr}.pack .para{min-height:0}}
@@ -375,18 +384,18 @@ a{color:inherit}
         <article class="pack destacado"><span class="etiqueta">Para empezar</span>
           <h3>Esencial</h3>
           <p class="para">Peluquerías, barberías y negocios de barrio</p>
-          <p class="cifra"><span data-mes="29" data-anual="290">29</span> <small data-mes="€/mes" data-anual="€/año">€/mes</small></p>
-          <p class="equivale" data-mes="" data-anual="Sale a unos 24 €/mes"></p>
-          <p class="alta">Alta desde 0 hasta 99 €</p>
+          <p class="cifra"><span data-mes="35" data-anual="350">35</span> <small data-mes="€/mes" data-anual="€/año">€/mes</small></p>
+          <p class="equivale" data-mes="" data-anual="Sale a unos 29 €/mes"></p>
+          <p class="alta">Alta 99 €</p>
           <ul><li>Asistente por chat 24 horas</li><li>En tu Instagram, WhatsApp o Google</li><li>Recoge peticiones de cita</li><li>Te avisa al momento</li><li class="no">Web propia</li><li class="no">Llamadas de voz</li></ul>
           <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
         </article>
         <article class="pack">
           <h3>Básico</h3>
           <p class="para">Negocios que quieren su propia web</p>
-          <p class="cifra"><span data-mes="49" data-anual="490">49</span> <small data-mes="€/mes" data-anual="€/año">€/mes</small></p>
-          <p class="equivale" data-mes="" data-anual="Sale a unos 41 €/mes"></p>
-          <p class="alta">Alta desde 250 €</p>
+          <p class="cifra"><span data-mes="55" data-anual="550">55</span> <small data-mes="€/mes" data-anual="€/año">€/mes</small></p>
+          <p class="equivale" data-mes="" data-anual="Sale a unos 46 €/mes"></p>
+          <p class="alta">Alta desde 390 €</p>
           <ul><li>Web con diseño propio</li><li>Asistente por chat 24 horas</li><li>Recoge peticiones de cita</li><li>Te avisa al momento</li><li class="no">Llamadas de voz</li></ul>
           <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
         </article>
@@ -410,14 +419,25 @@ a{color:inherit}
         </article>
       </div>
       <div class="pack-medida">
-        <div>
-          <h3>A medida</h3>
-          <p>¿Solo te interesa una parte? Elige únicamente lo que necesitas (el chat, las llamadas, las citas, los presupuestos o la web) y paga solo por eso. También lo integramos en la web que ya tengas.</p>
-          <span class="precio-medida">Precio según lo que elijas · te lo calculamos sin compromiso</span>
+        <div class="medida-cabeza">
+          <div>
+            <h3>A medida: elige solo lo que necesitas</h3>
+            <p>¿Te sobra parte de un pack? Combina los servicios sueltos y paga solo por lo que uses. También lo integramos en la web que ya tengas. Si juntas varios, normalmente te sale mejor un pack.</p>
+          </div>
+          <button class="boton boton-luz" type="button" data-abrir-eris>Lo quiero a medida</button>
         </div>
-        <button class="boton boton-luz" type="button" data-abrir-eris>Lo quiero a medida</button>
+        <ul class="modulos">
+          <li><div><b>Asistente de chat</b><span>En tu web, WhatsApp, Instagram o Google (un canal)</span></div><span class="m-alta">99 €<small>alta</small></span><span class="m-mes">35 €/mes</span></li>
+          <li><div><b>Canal extra para el chat</b><span>Añade otro canal a tu asistente</span></div><span class="m-alta">49 €<small>alta</small></span><span class="m-mes">10 €/mes</span></li>
+          <li><div><b>Página web</b><span>Hasta 5 secciones, con alojamiento y mantenimiento</span></div><span class="m-alta">390 €<small>alta</small></span><span class="m-mes">25 €/mes</span></li>
+          <li><div><b>Asistente de llamadas</b><span>Contesta el teléfono por ti · 150 min incluidos</span></div><span class="m-alta">249 €<small>alta</small></span><span class="m-mes">59 €/mes</span></li>
+          <li><div><b>150 minutos de voz extra</b><span>Para negocios con muchas llamadas</span></div><span class="m-alta">sin alta</span><span class="m-mes">29 €/mes</span></li>
+          <li><div><b>Citas en tu calendario</b><span>Reservas automáticas con recordatorio</span></div><span class="m-alta">99 €<small>alta</small></span><span class="m-mes">15 €/mes</span></li>
+          <li><div><b>Presupuestos automáticos</b><span>En PDF, y tú los apruebas con un clic</span></div><span class="m-alta">399 €<small>alta</small></span><span class="m-mes">59 €/mes</span></li>
+          <li><div><b>Automatización a medida</b><span>Cada tarea repetitiva que se hace sola</span></div><span class="m-alta">desde 149 €<small>alta</small></span><span class="m-mes">10 €/mes</span></li>
+        </ul>
       </div>
-      <p class="nota-precios">Precios de lanzamiento (fase beta), orientativos y sin IVA. El presupuesto exacto depende de tu negocio: cuéntanos qué necesitas y te preparamos una propuesta a medida, sin compromiso.</p>
+      <p class="nota-precios">Precios de lanzamiento (fase beta), orientativos y sin IVA. El pago anual (2 meses gratis) vale también para los servicios sueltos. El presupuesto exacto depende de tu negocio: cuéntanos qué necesitas y te preparamos una propuesta a medida, sin compromiso.</p>
     </div>
     <script>
     (function(){
