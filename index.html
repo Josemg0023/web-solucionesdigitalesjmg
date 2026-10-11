@@ -657,16 +657,16 @@ a{color:inherit}
   var cargado = false;
 
   var TEXTOS = {
-    es:{h:'¡Hola! Soy Eris, de Euxenos 👋', p:'¿Con quién hablo?', i:'Escribe tu mensaje...', b:'¿Prefieres hablar?', l:'Llamar a Eris', c:'Conectando…', e:'Te escucho', s:'Eris está hablando', f:'Llamada terminada', m:'Para hablar con Eris, permite el uso del micrófono. Si no puedes, escríbele aquí.', a:'Hablas con Eris, una asistente con inteligencia artificial. Necesitas permitir el micrófono.', x:'Colgar', q:'¿Cómo prefieres contactar?', o1:'Por chat', o1d:'Escríbeme y te respondo al momento', o2:'Por llamada', o2d:'Háblame por voz desde aquí, sin marcar ningún número', n:'La llamada es gratis y desde el navegador: solo tienes que permitir el micrófono.'},
-    en:{h:'Hi! I\'m Eris, from Euxenos 👋', p:'Who am I talking to?', i:'Type your message...', b:'Rather talk?', l:'Call Eris', c:'Connecting…', e:'Listening', s:'Eris is speaking', f:'Call ended', m:'To talk to Eris, please allow the microphone. If you can\'t, just type here.', a:'You are talking to Eris, an AI assistant. Please allow the microphone.', x:'Hang up', q:'How would you like to get in touch?', o1:'Chat', o1d:'Type and I\'ll answer right away', o2:'Call', o2d:'Talk to me by voice from here, no number to dial', n:'The call is free and runs in your browser: just allow the microphone.'},
-    ca:{h:'Hola! Sóc l\'Eris, d\'Euxenos 👋', p:'Amb qui parlo?', i:'Escriu el teu missatge...', b:'Prefereixes parlar?', l:'Truca a l\'Eris', c:'Connectant…', e:'T\'escolto', s:'L\'Eris està parlant', f:'Trucada acabada', m:'Per parlar amb l\'Eris, permet el micròfon. Si no pots, escriu-li aquí.', a:'Parles amb l\'Eris, una assistent amb intel·ligència artificial. Cal permetre el micròfon.', x:'Penjar', q:'Com prefereixes contactar?', o1:'Per xat', o1d:'Escriu-me i et responc al moment', o2:'Per trucada', o2d:'Parla amb mi per veu des d\'aquí, sense marcar cap número', n:'La trucada és gratuïta i des del navegador: només cal permetre el micròfon.'},
-    va:{h:'Hola! Soc Eris, d\'Euxenos 👋', p:'Amb qui parle?', i:'Escriu el teu missatge...', b:'Preferixes parlar?', l:'Telefona a Eris', c:'Connectant…', e:'T\'escolte', s:'Eris està parlant', f:'Telefonada acabada', m:'Per a parlar amb Eris, permet el micròfon. Si no pots, escriu-li ací.', a:'Parles amb Eris, una assistent amb intel·ligència artificial. Cal permetre el micròfon.', x:'Penjar', q:'Com preferixes contactar?', o1:'Per xat', o1d:'Escriu-me i et responc al moment', o2:'Per telefonada', o2d:'Parla amb mi per veu des d\'ací, sense marcar cap número', n:'La telefonada és gratuïta i des del navegador: només cal permetre el micròfon.'},
-    gl:{h:'Ola! Son Eris, de Euxenos 👋', p:'Con quen falo?', i:'Escribe a túa mensaxe...', b:'Prefires falar?', l:'Chamar a Eris', c:'Conectando…', e:'Escóitote', s:'Eris está falando', f:'Chamada rematada', m:'Para falar con Eris, permite o micrófono. Se non podes, escríbelle aquí.', a:'Falas con Eris, unha asistente con intelixencia artificial. Tes que permitir o micrófono.', x:'Colgar', q:'Como prefires contactar?', o1:'Por chat', o1d:'Escríbeme e respóndoche ao momento', o2:'Por chamada', o2d:'Fálame por voz desde aquí, sen marcar ningún número', n:'A chamada é gratuíta e desde o navegador: só tes que permitir o micrófono.'},
-    eu:{h:'Kaixo! Eris naiz, Euxenoskoa 👋', p:'Norekin ari naiz hizketan?', i:'Idatzi zure mezua...', b:'Hitz egin nahiago?', l:'Deitu Erisi', c:'Konektatzen…', e:'Entzuten', s:'Eris hitz egiten ari da', f:'Deia amaitu da', m:'Erisekin hitz egiteko, baimendu mikrofonoa. Ezin baduzu, idatzi hemen.', a:'Eris adimen artifizialeko laguntzailearekin ari zara. Mikrofonoa baimendu behar duzu.', x:'Eskegi', q:'Nola nahi duzu harremanetan jarri?', o1:'Txat bidez', o1d:'Idatzi eta berehala erantzungo dizut', o2:'Dei bidez', o2d:'Hitz egin nirekin ahotsez hemendik, zenbakirik markatu gabe', n:'Deia doakoa da eta nabigatzailetik egiten da: mikrofonoa baimendu besterik ez.'},
-    fr:{h:'Bonjour ! Je suis Eris, d\'Euxenos 👋', p:'À qui ai-je le plaisir de parler ?', i:'Écrivez votre message...', b:'Vous préférez parler ?', l:'Appeler Eris', c:'Connexion…', e:'Je vous écoute', s:'Eris parle', f:'Appel terminé', m:'Pour parler à Eris, autorisez le micro. Sinon, écrivez-lui ici.', a:'Vous parlez à Eris, une assistante IA. Autorisez le micro.', x:'Raccrocher', q:'Comment préférez-vous nous contacter ?', o1:'Par chat', o1d:'Écrivez-moi, je réponds tout de suite', o2:'Par appel', o2d:'Parlez-moi de vive voix d\'ici, sans composer de numéro', n:'L\'appel est gratuit et se fait depuis le navigateur : autorisez simplement le micro.'},
-    pt:{h:'Olá! Sou a Eris, da Euxenos 👋', p:'Com quem estou a falar?', i:'Escreva a sua mensagem...', b:'Prefere falar?', l:'Ligar à Eris', c:'A ligar…', e:'Estou a ouvir', s:'A Eris está a falar', f:'Chamada terminada', m:'Para falar com a Eris, permita o microfone. Se não puder, escreva aqui.', a:'Está a falar com a Eris, uma assistente com inteligência artificial. Permita o microfone.', x:'Desligar', q:'Como prefere entrar em contacto?', o1:'Por chat', o1d:'Escreva-me e respondo logo', o2:'Por chamada', o2d:'Fale comigo por voz a partir daqui, sem marcar nenhum número', n:'A chamada é gratuita e feita no navegador: basta permitir o microfone.'},
-    de:{h:'Hallo! Ich bin Eris von Euxenos 👋', p:'Mit wem spreche ich?', i:'Nachricht schreiben...', b:'Lieber sprechen?', l:'Eris anrufen', c:'Verbinde…', e:'Ich höre zu', s:'Eris spricht', f:'Anruf beendet', m:'Um mit Eris zu sprechen, erlauben Sie das Mikrofon. Sonst schreiben Sie hier.', a:'Sie sprechen mit Eris, einer KI-Assistentin. Bitte Mikrofon erlauben.', x:'Auflegen', q:'Wie möchten Sie uns kontaktieren?', o1:'Per Chat', o1d:'Schreiben Sie mir, ich antworte sofort', o2:'Per Anruf', o2d:'Sprechen Sie direkt hier mit mir, ohne eine Nummer zu wählen', n:'Der Anruf ist kostenlos und läuft im Browser: Erlauben Sie einfach das Mikrofon.'},
-    it:{h:'Ciao! Sono Eris di Euxenos 👋', p:'Con chi sto parlando?', i:'Scrivi il tuo messaggio...', b:'Preferisci parlare?', l:'Chiama Eris', c:'Connessione…', e:'Ti ascolto', s:'Eris sta parlando', f:'Chiamata terminata', m:'Per parlare con Eris, consenti il microfono. Se non puoi, scrivile qui.', a:'Stai parlando con Eris, un\'assistente con intelligenza artificiale. Consenti il microfono.', x:'Riaggancia', q:'Come preferisci contattarci?', o1:'In chat', o1d:'Scrivimi e ti rispondo subito', o2:'Con una chiamata', o2d:'Parlami a voce da qui, senza comporre nessun numero', n:'La chiamata è gratuita e dal browser: basta consentire il microfono.'}
+    es:{h:'¡Hola! Soy Eris, de Euxenos 👋', p:'¿Con quién hablo?', i:'Escribe tu mensaje...', b:'¿Prefieres hablar?', l:'Llamar a Eris', c:'Conectando…', e:'Te escucho', s:'Eris está hablando', f:'Llamada terminada', m:'Para hablar con Eris, permite el uso del micrófono. Si no puedes, escríbele aquí.', a:'Hablas con Eris, una asistente con inteligencia artificial. Necesitas permitir el micrófono.', x:'Colgar', q:'¿Cómo prefieres contactar?', o1:'Por chat', o1d:'Escríbeme y te respondo al momento', o2:'Por llamada', o2d:'Háblame por voz desde aquí, sin marcar ningún número', n:'La llamada es gratis y desde el navegador: solo tienes que permitir el micrófono.', nv:'Ahora mismo la línea de voz no está disponible. Te atiendo por chat con la misma información.', sg:'La llamada se ha cerrado. Seguimos por aquí: ¿en qué nos habíamos quedado?'},
+    en:{h:'Hi! I\'m Eris, from Euxenos 👋', p:'Who am I talking to?', i:'Type your message...', b:'Rather talk?', l:'Call Eris', c:'Connecting…', e:'Listening', s:'Eris is speaking', f:'Call ended', m:'To talk to Eris, please allow the microphone. If you can\'t, just type here.', a:'You are talking to Eris, an AI assistant. Please allow the microphone.', x:'Hang up', q:'How would you like to get in touch?', o1:'Chat', o1d:'Type and I\'ll answer right away', o2:'Call', o2d:'Talk to me by voice from here, no number to dial', n:'The call is free and runs in your browser: just allow the microphone.', nv:'The voice line isn\'t available right now. I can help you here by chat with the same information.', sg:'The call has ended. Let\'s continue here: where were we?'},
+    ca:{h:'Hola! Sóc l\'Eris, d\'Euxenos 👋', p:'Amb qui parlo?', i:'Escriu el teu missatge...', b:'Prefereixes parlar?', l:'Truca a l\'Eris', c:'Connectant…', e:'T\'escolto', s:'L\'Eris està parlant', f:'Trucada acabada', m:'Per parlar amb l\'Eris, permet el micròfon. Si no pots, escriu-li aquí.', a:'Parles amb l\'Eris, una assistent amb intel·ligència artificial. Cal permetre el micròfon.', x:'Penjar', q:'Com prefereixes contactar?', o1:'Per xat', o1d:'Escriu-me i et responc al moment', o2:'Per trucada', o2d:'Parla amb mi per veu des d\'aquí, sense marcar cap número', n:'La trucada és gratuïta i des del navegador: només cal permetre el micròfon.', nv:'Ara mateix la línia de veu no està disponible. T\'atenc per xat amb la mateixa informació.', sg:'La trucada s\'ha tancat. Continuem per aquí: on ens havíem quedat?'},
+    va:{h:'Hola! Soc Eris, d\'Euxenos 👋', p:'Amb qui parle?', i:'Escriu el teu missatge...', b:'Preferixes parlar?', l:'Telefona a Eris', c:'Connectant…', e:'T\'escolte', s:'Eris està parlant', f:'Telefonada acabada', m:'Per a parlar amb Eris, permet el micròfon. Si no pots, escriu-li ací.', a:'Parles amb Eris, una assistent amb intel·ligència artificial. Cal permetre el micròfon.', x:'Penjar', q:'Com preferixes contactar?', o1:'Per xat', o1d:'Escriu-me i et responc al moment', o2:'Per telefonada', o2d:'Parla amb mi per veu des d\'ací, sense marcar cap número', n:'La telefonada és gratuïta i des del navegador: només cal permetre el micròfon.', nv:'Ara mateix la línia de veu no està disponible. T\'atenc per xat amb la mateixa informació.', sg:'La telefonada s\'ha tancat. Continuem per ací: on ens havíem quedat?'},
+    gl:{h:'Ola! Son Eris, de Euxenos 👋', p:'Con quen falo?', i:'Escribe a túa mensaxe...', b:'Prefires falar?', l:'Chamar a Eris', c:'Conectando…', e:'Escóitote', s:'Eris está falando', f:'Chamada rematada', m:'Para falar con Eris, permite o micrófono. Se non podes, escríbelle aquí.', a:'Falas con Eris, unha asistente con intelixencia artificial. Tes que permitir o micrófono.', x:'Colgar', q:'Como prefires contactar?', o1:'Por chat', o1d:'Escríbeme e respóndoche ao momento', o2:'Por chamada', o2d:'Fálame por voz desde aquí, sen marcar ningún número', n:'A chamada é gratuíta e desde o navegador: só tes que permitir o micrófono.', nv:'Agora mesmo a liña de voz non está dispoñible. Aténdote por chat coa mesma información.', sg:'A chamada pechouse. Seguimos por aquí: onde quedaramos?'},
+    eu:{h:'Kaixo! Eris naiz, Euxenoskoa 👋', p:'Norekin ari naiz hizketan?', i:'Idatzi zure mezua...', b:'Hitz egin nahiago?', l:'Deitu Erisi', c:'Konektatzen…', e:'Entzuten', s:'Eris hitz egiten ari da', f:'Deia amaitu da', m:'Erisekin hitz egiteko, baimendu mikrofonoa. Ezin baduzu, idatzi hemen.', a:'Eris adimen artifizialeko laguntzailearekin ari zara. Mikrofonoa baimendu behar duzu.', x:'Eskegi', q:'Nola nahi duzu harremanetan jarri?', o1:'Txat bidez', o1d:'Idatzi eta berehala erantzungo dizut', o2:'Dei bidez', o2d:'Hitz egin nirekin ahotsez hemendik, zenbakirik markatu gabe', n:'Deia doakoa da eta nabigatzailetik egiten da: mikrofonoa baimendu besterik ez.', nv:'Une honetan ahots-linea ez dago erabilgarri. Txat bidez artatuko zaitut, informazio berarekin.', sg:'Deia amaitu da. Jarrai dezagun hemen: non geratu ginen?'},
+    fr:{h:'Bonjour ! Je suis Eris, d\'Euxenos 👋', p:'À qui ai-je le plaisir de parler ?', i:'Écrivez votre message...', b:'Vous préférez parler ?', l:'Appeler Eris', c:'Connexion…', e:'Je vous écoute', s:'Eris parle', f:'Appel terminé', m:'Pour parler à Eris, autorisez le micro. Sinon, écrivez-lui ici.', a:'Vous parlez à Eris, une assistante IA. Autorisez le micro.', x:'Raccrocher', q:'Comment préférez-vous nous contacter ?', o1:'Par chat', o1d:'Écrivez-moi, je réponds tout de suite', o2:'Par appel', o2d:'Parlez-moi de vive voix d\'ici, sans composer de numéro', n:'L\'appel est gratuit et se fait depuis le navigateur : autorisez simplement le micro.', nv:'La ligne vocale n\'est pas disponible pour le moment. Je vous réponds par chat avec les mêmes informations.', sg:'L\'appel s\'est terminé. Continuons ici : où en étions-nous ?'},
+    pt:{h:'Olá! Sou a Eris, da Euxenos 👋', p:'Com quem estou a falar?', i:'Escreva a sua mensagem...', b:'Prefere falar?', l:'Ligar à Eris', c:'A ligar…', e:'Estou a ouvir', s:'A Eris está a falar', f:'Chamada terminada', m:'Para falar com a Eris, permita o microfone. Se não puder, escreva aqui.', a:'Está a falar com a Eris, uma assistente com inteligência artificial. Permita o microfone.', x:'Desligar', q:'Como prefere entrar em contacto?', o1:'Por chat', o1d:'Escreva-me e respondo logo', o2:'Por chamada', o2d:'Fale comigo por voz a partir daqui, sem marcar nenhum número', n:'A chamada é gratuita e feita no navegador: basta permitir o microfone.', nv:'Neste momento a linha de voz não está disponível. Atendo-o por chat com a mesma informação.', sg:'A chamada terminou. Continuamos por aqui: onde é que ficámos?'},
+    de:{h:'Hallo! Ich bin Eris von Euxenos 👋', p:'Mit wem spreche ich?', i:'Nachricht schreiben...', b:'Lieber sprechen?', l:'Eris anrufen', c:'Verbinde…', e:'Ich höre zu', s:'Eris spricht', f:'Anruf beendet', m:'Um mit Eris zu sprechen, erlauben Sie das Mikrofon. Sonst schreiben Sie hier.', a:'Sie sprechen mit Eris, einer KI-Assistentin. Bitte Mikrofon erlauben.', x:'Auflegen', q:'Wie möchten Sie uns kontaktieren?', o1:'Per Chat', o1d:'Schreiben Sie mir, ich antworte sofort', o2:'Per Anruf', o2d:'Sprechen Sie direkt hier mit mir, ohne eine Nummer zu wählen', n:'Der Anruf ist kostenlos und läuft im Browser: Erlauben Sie einfach das Mikrofon.', nv:'Die Sprachleitung ist gerade nicht verfügbar. Ich helfe Ihnen hier im Chat mit denselben Informationen.', sg:'Der Anruf wurde beendet. Machen wir hier weiter: Wo waren wir stehen geblieben?'},
+    it:{h:'Ciao! Sono Eris di Euxenos 👋', p:'Con chi sto parlando?', i:'Scrivi il tuo messaggio...', b:'Preferisci parlare?', l:'Chiama Eris', c:'Connessione…', e:'Ti ascolto', s:'Eris sta parlando', f:'Chiamata terminata', m:'Per parlare con Eris, consenti il microfono. Se non puoi, scrivile qui.', a:'Stai parlando con Eris, un\'assistente con intelligenza artificiale. Consenti il microfono.', x:'Riaggancia', q:'Come preferisci contattarci?', o1:'In chat', o1d:'Scrivimi e ti rispondo subito', o2:'Con una chiamata', o2d:'Parlami a voce da qui, senza comporre nessun numero', n:'La chiamata è gratuita e dal browser: basta consentire il microfono.', nv:'Al momento la linea vocale non è disponibile. Ti rispondo in chat con le stesse informazioni.', sg:'La chiamata si è chiusa. Continuiamo qui: dove eravamo rimasti?'}
   };
   var modulo = null, appChat = null, idioma = 'es';
   try { idioma = localStorage.getItem('eris-idioma') || ''; } catch(e) { idioma = ''; }
@@ -682,7 +682,7 @@ a{color:inherit}
     otros.value = esOtro ? idioma : '';
     otros.classList.toggle('activo', esOtro);
   }
-  function montarChat(){
+  function montarChat(mensajes){
     var t = TEXTOS[idioma];
     if(appChat){ try { appChat.unmount(); } catch(e) {} }
     var contenedor = document.getElementById('chat-n8n');
@@ -695,7 +695,7 @@ a{color:inherit}
       showWelcomeScreen: false,
       enableStreaming: true,
       defaultLanguage: 'en',
-      initialMessages: [t.h, t.p],
+      initialMessages: mensajes || [t.h, t.p],
       i18n: { en: { title: 'Eris', subtitle: '', footer: '', getStarted: 'OK', inputPlaceholder: t.i, closeButtonTooltip: 'X' } }
     });
   }
@@ -720,7 +720,32 @@ a{color:inherit}
   var aviso = document.getElementById('aviso-llamada');
   var botonColgar = document.getElementById('colgar');
   var botonPanel = document.getElementById('boton-llamar-panel');
-  var sesion = null, llamando = false;
+  var sesion = null, llamando = false, conectada = false, inicioLlamada = 0;
+  var URL_VOZ = 'https://erisproject.app.n8n.cloud/webhook/eris-voz-disponible';
+  var DURACION_MAX = 600;
+  // Pregunta a n8n si quedan minutos de voz. Si n8n no contesta, se intenta la llamada igualmente.
+  function hayVoz(){
+    var control = window.AbortController ? new AbortController() : null;
+    var corte = setTimeout(function(){ if(control) control.abort(); }, 4000);
+    return fetch(URL_VOZ, { cache:'no-store', signal: control ? control.signal : undefined })
+      .then(function(r){ return r.ok ? r.json() : { voz:true }; })
+      .then(function(d){ clearTimeout(corte); return !(d && d.voz === false); })
+      .catch(function(){ clearTimeout(corte); return true; });
+  }
+  // Cierra la vista de llamada y abre el chat con el aviso que toque.
+  function pasarAChat(tipo){
+    var t = TEXTOS[idioma];
+    llamando = false; conectada = false; sesion = null;
+    orbe.classList.remove('hablando');
+    botonPanel.disabled = false;
+    vista.classList.remove('activa');
+    eleccion.classList.remove('activa');
+    panel.classList.remove('eligiendo');
+    yaEligio = true;
+    var mensajes = tipo === 'sinVoz' ? [t.nv, t.p] : [t.sg];
+    if(modulo) montarChat(mensajes); else pendientes = mensajes;
+  }
+  var pendientes = null;
   function textosLlamada(){
     var t = TEXTOS[idioma];
     document.getElementById('texto-barra').textContent = t.b;
@@ -746,11 +771,18 @@ a{color:inherit}
   function llamar(){
     if(llamando) return;
     var t = TEXTOS[idioma];
-    llamando = true;
+    llamando = true; conectada = false;
     botonPanel.disabled = true;
     estado.textContent = t.c;
     aviso.textContent = t.a;
     vista.classList.add('activa');
+    hayVoz().then(function(ok){
+      if(!llamando) return;
+      if(!ok){ pasarAChat('sinVoz'); return; }
+      empezarLlamada();
+    });
+  }
+  function empezarLlamada(){
     var micro = (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ? navigator.mediaDevices.getUserMedia({audio:true}) : Promise.reject();
     micro.then(function(stream){
       stream.getTracks().forEach(function(p){ p.stop(); });
@@ -760,14 +792,23 @@ a{color:inherit}
       var opciones = {
         agentId: AGENTE_VOZ,
         connectionType: 'webrtc',
-        onConnect: function(){ estado.textContent = TEXTOS[idioma].e; },
+        onConnect: function(){ conectada = true; inicioLlamada = Date.now(); estado.textContent = TEXTOS[idioma].e; },
         onModeChange: function(d){
           var hablando = d && d.mode === 'speaking';
           orbe.classList.toggle('hablando', hablando);
           estado.textContent = hablando ? TEXTOS[idioma].s : TEXTOS[idioma].e;
         },
-        onDisconnect: function(){ if(llamando) terminarVista(TEXTOS[idioma].f); },
-        onError: function(){ if(llamando) terminarVista(TEXTOS[idioma].f); }
+        onDisconnect: function(d){
+          if(!llamando) return;
+          var segundos = (Date.now() - inicioLlamada) / 1000;
+          var motivo = d && d.reason;
+          // Sin llegar a conectar: no hay voz disponible.
+          if(!conectada){ pasarAChat('sinVoz'); return; }
+          // Corte por error o por llegar al límite de duración: seguimos por chat.
+          if(motivo === 'error' || segundos >= DURACION_MAX - 15){ pasarAChat('seguir'); return; }
+          terminarVista(TEXTOS[idioma].f);
+        },
+        onError: function(){ if(!llamando) return; if(!conectada) pasarAChat('sinVoz'); else pasarAChat('seguir'); }
       };
       if(IDIOMAS_VOZ[idioma] && IDIOMAS_VOZ[idioma] !== 'es'){ opciones.overrides = { agent: { language: IDIOMAS_VOZ[idioma] } }; }
       return m.Conversation.startSession(opciones).then(function(s){
@@ -775,6 +816,7 @@ a{color:inherit}
         if(!llamando){ s.endSession(); }
       });
     }).catch(function(err){
+      if(err !== 'micro' && llamando){ pasarAChat('sinVoz'); return; }
       llamando = false;
       botonPanel.disabled = false;
       estado.textContent = err === 'micro' ? '🎙️' : TEXTOS[idioma].f;
@@ -812,7 +854,7 @@ a{color:inherit}
       cargado = true;
       import('./vendor/n8n-chat/chat.bundle.es.js').then(function(m){
         modulo = m;
-        montarChat();
+        montarChat(pendientes); pendientes = null;
       }).catch(function(){
         document.getElementById('chat-n8n').innerHTML = '<p style="padding:20px;color:#0B2A20">No se ha podido cargar el chat. Escríbenos a <a href="mailto:soluciones.digitales.jmg@gmail.com">soluciones.digitales.jmg@gmail.com</a>.</p>';
       });
