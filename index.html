@@ -697,6 +697,7 @@ a{color:inherit}
       temporizador = setTimeout(siguiente, PASO);
     }, espera || PASO);
   }
+  for(var i = escenas.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var tmp = escenas[i]; escenas[i] = escenas[j]; escenas[j] = tmp; }
   mostrar(0);
   arrancar(PASO);
 })();
