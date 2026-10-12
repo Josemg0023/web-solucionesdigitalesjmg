@@ -123,8 +123,11 @@ a{color:inherit}
 .cierre{overflow:hidden;isolation:isolate}
 .cierre::before{content:"";position:absolute;z-index:-1;right:-180px;top:-120px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(209,16,74,.28),transparent 65%);filter:blur(20px)}
 .cierre .bajada{margin-bottom:36px}
-.cierre .alternativa{margin-top:22px;color:var(--apagado);font-size:.98rem}
-.cierre .alternativa a{color:var(--esmeralda-luz)}
+.cierre .vias{list-style:none;margin:30px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:14px}
+.cierre .vias li{display:flex;flex-direction:column;gap:4px;padding:14px 18px;border:1px solid var(--linea);border-radius:14px;min-width:220px;flex:1 1 220px;max-width:340px}
+.cierre .via-t{color:var(--apagado);font-size:.85rem}
+.cierre .vias a{color:var(--esmeralda-luz);font-weight:600;font-size:1.05rem;text-decoration:none;word-break:break-word}
+.cierre .vias a:hover{text-decoration:underline}
 .pie{color:#6F9586;font-size:.9rem;border-top:1px solid var(--linea)}
 .pie .envoltura{padding-top:28px;padding-bottom:96px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 .pie .correos{display:flex;flex-wrap:wrap;gap:6px 18px}
@@ -468,7 +471,11 @@ a{color:inherit}
       <div class="acciones">
         <button class="boton boton-luz" type="button" data-abrir-eris>Contáctanos</button>
       </div>
-      <p class="alternativa">¿Prefieres el correo? Escríbenos a <a href="mailto:contacto@euxenos.com">contacto@euxenos.com</a></p>
+      <ul class="vias">
+        <li><span class="via-t">Teléfono</span><a href="tel:+34919933642">919 93 36 42</a></li>
+        <li><span class="via-t">Información y presupuestos</span><a href="mailto:contacto@euxenos.com">contacto@euxenos.com</a></li>
+        <li><span class="via-t">Soporte a clientes</span><a href="mailto:soporte@euxenos.com">soporte@euxenos.com</a></li>
+      </ul>
     </div>
   </section>
   <section class="seccion opinion" id="opinion">
@@ -500,7 +507,7 @@ a{color:inherit}
 <footer class="pie">
   <div class="envoltura">
     <span>© 2026 Euxenos · Versión beta</span>
-    <span class="correos"><span>Contacto: <a href="mailto:contacto@euxenos.com">contacto@euxenos.com</a></span><span>Soporte a clientes: <a href="mailto:soporte@euxenos.com">soporte@euxenos.com</a></span></span>
+    <span class="correos"><span>Teléfono: <a href="tel:+34919933642">919 93 36 42</a></span><span>Contacto: <a href="mailto:contacto@euxenos.com">contacto@euxenos.com</a></span><span>Soporte a clientes: <a href="mailto:soporte@euxenos.com">soporte@euxenos.com</a></span></span>
     <span>El chat y las llamadas los atiende Eris, una asistente con inteligencia artificial.</span>
   </div>
 </footer>
