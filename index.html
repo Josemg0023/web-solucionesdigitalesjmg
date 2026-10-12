@@ -138,6 +138,16 @@ a{color:inherit}
 
 /* Ventana del chat */
 .lanzador{position:fixed;right:22px;bottom:22px;z-index:20}
+.aviso-cookies{position:fixed;left:22px;bottom:22px;z-index:30;max-width:400px;background:#0A2A20;border:1px solid var(--linea);border-radius:16px;padding:18px 18px 16px;box-shadow:0 18px 50px rgba(0,0,0,.45);font-size:.92rem;line-height:1.5;color:#CFE9DF}
+.aviso-cookies[hidden]{display:none}
+.aviso-cookies b{display:block;font-family:var(--display);color:var(--claro);font-size:1rem;margin-bottom:6px}
+.aviso-cookies p{margin:0 0 14px}
+.aviso-cookies .botones{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.aviso-cookies button{font:inherit;font-weight:600;cursor:pointer;border:0;border-radius:10px;padding:9px 18px;background:var(--esmeralda);color:#04120E}
+.aviso-cookies button:hover{background:var(--esmeralda-luz)}
+.aviso-cookies a{color:var(--esmeralda-luz);font-weight:600}
+@media (max-width:640px){.aviso-cookies{left:12px;right:12px;bottom:84px;max-width:none}}
+
 .lanzador .punto{width:9px;height:9px;border-radius:50%;background:var(--esmeralda-luz);box-shadow:0 0 0 3px rgba(52,211,153,.25),0 0 10px var(--esmeralda-luz)}
 .panel{position:fixed;right:22px;bottom:92px;width:380px;height:min(600px,calc(100vh - 120px));background:#fff;border-radius:18px;overflow:hidden;z-index:30;
   box-shadow:0 30px 80px -20px rgba(0,0,0,.8),0 0 0 1px var(--linea);display:none;flex-direction:column}
@@ -927,6 +937,23 @@ a{color:inherit}
     }).then(function(r){ if(!r.ok) throw 0; f.reset(); est.textContent='¡Gracias! Hemos recibido tu opinión.'; est.classList.add('ok'); })
     .catch(function(){ est.textContent='No hemos podido enviarla. Inténtalo de nuevo o escríbenos por correo.'; est.classList.add('error'); })
     .then(function(){ b.disabled=false; });
+  });
+})();
+</script>
+<div class="aviso-cookies" id="aviso-cookies" role="region" aria-label="Aviso de cookies" hidden>
+  <b>Tu privacidad, primero</b>
+  <p>En Euxenos no usamos cookies de análisis ni de publicidad. Solo guardamos en tu navegador lo imprescindible para que la web y el chat funcionen, como el idioma que eliges.</p>
+  <div class="botones"><button type="button" id="cookies-ok">Entendido</button><a href="/cookies.html">Más información</a></div>
+</div>
+<script>
+(function(){
+  var aviso = document.getElementById('aviso-cookies');
+  var visto = false;
+  try { visto = localStorage.getItem('euxenos-aviso-cookies') === '1'; } catch(e) {}
+  if (!visto) aviso.hidden = false;
+  document.getElementById('cookies-ok').addEventListener('click', function(){
+    aviso.hidden = true;
+    try { localStorage.setItem('euxenos-aviso-cookies', '1'); } catch(e) {}
   });
 })();
 </script>
