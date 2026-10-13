@@ -56,6 +56,8 @@ h2 .n{background:var(--tarjeta);border:1px solid var(--linea);border-radius:999p
 .avisos p b{color:var(--claro)}
 .avisos .acciones{margin-top:10px}
 .avisos.activo{border-color:rgba(52,211,153,.45)}
+.instalar-app .btn{width:100%;margin-top:18px}
+.instalar-app .instalar{margin-top:18px}
 .avisos.arriba{margin:14px 0 4px;border-color:rgba(52,211,153,.45);background:rgba(16,185,129,.08)}
 .cliente{font-weight:700;font-size:1.05rem;margin:12px 0 2px}
 .servicio{color:#CFE9DF}
@@ -270,10 +272,10 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
       + (cad.length ? seccion('Pasaron sin confirmar (se cerraron solas)', cad, '') : '')))
       + '<div class="avisos" id="avisos"></div>'
       + '<div class="cuenta"><button data-cuenta="acceso">Cambiar contraseña' + (datos.negocio.usuario ? ' (' + esc(datos.negocio.usuario) + ')' : '') + '</button><button data-cuenta="salir">Cerrar sesión</button></div>'
-      + '<p class="instalar"><b>Tenlo a mano:</b> en el móvil, abre el menú del navegador y pulsa «Añadir a pantalla de inicio». En iPhone, el botón Compartir → «Añadir a pantalla de inicio».</p>'
+      + '<div class="instalar-app"></div>'
       + '</main>';
     document.getElementById('recargar').addEventListener('click', cargar);
-    pintarAvisos();
+    pintarAvisos(); pintarInstalar();
   }
   app.addEventListener('click', function(e){
     var t = e.target.closest('[data-vista],[data-mes],[data-dia]');
@@ -344,7 +346,8 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
       + '<label class="campo"><span>Correo electrónico</span><input name="usuario" type="email" inputmode="email" autocomplete="username" required autocapitalize="none"></label>'
       + '<label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>'
       + '<p class="error" id="errorLogin">' + esc(aviso || '') + '</p><button class="btn b-ok" type="submit" style="width:100%">Entrar</button>'
-      + '<p class="instalar">¿Aún no tienes cuenta? Usa el enlace de activación que te envió Euxenos. ¿Has olvidado la contraseña? Escríbenos a soporte@euxenos.com.</p></form>';
+      + '<p class="instalar">¿Aún no tienes cuenta? Usa el enlace de activación que te envió Euxenos. ¿Has olvidado la contraseña? Escríbenos a soporte@euxenos.com.</p><div class="instalar-app"></div></form>';
+    pintarInstalar();
     var f = document.getElementById('formLogin');
     f.addEventListener('submit', function(e){
       e.preventDefault();
@@ -500,6 +503,24 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
         else toast((r && r.motivo) || 'No se ha podido enviar');
       }).catch(function(){ b.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
     }
+  });
+
+  // ---- Instalar la app en el móvil u ordenador ----
+  var promptInstalar = null;
+  window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); promptInstalar = e; pintarInstalar(); });
+  window.addEventListener('appinstalled', function(){ promptInstalar = null; instalada = true; pintarInstalar(); toast('Eris Agenda instalada'); });
+  function pintarInstalar(){
+    var h = '';
+    if (instalada) h = '';
+    else if (promptInstalar) h = '<button class="btn b-otra" type="button" data-instalar>📲 Instalar Eris Agenda en este dispositivo</button>';
+    else if (esIOS) h = '<p class="instalar"><b>Tenla como una app:</b> pulsa el botón Compartir de Safari y luego «Añadir a pantalla de inicio».</p>';
+    else h = '<p class="instalar"><b>Tenla como una app:</b> abre el menú del navegador (⋮) y pulsa «Instalar aplicación» o «Añadir a pantalla de inicio».</p>';
+    document.querySelectorAll('.instalar-app').forEach(function(el){ el.innerHTML = h; });
+  }
+  document.addEventListener('click', function(e){
+    if (!e.target.closest('[data-instalar]') || !promptInstalar) return;
+    var pr = promptInstalar; promptInstalar = null;
+    pr.prompt(); pr.userChoice.then(function(){ pintarInstalar(); });
   });
   function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !document.querySelector('.proponer.abierto') && !velo.classList.contains('abierto') && !veloA.classList.contains('abierto') && !!datos; }
   document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) cargar(); });

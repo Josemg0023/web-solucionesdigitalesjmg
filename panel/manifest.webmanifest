@@ -1,7 +1,10 @@
 {
+  "id": "/panel/",
   "name": "Eris Agenda",
   "short_name": "Eris Agenda",
   "description": "La agenda de tu negocio: citas de Eris y citas apuntadas a mano.",
+  "start_url": "/panel/",
+  "scope": "/panel/",
   "display": "standalone",
   "background_color": "#04120E",
   "theme_color": "#04120E",
