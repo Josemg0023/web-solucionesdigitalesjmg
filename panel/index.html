@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eris · Panel</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#04120E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Eris">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-192.png">
+<link href="../vendor/fuentes/fuentes.css" rel="stylesheet">
+<style>
+:root{--fondo:#04120E;--tarjeta:#0A1F18;--claro:#E9FBF4;--apagado:#9CC3B5;--linea:rgba(52,211,153,.18);--verde:#10B981;--verde-luz:#34D399;--rubi:#D1104A;--ambar:#F5B942}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--fondo);color:var(--claro);font-family:'Figtree',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:rgba(4,18,14,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--linea);padding:calc(12px + env(safe-area-inset-top)) 16px 12px}
+.fila{display:flex;align-items:center;justify-content:space-between;gap:12px}
+h1{font-family:'Sora',system-ui,sans-serif;font-size:1.15rem;margin:0;line-height:1.25}
+.fecha-hoy{color:var(--apagado);font-size:.88rem;margin-top:2px}
+.recargar{flex:none;width:42px;height:42px;border-radius:12px;border:1px solid var(--linea);background:var(--tarjeta);color:var(--claro);display:grid;place-items:center;cursor:pointer}
+.recargar svg{width:20px;height:20px}
+.recargar.girando svg{animation:g 1s linear infinite}
+@keyframes g{to{transform:rotate(360deg)}}
+.resumen{display:flex;gap:8px;margin-top:12px;overflow-x:auto}
+.chip{flex:none;font-size:.82rem;padding:6px 10px;border-radius:999px;background:var(--tarjeta);border:1px solid var(--linea);color:var(--apagado)}
+.chip b{color:var(--claro)}
+.chip.alerta{border-color:rgba(245,185,66,.5);color:#F7D58C}
+main{padding:8px 16px 0;max-width:640px;margin:0 auto}
+h2{font-family:'Sora',system-ui,sans-serif;font-size:.95rem;letter-spacing:.02em;color:var(--apagado);margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+h2 .n{background:var(--tarjeta);border:1px solid var(--linea);border-radius:999px;padding:1px 8px;font-size:.78rem;color:var(--claro)}
+.vacio{color:#6F9888;font-size:.9rem;padding:10px 2px}
+.cita{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:14px;margin-bottom:10px}
+.cita.pendiente{border-color:rgba(245,185,66,.45);box-shadow:0 0 0 1px rgba(245,185,66,.08) inset}
+.cita.cancelada{opacity:.55}
+.arriba{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.hora{font-family:'Sora',system-ui,sans-serif;font-weight:700;font-size:1.25rem;line-height:1}
+.dia{color:var(--apagado);font-size:.82rem;margin-top:4px}
+.dia::first-letter,.fecha-hoy::first-letter{text-transform:uppercase}
+.estado{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:999px;white-space:nowrap}
+.e-pendiente{background:rgba(245,185,66,.15);color:#F7D58C}
+.e-confirmada{background:rgba(16,185,129,.15);color:var(--verde-luz)}
+.e-propuesta{background:rgba(96,165,250,.15);color:#9CC8FF}
+.e-cancelada{background:rgba(209,16,74,.15);color:#FF8FB0}
+.e-hecha{background:rgba(255,255,255,.08);color:var(--apagado)}
+.cliente{font-weight:700;font-size:1.05rem;margin:12px 0 2px}
+.servicio{color:#CFE9DF}
+.meta{color:var(--apagado);font-size:.85rem;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 12px}
+.meta a{color:var(--verde-luz);text-decoration:none}
+.notas{margin-top:8px;font-size:.88rem;color:#CFE9DF;background:rgba(255,255,255,.03);border-radius:10px;padding:8px 10px}
+.acciones{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn{flex:1 1 auto;min-height:44px;font:inherit;font-weight:700;font-size:.92rem;border-radius:12px;border:1px solid transparent;padding:10px 12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn:disabled{opacity:.5;cursor:default}
+.b-ok{background:var(--verde);color:#04120E}
+.b-otra{background:transparent;color:var(--claro);border-color:var(--linea)}
+.b-no{background:transparent;color:#FF8FB0;border-color:rgba(209,16,74,.4);flex:0 0 auto}
+.b-wa{background:#1FAF5A;color:#fff}
+.proponer{margin-top:10px;display:none}
+.proponer.abierto{display:block}
+.proponer input{width:100%;min-height:44px;font:inherit;font-size:16px;color:var(--claro);background:#06170F;border:1px solid var(--linea);border-radius:12px;padding:10px 12px}
+.proponer .acciones{margin-top:8px}
+.aviso{margin-top:10px;font-size:.86rem;color:var(--verde-luz)}
+.mensaje{max-width:440px;margin:18vh auto 0;padding:0 16px;text-align:center;color:var(--apagado)}
+.mensaje h1{color:var(--claro);margin-bottom:10px}
+.instalar{margin:26px 0 8px;font-size:.84rem;color:#6F9888;line-height:1.5}
+.instalar b{color:var(--apagado)}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120%);background:#E9FBF4;color:#04120E;font-weight:700;font-size:.9rem;padding:10px 16px;border-radius:12px;transition:transform .25s,visibility .25s;visibility:hidden;z-index:20;max-width:calc(100% - 32px)}
+.toast.ver{transform:translateX(-50%) translateY(0);visibility:visible}
+</style>
+</head>
+<body>
+<div id="app"><p class="mensaje">Cargando…</p></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+  var API = 'https://erisproject.app.n8n.cloud/webhook/eris-panel';
+  var q = new URLSearchParams(location.search);
+  var n = q.get('n'), k = q.get('k');
+  try {
+    if (n && k) { localStorage.setItem('eris-panel', JSON.stringify({ n: n, k: k })); }
+    else { var g = JSON.parse(localStorage.getItem('eris-panel') || 'null'); if (g) { n = g.n; k = g.k; } }
+  } catch (e) {}
+  var app = document.getElementById('app');
+  var datos = null, cargando = false, pausa = 0;
+  var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Hecha' };
+
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function hoyISO(){ var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function nombreDia(iso){
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); if (!m) return iso || 'Sin fecha';
+    var d = new Date(+m[1], +m[2]-1, +m[3]);
+    var h = new Date(); h.setHours(0,0,0,0);
+    var dif = Math.round((d - h) / 86400000);
+    var base = DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()];
+    if (dif === 0) return 'Hoy, ' + base; if (dif === 1) return 'Mañana, ' + base; if (dif === -1) return 'Ayer, ' + base;
+    return base;
+  }
+  function toast(t){ var el = document.getElementById('toast'); el.textContent = t; el.classList.add('ver'); clearTimeout(toast.t); toast.t = setTimeout(function(){ el.classList.remove('ver'); }, 2600); }
+  function llamar(cuerpo){
+    // text/plain evita la comprobación previa del navegador (CORS)
+    return fetch(API, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=UTF-8' }, body: JSON.stringify(cuerpo), cache:'no-store' })
+      .then(function(r){ return r.json(); });
+  }
+  function cargar(){
+    if (!n || !k) { app.innerHTML = '<div class="mensaje"><h1>Panel de Eris</h1><p>Abre este panel con el enlace personal que te enviamos desde Euxenos.</p></div>'; return; }
+    if (cargando) return; cargando = true;
+    var bR = document.getElementById('recargar'); if (bR) bR.classList.add('girando');
+    llamar({ n:n, k:k, accion:'ver' }).then(function(d){
+      cargando = false;
+      if (!d || !d.ok) { app.innerHTML = '<div class="mensaje"><h1>Enlace no válido</h1><p>Pide a Euxenos tu enlace personal del panel.</p></div>'; return; }
+      datos = d; pintar();
+    }).catch(function(){
+      cargando = false; if (bR) bR.classList.remove('girando');
+      if (!datos) app.innerHTML = '<div class="mensaje"><h1>Sin conexión</h1><p>No se ha podido cargar el panel. Comprueba la conexión y vuelve a intentarlo.</p><p><button class="btn b-ok" onclick="location.reload()">Reintentar</button></p></div>';
+      else toast('Sin conexión: mostrando lo último cargado');
+    });
+  }
+  function tarjeta(c){
+    var tel = c.telefono ? '<a href="tel:' + esc(c.telefono.replace(/\s/g,'')) + '">📞 ' + esc(c.telefono) + '</a>' : '';
+    var mail = c.email ? '<a href="mailto:' + esc(c.email) + '">✉️ ' + esc(c.email) + '</a>' : '';
+    var acc = '';
+    if (c.estado === 'pendiente' || c.estado === 'propuesta') {
+      acc = '<div class="acciones">'
+        + '<button class="btn b-ok" data-a="confirmar" data-r="' + esc(c.ref) + '">✓ Confirmar</button>'
+        + '<button class="btn b-otra" data-a="abrir" data-r="' + esc(c.ref) + '">Otra hora</button>'
+        + '<button class="btn b-no" data-a="cancelar" data-r="' + esc(c.ref) + '" aria-label="Cancelar cita">✕</button></div>'
+        + '<div class="proponer" id="p-' + esc(c.ref) + '"><input type="text" maxlength="200" placeholder="Ej.: el jueves a las 18:30 o el viernes a las 10:00" aria-label="Hora que propones">'
+        + '<div class="acciones"><button class="btn b-ok" data-a="proponer" data-r="' + esc(c.ref) + '">Enviar propuesta</button></div></div>';
+    } else if (c.estado === 'confirmada') {
+      acc = '<div class="acciones"><button class="btn b-otra" data-a="hecha" data-r="' + esc(c.ref) + '">Marcar como hecha</button><button class="btn b-no" data-a="cancelar" data-r="' + esc(c.ref) + '">Cancelar</button></div>';
+    }
+    return '<article class="cita ' + esc(c.estado) + '" id="c-' + esc(c.ref) + '">'
+      + '<div class="arriba"><div><div class="hora">' + esc(c.hora || '—') + '</div><div class="dia">' + esc(nombreDia(c.fecha)) + '</div></div>'
+      + '<span class="estado e-' + esc(c.estado) + '">' + esc(ETIQUETAS[c.estado] || c.estado) + '</span></div>'
+      + '<div class="cliente">' + esc(c.cliente) + '</div>'
+      + (c.servicio ? '<div class="servicio">' + esc(c.servicio) + '</div>' : '')
+      + '<div class="meta">' + tel + mail + '<span>vía ' + esc(c.canal || 'Eris') + '</span></div>'
+      + (c.propuesta ? '<div class="notas">Propuesta enviada: ' + esc(c.propuesta) + '</div>' : '')
+      + (c.notas ? '<div class="notas">' + esc(c.notas) + '</div>' : '')
+      + acc + '<div class="aviso" id="a-' + esc(c.ref) + '"></div></article>';
+  }
+  function seccion(titulo, lista, vacio){
+    return '<h2>' + titulo + ' <span class="n">' + lista.length + '</span></h2>' + (lista.length ? lista.map(tarjeta).join('') : '<p class="vacio">' + vacio + '</p>');
+  }
+  function orden(a, b){ return ((a.fecha || '9999') + (a.hora || '99')).localeCompare((b.fecha || '9999') + (b.hora || '99')); }
+  function pintar(){
+    var hoy = hoyISO(), c = datos.citas || [];
+    var pend = c.filter(function(x){ return x.estado === 'pendiente'; }).sort(orden);
+    var hoyL = c.filter(function(x){ return x.fecha === hoy && (x.estado === 'confirmada' || x.estado === 'hecha'); }).sort(orden);
+    var prox = c.filter(function(x){ return x.fecha > hoy && x.estado === 'confirmada'; }).sort(orden);
+    var prop = c.filter(function(x){ return x.estado === 'propuesta'; }).sort(orden);
+    var d = new Date();
+    app.innerHTML = '<header><div class="fila"><div><h1>' + esc(datos.negocio.nombre) + '</h1><div class="fecha-hoy">' + DIAS[d.getDay()] + ', ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div></div>'
+      + '<button class="recargar" id="recargar" aria-label="Actualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button></div>'
+      + '<div class="resumen"><span class="chip' + (pend.length ? ' alerta' : '') + '"><b>' + pend.length + '</b> por confirmar</span><span class="chip"><b>' + hoyL.length + '</b> hoy</span><span class="chip"><b>' + prox.length + '</b> próximas</span></div></header>'
+      + '<main>'
+      + seccion('Por confirmar', pend, 'Nada pendiente. Cuando Eris recoja una petición de cita, aparecerá aquí.')
+      + seccion('Hoy', hoyL, 'No hay citas confirmadas para hoy.')
+      + seccion('Próximos días', prox, 'No hay citas confirmadas en los próximos días.')
+      + (prop.length ? seccion('Esperando respuesta del cliente', prop, '') : '')
+      + '<p class="instalar"><b>Tenlo a mano:</b> en el móvil, abre el menú del navegador y pulsa «Añadir a pantalla de inicio». En iPhone, el botón Compartir → «Añadir a pantalla de inicio».</p>'
+      + '</main>';
+    document.getElementById('recargar').addEventListener('click', cargar);
+  }
+  app.addEventListener('click', function(e){
+    var b = e.target.closest('button[data-a]'); if (!b) return;
+    var a = b.getAttribute('data-a'), ref = b.getAttribute('data-r');
+    if (a === 'abrir') { var p = document.getElementById('p-' + ref); p.classList.toggle('abierto'); var i = p.querySelector('input'); if (p.classList.contains('abierto')) i.focus(); return; }
+    var propuesta = '';
+    if (a === 'proponer') { propuesta = document.querySelector('#p-' + ref + ' input').value.trim(); if (!propuesta) { toast('Escribe qué día y hora propones'); return; } }
+    var botones = document.querySelectorAll('#c-' + ref + ' button'); botones.forEach(function(x){ x.disabled = true; });
+    llamar({ n:n, k:k, accion:a, ref:ref, propuesta:propuesta }).then(function(r){
+      if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido guardar'); botones.forEach(function(x){ x.disabled = false; }); return; }
+      var c = (datos.citas || []).filter(function(x){ return x.ref === ref; })[0];
+      if (c) { c.estado = r.estado; if (a === 'proponer') c.propuesta = propuesta; }
+      var txt = { confirmar:'Cita confirmada', proponer:'Propuesta enviada', cancelar:'Cita cancelada', hecha:'Marcada como hecha' }[a];
+      pintar();
+      var av = document.getElementById('a-' + ref);
+      if (av && a !== 'hecha') {
+        var h = r.emailEnviado ? 'Le hemos avisado por email.' : 'No tiene email: avísale por WhatsApp.';
+        if (r.whatsapp) h += '<div class="acciones"><a class="btn b-wa" href="' + esc(r.whatsapp) + '" target="_blank" rel="noopener">Avisar por WhatsApp</a></div>';
+        av.innerHTML = h;
+      }
+      toast(txt); pausa = Date.now() + 90000;
+    }).catch(function(){ toast('Sin conexión, inténtalo de nuevo'); botones.forEach(function(x){ x.disabled = false; }); });
+  });
+  function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !document.querySelector('.proponer.abierto'); }
+  document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) cargar(); });
+  setInterval(function(){ if (puedeRefrescar()) cargar(); }, 60000);
+  cargar();
+})();
+</script>
+</body>
+</html>
