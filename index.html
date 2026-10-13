@@ -272,6 +272,13 @@ a{color:inherit}
 .modulos li{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;padding:12px 0;border-top:1px solid var(--linea)}
 .modulos b{display:block;font-weight:600;font-size:.97rem}
 .modulos li div span{display:block;color:var(--apagado);font-size:.85rem;margin-top:2px}
+.alta-caja{display:flex;flex-direction:column;gap:2px;margin:12px 0 18px;padding:10px 14px;border-radius:12px;background:rgba(52,211,153,.07);border:1px solid var(--linea)}
+.alta-t{font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--apagado)}
+.alta-v{font-family:var(--display);font-weight:700;font-size:1.15rem;color:var(--claro)}.alta-v small{font-family:var(--texto);font-weight:500;font-size:.85rem;color:var(--apagado)}
+.alta-iva{font-size:.9rem;color:var(--esmeralda-luz);font-weight:600}
+.m-mes small.miva{font-family:var(--texto);font-weight:500;font-size:.75rem;color:var(--apagado)}
+.m-alta em,.m-mes em{display:block;font-style:normal;font-family:var(--texto);font-weight:600;font-size:.8rem;color:var(--esmeralda-luz);margin-top:2px}
+.m-alta small{display:inline!important;margin:0!important;font-size:.75rem}
 .m-alta{color:var(--apagado);font-size:.88rem;text-align:right;white-space:nowrap}
 .m-alta small{display:block;font-size:.72rem;opacity:.8}
 .m-mes{font-family:var(--display);font-weight:700;font-size:1.02rem;white-space:nowrap;text-align:right;min-width:78px}
@@ -463,7 +470,7 @@ a{color:inherit}
           <p class="cifra"><span data-mes="35" data-anual="350">35</span> <small data-mes="€/mes + IVA" data-anual="€/año + IVA">€/mes + IVA</small></p>
           <p class="equivale" data-mes="" data-anual="Sale a unos 29 €/mes"></p>
           <p class="coniva" data-mes="42,35 €/mes con IVA" data-anual="423,50 €/año con IVA">42,35 €/mes con IVA</p>
-          <p class="alta">Alta 99 € + IVA</p>
+          <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">99 € <small>+ IVA</small></span><span class="alta-iva">119,79 € con IVA</span></div>
           <ul><li>Asistente por chat 24 horas</li><li>En tu Instagram, WhatsApp o Google</li><li>Recoge peticiones de cita</li><li>Te avisa al momento</li><li class="no">Web propia</li><li class="no">Llamadas de voz</li></ul>
           <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
         </article>
@@ -473,7 +480,7 @@ a{color:inherit}
           <p class="cifra"><span data-mes="55" data-anual="550">55</span> <small data-mes="€/mes + IVA" data-anual="€/año + IVA">€/mes + IVA</small></p>
           <p class="equivale" data-mes="" data-anual="Sale a unos 46 €/mes"></p>
           <p class="coniva" data-mes="66,55 €/mes con IVA" data-anual="665,50 €/año con IVA">66,55 €/mes con IVA</p>
-          <p class="alta">Alta desde 390 € + IVA</p>
+          <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 390 € <small>+ IVA</small></span><span class="alta-iva">desde 471,90 € con IVA</span></div>
           <ul><li>Web con diseño propio</li><li>Asistente por chat 24 horas</li><li>Recoge peticiones de cita</li><li>Te avisa al momento</li><li class="no">Llamadas de voz</li></ul>
           <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
         </article>
@@ -483,7 +490,7 @@ a{color:inherit}
           <p class="cifra"><span data-mes="99" data-anual="990">99</span> <small data-mes="€/mes + IVA" data-anual="€/año + IVA">€/mes + IVA</small></p>
           <p class="equivale" data-mes="" data-anual="Sale a unos 83 €/mes"></p>
           <p class="coniva" data-mes="119,79 €/mes con IVA" data-anual="1.197,90 €/año con IVA">119,79 €/mes con IVA</p>
-          <p class="alta">Alta desde 600 € + IVA</p>
+          <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 600 € <small>+ IVA</small></span><span class="alta-iva">desde 726 € con IVA</span></div>
           <ul><li>Todo lo del Básico</li><li>Llamadas de voz con IA (150 min/mes)</li><li>Citas en tu calendario</li><li>Web de hasta 5 secciones</li></ul>
           <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
         </article>
@@ -493,7 +500,7 @@ a{color:inherit}
           <p class="cifra"><span data-mes="199" data-anual="1.990">199</span> <small data-mes="€/mes + IVA" data-anual="€/año + IVA">€/mes + IVA</small></p>
           <p class="equivale" data-mes="" data-anual="Sale a unos 166 €/mes"></p>
           <p class="coniva" data-mes="240,79 €/mes con IVA" data-anual="2.407,90 €/año con IVA">240,79 €/mes con IVA</p>
-          <p class="alta">Alta desde 1.000 € + IVA</p>
+          <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 1.000 € <small>+ IVA</small></span><span class="alta-iva">desde 1.210 € con IVA</span></div>
           <ul><li>Todo lo del Completo</li><li>Presupuestos automáticos en PDF</li><li>Tú los apruebas con un clic</li><li>Llamadas de voz (300 min/mes)</li></ul>
           <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
         </article>
@@ -507,20 +514,20 @@ a{color:inherit}
           <button class="boton boton-luz" type="button" data-abrir-eris>Lo quiero a medida</button>
         </div>
         <ul class="modulos">
-          <li><div><b>Asistente de chat</b><span>En tu web, WhatsApp, Instagram o Google (un canal)</span></div><span class="m-alta">99 €<small>alta</small></span><span class="m-mes">35 €/mes</span></li>
-          <li><div><b>Canal extra para el chat</b><span>Añade otro canal a tu asistente</span></div><span class="m-alta">49 €<small>alta</small></span><span class="m-mes">10 €/mes</span></li>
-          <li><div><b>Página web</b><span>Hasta 5 secciones, con alojamiento y mantenimiento</span></div><span class="m-alta">390 €<small>alta</small></span><span class="m-mes">25 €/mes</span></li>
-          <li><div><b>Asistente de llamadas</b><span>Contesta el teléfono por ti · 150 min incluidos</span></div><span class="m-alta">249 €<small>alta</small></span><span class="m-mes">59 €/mes</span></li>
-          <li><div><b>150 minutos de voz extra</b><span>Para negocios con muchas llamadas</span></div><span class="m-alta">sin alta</span><span class="m-mes">29 €/mes</span></li>
-          <li><div><b>Citas en tu calendario</b><span>Reservas automáticas con recordatorio</span></div><span class="m-alta">99 €<small>alta</small></span><span class="m-mes">15 €/mes</span></li>
-          <li><div><b>Presupuestos automáticos</b><span>En PDF, y tú los apruebas con un clic</span></div><span class="m-alta">399 €<small>alta</small></span><span class="m-mes">59 €/mes</span></li>
-          <li><div><b>Ficha de Google a punto</b><span>Fotos, horarios, publicaciones y respuesta a reseñas</span></div><span class="m-alta">149 €<small>alta</small></span><span class="m-mes">39 €/mes</span></li>
-          <li><div><b>Anuncios locales</b><span>En Google o en Instagram y Facebook (una plataforma) · el presupuesto de anuncios va aparte</span></div><span class="m-alta">149 €<small>alta</small></span><span class="m-mes">129 €/mes</span></li>
-          <li><div><b>Segunda plataforma de anuncios</b><span>Google y Meta a la vez</span></div><span class="m-alta">99 €<small>alta</small></span><span class="m-mes">79 €/mes</span></li>
-          <li><div><b>Automatización a medida</b><span>Cada tarea repetitiva que se hace sola</span></div><span class="m-alta">desde 149 €<small>alta</small></span><span class="m-mes">10 €/mes</span></li>
+          <li><div><b>Asistente de chat</b><span>En tu web, WhatsApp, Instagram o Google (un canal)</span></div><span class="m-alta">Alta 99 € <small>+ IVA</small><em>119,79 € con IVA</em></span><span class="m-mes">35 €/mes <small class="miva">+ IVA</small><em>42,35 €/mes con IVA</em></span></li>
+          <li><div><b>Canal extra para el chat</b><span>Añade otro canal a tu asistente</span></div><span class="m-alta">Alta 49 € <small>+ IVA</small><em>59,29 € con IVA</em></span><span class="m-mes">10 €/mes <small class="miva">+ IVA</small><em>12,10 €/mes con IVA</em></span></li>
+          <li><div><b>Página web</b><span>Hasta 5 secciones, con alojamiento y mantenimiento</span></div><span class="m-alta">Alta 390 € <small>+ IVA</small><em>471,90 € con IVA</em></span><span class="m-mes">25 €/mes <small class="miva">+ IVA</small><em>30,25 €/mes con IVA</em></span></li>
+          <li><div><b>Asistente de llamadas</b><span>Contesta el teléfono por ti · 150 min incluidos</span></div><span class="m-alta">Alta 249 € <small>+ IVA</small><em>301,29 € con IVA</em></span><span class="m-mes">59 €/mes <small class="miva">+ IVA</small><em>71,39 €/mes con IVA</em></span></li>
+          <li><div><b>150 minutos de voz extra</b><span>Para negocios con muchas llamadas</span></div><span class="m-alta">Sin alta</span><span class="m-mes">29 €/mes <small class="miva">+ IVA</small><em>35,09 €/mes con IVA</em></span></li>
+          <li><div><b>Citas en tu calendario</b><span>Reservas automáticas con recordatorio</span></div><span class="m-alta">Alta 99 € <small>+ IVA</small><em>119,79 € con IVA</em></span><span class="m-mes">15 €/mes <small class="miva">+ IVA</small><em>18,15 €/mes con IVA</em></span></li>
+          <li><div><b>Presupuestos automáticos</b><span>En PDF, y tú los apruebas con un clic</span></div><span class="m-alta">Alta 399 € <small>+ IVA</small><em>482,79 € con IVA</em></span><span class="m-mes">59 €/mes <small class="miva">+ IVA</small><em>71,39 €/mes con IVA</em></span></li>
+          <li><div><b>Ficha de Google a punto</b><span>Fotos, horarios, publicaciones y respuesta a reseñas</span></div><span class="m-alta">Alta 149 € <small>+ IVA</small><em>180,29 € con IVA</em></span><span class="m-mes">39 €/mes <small class="miva">+ IVA</small><em>47,19 €/mes con IVA</em></span></li>
+          <li><div><b>Anuncios locales</b><span>En Google o en Instagram y Facebook (una plataforma) · el presupuesto de anuncios va aparte</span></div><span class="m-alta">Alta 149 € <small>+ IVA</small><em>180,29 € con IVA</em></span><span class="m-mes">129 €/mes <small class="miva">+ IVA</small><em>156,09 €/mes con IVA</em></span></li>
+          <li><div><b>Segunda plataforma de anuncios</b><span>Google y Meta a la vez</span></div><span class="m-alta">Alta 99 € <small>+ IVA</small><em>119,79 € con IVA</em></span><span class="m-mes">79 €/mes <small class="miva">+ IVA</small><em>95,59 €/mes con IVA</em></span></li>
+          <li><div><b>Automatización a medida</b><span>Cada tarea repetitiva que se hace sola</span></div><span class="m-alta">Alta desde 149 € <small>+ IVA</small><em>desde 180,29 € con IVA</em></span><span class="m-mes">10 €/mes <small class="miva">+ IVA</small><em>12,10 €/mes con IVA</em></span></li>
         </ul>
       </div>
-      <p class="nota-precios">Precios de lanzamiento (fase beta), orientativos y sin IVA. Península y Baleares: +21 % de IVA. Canarias, Ceuta y Melilla: sin IVA (el impuesto local lo gestiona el cliente). El pago anual (2 meses gratis) vale también para los servicios sueltos. En la publicidad, el presupuesto de los anuncios lo pagas directamente a Google o Meta (recomendamos empezar con unos 5 € al día) y no lleva cuota de Euxenos. El presupuesto exacto depende de tu negocio: cuéntanos qué necesitas y te preparamos una propuesta a medida, sin compromiso.</p>
+      <p class="nota-precios">Precios de lanzamiento (fase beta). Cada precio aparece sin IVA y, justo debajo, con el IVA ya incluido (21 %, península y Baleares). En Canarias, Ceuta y Melilla no se aplica IVA (el impuesto local lo gestiona el cliente). El pago anual (2 meses gratis) vale también para los servicios sueltos. En la publicidad, el presupuesto de los anuncios lo pagas directamente a Google o Meta (recomendamos empezar con unos 5 € al día) y no lleva cuota de Euxenos. El presupuesto exacto depende de tu negocio: cuéntanos qué necesitas y te preparamos una propuesta a medida, sin compromiso.</p>
     </div>
     <script>
     (function(){
