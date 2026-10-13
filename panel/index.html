@@ -82,6 +82,15 @@ h2 .n{background:var(--tarjeta);border:1px solid var(--linea);border-radius:999p
 .campo textarea{min-height:70px;resize:vertical}
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 main{padding-bottom:90px}
+.login{max-width:380px;margin:12vh auto 0;padding:0 16px}
+.login .logo{width:64px;height:64px;border-radius:16px;display:block;margin:0 auto 14px}
+.login h1{text-align:center;margin-bottom:4px}
+.login p.sub{text-align:center;color:var(--apagado);margin:0 0 22px;font-size:.92rem}
+.error{color:#FF8FB0;font-size:.88rem;min-height:1.2em;margin:4px 0 10px}
+.cuenta{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.cuenta button{font:inherit;font-size:.8rem;color:var(--apagado);background:none;border:1px solid var(--linea);border-radius:999px;padding:6px 10px;cursor:pointer}
+.banner{margin:14px 0 0;background:rgba(16,185,129,.1);border:1px solid rgba(52,211,153,.35);border-radius:14px;padding:12px 14px;font-size:.9rem;color:#CFE9DF}
+.banner button{margin-top:8px}
 .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120%);background:#E9FBF4;color:#04120E;font-weight:700;font-size:.9rem;padding:10px 16px;border-radius:12px;transition:transform .25s,visibility .25s;visibility:hidden;z-index:20;max-width:calc(100% - 32px)}
 .toast.ver{transform:translateX(-50%) translateY(0);visibility:visible}
 </style>
@@ -98,6 +107,15 @@ main{padding-bottom:90px}
 <label class="campo"><span>Teléfono</span><input name="telefono" type="tel" inputmode="tel" maxlength="30" placeholder="Opcional"></label>
 <label class="campo"><span>Notas</span><textarea name="notas" maxlength="500" placeholder="Opcional"></textarea></label>
 <button class="btn b-ok" type="submit" style="width:100%">Guardar cita</button>
+</form></div>
+<div class="velo" id="veloAcceso"><form class="hoja" id="formAcceso" autocomplete="on">
+<h3>Usuario y contraseña <button type="button" id="cerrarAcceso" aria-label="Cerrar">×</button></h3>
+<p style="color:var(--apagado);font-size:.9rem;margin:-4px 0 14px">Con ellos podrás entrar en euxenos.com/panel desde cualquier móvil u ordenador.</p>
+<label class="campo"><span>Usuario</span><input name="usuario" autocomplete="username" required minlength="3" maxlength="40" pattern="[A-Za-z0-9._-]{3,40}" placeholder="Ej.: talleres-tete"></label>
+<label class="campo"><span>Contraseña nueva (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>
+<label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>
+<p class="error" id="errorAcceso"></p>
+<button class="btn b-ok" type="submit" style="width:100%">Guardar</button>
 </form></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
@@ -133,13 +151,13 @@ main{padding-bottom:90px}
       .then(function(r){ return r.json(); });
   }
   function cargar(){
-    if (!n || !k) { app.innerHTML = '<div class="mensaje"><h1>Panel de Eris</h1><p>Abre este panel con el enlace personal que te enviamos desde Euxenos.</p></div>'; return; }
+    if (!n || !k) { pantallaLogin(); return; }
     if (cargando) return; cargando = true;
     var bR = document.getElementById('recargar'); if (bR) bR.classList.add('girando');
     llamar({ n:n, k:k, accion:'ver' }).then(function(d){
       cargando = false;
-      if (!d || !d.ok) { app.innerHTML = '<div class="mensaje"><h1>Enlace no válido</h1><p>Pide a Euxenos tu enlace personal del panel.</p></div>'; return; }
-      datos = d; pintar();
+      if (!d || !d.ok) { olvidar(); pantallaLogin('Tu acceso ya no es válido. Entra con tu usuario y contraseña.'); return; }
+      datos = d; document.getElementById('nueva').style.display = ''; pintar();
     }).catch(function(){
       cargando = false; if (bR) bR.classList.remove('girando');
       if (!datos) app.innerHTML = '<div class="mensaje"><h1>Sin conexión</h1><p>No se ha podido cargar el panel. Comprueba la conexión y vuelve a intentarlo.</p><p><button class="btn b-ok" onclick="location.reload()">Reintentar</button></p></div>';
@@ -183,12 +201,15 @@ main{padding-bottom:90px}
     var d = new Date();
     app.innerHTML = '<header><div class="fila"><div><h1>' + esc(datos.negocio.nombre) + '</h1><div class="fecha-hoy">' + DIAS[d.getDay()] + ', ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div></div>'
       + '<button class="recargar" id="recargar" aria-label="Actualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button></div>'
-      + '<div class="resumen"><span class="chip' + (pend.length ? ' alerta' : '') + '"><b>' + pend.length + '</b> por confirmar</span><span class="chip"><b>' + hoyL.length + '</b> hoy</span><span class="chip"><b>' + prox.length + '</b> próximas</span></div></header>'
+      + '<div class="resumen"><span class="chip' + (pend.length ? ' alerta' : '') + '"><b>' + pend.length + '</b> por confirmar</span><span class="chip"><b>' + hoyL.length + '</b> hoy</span><span class="chip"><b>' + prox.length + '</b> próximas</span></div>'
+      + '</header>'
       + '<main>'
+      + (datos.negocio.usuario ? '' : '<div class="banner">Crea tu usuario y contraseña para entrar desde cualquier móvil sin necesidad del enlace.<br><button class="btn b-ok" data-cuenta="acceso">Crear usuario y contraseña</button></div>')
       + seccion('Por confirmar', pend, 'Nada pendiente. Cuando Eris recoja una petición de cita, aparecerá aquí.')
       + seccion('Hoy', hoyL, 'No hay citas confirmadas para hoy.')
       + seccion('Próximos días', prox, 'No hay citas confirmadas en los próximos días.')
       + (prop.length ? seccion('Esperando respuesta del cliente', prop, '') : '')
+      + '<div class="cuenta"><button data-cuenta="acceso">' + (datos.negocio.usuario ? 'Cambiar contraseña (usuario: ' + esc(datos.negocio.usuario) + ')' : 'Crear usuario y contraseña') + '</button><button data-cuenta="salir">Cerrar sesión</button></div>'
       + '<p class="instalar"><b>Tenlo a mano:</b> en el móvil, abre el menú del navegador y pulsa «Añadir a pantalla de inicio». En iPhone, el botón Compartir → «Añadir a pantalla de inicio».</p>'
       + '</main>';
     document.getElementById('recargar').addEventListener('click', cargar);
@@ -240,7 +261,55 @@ main{padding-bottom:90px}
       cerrarHoja(); pintar(); toast('Cita apuntada'); pausa = Date.now() + 30000;
     }).catch(function(){ boton.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
   });
-  function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !document.querySelector('.proponer.abierto') && !velo.classList.contains('abierto'); }
+  // ---- Usuario y contraseña ----
+  function derivar(usuario, clave){
+    var enc = new TextEncoder();
+    return crypto.subtle.importKey('raw', enc.encode(clave), 'PBKDF2', false, ['deriveBits']).then(function(key){
+      return crypto.subtle.deriveBits({ name:'PBKDF2', hash:'SHA-256', salt: enc.encode('eris-panel:' + usuario), iterations:150000 }, key, 256);
+    }).then(function(bits){ return Array.from(new Uint8Array(bits)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join(''); });
+  }
+  function guardarAcceso(nn, kk){ n = nn; k = kk; try { localStorage.setItem('eris-panel', JSON.stringify({ n:n, k:k })); } catch (e) {} }
+  function olvidar(){ n = null; k = null; datos = null; try { localStorage.removeItem('eris-panel'); } catch (e) {} if (location.search) history.replaceState(null, '', location.pathname); }
+  function pantallaLogin(aviso){
+    document.getElementById('nueva').style.display = 'none';
+    app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Panel de Eris</h1><p class="sub">Entra para ver las citas de tu negocio</p>'
+      + '<label class="campo"><span>Usuario</span><input name="usuario" autocomplete="username" required autocapitalize="none"></label>'
+      + '<label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>'
+      + '<p class="error" id="errorLogin">' + esc(aviso || '') + '</p><button class="btn b-ok" type="submit" style="width:100%">Entrar</button>'
+      + '<p class="instalar">¿No tienes usuario? Abre el panel una vez con el enlace que te dio Euxenos y créalo desde ahí.</p></form>';
+    var f = document.getElementById('formLogin');
+    f.addEventListener('submit', function(e){
+      e.preventDefault();
+      var u = f.usuario.value.trim().toLowerCase(), boton = f.querySelector('button'); boton.disabled = true;
+      document.getElementById('errorLogin').textContent = '';
+      derivar(u, f.clave.value).then(function(h){ return llamar({ accion:'login', usuario:u, hash:h }); }).then(function(r){
+        boton.disabled = false;
+        if (!r || !r.ok) { document.getElementById('errorLogin').textContent = (r && r.motivo) || 'No se ha podido entrar.'; return; }
+        guardarAcceso(r.n, r.k); cargar();
+      }).catch(function(){ boton.disabled = false; document.getElementById('errorLogin').textContent = 'Sin conexión, inténtalo de nuevo.'; });
+    });
+  }
+  var veloA = document.getElementById('veloAcceso'), formA = document.getElementById('formAcceso');
+  function abrirAcceso(){ formA.reset(); document.getElementById('errorAcceso').textContent = ''; if (datos && datos.negocio.usuario) formA.usuario.value = datos.negocio.usuario; veloA.classList.add('abierto'); }
+  document.getElementById('cerrarAcceso').addEventListener('click', function(){ veloA.classList.remove('abierto'); });
+  veloA.addEventListener('click', function(e){ if (e.target === veloA) veloA.classList.remove('abierto'); });
+  formA.addEventListener('submit', function(e){
+    e.preventDefault();
+    var err = document.getElementById('errorAcceso'), u = formA.usuario.value.trim().toLowerCase();
+    if (formA.clave1.value !== formA.clave2.value) { err.textContent = 'Las contraseñas no coinciden.'; return; }
+    var boton = formA.querySelector('button[type=submit]'); boton.disabled = true; err.textContent = '';
+    derivar(u, formA.clave1.value).then(function(h){ return llamar({ n:n, k:k, accion:'acceso', usuario:u, hash:h }); }).then(function(r){
+      boton.disabled = false;
+      if (!r || !r.ok) { err.textContent = (r && r.motivo) || 'No se ha podido guardar.'; return; }
+      datos.negocio.usuario = r.usuario; veloA.classList.remove('abierto'); pintar(); toast('Usuario y contraseña guardados');
+    }).catch(function(){ boton.disabled = false; err.textContent = 'Sin conexión, inténtalo de nuevo.'; });
+  });
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('[data-cuenta]'); if (!b) return;
+    if (b.getAttribute('data-cuenta') === 'acceso') abrirAcceso();
+    else { olvidar(); pantallaLogin('Has cerrado la sesión.'); }
+  });
+  function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !document.querySelector('.proponer.abierto') && !velo.classList.contains('abierto') && !veloA.classList.contains('abierto') && !!datos; }
   document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) cargar(); });
   setInterval(function(){ if (puedeRefrescar()) cargar(); }, 60000);
   cargar();
