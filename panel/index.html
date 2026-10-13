@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Eris · Panel</title>
+<title>Eris · Panel de control</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#04120E">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -324,7 +324,7 @@ main{padding-bottom:90px}
   function olvidar(){ n = null; k = null; datos = null; try { localStorage.removeItem('eris-panel'); } catch (e) {} if (location.search) history.replaceState(null, '', location.pathname); }
   function pantallaLogin(aviso){
     document.getElementById('nueva').style.display = 'none';
-    app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Panel de Eris</h1><p class="sub">Entra para ver las citas de tu negocio</p>'
+    app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Panel de control</h1><p class="sub">Eris · Entra para ver las citas de tu negocio</p>'
       + '<label class="campo"><span>Usuario</span><input name="usuario" autocomplete="username" required autocapitalize="none"></label>'
       + '<label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>'
       + '<p class="error" id="errorLogin">' + esc(aviso || '') + '</p><button class="btn b-ok" type="submit" style="width:100%">Entrar</button>'
