@@ -636,79 +636,344 @@ a{color:inherit}
 <script>
 (function(){
   var escenas = [
-    { sector:'Clínicas dentales', hora:'22:15', canal:'WhatsApp', pie:'Clínica cerrada. Un paciente escribe por',
-      msgs:[['c','Me duele mucho una muela, ¿tenéis cita mañana?','22:15'],
-            ['e','Siento el dolor. Mañana a las 10:30 hay un hueco para urgencias. ¿Te lo reservo?','22:15'],
-            ['c','Sí, por favor. Soy Javier','22:16'],
-            ['e','Reservado, Javier: mañana a las 10:30. <b>Te enviamos un recordatorio por la mañana.</b>','22:16']],
-      hecho:'Cita urgente en la agenda de la clínica' },
-    { sector:'Hoteles y casas rurales', hora:'02:30', canal:'la web', pie:'Recepción cerrada. Una turista escribe en inglés desde',
-      msgs:[['c','Hi! Do you have a double room for 2 nights from Friday?','02:30'],
-            ['e','Hi! Yes, we have a double room with mountain views for Friday and Saturday. Shall I book it for you?','02:30'],
-            ['c','Yes, please. I\'m Emma','02:31'],
-            ['e','Done, Emma: double room from Friday to Sunday. <b>You\'ll get the confirmation by email.</b>','02:31']],
-      hecho:'Reserva guardada · le respondió en inglés' },
-    { sector:'Peluquerías', hora:'23:05', canal:'Instagram', pie:'Peluquería cerrada. Una clienta escribe en catalán por',
-      msgs:[['c','Bona nit! Teniu hora per tallar i fer metxes dissabte?','23:05'],
-            ['e','Bona nit! Dissabte a les 10:00 podem fer les dues coses. Vols que t\'ho reservi?','23:05'],
-            ['c','Sí, si us plau! Sóc la Marta','23:06'],
-            ['e','Reservat, Marta: dissabte a les 10:00, tall i metxes. <b>T\'esperem!</b>','23:06']],
-      hecho:'Cita reservada · le respondió en catalán' },
-    { sector:'Restaurantes', hora:'01:12', canal:'la web', pie:'Cocina cerrada. Un turista escribe en italiano desde',
-      msgs:[['c','Buonasera! Avete un tavolo per 6 sabato alle 21:30?','01:12'],
-            ['e','Buonasera! Sì, c\'è posto. A che nome? Qualcuno ha allergie o intolleranze?','01:12'],
-            ['c','A nome di Luca. Uno di noi è celiaco','01:13'],
-            ['e','Prenotato: sabato alle 21:30, 6 persone, a nome di Luca. <b>La celiachia è segnalata alla cucina.</b>','01:13']],
-      hecho:'Reserva guardada y cocina avisada · le respondió en italiano' },
-    { sector:'Talleres', hora:'22:10', canal:'WhatsApp', pie:'Taller cerrado. Un cliente escribe por',
-      msgs:[['c','Se me ha encendido el testigo del motor, ¿tenéis hueco esta semana?','22:10'],
-            ['e','Podemos verlo el miércoles a las 9:00. ¿Me dices la marca y el modelo del coche?','22:10'],
-            ['c','Seat León de 2016','22:11'],
-            ['e','Apuntado: miércoles a las 9:00, Seat León 2016. <b>Te recordamos la cita el día antes.</b>','22:11']],
-      hecho:'Cita en el calendario del taller' },
-    { sector:'Fontanería', hora:'21:45', canal:'teléfono', pie:'El fontanero está en otro trabajo. Un cliente llama por',
-      msgs:[['c','Hola, tengo una fuga debajo del fregadero y está saliendo bastante agua','21:45'],
-            ['e','Vale, lo primero: cierra la llave de paso del agua, suele estar bajo el fregadero o junto al contador. ¿Me dices tu nombre y la dirección?','21:45'],
-            ['c','Ya la he cerrado. Soy Pedro, calle del Prado 12, segundo B','21:46'],
-            ['e','Apuntado, Pedro. <b>Aviso ahora mismo al fontanero como urgente y te llama en unos minutos.</b>','21:46']],
-      hecho:'Urgencia avisada al fontanero por WhatsApp' },
-    { sector:'Estudios de tatuajes', hora:'23:30', canal:'Instagram', pie:'Estudio cerrado. Alguien escribe por',
-      msgs:[['c','Hola! Quiero tatuarme una golondrina pequeña en la muñeca, ¿cuánto costaría?','23:30'],
-            ['e','¡Hola! Un tatuaje pequeño así suele rondar los 80–100 €, el precio final lo confirma el tatuador. ¿Quieres que te dé cita para hablarlo?','23:30'],
-            ['c','Sí! Me llamo Nerea','23:31'],
-            ['e','Genial, Nerea. Tienes cita el jueves a las 17:00. <b>Si tienes alguna foto de referencia, tráela.</b>','23:31']],
-      hecho:'Cita apuntada en la agenda del estudio' },
-    { sector:'Inmobiliarias', hora:'22:05', canal:'WhatsApp', pie:'Oficina cerrada. Un comprador escribe en alemán por',
-      msgs:[['c','Guten Abend! Ist die Wohnung in der Calle Mayor noch verfügbar? Ich ziehe im März nach Spanien.','22:05'],
-            ['e','Guten Abend! Ja, sie ist noch verfügbar. Möchten Sie eine Besichtigung vereinbaren? Am Dienstagnachmittag gibt es freie Termine.','22:05'],
-            ['c','Dienstag passt mir gut. Ich heiße Jonas.','22:06'],
-            ['e','Perfekt, Jonas. <b>Ein Makler bestätigt Ihnen morgen die genaue Uhrzeit der Besichtigung.</b>','22:06']],
-      hecho:'Interesado guardado · le respondió en alemán' },
-    { sector:'Tiendas de alimentación', hora:'22:40', canal:'WhatsApp', pie:'Tienda cerrada. Un cliente escribe por',
-      msgs:[['c','¿Me preparáis un pedido para recoger mañana? Un kilo de tomates y una docena de huevos','22:40'],
-            ['e','¡Claro! Lo tendrás listo mañana desde las 9:00. ¿A nombre de quién?','22:40'],
-            ['c','De Lucía','22:41'],
-            ['e','Apuntado para Lucía. <b>Mañana desde las 9:00 lo tienes preparado.</b>','22:41']],
-      hecho:'Pedido apuntado para preparar' },
-    { sector:'Tiendas online', hora:'00:20', canal:'la web', pie:'Atención al cliente cerrada. Un cliente molesto escribe en francés desde',
-      msgs:[['c','Ça fait 10 jours que j\'attends ma commande 4821, c\'est inadmissible !','00:20'],
-            ['e','Je comprends votre agacement, je suis désolée. Votre colis est bloqué au centre de tri : je signale l\'incident en priorité. Je peux aussi vous proposer le remboursement des frais de livraison.','00:20'],
-            ['c','D\'accord, merci de vous en occuper','00:21'],
-            ['e','C\'est fait. <b>Le responsable vous écrit demain matin avec une solution.</b>','00:21']],
-      hecho:'Queja calmada y dueño avisado · le respondió en francés' },
-    { sector:'Gestorías y abogados', hora:'21:50', canal:'WhatsApp', pie:'Despacho cerrado. Una autónoma escribe por',
-      msgs:[['c','Buenas, me ha llegado una carta de Hacienda y no sé qué hacer. ¿Me podéis ayudar?','21:50'],
-            ['e','Claro, para eso estamos. ¿Me dices tu nombre y qué pone en la carta? Si puedes, mándame una foto.','21:50'],
-            ['c','Soy Carmen. Es un requerimiento del IVA del segundo trimestre','21:51'],
-            ['e','Gracias, Carmen. Te dejo una llamada con la gestora mañana a las 9:30. <b>Ya tendrá tu caso delante cuando te llame.</b>','21:51']],
-      hecho:'Caso guardado y llamada agendada con la gestora' },
-    { sector:'Autoescuelas', hora:'22:20', canal:'Instagram', pie:'Autoescuela cerrada. Alguien escribe por',
-      msgs:[['c','Hola, ¿cuándo empieza el próximo curso para sacarse el carné de coche?','22:20'],
-            ['e','¡Hola! El próximo curso de teórico empieza el lunes a las 18:00. ¿Quieres que te reserve plaza?','22:20'],
-            ['c','Sí, porfa. Me llamo Hugo','22:21'],
-            ['e','Plaza reservada, Hugo. <b>Mañana te llamamos para explicarte los precios y las prácticas.</b>','22:21']],
-      hecho:'Alumno apuntado y autoescuela avisada' }
-  ];
+{
+"sector": "Clínicas dentales",
+"hora": "22:15",
+"canal": "WhatsApp",
+"quien": "Clínica cerrada. Un paciente",
+"via": "por",
+"hecho": "Cita urgente en la agenda de la clínica",
+"v": {
+"es": [
+"Me duele mucho una muela, ¿tenéis cita mañana?",
+"Siento el dolor. Mañana a las 10:30 hay un hueco para urgencias. ¿Te lo reservo?",
+"Sí, por favor. Soy Javier",
+"Reservado, Javier: mañana a las 10:30. <b>Te enviamos un recordatorio por la mañana.<\/b>"
+],
+"en": [
+"Hi, I have a really bad toothache. Do you have an appointment tomorrow?",
+"Sorry to hear that. There's an emergency slot tomorrow at 10:30. Shall I book it for you?",
+"Yes, please. I'm James",
+"Booked, James: tomorrow at 10:30. <b>We'll send you a reminder in the morning.<\/b>"
+],
+"pt": [
+"Olá, estou com uma dor de dentes muito forte. Têm consulta amanhã?",
+"Lamento! Amanhã às 10:30 há uma vaga para urgências. Quer que a reserve?",
+"Sim, por favor. Sou o João",
+"Reservado, João: amanhã às 10:30. <b>Enviamos-lhe um lembrete de manhã.<\/b>"
+]
+}
+},
+{
+"sector": "Hoteles y casas rurales",
+"hora": "02:30",
+"canal": "la web",
+"quien": "Recepción cerrada. Una viajera",
+"via": "desde",
+"hecho": "Reserva guardada",
+"v": {
+"es": [
+"¡Hola! ¿Tenéis una habitación doble para 2 noches desde el viernes?",
+"¡Hola! Sí, tenemos una doble con vistas a la sierra para el viernes y el sábado. ¿Te la reservo?",
+"Sí, porfa. Soy Elena",
+"Hecho, Elena: habitación doble de viernes a domingo. <b>Te llega la confirmación por email.<\/b>"
+],
+"en": [
+"Hi! Do you have a double room for 2 nights from Friday?",
+"Hi! Yes, we have a double room with mountain views for Friday and Saturday. Shall I book it for you?",
+"Yes, please. I'm Emma",
+"Done, Emma: double room from Friday to Sunday. <b>You'll get the confirmation by email.<\/b>"
+],
+"de": [
+"Hallo! Haben Sie ab Freitag ein Doppelzimmer für 2 Nächte?",
+"Hallo! Ja, wir haben ein Doppelzimmer mit Bergblick für Freitag und Samstag. Soll ich es für Sie reservieren?",
+"Ja, bitte. Ich heiße Anna",
+"Erledigt, Anna: Doppelzimmer von Freitag bis Sonntag. <b>Die Bestätigung kommt per E-Mail.<\/b>"
+]
+}
+},
+{
+"sector": "Peluquerías",
+"hora": "23:05",
+"canal": "Instagram",
+"quien": "Peluquería cerrada. Una clienta",
+"via": "por",
+"hecho": "Cita reservada y recordatorio programado",
+"v": {
+"es": [
+"¿Tenéis hueco para corte y mechas el sábado?",
+"El sábado a las 10:00 podemos hacer las dos cosas. ¿Te lo reservo?",
+"¡Sí, porfa! Soy Marta",
+"Reservado, Marta: sábado a las 10:00, corte y mechas. <b>¡Te esperamos!<\/b>"
+],
+"ca": [
+"Bona nit! Teniu hora per tallar i fer metxes dissabte?",
+"Bona nit! Dissabte a les 10:00 podem fer les dues coses. Vols que t'ho reservi?",
+"Sí, si us plau! Sóc la Marta",
+"Reservat, Marta: dissabte a les 10:00, tall i metxes. <b>T'esperem!<\/b>"
+],
+"fr": [
+"Bonsoir ! Vous avez de la place samedi pour une coupe et des mèches ?",
+"Bonsoir ! Samedi à 10 h, on peut faire les deux. Je vous le réserve ?",
+"Oui, s'il vous plaît ! Je m'appelle Claire",
+"C'est réservé, Claire : samedi à 10 h, coupe et mèches. <b>À samedi !<\/b>"
+]
+}
+},
+{
+"sector": "Restaurantes",
+"hora": "01:12",
+"canal": "la web",
+"quien": "Cocina cerrada. Un cliente",
+"via": "desde",
+"hecho": "Reserva guardada y cocina avisada",
+"v": {
+"es": [
+"¡Buenas! ¿Tenéis mesa para 6 el sábado a las 21:30?",
+"¡Buenas! Sí, hay sitio. ¿A nombre de quién? ¿Alguien tiene alergias o intolerancias?",
+"A nombre de Luis. Uno de nosotros es celíaco",
+"Reservado: sábado a las 21:30, 6 personas, a nombre de Luis. <b>La celiaquía queda avisada en cocina.<\/b>"
+],
+"it": [
+"Buonasera! Avete un tavolo per 6 sabato alle 21:30?",
+"Buonasera! Sì, c'è posto. A che nome? Qualcuno ha allergie o intolleranze?",
+"A nome di Luca. Uno di noi è celiaco",
+"Prenotato: sabato alle 21:30, 6 persone, a nome di Luca. <b>La celiachia è segnalata alla cucina.<\/b>"
+],
+"en": [
+"Hi! Do you have a table for 6 on Saturday at 9:30 pm?",
+"Hi! Yes, we have space. What name should I put it under? Does anyone have allergies or intolerances?",
+"Under Tom. One of us is coeliac",
+"Booked: Saturday at 9:30 pm, 6 people, under Tom. <b>The kitchen knows about the coeliac guest.<\/b>"
+]
+}
+},
+{
+"sector": "Talleres",
+"hora": "22:10",
+"canal": "WhatsApp",
+"quien": "Taller cerrado. Un cliente",
+"via": "por",
+"hecho": "Cita en el calendario del taller",
+"v": {
+"es": [
+"Se me ha encendido el testigo del motor, ¿tenéis hueco esta semana?",
+"Podemos verlo el miércoles a las 9:00. ¿Me dices la marca y el modelo del coche?",
+"Seat León de 2016",
+"Apuntado: miércoles a las 9:00, Seat León 2016. <b>Te recordamos la cita el día antes.<\/b>"
+],
+"pt": [
+"Boa noite, acendeu-se a luz do motor. Têm vaga esta semana?",
+"Podemos ver o carro na quarta-feira às 9:00. Pode dizer-me a marca e o modelo?",
+"Seat León de 2016",
+"Marcado: quarta-feira às 9:00, Seat León 2016. <b>Lembramos-lhe a marcação no dia anterior.<\/b>"
+],
+"fr": [
+"Bonsoir, le voyant moteur s'est allumé. Vous avez de la place cette semaine ?",
+"On peut la regarder mercredi à 9 h. Quelle est la marque et le modèle de la voiture ?",
+"Une Seat León de 2016",
+"C'est noté : mercredi à 9 h, Seat León 2016. <b>On vous rappelle le rendez-vous la veille.<\/b>"
+]
+}
+},
+{
+"sector": "Fontanería",
+"hora": "21:45",
+"canal": "teléfono",
+"quien": "El fontanero está en otro trabajo. Un cliente",
+"verbo": "llama",
+"via": "por",
+"hecho": "Urgencia avisada al fontanero por WhatsApp",
+"v": {
+"es": [
+"Hola, tengo una fuga debajo del fregadero y está saliendo bastante agua",
+"Vale, lo primero: cierra la llave de paso del agua, suele estar bajo el fregadero o junto al contador. ¿Me dices tu nombre y la dirección?",
+"Ya la he cerrado. Soy Pedro, calle del Prado 12, segundo B",
+"Apuntado, Pedro. <b>Aviso ahora mismo al fontanero como urgente y te llama en unos minutos.<\/b>"
+],
+"en": [
+"Hi, I've got a leak under the kitchen sink and there's quite a lot of water",
+"OK, first turn off the water at the stopcock, it's usually under the sink or next to the meter. Can I have your name and address?",
+"Done. I'm Peter, Calle del Prado 12, 2B",
+"Got it, Peter. <b>I'm flagging this as urgent to the plumber now, and he'll call you in a few minutes.<\/b>"
+],
+"ca": [
+"Hola, tinc una fuita sota la pica i surt força aigua",
+"D'acord, primer tanca la clau de pas de l'aigua, sol estar sota la pica o al costat del comptador. Em dius el teu nom i l'adreça?",
+"Ja l'he tancada. Sóc en Pere, carrer del Prado 12, segon B",
+"Apuntat, Pere. <b>Aviso ara mateix el lampista com a urgent i et truca en uns minuts.<\/b>"
+]
+}
+},
+{
+"sector": "Estudios de tatuajes",
+"hora": "23:30",
+"canal": "Instagram",
+"quien": "Estudio cerrado. Alguien",
+"via": "por",
+"hecho": "Cita apuntada en la agenda del estudio",
+"v": {
+"es": [
+"¡Hola! Quiero tatuarme una golondrina pequeña en la muñeca, ¿cuánto costaría?",
+"¡Hola! Un tatuaje pequeño así suele rondar los 80–100 €, el precio final lo confirma el tatuador. ¿Quieres que te dé cita para hablarlo?",
+"¡Sí! Me llamo Nerea",
+"Genial, Nerea. Tienes cita el jueves a las 17:00. <b>Si tienes alguna foto de referencia, tráela.<\/b>"
+],
+"en": [
+"Hi! I'd like a small swallow tattoo on my wrist, how much would it be?",
+"Hi! A small piece like that is usually around €80–100, and the artist confirms the final price. Shall I book you in to talk it over?",
+"Yes! I'm Chloe",
+"Great, Chloe. You're booked for Thursday at 5 pm. <b>If you have a reference photo, bring it along.<\/b>"
+],
+"it": [
+"Ciao! Vorrei tatuarmi una piccola rondine sul polso, quanto costerebbe?",
+"Ciao! Un tatuaggio piccolo così di solito costa sugli 80–100 €, il prezzo finale lo conferma il tatuatore. Vuoi un appuntamento per parlarne?",
+"Sì! Mi chiamo Giulia",
+"Perfetto, Giulia. Hai appuntamento giovedì alle 17:00. <b>Se hai una foto di riferimento, portala.<\/b>"
+]
+}
+},
+{
+"sector": "Inmobiliarias",
+"hora": "22:05",
+"canal": "WhatsApp",
+"quien": "Oficina cerrada. Un comprador",
+"via": "por",
+"hecho": "Interesado guardado y visita en marcha",
+"v": {
+"es": [
+"Buenas noches, ¿sigue disponible el piso de la calle Mayor? Me mudo en marzo.",
+"¡Buenas noches! Sí, sigue disponible. ¿Quieres verlo? El martes por la tarde hay huecos para visitas.",
+"El martes me va bien. Me llamo Raúl.",
+"Perfecto, Raúl. <b>Mañana un agente te confirma la hora exacta de la visita.<\/b>"
+],
+"de": [
+"Guten Abend! Ist die Wohnung in der Calle Mayor noch verfügbar? Ich ziehe im März nach Spanien.",
+"Guten Abend! Ja, sie ist noch verfügbar. Möchten Sie eine Besichtigung vereinbaren? Am Dienstagnachmittag gibt es freie Termine.",
+"Dienstag passt mir gut. Ich heiße Jonas.",
+"Perfekt, Jonas. <b>Ein Makler bestätigt Ihnen morgen die genaue Uhrzeit der Besichtigung.<\/b>"
+],
+"en": [
+"Good evening! Is the flat on Calle Mayor still available? I'm moving to Spain in March.",
+"Good evening! Yes, it's still available. Would you like to arrange a viewing? There are free slots on Tuesday afternoon.",
+"Tuesday works for me. I'm Mark.",
+"Perfect, Mark. <b>An agent will confirm the exact viewing time tomorrow.<\/b>"
+]
+}
+},
+{
+"sector": "Tiendas de alimentación",
+"hora": "22:40",
+"canal": "WhatsApp",
+"quien": "Tienda cerrada. Una clienta",
+"via": "por",
+"hecho": "Pedido apuntado para preparar",
+"v": {
+"es": [
+"¿Me preparáis un pedido para recoger mañana? Un kilo de tomates y una docena de huevos",
+"¡Claro! Lo tendrás listo mañana desde las 9:00. ¿A nombre de quién?",
+"De Lucía",
+"Apuntado para Lucía. <b>Mañana desde las 9:00 lo tienes preparado.<\/b>"
+],
+"ca": [
+"Em prepareu una comanda per recollir demà? Un quilo de tomàquets i una dotzena d'ous",
+"És clar! La tindràs a punt demà a partir de les 9:00. A nom de qui?",
+"De la Núria",
+"Apuntat per a la Núria. <b>Demà a partir de les 9:00 la tens preparada.<\/b>"
+],
+"it": [
+"Mi preparate un ordine da ritirare domani? Un chilo di pomodori e una dozzina di uova",
+"Certo! Sarà pronto domani dalle 9:00. A che nome?",
+"Francesca",
+"Segnato per Francesca. <b>Domani dalle 9:00 lo trovi pronto.<\/b>"
+]
+}
+},
+{
+"sector": "Tiendas online",
+"hora": "00:20",
+"canal": "la web",
+"quien": "Atención al cliente cerrada. Un cliente molesto",
+"via": "desde",
+"hecho": "Queja calmada y dueño avisado",
+"v": {
+"es": [
+"Llevo 10 días esperando el pedido 4821, esto es una vergüenza",
+"Entiendo tu enfado y lo siento. Tu paquete está parado en el centro de reparto: lo marco como incidencia prioritaria. También puedo devolverte los gastos de envío.",
+"Vale, gracias por encargarte",
+"Hecho. <b>El responsable te escribe mañana por la mañana con una solución.<\/b>"
+],
+"fr": [
+"Ça fait 10 jours que j'attends ma commande 4821, c'est inadmissible !",
+"Je comprends votre agacement, je suis désolée. Votre colis est bloqué au centre de tri : je signale l'incident en priorité. Je peux aussi vous proposer le remboursement des frais de livraison.",
+"D'accord, merci de vous en occuper",
+"C'est fait. <b>Le responsable vous écrit demain matin avec une solution.<\/b>"
+],
+"de": [
+"Ich warte seit 10 Tagen auf meine Bestellung 4821, das ist eine Zumutung!",
+"Ich verstehe Ihren Ärger, das tut mir leid. Ihr Paket hängt im Verteilzentrum fest: Ich melde den Fall mit Priorität. Gern erstatte ich Ihnen auch die Versandkosten.",
+"In Ordnung, danke, dass Sie sich kümmern",
+"Erledigt. <b>Der Verantwortliche meldet sich morgen früh mit einer Lösung bei Ihnen.<\/b>"
+]
+}
+},
+{
+"sector": "Gestorías y abogados",
+"hora": "21:50",
+"canal": "WhatsApp",
+"quien": "Despacho cerrado. Una autónoma",
+"via": "por",
+"hecho": "Caso guardado y llamada agendada con la gestora",
+"v": {
+"es": [
+"Buenas, me ha llegado una carta de Hacienda y no sé qué hacer. ¿Me podéis ayudar?",
+"Claro, para eso estamos. ¿Me dices tu nombre y qué pone en la carta? Si puedes, mándame una foto.",
+"Soy Carmen. Es un requerimiento del IVA del segundo trimestre",
+"Gracias, Carmen. Te dejo una llamada con la gestora mañana a las 9:30. <b>Ya tendrá tu caso delante cuando te llame.<\/b>"
+],
+"en": [
+"Hi, I've received a letter from the Spanish tax office and I don't know what to do. Can you help?",
+"Of course, that's what we're here for. Can you tell me your name and what the letter says? A photo would help.",
+"I'm Sarah. It's a request about my VAT for the second quarter",
+"Thanks, Sarah. I've booked you a call with our advisor tomorrow at 9:30. <b>She'll already have your case in front of her.<\/b>"
+],
+"pt": [
+"Boa noite, recebi uma carta das Finanças espanholas e não sei o que fazer. Podem ajudar-me?",
+"Claro, estamos cá para isso. Pode dizer-me o seu nome e o que diz a carta? Se puder, envie uma foto.",
+"Sou a Ana. É um pedido sobre o IVA do segundo trimestre",
+"Obrigada, Ana. Marquei-lhe uma chamada com a gestora amanhã às 9:30. <b>Ela já terá o seu caso à frente quando ligar.<\/b>"
+]
+}
+},
+{
+"sector": "Autoescuelas",
+"hora": "22:20",
+"canal": "Instagram",
+"quien": "Autoescuela cerrada. Alguien",
+"via": "por",
+"hecho": "Alumno apuntado y autoescuela avisada",
+"v": {
+"es": [
+"Hola, ¿cuándo empieza el próximo curso para sacarse el carné de coche?",
+"¡Hola! El próximo curso de teórico empieza el lunes a las 18:00. ¿Quieres que te reserve plaza?",
+"Sí, porfa. Me llamo Hugo",
+"Plaza reservada, Hugo. <b>Mañana te llamamos para explicarte los precios y las prácticas.<\/b>"
+],
+"ca": [
+"Hola, quan comença el pròxim curs per treure's el carnet de cotxe?",
+"Hola! El pròxim curs de teòrica comença dilluns a les 18:00. Vols que et reservi plaça?",
+"Sí, si us plau. Em dic Marc",
+"Plaça reservada, Marc. <b>Demà et truquem per explicar-te els preus i les pràctiques.<\/b>"
+],
+"it": [
+"Ciao, quando inizia il prossimo corso per prendere la patente?",
+"Ciao! Il prossimo corso di teoria inizia lunedì alle 18:00. Vuoi che ti prenoti un posto?",
+"Sì, grazie. Mi chiamo Marco",
+"Posto prenotato, Marco. <b>Domani ti chiamiamo per spiegarti prezzi e guide.<\/b>"
+]
+}
+}
+];
   var etiqueta = document.getElementById('sector-actual');
   var contador = document.getElementById('contador');
   var hilo = document.getElementById('hilo');
@@ -719,18 +984,21 @@ a{color:inherit}
   document.getElementById('anterior').addEventListener('click', function(){ mostrar((actual - 1 + escenas.length) % escenas.length); arrancar(20000); });
   document.getElementById('siguiente').addEventListener('click', function(){ mostrar((actual + 1) % escenas.length); arrancar(20000); });
 
+  var NOMBRES = { en:'inglés', fr:'francés', it:'italiano', de:'alemán', pt:'portugués', ca:'catalán' };
   function mostrar(i){
     actual = i;
-    var e = escenas[i];
+    var e = escenas[i], l = e.idioma || 'es', textos = e.v[l];
+    var h = e.hora.split(':'), m = (+h[0] * 60 + (+h[1]) + 1) % 1440;
+    var hora2 = ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2);
     etiqueta.textContent = e.sector;
     contador.textContent = 'Así atiende Eris mientras el negocio está cerrado';
     reloj.textContent = e.hora;
-    pie.innerHTML = e.pie + ' <span class="canal">' + e.canal + '</span>';
+    pie.innerHTML = e.quien + ' ' + (e.verbo || 'escribe') + (l !== 'es' ? ' en ' + NOMBRES[l] : '') + ' ' + e.via + ' <span class="canal">' + e.canal + '</span>';
     var html = '';
-    e.msgs.forEach(function(m, k){
-      html += '<div class="msg ' + (m[0] === 'c' ? 'cliente' : 'eris') + '" style="animation-delay:' + (0.3 + k * 0.9) + 's">' + m[1] + '<small>' + m[2] + '</small></div>';
+    textos.forEach(function(t, k){
+      html += '<div class="msg ' + (k % 2 === 0 ? 'cliente' : 'eris') + '" style="animation-delay:' + (0.3 + k * 0.9) + 's">' + t + '<small>' + (k < 2 ? e.hora : hora2) + '</small></div>';
     });
-    html += '<div class="hecho" style="animation-delay:' + (0.3 + e.msgs.length * 0.9) + 's">' + e.hecho + '</div>';
+    html += '<div class="hecho" style="animation-delay:' + (0.3 + textos.length * 0.9) + 's">' + e.hecho + (l !== 'es' ? ' · le atendió en ' + NOMBRES[l] : '') + '</div>';
     hilo.classList.remove('animar'); void hilo.offsetWidth;
     hilo.innerHTML = html;
     if(!sinMovimiento) hilo.classList.add('animar');
@@ -744,7 +1012,14 @@ a{color:inherit}
       temporizador = setTimeout(siguiente, PASO);
     }, espera || PASO);
   }
-  for(var i = escenas.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var tmp = escenas[i]; escenas[i] = escenas[j]; escenas[j] = tmp; }
+  function barajar(lista){ for(var i = lista.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var tmp = lista[i]; lista[i] = lista[j]; lista[j] = tmp; } return lista; }
+  barajar(escenas);
+  // Entre 4 y 6 ejemplos salen en otro idioma, cada vez distintos y sin repetir idioma si se puede
+  var cuantos = 4 + Math.floor(Math.random() * 3), usados = {};
+  barajar(escenas.slice()).slice(0, cuantos).forEach(function(e){
+    var libres = barajar(Object.keys(e.v).filter(function(k){ return k !== 'es' && !usados[k]; }));
+    if(libres.length){ e.idioma = libres[0]; usados[e.idioma] = true; }
+  });
   mostrar(0);
   arrancar(PASO);
 })();
