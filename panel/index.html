@@ -48,6 +48,15 @@ h2 .n{background:var(--tarjeta);border:1px solid var(--linea);border-radius:999p
 .e-propuesta{background:rgba(96,165,250,.15);color:#9CC8FF}
 .e-cancelada{background:rgba(209,16,74,.15);color:#FF8FB0}
 .e-hecha{background:rgba(255,255,255,.08);color:var(--apagado)}
+.e-caducada{background:rgba(255,255,255,.06);color:#8FA89E}
+.cita.caducada{opacity:.6}
+.punto.x{background:#4F6B60}
+.avisos{margin:22px 0 0;background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:14px}
+.avisos p{margin:0;font-size:.9rem;color:#CFE9DF;line-height:1.45}
+.avisos p b{color:var(--claro)}
+.avisos .acciones{margin-top:10px}
+.avisos.activo{border-color:rgba(52,211,153,.45)}
+.avisos.arriba{margin:14px 0 4px;border-color:rgba(52,211,153,.45);background:rgba(16,185,129,.08)}
 .cliente{font-weight:700;font-size:1.05rem;margin:12px 0 2px}
 .servicio{color:#CFE9DF}
 .meta{color:var(--apagado);font-size:.85rem;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 12px}
@@ -153,7 +162,7 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
   try { vista = localStorage.getItem('eris-panel-vista') || 'resumen'; } catch (e) {}
   var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
   var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Hecha' };
+  var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Hecha', caducada:'Sin confirmar · cerrada' };
 
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function hoyISO(){ var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
@@ -179,7 +188,8 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     llamar({ n:n, k:k, accion:'ver' }).then(function(d){
       cargando = false;
       if (!d || !d.ok) { olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu correo y contraseña.'); return; }
-      datos = d; document.getElementById('nueva').style.display = ''; pintar();
+      var primera = !datos; datos = d; document.getElementById('nueva').style.display = ''; pintar();
+      if (primera) comprobarAvisos();
     }).catch(function(){
       cargando = false; if (bR) bR.classList.remove('girando');
       if (!datos) app.innerHTML = '<div class="mensaje"><h1>Sin conexión</h1><p>No se ha podido cargar el panel. Comprueba la conexión y vuelve a intentarlo.</p><p><button class="btn b-ok" onclick="location.reload()">Reintentar</button></p></div>';
@@ -205,7 +215,7 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
       + '<span class="estado e-' + esc(c.estado) + '">' + esc(ETIQUETAS[c.estado] || c.estado) + '</span></div>'
       + '<div class="cliente">' + esc(c.cliente) + '</div>'
       + (c.servicio ? '<div class="servicio">' + esc(c.servicio) + '</div>' : '')
-      + '<div class="meta">' + tel + mail + '<span>' + (c.canal === 'manual' ? 'apuntada a mano' : 'vía ' + esc(c.canal || 'Eris')) + '</span></div>'
+      + '<div class="meta">' + tel + mail + '<span>' + (c.canal === 'manual' ? 'apuntada a mano' : 'vía ' + esc(c.canal || 'Eris')) + '</span>' + (String(c.cierre || '').indexOf('auto') === 0 ? '<span>cerrada automáticamente</span>' : '') + '</div>'
       + (c.propuesta ? '<div class="notas">Propuesta enviada: ' + esc(c.propuesta) + '</div>' : '')
       + (c.notas ? '<div class="notas">' + esc(c.notas) + '</div>' : '')
       + acc + '<div class="aviso" id="a-' + esc(c.ref) + '"></div></article>';
@@ -229,7 +239,7 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
       if (i >= 35 && d.getMonth() !== mesVista.getMonth()) break;
       var k2 = iso(d), lista = porDia[k2] || [];
       var cls = 'dia-c' + (d.getMonth() !== mesVista.getMonth() ? ' fuera' : '') + (k2 === hoy ? ' hoy' : '') + (k2 === diaSel ? ' sel' : '') + (k2 < hoy ? ' pasado' : '');
-      var puntos = lista.length > 3 ? '<span class="num">' + lista.length + '</span>' : '<span class="puntos">' + lista.map(function(x){ return '<i class="punto' + (x.estado === 'pendiente' || x.estado === 'propuesta' ? ' p' : '') + '"></i>'; }).join('') + '</span>';
+      var puntos = lista.length > 3 ? '<span class="num">' + lista.length + '</span>' : '<span class="puntos">' + lista.map(function(x){ return '<i class="punto' + (x.estado === 'pendiente' || x.estado === 'propuesta' ? ' p' : (x.estado === 'caducada' ? ' x' : '')) + '"></i>'; }).join('') + '</span>';
       h += '<button class="' + cls + '" data-dia="' + k2 + '" aria-label="' + esc(nombreDia(k2)) + ', ' + lista.length + ' citas">' + d.getDate() + puntos + '</button>';
     }
     h += '</div>';
@@ -244,6 +254,8 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     var hoyL = c.filter(function(x){ return x.fecha === hoy && (x.estado === 'confirmada' || x.estado === 'hecha'); }).sort(orden);
     var prox = c.filter(function(x){ return x.fecha > hoy && x.estado === 'confirmada'; }).sort(orden);
     var prop = c.filter(function(x){ return x.estado === 'propuesta'; }).sort(orden);
+    var hace3 = new Date(); hace3.setDate(hace3.getDate() - 3); hace3 = iso(hace3);
+    var cad = c.filter(function(x){ return x.estado === 'caducada' && (x.fecha || '') >= hace3; }).sort(orden).reverse();
     var d = new Date();
     app.innerHTML = '<header><div class="fila"><div><h1>' + esc(datos.negocio.nombre) + '</h1><div class="fecha-hoy">' + DIAS[d.getDay()] + ', ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div></div>'
       + '<button class="recargar" id="recargar" aria-label="Actualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button></div>'
@@ -254,11 +266,14 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
       + (vista === 'calendario' ? calendario(c) : (seccion('Por confirmar', pend, 'Nada pendiente. Cuando Eris recoja una petición de cita, aparecerá aquí.')
       + seccion('Hoy', hoyL, 'No hay citas confirmadas para hoy.')
       + seccion('Próximos días', prox, 'No hay citas confirmadas en los próximos días.')
-      + (prop.length ? seccion('Esperando respuesta del cliente', prop, '') : '')))
+      + (prop.length ? seccion('Esperando respuesta del cliente', prop, '') : '')
+      + (cad.length ? seccion('Pasaron sin confirmar (se cerraron solas)', cad, '') : '')))
+      + '<div class="avisos" id="avisos"></div>'
       + '<div class="cuenta"><button data-cuenta="acceso">Cambiar contraseña' + (datos.negocio.usuario ? ' (' + esc(datos.negocio.usuario) + ')' : '') + '</button><button data-cuenta="salir">Cerrar sesión</button></div>'
       + '<p class="instalar"><b>Tenlo a mano:</b> en el móvil, abre el menú del navegador y pulsa «Añadir a pantalla de inicio». En iPhone, el botón Compartir → «Añadir a pantalla de inicio».</p>'
       + '</main>';
     document.getElementById('recargar').addEventListener('click', cargar);
+    pintarAvisos();
   }
   app.addEventListener('click', function(e){
     var t = e.target.closest('[data-vista],[data-mes],[data-dia]');
@@ -389,7 +404,102 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
   document.addEventListener('click', function(e){
     var b = e.target.closest('[data-cuenta]'); if (!b) return;
     if (b.getAttribute('data-cuenta') === 'acceso') abrirAcceso();
-    else { olvidar(); pantallaLogin('Has cerrado la sesión.'); }
+    else { quitarAvisos(true); olvidar(); pantallaLogin('Has cerrado la sesión.'); }
+  });
+
+  // ---- Avisos al móvil (notificaciones) ----
+  var hayPush = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  var esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var instalada = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  var estadoAvisos = 'cargando', suscripcion = null, swListo = null;
+  if ('serviceWorker' in navigator) {
+    swListo = navigator.serviceWorker.register('sw.js').then(function(){ return navigator.serviceWorker.ready; }).catch(function(){ hayPush = false; return null; });
+    navigator.serviceWorker.addEventListener('message', function(e){ if (e.data && e.data.tipo === 'eris-actualizar' && puedeRefrescar()) cargar(); });
+  }
+  function bytesClave(b64){
+    var pad = '='.repeat((4 - b64.length % 4) % 4), raw = atob((b64 + pad).replace(/-/g, '+').replace(/_/g, '/'));
+    var out = new Uint8Array(raw.length); for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i); return out;
+  }
+  function nombreDispositivo(){
+    var u = navigator.userAgent;
+    var so = /android/i.test(u) ? 'Android' : (esIOS ? 'iPhone/iPad' : (/windows/i.test(u) ? 'Windows' : (/mac/i.test(u) ? 'Mac' : 'Otro')));
+    var nav = /edg\//i.test(u) ? 'Edge' : (/firefox/i.test(u) ? 'Firefox' : (/samsungbrowser/i.test(u) ? 'Samsung' : (/chrome|crios/i.test(u) ? 'Chrome' : 'Safari')));
+    return so + ' · ' + nav + (instalada ? ' · app' : '');
+  }
+  function comprobarAvisos(){
+    if (!hayPush) { estadoAvisos = esIOS && !instalada ? 'ios' : 'nosoporte'; pintarAvisos(); return; }
+    if (Notification.permission === 'denied') { estadoAvisos = 'bloqueado'; pintarAvisos(); return; }
+    swListo.then(function(reg){ return reg ? reg.pushManager.getSubscription() : null; }).then(function(sub){
+      suscripcion = sub; estadoAvisos = sub && Notification.permission === 'granted' ? 'activo' : (hayPush ? 'inactivo' : 'nosoporte'); pintarAvisos();
+      if (sub && n && k) {
+        // Una vez al día recordamos al servidor este móvil por si se hubiera perdido
+        var hoy = hoyISO(), ultima = ''; try { ultima = localStorage.getItem('eris-avisos-sync') || ''; } catch (e) {}
+        if (ultima !== hoy + n) llamar({ n:n, k:k, accion:'avisos-alta', sub: sub.toJSON(), dispositivo: nombreDispositivo() }).then(function(r){ if (r && r.ok) try { localStorage.setItem('eris-avisos-sync', hoy + n); } catch (e) {} }).catch(function(){});
+      }
+    }).catch(function(){ estadoAvisos = 'nosoporte'; pintarAvisos(); });
+  }
+  function pintarAvisos(){
+    var el = document.getElementById('avisos'); if (!el) return;
+    var h = '', activo = false;
+    if (estadoAvisos === 'cargando') h = '<p>Comprobando los avisos de este dispositivo…</p>';
+    else if (estadoAvisos === 'activo') { activo = true; h = '<p><b>🔔 Avisos activados en este dispositivo.</b> Te avisamos al momento de cada petición de cita nueva y 15 minutos antes de cada cita.</p><div class="acciones"><button class="btn b-otra" data-avisos="probar">Enviar un aviso de prueba</button><button class="btn b-no" data-avisos="quitar">Desactivar</button></div>'; }
+    else if (estadoAvisos === 'inactivo') h = '<p><b>🔔 Activa los avisos en este móvil</b> y te avisaremos al momento de cada petición de cita nueva y 15 minutos antes de cada cita, aunque tengas la app cerrada.</p><div class="acciones"><button class="btn b-ok" data-avisos="activar">Activar avisos</button></div>';
+    else if (estadoAvisos === 'ios') h = '<p><b>🔔 Avisos en iPhone:</b> primero añade Eris Agenda a la pantalla de inicio (botón Compartir → «Añadir a pantalla de inicio»), ábrela desde ese icono y vuelve aquí para activar los avisos.</p>';
+    else if (estadoAvisos === 'bloqueado') h = '<p><b>🔕 Los avisos están bloqueados</b> en este navegador. Para recibirlos, permite las notificaciones de euxenos.com en los ajustes del navegador y vuelve a abrir Eris Agenda.</p>';
+    else h = '<p><b>🔕 Este navegador no admite avisos.</b> Abre Eris Agenda con Chrome (Android u ordenador) o, en iPhone, desde el icono de la pantalla de inicio.</p>';
+    var arriba = estadoAvisos === 'inactivo' || estadoAvisos === 'ios', main = el.parentNode;
+    el.className = 'avisos' + (activo ? ' activo' : '') + (arriba ? ' arriba' : '');
+    el.innerHTML = h;
+    // Mientras no estén activados, la invitación va arriba del todo; luego, abajo
+    if (main) { if (arriba) { if (main.firstChild !== el) main.insertBefore(el, main.firstChild); } else { var cu = main.querySelector('.cuenta'); if (cu && el.nextSibling !== cu) main.insertBefore(el, cu); } }
+  }
+  function fallo(m){ var e = new Error(m); e.propio = true; return e; }
+  function activarAvisos(boton){
+    if (boton) boton.disabled = true;
+    Notification.requestPermission().then(function(permiso){
+      if (permiso !== 'granted') { estadoAvisos = permiso === 'denied' ? 'bloqueado' : 'inactivo'; pintarAvisos(); throw fallo('Sin tu permiso no podemos enviarte avisos'); }
+      return Promise.all([swListo, llamar({ n:n, k:k, accion:'avisos-clave' })]);
+    }).then(function(r){
+      var reg = r[0], clave = r[1] && r[1].clave;
+      if (!reg || !clave) throw fallo('No se han podido activar los avisos. Inténtalo de nuevo');
+      return reg.pushManager.getSubscription().then(function(vieja){ return vieja ? vieja.unsubscribe() : true; }).then(function(){
+        return Promise.race([
+          reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: bytesClave(clave) }),
+          new Promise(function(_, mal){ setTimeout(function(){ mal(fallo('El servicio de avisos del móvil no responde. Inténtalo en un rato')); }, 20000); })
+        ]);
+      });
+    }).then(function(sub){
+      return llamar({ n:n, k:k, accion:'avisos-alta', sub: sub.toJSON(), dispositivo: nombreDispositivo() }).then(function(r){
+        if (!r || !r.ok) { sub.unsubscribe(); throw fallo((r && r.motivo) || 'No se han podido activar los avisos'); }
+        suscripcion = sub; estadoAvisos = 'activo'; pintarAvisos();
+        try { localStorage.setItem('eris-avisos-sync', hoyISO() + n); } catch (e) {}
+        toast('Avisos activados. Te enviamos uno de prueba');
+        return llamar({ n:n, k:k, accion:'avisos-prueba' });
+      });
+    }).catch(function(e){ if (boton) boton.disabled = false; toast(e && e.propio ? e.message : 'No se han podido activar los avisos en este dispositivo'); });
+  }
+  function quitarAvisos(silencio){
+    var sub = suscripcion; if (!sub) return;
+    if (n && k) llamar({ n:n, k:k, accion:'avisos-baja', endpoint: sub.endpoint }).catch(function(){});
+    sub.unsubscribe().catch(function(){});
+    suscripcion = null; estadoAvisos = 'inactivo';
+    try { localStorage.removeItem('eris-avisos-sync'); } catch (e) {}
+    if (!silencio) { pintarAvisos(); toast('Avisos desactivados en este dispositivo'); }
+  }
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('[data-avisos]'); if (!b) return;
+    var a = b.getAttribute('data-avisos');
+    if (a === 'activar') activarAvisos(b);
+    else if (a === 'quitar') quitarAvisos(false);
+    else if (a === 'probar') {
+      b.disabled = true;
+      llamar({ n:n, k:k, accion:'avisos-prueba' }).then(function(r){
+        b.disabled = false;
+        if (r && r.ok && r.enviados > 0) toast('Aviso de prueba enviado');
+        else if (r && r.ok) { toast('No hay ningún móvil conectado. Vuelve a activarlos'); quitarAvisos(true); pintarAvisos(); }
+        else toast((r && r.motivo) || 'No se ha podido enviar');
+      }).catch(function(){ b.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
+    }
   });
   function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !document.querySelector('.proponer.abierto') && !velo.classList.contains('abierto') && !veloA.classList.contains('abierto') && !!datos; }
   document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) cargar(); });
