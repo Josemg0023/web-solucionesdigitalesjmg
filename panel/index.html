@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Eris · Panel de control</title>
+<title>Eris Agenda</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#04120E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Eris">
+<meta name="apple-mobile-web-app-title" content="Eris Agenda">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icono-192.png">
@@ -110,6 +110,7 @@ main{padding-bottom:90px}
 .dia-c.sel .punto{background:#04120E}
 .dia-c .num{font-size:.68rem;font-weight:700;color:var(--verde-luz)}
 .dia-c.sel .num{color:#04120E}
+header>*{max-width:640px;margin-left:auto;margin-right:auto}
 .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120%);background:#E9FBF4;color:#04120E;font-weight:700;font-size:.9rem;padding:10px 16px;border-radius:12px;transition:transform .25s,visibility .25s;visibility:hidden;z-index:20;max-width:calc(100% - 32px)}
 .toast.ver{transform:translateX(-50%) translateY(0);visibility:visible}
 </style>
@@ -128,9 +129,9 @@ main{padding-bottom:90px}
 <button class="btn b-ok" type="submit" style="width:100%">Guardar cita</button>
 </form></div>
 <div class="velo" id="veloAcceso"><form class="hoja" id="formAcceso" autocomplete="on">
-<h3>Usuario y contraseña <button type="button" id="cerrarAcceso" aria-label="Cerrar">×</button></h3>
-<p style="color:var(--apagado);font-size:.9rem;margin:-4px 0 14px">Con ellos podrás entrar en euxenos.com/panel desde cualquier móvil u ordenador.</p>
-<label class="campo"><span>Usuario</span><input name="usuario" autocomplete="username" required minlength="3" maxlength="40" pattern="[A-Za-z0-9._-]{3,40}" placeholder="Ej.: talleres-tete"></label>
+<h3>Cambiar contraseña <button type="button" id="cerrarAcceso" aria-label="Cerrar">×</button></h3>
+<p style="color:var(--apagado);font-size:.9rem;margin:-4px 0 14px">Al cambiarla, se cerrará la sesión en los demás dispositivos.</p>
+<label class="campo"><span>Correo electrónico</span><input name="usuario" type="email" autocomplete="username" required></label>
 <label class="campo"><span>Contraseña nueva (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>
 <label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>
 <p class="error" id="errorAcceso"></p>
@@ -141,11 +142,12 @@ main{padding-bottom:90px}
 (function(){
   var API = 'https://erisproject.app.n8n.cloud/webhook/eris-panel';
   var q = new URLSearchParams(location.search);
-  var n = q.get('n'), k = q.get('k');
+  var enlaceN = q.get('n'), enlaceK = q.get('k'), n = null, k = null;
   try {
-    if (n && k) { localStorage.setItem('eris-panel', JSON.stringify({ n: n, k: k })); }
-    else { var g = JSON.parse(localStorage.getItem('eris-panel') || 'null'); if (g) { n = g.n; k = g.k; } }
+    localStorage.removeItem('eris-panel');
+    var g = JSON.parse(localStorage.getItem('eris-agenda') || 'null'); if (g) { n = g.n; k = g.k; }
   } catch (e) {}
+  if (enlaceN && enlaceK) history.replaceState(null, '', location.pathname);
   var app = document.getElementById('app');
   var datos = null, cargando = false, pausa = 0, vista = 'resumen', diaSel = null, mesVista = null;
   try { vista = localStorage.getItem('eris-panel-vista') || 'resumen'; } catch (e) {}
@@ -176,7 +178,7 @@ main{padding-bottom:90px}
     var bR = document.getElementById('recargar'); if (bR) bR.classList.add('girando');
     llamar({ n:n, k:k, accion:'ver' }).then(function(d){
       cargando = false;
-      if (!d || !d.ok) { olvidar(); pantallaLogin('Tu acceso ya no es válido. Entra con tu usuario y contraseña.'); return; }
+      if (!d || !d.ok) { olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu correo y contraseña.'); return; }
       datos = d; document.getElementById('nueva').style.display = ''; pintar();
     }).catch(function(){
       cargando = false; if (bR) bR.classList.remove('girando');
@@ -249,12 +251,11 @@ main{padding-bottom:90px}
       + '<div class="pestanas"><button data-vista="resumen" aria-pressed="' + (vista === 'resumen') + '">Resumen</button><button data-vista="calendario" aria-pressed="' + (vista === 'calendario') + '">Calendario</button></div>'
       + '</header>'
       + '<main>'
-      + (datos.negocio.usuario ? '' : '<div class="banner">Crea tu usuario y contraseña para entrar desde cualquier móvil sin necesidad del enlace.<br><button class="btn b-ok" data-cuenta="acceso">Crear usuario y contraseña</button></div>')
       + (vista === 'calendario' ? calendario(c) : (seccion('Por confirmar', pend, 'Nada pendiente. Cuando Eris recoja una petición de cita, aparecerá aquí.')
       + seccion('Hoy', hoyL, 'No hay citas confirmadas para hoy.')
       + seccion('Próximos días', prox, 'No hay citas confirmadas en los próximos días.')
       + (prop.length ? seccion('Esperando respuesta del cliente', prop, '') : '')))
-      + '<div class="cuenta"><button data-cuenta="acceso">' + (datos.negocio.usuario ? 'Cambiar contraseña (usuario: ' + esc(datos.negocio.usuario) + ')' : 'Crear usuario y contraseña') + '</button><button data-cuenta="salir">Cerrar sesión</button></div>'
+      + '<div class="cuenta"><button data-cuenta="acceso">Cambiar contraseña' + (datos.negocio.usuario ? ' (' + esc(datos.negocio.usuario) + ')' : '') + '</button><button data-cuenta="salir">Cerrar sesión</button></div>'
       + '<p class="instalar"><b>Tenlo a mano:</b> en el móvil, abre el menú del navegador y pulsa «Añadir a pantalla de inicio». En iPhone, el botón Compartir → «Añadir a pantalla de inicio».</p>'
       + '</main>';
     document.getElementById('recargar').addEventListener('click', cargar);
@@ -320,15 +321,15 @@ main{padding-bottom:90px}
       return crypto.subtle.deriveBits({ name:'PBKDF2', hash:'SHA-256', salt: enc.encode('eris-panel:' + usuario), iterations:150000 }, key, 256);
     }).then(function(bits){ return Array.from(new Uint8Array(bits)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join(''); });
   }
-  function guardarAcceso(nn, kk){ n = nn; k = kk; try { localStorage.setItem('eris-panel', JSON.stringify({ n:n, k:k })); } catch (e) {} }
-  function olvidar(){ n = null; k = null; datos = null; try { localStorage.removeItem('eris-panel'); } catch (e) {} if (location.search) history.replaceState(null, '', location.pathname); }
+  function guardarAcceso(nn, kk){ n = nn; k = kk; try { localStorage.setItem('eris-agenda', JSON.stringify({ n:n, k:k })); } catch (e) {} }
+  function olvidar(){ n = null; k = null; datos = null; try { localStorage.removeItem('eris-agenda'); } catch (e) {} }
   function pantallaLogin(aviso){
     document.getElementById('nueva').style.display = 'none';
-    app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Panel de control</h1><p class="sub">Eris · Entra para ver las citas de tu negocio</p>'
-      + '<label class="campo"><span>Usuario</span><input name="usuario" autocomplete="username" required autocapitalize="none"></label>'
+    app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Eris Agenda</h1><p class="sub">Entra con tu correo para ver la agenda de tu negocio</p>'
+      + '<label class="campo"><span>Correo electrónico</span><input name="usuario" type="email" inputmode="email" autocomplete="username" required autocapitalize="none"></label>'
       + '<label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>'
       + '<p class="error" id="errorLogin">' + esc(aviso || '') + '</p><button class="btn b-ok" type="submit" style="width:100%">Entrar</button>'
-      + '<p class="instalar">¿No tienes usuario? Abre el panel una vez con el enlace que te dio Euxenos y créalo desde ahí.</p></form>';
+      + '<p class="instalar">¿Aún no tienes cuenta? Usa el enlace de activación que te envió Euxenos. ¿Has olvidado la contraseña? Escríbenos a soporte@euxenos.com.</p></form>';
     var f = document.getElementById('formLogin');
     f.addEventListener('submit', function(e){
       e.preventDefault();
@@ -340,6 +341,35 @@ main{padding-bottom:90px}
         guardarAcceso(r.n, r.k); cargar();
       }).catch(function(){ boton.disabled = false; document.getElementById('errorLogin').textContent = 'Sin conexión, inténtalo de nuevo.'; });
     });
+  }
+  function pantallaAlta(nombre, sugerido, nn, kk){
+    document.getElementById('nueva').style.display = 'none';
+    app.innerHTML = '<form class="login" id="formAlta" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Activa Eris Agenda</h1><p class="sub">' + esc(nombre || 'Tu negocio') + ': crea tu acceso con tu correo y una contraseña</p>'
+      + '<label class="campo"><span>Correo electrónico</span><input name="usuario" type="email" inputmode="email" autocomplete="username" required autocapitalize="none" value="' + esc(sugerido || '') + '"></label>'
+      + '<label class="campo"><span>Contraseña (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>'
+      + '<label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>'
+      + '<p class="error" id="errorAlta"></p><button class="btn b-ok" type="submit" style="width:100%">Activar y entrar</button>'
+      + '<p class="instalar">A partir de ahora entrarás en euxenos.com/panel con este correo y contraseña, desde cualquier móvil u ordenador.</p></form>';
+    var f = document.getElementById('formAlta');
+    f.addEventListener('submit', function(e){
+      e.preventDefault();
+      var err = document.getElementById('errorAlta'), u = f.usuario.value.trim().toLowerCase();
+      if (f.clave1.value !== f.clave2.value) { err.textContent = 'Las contraseñas no coinciden.'; return; }
+      var boton = f.querySelector('button'); boton.disabled = true; err.textContent = '';
+      derivar(u, f.clave1.value).then(function(h){ return llamar({ n:nn, k:kk, accion:'alta', usuario:u, hash:h }); }).then(function(r){
+        boton.disabled = false;
+        if (!r || !r.ok) { err.textContent = (r && r.motivo) || 'No se ha podido activar.'; return; }
+        guardarAcceso(r.n, r.k); toast('Cuenta activada'); cargar();
+      }).catch(function(){ boton.disabled = false; err.textContent = 'Sin conexión, inténtalo de nuevo.'; });
+    });
+  }
+  function comprobarEnlace(nn, kk){
+    app.innerHTML = '<p class="mensaje">Comprobando tu enlace…</p>';
+    llamar({ n:nn, k:kk, accion:'ver' }).then(function(r){
+      if (r && r.activar) pantallaAlta(r.nombre, r.sugerido, nn, kk);
+      else if (r && r.activado) { if (n && k) cargar(); else pantallaLogin('Tu cuenta ya está activada: entra con tu correo y contraseña.'); }
+      else pantallaLogin('Este enlace no es válido.');
+    }).catch(function(){ pantallaLogin('Sin conexión, inténtalo de nuevo.'); });
   }
   var veloA = document.getElementById('veloAcceso'), formA = document.getElementById('formAcceso');
   function abrirAcceso(){ formA.reset(); document.getElementById('errorAcceso').textContent = ''; if (datos && datos.negocio.usuario) formA.usuario.value = datos.negocio.usuario; veloA.classList.add('abierto'); }
@@ -353,7 +383,7 @@ main{padding-bottom:90px}
     derivar(u, formA.clave1.value).then(function(h){ return llamar({ n:n, k:k, accion:'acceso', usuario:u, hash:h }); }).then(function(r){
       boton.disabled = false;
       if (!r || !r.ok) { err.textContent = (r && r.motivo) || 'No se ha podido guardar.'; return; }
-      datos.negocio.usuario = r.usuario; veloA.classList.remove('abierto'); pintar(); toast('Usuario y contraseña guardados');
+      guardarAcceso(r.n, r.k); datos.negocio.usuario = r.usuario; veloA.classList.remove('abierto'); pintar(); toast('Contraseña cambiada');
     }).catch(function(){ boton.disabled = false; err.textContent = 'Sin conexión, inténtalo de nuevo.'; });
   });
   document.addEventListener('click', function(e){
@@ -364,7 +394,7 @@ main{padding-bottom:90px}
   function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !document.querySelector('.proponer.abierto') && !velo.classList.contains('abierto') && !veloA.classList.contains('abierto') && !!datos; }
   document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) cargar(); });
   setInterval(function(){ if (puedeRefrescar()) cargar(); }, 60000);
-  cargar();
+  if (enlaceN && enlaceK) comprobarEnlace(enlaceN, enlaceK); else cargar();
 })();
 </script>
 </body>

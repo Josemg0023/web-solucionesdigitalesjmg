@@ -1,7 +1,7 @@
 {
-  "name": "Eris · Panel de control",
-  "short_name": "Eris",
-  "description": "Las citas y peticiones que recoge Eris para tu negocio.",
+  "name": "Eris Agenda",
+  "short_name": "Eris Agenda",
+  "description": "La agenda de tu negocio: citas de Eris y citas apuntadas a mano.",
   "display": "standalone",
   "background_color": "#04120E",
   "theme_color": "#04120E",
