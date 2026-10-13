@@ -69,12 +69,36 @@ h2 .n{background:var(--tarjeta);border:1px solid var(--linea);border-radius:999p
 .mensaje h1{color:var(--claro);margin-bottom:10px}
 .instalar{margin:26px 0 8px;font-size:.84rem;color:#6F9888;line-height:1.5}
 .instalar b{color:var(--apagado)}
-.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120%);background:#E9FBF4;color:#04120E;font-weight:700;font-size:.9rem;padding:10px 16px;border-radius:12px;transition:transform .25s,visibility .25s;visibility:hidden;z-index:20;max-width:calc(100% - 32px)}
+.fab{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:8;display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:700;font-size:1rem;color:#04120E;background:var(--verde);border:0;border-radius:999px;padding:14px 20px;box-shadow:0 10px 28px -8px rgba(16,185,129,.7);cursor:pointer}
+.fab span{font-size:1.4rem;line-height:1}
+.velo{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center}
+.velo.abierto{display:flex}
+.hoja{width:100%;max-width:560px;max-height:92vh;overflow:auto;background:#0A1F18;border:1px solid var(--linea);border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+.hoja h3{font-family:'Sora',system-ui,sans-serif;margin:0 0 14px;font-size:1.15rem;display:flex;justify-content:space-between;align-items:center}
+.hoja h3 button{background:none;border:0;color:var(--apagado);font-size:1.6rem;cursor:pointer;padding:0 4px}
+.campo{display:block;margin-bottom:12px}
+.campo span{display:block;font-size:.82rem;color:var(--apagado);margin-bottom:5px}
+.campo input,.campo textarea{width:100%;min-height:46px;font:inherit;font-size:16px;color:var(--claro);background:#06170F;border:1px solid var(--linea);border-radius:12px;padding:10px 12px;color-scheme:dark}
+.campo textarea{min-height:70px;resize:vertical}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+main{padding-bottom:90px}
+.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120%);background:#E9FBF4;color:#04120E;font-weight:700;font-size:.9rem;padding:10px 16px;border-radius:12px;transition:transform .25s,visibility .25s;visibility:hidden;z-index:20;max-width:calc(100% - 32px)}
 .toast.ver{transform:translateX(-50%) translateY(0);visibility:visible}
 </style>
 </head>
 <body>
 <div id="app"><p class="mensaje">Cargando…</p></div>
+<button class="fab" id="nueva" aria-label="Apuntar una cita"><span>+</span> Nueva cita</button>
+<div class="velo" id="velo"><form class="hoja" id="formCita" autocomplete="off">
+<h3>Apuntar una cita <button type="button" id="cerrarHoja" aria-label="Cerrar">×</button></h3>
+<label class="campo"><span>Cliente *</span><input name="cliente" required maxlength="120" placeholder="Nombre"></label>
+<div class="dos"><label class="campo"><span>Día *</span><input name="fecha" type="date" required></label>
+<label class="campo"><span>Hora *</span><input name="hora" type="time" required step="300"></label></div>
+<label class="campo"><span>Servicio</span><input name="servicio" maxlength="200" placeholder="Ej.: cambio de aceite, corte…"></label>
+<label class="campo"><span>Teléfono</span><input name="telefono" type="tel" inputmode="tel" maxlength="30" placeholder="Opcional"></label>
+<label class="campo"><span>Notas</span><textarea name="notas" maxlength="500" placeholder="Opcional"></textarea></label>
+<button class="btn b-ok" type="submit" style="width:100%">Guardar cita</button>
+</form></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (function(){
@@ -141,7 +165,7 @@ h2 .n{background:var(--tarjeta);border:1px solid var(--linea);border-radius:999p
       + '<span class="estado e-' + esc(c.estado) + '">' + esc(ETIQUETAS[c.estado] || c.estado) + '</span></div>'
       + '<div class="cliente">' + esc(c.cliente) + '</div>'
       + (c.servicio ? '<div class="servicio">' + esc(c.servicio) + '</div>' : '')
-      + '<div class="meta">' + tel + mail + '<span>vía ' + esc(c.canal || 'Eris') + '</span></div>'
+      + '<div class="meta">' + tel + mail + '<span>' + (c.canal === 'manual' ? 'apuntada a mano' : 'vía ' + esc(c.canal || 'Eris')) + '</span></div>'
       + (c.propuesta ? '<div class="notas">Propuesta enviada: ' + esc(c.propuesta) + '</div>' : '')
       + (c.notas ? '<div class="notas">' + esc(c.notas) + '</div>' : '')
       + acc + '<div class="aviso" id="a-' + esc(c.ref) + '"></div></article>';
@@ -191,7 +215,32 @@ h2 .n{background:var(--tarjeta);border:1px solid var(--linea);border-radius:999p
       toast(txt); pausa = Date.now() + 90000;
     }).catch(function(){ toast('Sin conexión, inténtalo de nuevo'); botones.forEach(function(x){ x.disabled = false; }); });
   });
-  function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !document.querySelector('.proponer.abierto'); }
+  // ---- Apuntar citas a mano ----
+  var velo = document.getElementById('velo'), form = document.getElementById('formCita');
+  function abrirHoja(){
+    if (!datos) return;
+    form.reset();
+    var d = new Date(); d.setMinutes(d.getMinutes() < 30 ? 30 : 60, 0, 0);
+    form.fecha.value = hoyISO();
+    form.hora.value = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    velo.classList.add('abierto'); setTimeout(function(){ form.cliente.focus(); }, 50);
+  }
+  function cerrarHoja(){ velo.classList.remove('abierto'); }
+  document.getElementById('nueva').addEventListener('click', abrirHoja);
+  document.getElementById('cerrarHoja').addEventListener('click', cerrarHoja);
+  velo.addEventListener('click', function(e){ if (e.target === velo) cerrarHoja(); });
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var boton = form.querySelector('button[type=submit]'); boton.disabled = true;
+    var c = { n:n, k:k, accion:'crear', cliente: form.cliente.value, fecha: form.fecha.value, hora: form.hora.value, servicio: form.servicio.value, telefono: form.telefono.value, notas: form.notas.value };
+    llamar(c).then(function(r){
+      boton.disabled = false;
+      if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido guardar'); return; }
+      (datos.citas = datos.citas || []).push(r.cita);
+      cerrarHoja(); pintar(); toast('Cita apuntada'); pausa = Date.now() + 30000;
+    }).catch(function(){ boton.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
+  });
+  function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !document.querySelector('.proponer.abierto') && !velo.classList.contains('abierto'); }
   document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) cargar(); });
   setInterval(function(){ if (puedeRefrescar()) cargar(); }, 60000);
   cargar();
