@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ir al pago · Euxenos</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="vendor/fuentes/fuentes.css" rel="stylesheet">
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#04120E;color:#E9FBF4;font-family:'Figtree',system-ui,sans-serif;text-align:center;padding:16px}
+.giro{width:40px;height:40px;margin:0 auto 18px;border:3px solid rgba(52,211,153,.2);border-top-color:#34D399;border-radius:50%;animation:g 1s linear infinite}
+@keyframes g{to{transform:rotate(360deg)}}
+p{color:#9CC3B5}
+a{color:#34D399}
+</style>
+</head>
+<body>
+<main>
+<div class="giro" aria-hidden="true"></div>
+<h1 style="font-family:'Sora',system-ui,sans-serif;font-size:1.4rem;margin:0 0 8px">Te llevamos a la página de pago segura…</h1>
+<p id="msg">El pago se hace en Stripe, con tarjeta.</p>
+</main>
+<script>
+(function(){
+  var c = (new URLSearchParams(location.search).get('c') || '').replace(/[^A-Za-z0-9_]/g,'');
+  if (!c) { document.getElementById('msg').innerHTML = 'Este enlace no es válido. <a href="/">Volver a Euxenos</a>'; return; }
+  location.replace('https://erisproject.app.n8n.cloud/webhook/euxenos-ir-a-pagar?c=' + encodeURIComponent(c));
+})();
+</script>
+</body>
+</html>
