@@ -702,12 +702,12 @@ a{color:inherit}
             ['c','Venga, soy Álex','06:11'],
             ['e','Reservada, Álex. <b>Trae ropa cómoda y agua 💪</b>','06:11']],
       hecho:'Plaza reservada en la clase' },
-    { sector:'Guarderías', hora:'21:40', canal:'la web', pie:'Centro cerrado. Una familia escribe desde',
-      msgs:[['c','¿Quedan plazas para un bebé de 1 año para septiembre?','21:40'],
-            ['e','Sí, quedan plazas en el aula de 1 a 2 años. ¿Os gustaría visitar el centro?','21:40'],
-            ['c','Sí, ¿se puede por la mañana?','21:41'],
-            ['e','Claro. <b>Mañana la dirección os escribe para concretar el día de la visita.</b>','21:41']],
-      hecho:'Familia apuntada y dirección avisada' }
+    { sector:'Autoescuelas', hora:'22:20', canal:'Instagram', pie:'Autoescuela cerrada. Alguien escribe por',
+      msgs:[['c','Hola, ¿cuándo empieza el próximo curso para sacarse el carné de coche?','22:20'],
+            ['e','¡Hola! El próximo curso de teórico empieza el lunes a las 18:00. ¿Quieres que te reserve plaza?','22:20'],
+            ['c','Sí, porfa. Me llamo Hugo','22:21'],
+            ['e','Plaza reservada, Hugo. <b>Mañana te llamamos para explicarte los precios y las prácticas.</b>','22:21']],
+      hecho:'Alumno apuntado y autoescuela avisada' }
   ];
   var etiqueta = document.getElementById('sector-actual');
   var contador = document.getElementById('contador');
@@ -723,7 +723,7 @@ a{color:inherit}
     actual = i;
     var e = escenas[i];
     etiqueta.textContent = e.sector;
-    contador.textContent = (i + 1) + ' de ' + escenas.length + ' ejemplos · funciona igual para cualquier negocio';
+    contador.textContent = 'Así atiende Eris mientras el negocio está cerrado';
     reloj.textContent = e.hora;
     pie.innerHTML = e.pie + ' <span class="canal">' + e.canal + '</span>';
     var html = '';
