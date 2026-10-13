@@ -91,6 +91,25 @@ main{padding-bottom:90px}
 .cuenta button{font:inherit;font-size:.8rem;color:var(--apagado);background:none;border:1px solid var(--linea);border-radius:999px;padding:6px 10px;cursor:pointer}
 .banner{margin:14px 0 0;background:rgba(16,185,129,.1);border:1px solid rgba(52,211,153,.35);border-radius:14px;padding:12px 14px;font-size:.9rem;color:#CFE9DF}
 .banner button{margin-top:8px}
+.pestanas{display:flex;gap:6px;margin-top:12px;background:var(--tarjeta);border:1px solid var(--linea);border-radius:12px;padding:4px}
+.pestanas button{flex:1;font:inherit;font-weight:700;font-size:.9rem;color:var(--apagado);background:none;border:0;border-radius:9px;padding:9px;cursor:pointer}
+.pestanas button[aria-pressed="true"]{background:var(--verde);color:#04120E}
+.mes{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px}
+.mes h2{margin:0;color:var(--claro);font-size:1.05rem;text-transform:capitalize}
+.mes button{width:42px;height:42px;border-radius:12px;border:1px solid var(--linea);background:var(--tarjeta);color:var(--claro);font-size:1.2rem;cursor:pointer}
+.rejilla{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.rejilla .cab{text-align:center;font-size:.72rem;color:#6F9888;padding:4px 0;text-transform:uppercase}
+.dia-c{position:relative;aspect-ratio:1/1.05;border-radius:10px;border:1px solid transparent;background:rgba(255,255,255,.02);color:var(--claro);font:inherit;font-size:.92rem;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:7px;gap:3px}
+.dia-c.fuera{opacity:.3}
+.dia-c.hoy{border-color:rgba(52,211,153,.6)}
+.dia-c.sel{background:var(--verde);color:#04120E}
+.dia-c.pasado{color:#6F9888}
+.puntos{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;max-width:80%}
+.punto{width:6px;height:6px;border-radius:50%;background:var(--verde-luz)}
+.punto.p{background:var(--ambar)}
+.dia-c.sel .punto{background:#04120E}
+.dia-c .num{font-size:.68rem;font-weight:700;color:var(--verde-luz)}
+.dia-c.sel .num{color:#04120E}
 .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120%);background:#E9FBF4;color:#04120E;font-weight:700;font-size:.9rem;padding:10px 16px;border-radius:12px;transition:transform .25s,visibility .25s;visibility:hidden;z-index:20;max-width:calc(100% - 32px)}
 .toast.ver{transform:translateX(-50%) translateY(0);visibility:visible}
 </style>
@@ -128,7 +147,8 @@ main{padding-bottom:90px}
     else { var g = JSON.parse(localStorage.getItem('eris-panel') || 'null'); if (g) { n = g.n; k = g.k; } }
   } catch (e) {}
   var app = document.getElementById('app');
-  var datos = null, cargando = false, pausa = 0;
+  var datos = null, cargando = false, pausa = 0, vista = 'resumen', diaSel = null, mesVista = null;
+  try { vista = localStorage.getItem('eris-panel-vista') || 'resumen'; } catch (e) {}
   var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
   var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Hecha' };
@@ -192,6 +212,30 @@ main{padding-bottom:90px}
     return '<h2>' + titulo + ' <span class="n">' + lista.length + '</span></h2>' + (lista.length ? lista.map(tarjeta).join('') : '<p class="vacio">' + vacio + '</p>');
   }
   function orden(a, b){ return ((a.fecha || '9999') + (a.hora || '99')).localeCompare((b.fecha || '9999') + (b.hora || '99')); }
+  function iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function calendario(c){
+    var hoy = hoyISO();
+    if (!diaSel) diaSel = hoy;
+    if (!mesVista) { var p = diaSel.split('-'); mesVista = new Date(+p[0], +p[1]-1, 1); }
+    var porDia = {};
+    c.forEach(function(x){ if (!x.fecha || x.estado === 'cancelada') return; (porDia[x.fecha] = porDia[x.fecha] || []).push(x); });
+    var inicio = new Date(mesVista); var desfase = (inicio.getDay() + 6) % 7; inicio.setDate(1 - desfase);
+    var h = '<div class="mes"><button data-mes="-1" aria-label="Mes anterior">‹</button><h2>' + MESES[mesVista.getMonth()] + ' ' + mesVista.getFullYear() + '</h2><button data-mes="1" aria-label="Mes siguiente">›</button></div>';
+    h += '<div class="rejilla">' + ['L','M','X','J','V','S','D'].map(function(x){ return '<div class="cab">' + x + '</div>'; }).join('');
+    for (var i = 0; i < 42; i++) {
+      var d = new Date(inicio); d.setDate(inicio.getDate() + i);
+      if (i >= 35 && d.getMonth() !== mesVista.getMonth()) break;
+      var k2 = iso(d), lista = porDia[k2] || [];
+      var cls = 'dia-c' + (d.getMonth() !== mesVista.getMonth() ? ' fuera' : '') + (k2 === hoy ? ' hoy' : '') + (k2 === diaSel ? ' sel' : '') + (k2 < hoy ? ' pasado' : '');
+      var puntos = lista.length > 3 ? '<span class="num">' + lista.length + '</span>' : '<span class="puntos">' + lista.map(function(x){ return '<i class="punto' + (x.estado === 'pendiente' || x.estado === 'propuesta' ? ' p' : '') + '"></i>'; }).join('') + '</span>';
+      h += '<button class="' + cls + '" data-dia="' + k2 + '" aria-label="' + esc(nombreDia(k2)) + ', ' + lista.length + ' citas">' + d.getDate() + puntos + '</button>';
+    }
+    h += '</div>';
+    var delDia = (porDia[diaSel] || []).slice().sort(orden);
+    var titulo = nombreDia(diaSel); h += '<h2>' + esc(titulo.charAt(0).toUpperCase() + titulo.slice(1)) + ' <span class="n">' + delDia.length + '</span></h2>';
+    h += delDia.length ? delDia.map(tarjeta).join('') : '<p class="vacio">No hay citas este día. Pulsa «+ Nueva cita» para apuntar una.</p>';
+    return h;
+  }
   function pintar(){
     var hoy = hoyISO(), c = datos.citas || [];
     var pend = c.filter(function(x){ return x.estado === 'pendiente'; }).sort(orden);
@@ -202,19 +246,27 @@ main{padding-bottom:90px}
     app.innerHTML = '<header><div class="fila"><div><h1>' + esc(datos.negocio.nombre) + '</h1><div class="fecha-hoy">' + DIAS[d.getDay()] + ', ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div></div>'
       + '<button class="recargar" id="recargar" aria-label="Actualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button></div>'
       + '<div class="resumen"><span class="chip' + (pend.length ? ' alerta' : '') + '"><b>' + pend.length + '</b> por confirmar</span><span class="chip"><b>' + hoyL.length + '</b> hoy</span><span class="chip"><b>' + prox.length + '</b> próximas</span></div>'
+      + '<div class="pestanas"><button data-vista="resumen" aria-pressed="' + (vista === 'resumen') + '">Resumen</button><button data-vista="calendario" aria-pressed="' + (vista === 'calendario') + '">Calendario</button></div>'
       + '</header>'
       + '<main>'
       + (datos.negocio.usuario ? '' : '<div class="banner">Crea tu usuario y contraseña para entrar desde cualquier móvil sin necesidad del enlace.<br><button class="btn b-ok" data-cuenta="acceso">Crear usuario y contraseña</button></div>')
-      + seccion('Por confirmar', pend, 'Nada pendiente. Cuando Eris recoja una petición de cita, aparecerá aquí.')
+      + (vista === 'calendario' ? calendario(c) : (seccion('Por confirmar', pend, 'Nada pendiente. Cuando Eris recoja una petición de cita, aparecerá aquí.')
       + seccion('Hoy', hoyL, 'No hay citas confirmadas para hoy.')
       + seccion('Próximos días', prox, 'No hay citas confirmadas en los próximos días.')
-      + (prop.length ? seccion('Esperando respuesta del cliente', prop, '') : '')
+      + (prop.length ? seccion('Esperando respuesta del cliente', prop, '') : '')))
       + '<div class="cuenta"><button data-cuenta="acceso">' + (datos.negocio.usuario ? 'Cambiar contraseña (usuario: ' + esc(datos.negocio.usuario) + ')' : 'Crear usuario y contraseña') + '</button><button data-cuenta="salir">Cerrar sesión</button></div>'
       + '<p class="instalar"><b>Tenlo a mano:</b> en el móvil, abre el menú del navegador y pulsa «Añadir a pantalla de inicio». En iPhone, el botón Compartir → «Añadir a pantalla de inicio».</p>'
       + '</main>';
     document.getElementById('recargar').addEventListener('click', cargar);
   }
   app.addEventListener('click', function(e){
+    var t = e.target.closest('[data-vista],[data-mes],[data-dia]');
+    if (t) {
+      if (t.hasAttribute('data-vista')) { vista = t.getAttribute('data-vista'); try { localStorage.setItem('eris-panel-vista', vista); } catch (er) {} }
+      else if (t.hasAttribute('data-mes')) { mesVista = new Date(mesVista.getFullYear(), mesVista.getMonth() + (+t.getAttribute('data-mes')), 1); }
+      else { diaSel = t.getAttribute('data-dia'); var p = diaSel.split('-'); if (+p[1]-1 !== mesVista.getMonth()) mesVista = new Date(+p[0], +p[1]-1, 1); }
+      pintar(); return;
+    }
     var b = e.target.closest('button[data-a]'); if (!b) return;
     var a = b.getAttribute('data-a'), ref = b.getAttribute('data-r');
     if (a === 'abrir') { var p = document.getElementById('p-' + ref); p.classList.toggle('abierto'); var i = p.querySelector('input'); if (p.classList.contains('abierto')) i.focus(); return; }
@@ -242,7 +294,7 @@ main{padding-bottom:90px}
     if (!datos) return;
     form.reset();
     var d = new Date(); d.setMinutes(d.getMinutes() < 30 ? 30 : 60, 0, 0);
-    form.fecha.value = hoyISO();
+    form.fecha.value = (vista === 'calendario' && diaSel && diaSel >= hoyISO()) ? diaSel : hoyISO();
     form.hora.value = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
     velo.classList.add('abierto'); setTimeout(function(){ form.cliente.focus(); }, 50);
   }
