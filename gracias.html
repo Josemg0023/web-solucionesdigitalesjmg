@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¡Gracias! · Euxenos</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="vendor/fuentes/fuentes.css" rel="stylesheet">
+<style>
+:root{--fondo:#04120E;--claro:#E9FBF4;--apagado:#9CC3B5;--esmeralda-luz:#34D399;--linea:rgba(52,211,153,.18)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--claro);font-family:'Figtree',system-ui,sans-serif;font-size:1.0625rem;line-height:1.65}
+.envoltura{max-width:780px;margin:0 auto;padding:32px 16px 64px}
+.volver{display:inline-block;margin-bottom:28px;color:var(--esmeralda-luz);text-decoration:none;font-weight:600}
+.volver:hover{text-decoration:underline}
+h1{font-family:'Sora',system-ui,sans-serif;font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.2;margin:0 0 8px}
+h2{font-family:'Sora',system-ui,sans-serif;font-size:1.2rem;margin:36px 0 10px}
+p,li{color:#CFE9DF}
+.fecha{color:var(--apagado);font-size:.95rem;margin-bottom:28px}
+a{color:var(--esmeralda-luz)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.97rem}
+th,td{text-align:left;vertical-align:top;padding:10px 8px;border-bottom:1px solid var(--linea)}
+th{color:var(--claro);font-weight:600}
+.tabla{overflow-x:auto}
+footer{border-top:1px solid var(--linea);margin-top:48px;padding-top:20px;color:var(--apagado);font-size:.92rem;display:flex;flex-wrap:wrap;gap:8px 18px}
+footer a{text-decoration:none}
+.ok{width:64px;height:64px;border-radius:50%;background:rgba(52,211,153,.14);display:grid;place-items:center;margin:8px 0 20px}
+.pasos{counter-reset:p;list-style:none;padding:0;margin:20px 0}
+.pasos li{counter-increment:p;position:relative;padding:14px 16px 14px 56px;margin-bottom:10px;border:1px solid var(--linea);border-radius:14px;background:rgba(52,211,153,.04)}
+.pasos li::before{content:counter(p);position:absolute;left:16px;top:14px;width:26px;height:26px;border-radius:50%;background:var(--esmeralda-luz);color:var(--fondo);font-weight:700;display:grid;place-items:center;font-size:.9rem}
+.boton{display:inline-block;margin-top:12px;padding:12px 22px;border-radius:999px;background:var(--esmeralda-luz);color:var(--fondo);font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<main class="envoltura">
+<a class="volver" href="/">← Volver a Euxenos</a>
+<div class="ok" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+<h1>¡Gracias! Pago recibido</h1>
+<p>Ya formas parte de Euxenos. Te hemos enviado un correo con el resumen de lo que has contratado, y Stripe te enviará la factura.</p>
+<h2>¿Qué pasa ahora?</h2>
+<ol class="pasos">
+<li>En menos de 24 horas laborables te escribimos o te llamamos para empezar.</li>
+<li>Te pedimos la información de tu negocio: horarios, servicios, precios y preguntas frecuentes.</li>
+<li>Lo montamos todo, lo probamos contigo y lo ponemos en marcha.</li>
+</ol>
+<p>Si no ves nuestro correo, mira en la carpeta de spam o escríbenos a <a href="mailto:contacto@euxenos.com">contacto@euxenos.com</a>.</p>
+<a class="boton" href="/">Volver a la web</a>
+<footer>
+<a href="/aviso-legal.html">Aviso legal</a>
+<a href="/privacidad.html">Política de privacidad</a>
+<a href="/condiciones.html">Condiciones de contratación</a>
+<a href="mailto:contacto@euxenos.com">contacto@euxenos.com</a>
+</footer>
+</main>
+</body>
+</html>
