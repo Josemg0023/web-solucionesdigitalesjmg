@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Euxenos · Tu negocio, siempre atendido</title>
 <meta name="description" content="Automatizaciones, asistentes con IA y webs para negocios. Tus clientes reciben respuesta al momento, también cuando tu negocio está cerrado.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:title" content="Euxenos · Tu negocio, siempre atendido">
+<meta property="og:description" content="Una asistente con IA que atiende a tus clientes por chat, por voz y por teléfono, las 24 horas.">
+<meta property="og:image" content="https://euxenos.com/og-image.png">
+<meta property="og:url" content="https://euxenos.com/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#04120E">
 <link href="vendor/n8n-chat/style.css" rel="stylesheet">
 <link href="vendor/fuentes/fuentes.css" rel="stylesheet">
 <style>
@@ -34,8 +43,8 @@ a{color:inherit}
 .cabecera{position:relative;z-index:2;border-bottom:1px solid var(--linea);background:rgba(4,18,14,.7);backdrop-filter:blur(10px)}
 .cabecera .envoltura{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:18px;padding-bottom:18px}
 .marca{font-family:var(--display);font-weight:700;font-size:1.1rem;letter-spacing:-.01em;text-decoration:none;display:flex;align-items:center;gap:10px}
-.marca::before{content:"";width:14px;height:14px;border-radius:4px;background:var(--degradado);box-shadow:0 0 14px rgba(209,16,74,.6)}
-.marca span{background:var(--degradado);-webkit-background-clip:text;background-clip:text;color:transparent}
+.marca img{width:30px;height:30px;display:block}
+.marca span{color:var(--claro)}
 .boton{display:inline-flex;align-items:center;gap:10px;font-family:var(--texto);font-weight:600;font-size:1rem;border:0;cursor:pointer;text-decoration:none;border-radius:12px;padding:14px 26px;transition:transform .15s ease,box-shadow .2s ease,background-color .2s ease}
 .boton:active{transform:scale(.98)}
 .boton-luz{background:var(--rubi);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.08) inset,0 10px 30px -8px rgba(209,16,74,.75)}
@@ -301,7 +310,7 @@ a{color:inherit}
 
 <header class="cabecera">
   <div class="envoltura">
-    <a class="marca" href="#"><span>Euxenos</span><b class="insignia-beta">BETA</b></a>
+    <a class="marca" href="#"><img src="marca/euxenos-simbolo.svg" alt="" width="30" height="30"><span>Euxenos</span><b class="insignia-beta">BETA</b></a>
     <nav class="menu-cabecera"><a href="#precios">Precios</a><button class="boton boton-borde" type="button" data-abrir-eris>Contáctanos</button></nav>
   </div>
 </header>
