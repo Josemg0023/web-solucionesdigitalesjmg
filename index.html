@@ -192,6 +192,14 @@ a{color:inherit}
   --chat--border-radius:12px;
 }
 #chat-eris .chat-header{display:none}
+#chat-eris .chat-layout,#chat-eris .chat-body,.panel{overscroll-behavior:contain}
+#chat-eris .ajuste{display:inline-flex;align-items:center;gap:4px;margin-left:8px;vertical-align:middle;font:600 .74rem/1 'Figtree',system-ui,sans-serif;border-radius:999px;padding:5px 9px;cursor:pointer;border:1px solid;transition:background-color .15s,color .15s}
+#chat-eris .ajuste.quitar{color:#B80E41;background:#fff;border-color:rgba(184,14,65,.45)}
+#chat-eris .ajuste.quitar:hover{background:#B80E41;color:#fff}
+#chat-eris .ajuste.anadir{color:#0B7A57;background:#fff;border-color:rgba(14,159,110,.5)}
+#chat-eris .ajuste.anadir:hover{background:#0E9F6E;color:#fff}
+#chat-eris .ajuste:disabled{opacity:.45;cursor:default}
+#chat-eris li.tachado{text-decoration:line-through;opacity:.55}
 .acciones{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 .barra-llamada{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px;background:linear-gradient(90deg,rgba(209,16,74,.14),rgba(16,185,129,.14)),#071A14;border-bottom:1px solid rgba(52,211,153,.25);color:#CFE9DF;font-size:.85rem}
 .barra-llamada button{display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:600;font-size:.85rem;color:#fff;background:var(--rubi);border:0;border-radius:8px;padding:6px 12px;cursor:pointer}
@@ -1188,6 +1196,79 @@ a{color:inherit}
   botonPanel.addEventListener('click', llamar);
   botonColgar.addEventListener('click', colgar);
   window.addEventListener('pagehide', function(){ if(sesion){ try { sesion.endSession(); } catch(e) {} } });
+
+
+  // ---- Que la rueda del ratón mueva el chat y no la página ----
+  panel.addEventListener('wheel', function(e){
+    var el = e.target;
+    while(el && el !== panel){
+      var st = getComputedStyle(el);
+      if(/(auto|scroll)/.test(st.overflowY) && el.scrollHeight > el.clientHeight + 1){
+        var arriba = e.deltaY < 0, alTope = el.scrollTop <= 0, alFondo = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+        if((arriba && !alTope) || (!arriba && !alFondo)) return;
+      }
+      el = el.parentElement;
+    }
+    e.preventDefault();
+  }, { passive:false });
+
+  // ---- Pack a medida: botones para quitar o añadir servicios de la lista de Eris ----
+  var AJUSTES = {
+    es:['Quitar','Añadir','Quita: ','Añade: '], en:['Remove','Add','Remove: ','Add: '],
+    ca:['Treure','Afegir','Treu: ','Afegeix: '], va:['Llevar','Afegir','Lleva: ','Afig: '],
+    gl:['Quitar','Engadir','Quita: ','Engade: '], eu:['Kendu','Gehitu','Kendu: ','Gehitu: '],
+    fr:['Retirer','Ajouter','Retire : ','Ajoute : '], pt:['Retirar','Acrescentar','Retira: ','Acrescenta: '],
+    de:['Entfernen','Hinzufügen','Entferne: ','Füge hinzu: '], it:['Togli','Aggiungi','Togli: ','Aggiungi: ']
+  };
+  function enviarAlChat(texto){
+    var campo = document.querySelector('#chat-n8n textarea');
+    if(!campo) return;
+    campo.value = texto;
+    campo.dispatchEvent(new Event('input', { bubbles:true }));
+    setTimeout(function(){
+      var b = document.querySelector('#chat-n8n .chat-input-send-button');
+      if(b) b.click();
+      else campo.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true }));
+    }, 30);
+  }
+  function nombreServicio(li){
+    var copia = li.cloneNode(true);
+    copia.querySelectorAll('.ajuste').forEach(function(b){ b.remove(); });
+    var t = copia.textContent.replace(/\s+/g,' ').trim();
+    var dos = t.indexOf(':');
+    return (dos > 0 && /€/.test(t) ? t.slice(0, dos) : t).replace(/^[-•·]\s*/,'').trim();
+  }
+  function prepararLista(){
+    if(modoChat !== 'medida') return;
+    var bots = document.querySelectorAll('#chat-n8n .chat-message-from-bot');
+    if(!bots.length) return;
+    var ultimo = bots[bots.length - 1];
+    bots.forEach(function(m){ if(m !== ultimo) m.querySelectorAll('.ajuste').forEach(function(b){ b.disabled = true; }); });
+    var tx = AJUSTES[idioma] || AJUSTES.es;
+    ultimo.querySelectorAll('li').forEach(function(li){
+      if(li.querySelector('.ajuste') || li.querySelector('ul,ol')) return;
+      var texto = li.textContent;
+      if(texto.replace(/\s/g,'').length < 3) return;
+      var conPrecio = /€/.test(texto);
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ajuste ' + (conPrecio ? 'quitar' : 'anadir');
+      b.textContent = (conPrecio ? '✕ ' + tx[0] : '+ ' + tx[1]);
+      b.addEventListener('click', function(){
+        if(b.disabled) return;
+        var nombre = nombreServicio(li);
+        ultimo.querySelectorAll('.ajuste').forEach(function(x){ x.disabled = true; });
+        if(conPrecio) li.classList.add('tachado');
+        enviarAlChat((conPrecio ? tx[2] : tx[3]) + nombre);
+      });
+      li.appendChild(b);
+    });
+  }
+  var esperaLista = null;
+  new MutationObserver(function(){
+    clearTimeout(esperaLista);
+    esperaLista = setTimeout(prepararLista, 700);
+  }).observe(document.getElementById('chat-n8n'), { childList:true, subtree:true, characterData:true });
 
   function abrir(ev){
     var quiere = (ev && ev.currentTarget && ev.currentTarget.getAttribute && ev.currentTarget.getAttribute('data-modo') === 'medida') ? 'medida' : 'normal';
