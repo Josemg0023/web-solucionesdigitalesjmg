@@ -164,7 +164,7 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
   try { vista = localStorage.getItem('eris-panel-vista') || 'resumen'; } catch (e) {}
   var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
   var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Hecha', caducada:'Sin confirmar · cerrada' };
+  var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Finalizada', caducada:'Sin confirmar · cerrada' };
 
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function hoyISO(){ var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
@@ -210,14 +210,14 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
         + '<div class="proponer" id="p-' + esc(c.ref) + '"><input type="text" maxlength="200" placeholder="Ej.: el jueves a las 18:30 o el viernes a las 10:00" aria-label="Hora que propones">'
         + '<div class="acciones"><button class="btn b-ok" data-a="proponer" data-r="' + esc(c.ref) + '">Enviar propuesta</button></div></div>';
     } else if (c.estado === 'confirmada') {
-      acc = '<div class="acciones"><button class="btn b-otra" data-a="hecha" data-r="' + esc(c.ref) + '">Marcar como hecha</button><button class="btn b-no" data-a="cancelar" data-r="' + esc(c.ref) + '">Cancelar</button></div>';
+      acc = '<div class="acciones"><button class="btn b-otra" data-a="hecha" data-r="' + esc(c.ref) + '">Marcar como finalizada</button><button class="btn b-no" data-a="cancelar" data-r="' + esc(c.ref) + '">Cancelar</button></div>';
     }
     return '<article class="cita ' + esc(c.estado) + '" id="c-' + esc(c.ref) + '">'
       + '<div class="arriba"><div><div class="hora">' + esc(c.hora || '—') + '</div><div class="dia">' + esc(nombreDia(c.fecha)) + '</div></div>'
       + '<span class="estado e-' + esc(c.estado) + '">' + esc(ETIQUETAS[c.estado] || c.estado) + '</span></div>'
       + '<div class="cliente">' + esc(c.cliente) + '</div>'
       + (c.servicio ? '<div class="servicio">' + esc(c.servicio) + '</div>' : '')
-      + '<div class="meta">' + tel + mail + '<span>' + (c.canal === 'manual' ? 'apuntada a mano' : 'vía ' + esc(c.canal || 'Eris')) + '</span>' + (String(c.cierre || '').indexOf('auto') === 0 ? '<span>cerrada automáticamente</span>' : '') + '</div>'
+      + '<div class="meta">' + tel + mail + '<span>' + (c.canal === 'manual' ? 'apuntada a mano' : 'vía ' + esc(c.canal || 'Eris')) + '</span>' + (String(c.cierre || '').indexOf('auto') === 0 ? '<span>' + (c.estado === 'hecha' ? 'finalizada' : 'cerrada') + ' automáticamente</span>' : '') + '</div>'
       + (c.propuesta ? '<div class="notas">Propuesta enviada: ' + esc(c.propuesta) + '</div>' : '')
       + (c.notas ? '<div class="notas">' + esc(c.notas) + '</div>' : '')
       + acc + '<div class="aviso" id="a-' + esc(c.ref) + '"></div></article>';
@@ -295,7 +295,7 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
       if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido guardar'); botones.forEach(function(x){ x.disabled = false; }); return; }
       var c = (datos.citas || []).filter(function(x){ return x.ref === ref; })[0];
       if (c) { c.estado = r.estado; if (a === 'proponer') c.propuesta = propuesta; }
-      var txt = { confirmar:'Cita confirmada', proponer:'Propuesta enviada', cancelar:'Cita cancelada', hecha:'Marcada como hecha' }[a];
+      var txt = { confirmar:'Cita confirmada', proponer:'Propuesta enviada', cancelar:'Cita cancelada', hecha:'Cita finalizada' }[a];
       pintar();
       var av = document.getElementById('a-' + ref);
       if (av && a !== 'hecha') {
