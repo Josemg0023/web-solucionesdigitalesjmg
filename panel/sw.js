@@ -1,4 +1,4 @@
-/* Eris Agenda – service worker: solo avisos (no guarda nada en caché) */
+/* Euxenos – service worker: solo avisos (no guarda nada en caché) */
 self.addEventListener('install', function () { self.skipWaiting(); });
 self.addEventListener('activate', function (e) { e.waitUntil(self.clients.claim()); });
 
@@ -13,7 +13,7 @@ self.addEventListener('push', function (e) {
   };
   if (d.tag) { opciones.tag = d.tag; opciones.renotify = true; }
   e.waitUntil(Promise.all([
-    self.registration.showNotification(d.titulo || 'Eris Agenda', opciones),
+    self.registration.showNotification(d.titulo || 'Euxenos', opciones),
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (cs) {
       cs.forEach(function (c) { c.postMessage({ tipo: 'eris-actualizar' }); });
     })

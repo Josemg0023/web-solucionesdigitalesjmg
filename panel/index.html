@@ -3,207 +3,311 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Eris Agenda</title>
+<title>Euxenos</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#04120E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Eris Agenda">
+<meta name="apple-mobile-web-app-title" content="Euxenos">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icono-192.png">
 <link href="../vendor/fuentes/fuentes.css" rel="stylesheet">
 <style>
-:root{--fondo:#04120E;--tarjeta:#0A1F18;--claro:#E9FBF4;--apagado:#9CC3B5;--linea:rgba(52,211,153,.18);--verde:#10B981;--verde-luz:#34D399;--rubi:#D1104A;--ambar:#F5B942}
+:root{--fondo:#04120E;--tarjeta:#0A1F18;--claro:#E9FBF4;--apagado:#9CC3B5;--tenue:#6F9888;--linea:rgba(52,211,153,.18);--verde:#10B981;--verde-luz:#34D399;--rubi:#D1104A;--rubi-luz:#F0386B;--ambar:#F5B942}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--fondo);color:var(--claro);font-family:'Figtree',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
-body{min-height:100vh;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
-header{position:sticky;top:0;z-index:5;background:rgba(4,18,14,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--linea);padding:calc(12px + env(safe-area-inset-top)) 16px 12px}
-.fila{display:flex;align-items:center;justify-content:space-between;gap:12px}
-h1{font-family:'Sora',system-ui,sans-serif;font-size:1.15rem;margin:0;line-height:1.25}
-.fecha-hoy{color:var(--apagado);font-size:.88rem;margin-top:2px}
-.recargar{flex:none;width:42px;height:42px;border-radius:12px;border:1px solid var(--linea);background:var(--tarjeta);color:var(--claro);display:grid;place-items:center;cursor:pointer}
-.recargar svg{width:20px;height:20px}
-.recargar.girando svg{animation:g 1s linear infinite}
+body{min-height:100vh}
+button{font:inherit}
+/* Cabecera */
+header{position:sticky;top:0;z-index:5;background:rgba(4,18,14,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--linea);padding:calc(10px + env(safe-area-inset-top)) 12px 10px}
+.cab{display:flex;align-items:center;gap:10px;max-width:680px;margin:0 auto}
+.icono-btn{flex:none;width:42px;height:42px;border-radius:12px;border:1px solid var(--linea);background:var(--tarjeta);color:var(--claro);display:grid;place-items:center;cursor:pointer;position:relative}
+.icono-btn svg{width:20px;height:20px}
+.icono-btn.girando svg{animation:g 1s linear infinite}
+.icono-btn .bolita{position:absolute;top:6px;right:6px;width:9px;height:9px;border-radius:50%;background:var(--ambar);box-shadow:0 0 0 2px var(--fondo)}
 @keyframes g{to{transform:rotate(360deg)}}
+.titulo{flex:1;min-width:0}
+.titulo small{display:block;color:var(--apagado);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.titulo h1{font-family:'Sora',system-ui,sans-serif;font-size:1.12rem;margin:0;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+main{padding:6px 16px calc(110px + env(safe-area-inset-bottom));max-width:680px;margin:0 auto}
+h2{font-family:'Sora',system-ui,sans-serif;font-size:.95rem;letter-spacing:.02em;color:var(--apagado);margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+h2 .n{background:var(--tarjeta);border:1px solid var(--linea);border-radius:999px;padding:1px 8px;font-size:.78rem;color:var(--claro)}
+h2 .accion{margin-left:auto;font-size:.82rem;font-family:'Figtree',system-ui,sans-serif;color:var(--verde-luz);background:none;border:0;cursor:pointer;padding:4px}
+.vacio{color:var(--tenue);font-size:.9rem;padding:8px 2px;margin:0}
+.fecha-grande{font-family:'Sora',system-ui,sans-serif;font-size:1.5rem;margin:16px 0 2px}
+.fecha-grande::first-letter,.dia::first-letter{text-transform:uppercase}
+.sub{color:var(--apagado);font-size:.9rem;margin:0}
 .resumen{display:flex;gap:8px;margin-top:12px;overflow-x:auto}
 .chip{flex:none;font-size:.82rem;padding:6px 10px;border-radius:999px;background:var(--tarjeta);border:1px solid var(--linea);color:var(--apagado)}
 .chip b{color:var(--claro)}
 .chip.alerta{border-color:rgba(245,185,66,.5);color:#F7D58C}
-main{padding:8px 16px 0;max-width:640px;margin:0 auto}
-h2{font-family:'Sora',system-ui,sans-serif;font-size:.95rem;letter-spacing:.02em;color:var(--apagado);margin:22px 0 10px;display:flex;align-items:center;gap:8px}
-h2 .n{background:var(--tarjeta);border:1px solid var(--linea);border-radius:999px;padding:1px 8px;font-size:.78rem;color:var(--claro)}
-.vacio{color:#6F9888;font-size:.9rem;padding:10px 2px}
+.franja{margin:14px 0 0;border-radius:14px;padding:12px 14px;font-size:.92rem;line-height:1.45}
+.franja.cerrado{background:rgba(209,16,74,.12);border:1px solid rgba(209,16,74,.4);color:#FFC2D3}
+.franja.info{background:rgba(16,185,129,.08);border:1px solid rgba(52,211,153,.35);color:#CFE9DF}
+.franja b{color:#fff}
+/* Citas */
 .cita{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:14px;margin-bottom:10px}
-.cita.pendiente{border-color:rgba(245,185,66,.45);box-shadow:0 0 0 1px rgba(245,185,66,.08) inset}
-.cita.cancelada{opacity:.55}
+.cita.pendiente{border-color:rgba(245,185,66,.45)}
+.cita.cancelada{opacity:.55}.cita.caducada{opacity:.6}
 .arriba{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .hora{font-family:'Sora',system-ui,sans-serif;font-weight:700;font-size:1.25rem;line-height:1}
 .dia{color:var(--apagado);font-size:.82rem;margin-top:4px}
-.dia::first-letter,.fecha-hoy::first-letter{text-transform:uppercase}
 .estado{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:999px;white-space:nowrap}
-.e-pendiente{background:rgba(245,185,66,.15);color:#F7D58C}
-.e-confirmada{background:rgba(16,185,129,.15);color:var(--verde-luz)}
-.e-propuesta{background:rgba(96,165,250,.15);color:#9CC8FF}
-.e-cancelada{background:rgba(209,16,74,.15);color:#FF8FB0}
-.e-hecha{background:rgba(255,255,255,.08);color:var(--apagado)}
-.e-caducada{background:rgba(255,255,255,.06);color:#8FA89E}
-.cita.caducada{opacity:.6}
-.punto.x{background:#4F6B60}
-.avisos{margin:22px 0 0;background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:14px}
-.avisos p{margin:0;font-size:.9rem;color:#CFE9DF;line-height:1.45}
-.avisos p b{color:var(--claro)}
-.avisos .acciones{margin-top:10px}
-.avisos.activo{border-color:rgba(52,211,153,.45)}
-.instalar-app .btn{width:100%;margin-top:18px}
-.instalar-app .instalar{margin-top:18px}
-.avisos.arriba{margin:14px 0 4px;border-color:rgba(52,211,153,.45);background:rgba(16,185,129,.08)}
-.avisos.oculto{display:none}
-.avisos .ahora-no{flex:0 0 auto;background:none;border:0;color:var(--apagado);font:inherit;font-size:.88rem;cursor:pointer;padding:10px 8px}
-.botones-cab{display:flex;gap:8px;flex:none}
-.ajustes h4{font-family:'Sora',system-ui,sans-serif;font-size:.85rem;letter-spacing:.03em;text-transform:uppercase;color:var(--apagado);margin:18px 0 8px}
-.ajustes h4:first-of-type{margin-top:0}
-.ajustes .avisos{margin:0}
-.ajustes .fila-ajuste{display:flex;flex-direction:column;gap:8px}
-.ajustes .fila-ajuste .btn{width:100%}
-.ajustes .cuenta-txt{font-size:.88rem;color:var(--apagado);margin:0 0 4px}
-.ajustes .version{margin-top:18px;font-size:.78rem;color:#6F9888;text-align:center}
+.e-pendiente{background:rgba(245,185,66,.15);color:#F7D58C}.e-confirmada{background:rgba(16,185,129,.15);color:var(--verde-luz)}
+.e-propuesta{background:rgba(96,165,250,.15);color:#9CC8FF}.e-cancelada{background:rgba(209,16,74,.15);color:#FF8FB0}
+.e-hecha{background:rgba(255,255,255,.08);color:var(--apagado)}.e-caducada{background:rgba(255,255,255,.06);color:#8FA89E}
 .cliente{font-weight:700;font-size:1.05rem;margin:12px 0 2px}
 .servicio{color:#CFE9DF}
 .meta{color:var(--apagado);font-size:.85rem;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 12px}
 .meta a{color:var(--verde-luz);text-decoration:none}
 .notas{margin-top:8px;font-size:.88rem;color:#CFE9DF;background:rgba(255,255,255,.03);border-radius:10px;padding:8px 10px}
 .acciones{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.btn{flex:1 1 auto;min-height:44px;font:inherit;font-weight:700;font-size:.92rem;border-radius:12px;border:1px solid transparent;padding:10px 12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn{flex:1 1 auto;min-height:44px;font-weight:700;font-size:.92rem;border-radius:12px;border:1px solid transparent;padding:10px 12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
 .btn:disabled{opacity:.5;cursor:default}
 .b-ok{background:var(--verde);color:#04120E}
 .b-otra{background:transparent;color:var(--claro);border-color:var(--linea)}
 .b-no{background:transparent;color:#FF8FB0;border-color:rgba(209,16,74,.4);flex:0 0 auto}
 .b-wa{background:#1FAF5A;color:#fff}
-.proponer{margin-top:10px;display:none}
-.proponer.abierto{display:block}
-.proponer input{width:100%;min-height:44px;font:inherit;font-size:16px;color:var(--claro);background:#06170F;border:1px solid var(--linea);border-radius:12px;padding:10px 12px}
-.proponer .acciones{margin-top:8px}
+.ancho{width:100%}
+.proponer{margin-top:10px;display:none}.proponer.abierto{display:block}
 .aviso{margin-top:10px;font-size:.86rem;color:var(--verde-luz)}
-.mensaje{max-width:440px;margin:18vh auto 0;padding:0 16px;text-align:center;color:var(--apagado)}
-.mensaje h1{color:var(--claro);margin-bottom:10px}
-.instalar{margin:26px 0 8px;font-size:.84rem;color:#6F9888;line-height:1.5}
-.instalar b{color:var(--apagado)}
-.fab{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:8;display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:700;font-size:1rem;color:#04120E;background:var(--verde);border:0;border-radius:999px;padding:14px 20px;box-shadow:0 10px 28px -8px rgba(16,185,129,.7);cursor:pointer}
-.fab span{font-size:1.4rem;line-height:1}
-.velo{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center}
+input,textarea,select{width:100%;min-height:46px;font:inherit;font-size:16px;color:var(--claro);background:#06170F;border:1px solid var(--linea);border-radius:12px;padding:10px 12px;color-scheme:dark}
+textarea{min-height:90px;resize:vertical}
+/* Listas (catálogo, cierres, pendientes) */
+.fila{display:flex;align-items:center;gap:12px;background:var(--tarjeta);border:1px solid var(--linea);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.fila .txt{flex:1;min-width:0}
+.fila .txt b{display:block;font-weight:700}
+.fila .txt>span{display:block;color:var(--apagado);font-size:.85rem;margin-top:2px}
+.fila .precio{font-family:'Sora',system-ui,sans-serif;font-weight:700;white-space:nowrap}
+.fila.tocable{cursor:pointer;width:100%;text-align:left;color:inherit;font:inherit}
+.fila.apagada{opacity:.55}
+.etq{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--apagado);margin-left:6px;vertical-align:middle}
+.quitar{flex:none;width:36px;height:36px;border-radius:10px;border:1px solid rgba(209,16,74,.35);background:none;color:#FF8FB0;cursor:pointer;font-size:1.1rem}
+.check{flex:none;width:28px;height:28px;border-radius:8px;border:2px solid var(--verde-luz);background:none;cursor:pointer;display:grid;place-items:center;color:#04120E;font-weight:800}
+.check.si{background:var(--verde-luz)}
+.fila.hecho .txt b{text-decoration:line-through;color:var(--tenue)}
+.pestanas{display:flex;gap:6px;margin-top:14px;background:var(--tarjeta);border:1px solid var(--linea);border-radius:12px;padding:4px}
+.pestanas button{flex:1;font-weight:700;font-size:.9rem;color:var(--apagado);background:none;border:0;border-radius:9px;padding:9px;cursor:pointer}
+.pestanas button[aria-pressed="true"]{background:var(--verde);color:#04120E}
+.dias{display:grid;gap:8px}
+.dia-h{display:grid;grid-template-columns:92px 1fr;align-items:center;gap:10px}
+.dia-h label{font-weight:700}
+.nuevo-p{display:flex;gap:8px;margin-top:12px}
+.nuevo-p input{flex:1}
+.nuevo-p .btn{flex:0 0 auto}
+.caja{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:14px}
+.caja p{margin:0 0 10px;font-size:.9rem;color:#CFE9DF;line-height:1.45}
+.caja p b{color:var(--claro)}
+.caja.activo{border-color:rgba(52,211,153,.45)}
+.ayuda{font-size:.84rem;color:var(--tenue);line-height:1.5;margin:8px 0 0}
+.ayuda b{color:var(--apagado)}
+.columna{display:flex;flex-direction:column;gap:8px}
+.version{margin-top:22px;font-size:.78rem;color:var(--tenue);text-align:center}
+/* Calendario */
+.mes{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px}
+.mes h2{margin:0;color:var(--claro);font-size:1.05rem;text-transform:capitalize}
+.rejilla{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.rejilla .cabd{text-align:center;font-size:.72rem;color:var(--tenue);padding:4px 0;text-transform:uppercase}
+.dia-c{position:relative;aspect-ratio:1/1.05;border-radius:10px;border:1px solid transparent;background:rgba(255,255,255,.02);color:var(--claro);font-size:.92rem;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:7px;gap:3px}
+.dia-c.fuera{opacity:.3}.dia-c.hoy{border-color:rgba(52,211,153,.6)}.dia-c.pasado{color:var(--tenue)}
+.dia-c.cierre{background:rgba(209,16,74,.14);color:#FFB3C8}
+.dia-c.sel{background:var(--verde);color:#04120E}
+.puntos{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;max-width:80%}
+.punto{width:6px;height:6px;border-radius:50%;background:var(--verde-luz)}
+.punto.p{background:var(--ambar)}.punto.x{background:#4F6B60}
+.dia-c.sel .punto{background:#04120E}
+.dia-c .num{font-size:.68rem;font-weight:700;color:var(--verde-luz)}.dia-c.sel .num{color:#04120E}
+/* Menú lateral */
+.velo{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.55);display:none}
 .velo.abierto{display:flex}
+.velo.abajo{align-items:flex-end;justify-content:center}
+.cajon{width:min(320px,86vw);height:100%;background:#071A13;border-right:1px solid var(--linea);padding:calc(18px + env(safe-area-inset-top)) 12px calc(18px + env(safe-area-inset-bottom));overflow:auto;display:flex;flex-direction:column;animation:entra .18s ease-out}
+@keyframes entra{from{transform:translateX(-30px);opacity:.4}to{transform:none;opacity:1}}
+.marca{display:flex;align-items:center;gap:12px;padding:4px 8px 16px;border-bottom:1px solid var(--linea);margin-bottom:10px}
+.marca img{width:42px;height:42px;border-radius:12px}
+.marca b{font-family:'Sora',system-ui,sans-serif;font-size:1.15rem;display:block}
+.marca span{color:var(--apagado);font-size:.84rem}
+.cajon nav button{display:flex;align-items:center;gap:14px;width:100%;background:none;border:0;color:var(--claro);font-size:1rem;font-weight:600;padding:12px 10px;border-radius:12px;cursor:pointer;text-align:left}
+.cajon nav button svg{width:22px;height:22px;flex:none;color:var(--apagado)}
+.cajon nav button[aria-current="page"]{background:rgba(16,185,129,.14);color:var(--verde-luz)}
+.cajon nav button[aria-current="page"] svg{color:var(--verde-luz)}
+.cajon nav .cuenta-n{margin-left:auto;font-size:.75rem;font-weight:700;background:var(--ambar);color:#04120E;border-radius:999px;padding:1px 8px}
+.cajon hr{border:0;border-top:1px solid var(--linea);margin:10px 0}
+/* Hojas (formularios) */
 .hoja{width:100%;max-width:560px;max-height:92vh;overflow:auto;background:#0A1F18;border:1px solid var(--linea);border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
 .hoja h3{font-family:'Sora',system-ui,sans-serif;margin:0 0 14px;font-size:1.15rem;display:flex;justify-content:space-between;align-items:center}
 .hoja h3 button{background:none;border:0;color:var(--apagado);font-size:1.6rem;cursor:pointer;padding:0 4px}
 .campo{display:block;margin-bottom:12px}
-.campo span{display:block;font-size:.82rem;color:var(--apagado);margin-bottom:5px}
-.campo input,.campo textarea{width:100%;min-height:46px;font:inherit;font-size:16px;color:var(--claro);background:#06170F;border:1px solid var(--linea);border-radius:12px;padding:10px 12px;color-scheme:dark}
-.campo textarea{min-height:70px;resize:vertical}
+.campo>span{display:block;font-size:.82rem;color:var(--apagado);margin-bottom:5px}
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-main{padding-bottom:90px}
+.interruptor{display:flex;align-items:center;gap:10px;margin:4px 0 14px;font-size:.92rem}
+.interruptor input{width:22px;height:22px;min-height:0;accent-color:var(--verde)}
+.error{color:#FF8FB0;font-size:.88rem;min-height:1.2em;margin:4px 0 10px}
+/* Botones flotantes */
+.fab{position:fixed;left:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:8;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:.98rem;color:#04120E;background:var(--verde);border:0;border-radius:999px;padding:13px 18px;box-shadow:0 10px 28px -8px rgba(16,185,129,.7);cursor:pointer}
+.fab span{font-size:1.35rem;line-height:1}
+.lanzador{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:9;display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:1rem;color:#fff;background:var(--rubi);border:0;border-radius:999px;padding:13px 20px;cursor:pointer;box-shadow:0 0 0 1px rgba(255,255,255,.08) inset,0 10px 30px -8px rgba(209,16,74,.75)}
+.lanzador .punto-luz{width:9px;height:9px;border-radius:50%;background:var(--verde-luz);box-shadow:0 0 0 3px rgba(52,211,153,.25),0 0 10px var(--verde-luz)}
+/* Panel de Eris (como en la web) */
+.panel-eris{position:fixed;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));width:380px;height:min(600px,calc(100vh - 120px));background:#fff;border-radius:18px;overflow:hidden;z-index:40;box-shadow:0 30px 80px -20px rgba(0,0,0,.8),0 0 0 1px var(--linea);display:none;flex-direction:column}
+.panel-eris.abierto{display:flex}
+.panel-cab{background:linear-gradient(120deg,#5E0A26,#0B5A42);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:12px 10px 12px 18px;font-family:'Sora',system-ui,sans-serif;font-weight:700;padding-top:calc(12px + env(safe-area-inset-top))}
+.panel-cab small{display:block;font-family:'Figtree',system-ui,sans-serif;font-weight:400;font-size:.78rem;color:#CFE9DF}
+.panel-cab .acc{display:flex;gap:2px}
+.panel-cab button{background:transparent;border:0;color:#fff;cursor:pointer;padding:6px 10px;border-radius:8px;font-size:.8rem}
+.panel-cab button.x{font-size:1.6rem;line-height:1}
+.mensajes{flex:1;min-height:0;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:10px;background:#fff;overscroll-behavior:contain}
+.m{max-width:85%;padding:10px 13px;border-radius:12px;font-size:.95rem;line-height:1.45;white-space:pre-wrap;word-wrap:break-word}
+.m.eris{align-self:flex-start;background:#EAF7F1;color:#0B2A20;border-bottom-left-radius:4px}
+.m.yo{align-self:flex-end;background:#0E9F6E;color:#fff;border-bottom-right-radius:4px}
+.m.error{background:#FDECF1;color:#8A0B30}
+.escribiendo{align-self:flex-start;background:#EAF7F1;border-radius:12px;padding:12px 14px;display:flex;gap:5px}
+.escribiendo i{width:7px;height:7px;border-radius:50%;background:#7FB8A3;animation:sal 1s infinite}
+.escribiendo i:nth-child(2){animation-delay:.15s}.escribiendo i:nth-child(3){animation-delay:.3s}
+@keyframes sal{0%,60%,100%{transform:none}30%{transform:translateY(-5px)}}
+.sugerencias{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px;background:#fff}
+.sugerencias button{font-size:.82rem;font-weight:600;color:#0B7A57;background:#fff;border:1px solid rgba(14,159,110,.5);border-radius:999px;padding:6px 11px;cursor:pointer}
+.escribir{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid #E3EEE9;background:#fff}
+.escribir textarea{flex:1;min-height:44px;max-height:120px;color:#0B2A20;background:#F4F8F6;border:1px solid #D5E4DD;border-radius:12px;padding:10px 12px;resize:none;color-scheme:light}
+.escribir button{flex:none;width:46px;height:46px;border-radius:12px;border:0;background:#D1104A;color:#fff;cursor:pointer;display:grid;place-items:center}
+.escribir button:disabled{opacity:.5}
+.escribir svg{width:20px;height:20px}
+@media (max-width:520px){.panel-eris{inset:0;width:auto;height:auto;border-radius:0}}
+/* Varios */
+.mensaje{max-width:440px;margin:18vh auto 0;padding:0 16px;text-align:center;color:var(--apagado)}
+.mensaje h1{color:var(--claro);margin-bottom:10px}
 .login{max-width:380px;margin:12vh auto 0;padding:0 16px}
 .login .logo{width:64px;height:64px;border-radius:16px;display:block;margin:0 auto 14px}
-.login h1{text-align:center;margin-bottom:4px}
-.login p.sub{text-align:center;color:var(--apagado);margin:0 0 22px;font-size:.92rem}
-.error{color:#FF8FB0;font-size:.88rem;min-height:1.2em;margin:4px 0 10px}
-.cuenta{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-.cuenta button{font:inherit;font-size:.8rem;color:var(--apagado);background:none;border:1px solid var(--linea);border-radius:999px;padding:6px 10px;cursor:pointer}
-.banner{margin:14px 0 0;background:rgba(16,185,129,.1);border:1px solid rgba(52,211,153,.35);border-radius:14px;padding:12px 14px;font-size:.9rem;color:#CFE9DF}
-.banner button{margin-top:8px}
-.pestanas{display:flex;gap:6px;margin-top:12px;background:var(--tarjeta);border:1px solid var(--linea);border-radius:12px;padding:4px}
-.pestanas button{flex:1;font:inherit;font-weight:700;font-size:.9rem;color:var(--apagado);background:none;border:0;border-radius:9px;padding:9px;cursor:pointer}
-.pestanas button[aria-pressed="true"]{background:var(--verde);color:#04120E}
-.mes{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px}
-.mes h2{margin:0;color:var(--claro);font-size:1.05rem;text-transform:capitalize}
-.mes button{width:42px;height:42px;border-radius:12px;border:1px solid var(--linea);background:var(--tarjeta);color:var(--claro);font-size:1.2rem;cursor:pointer}
-.rejilla{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.rejilla .cab{text-align:center;font-size:.72rem;color:#6F9888;padding:4px 0;text-transform:uppercase}
-.dia-c{position:relative;aspect-ratio:1/1.05;border-radius:10px;border:1px solid transparent;background:rgba(255,255,255,.02);color:var(--claro);font:inherit;font-size:.92rem;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:7px;gap:3px}
-.dia-c.fuera{opacity:.3}
-.dia-c.hoy{border-color:rgba(52,211,153,.6)}
-.dia-c.sel{background:var(--verde);color:#04120E}
-.dia-c.pasado{color:#6F9888}
-.puntos{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;max-width:80%}
-.punto{width:6px;height:6px;border-radius:50%;background:var(--verde-luz)}
-.punto.p{background:var(--ambar)}
-.dia-c.sel .punto{background:#04120E}
-.dia-c .num{font-size:.68rem;font-weight:700;color:var(--verde-luz)}
-.dia-c.sel .num{color:#04120E}
-header>*{max-width:640px;margin-left:auto;margin-right:auto}
-.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120%);background:#E9FBF4;color:#04120E;font-weight:700;font-size:.9rem;padding:10px 16px;border-radius:12px;transition:transform .25s,visibility .25s;visibility:hidden;z-index:20;max-width:calc(100% - 32px)}
+.login h1{font-family:'Sora',system-ui,sans-serif;text-align:center;margin:0 0 4px}
+.login p.sub{text-align:center;margin:0 0 22px}
+.instalar{margin:22px 0 8px;font-size:.84rem;color:var(--tenue);line-height:1.5}
+.instalar b{color:var(--apagado)}
+.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120%);background:#E9FBF4;color:#04120E;font-weight:700;font-size:.9rem;padding:10px 16px;border-radius:12px;transition:transform .25s,visibility .25s;visibility:hidden;z-index:60;max-width:calc(100% - 32px)}
 .toast.ver{transform:translateX(-50%) translateY(0);visibility:visible}
+.oculto{display:none !important}
 </style>
 </head>
 <body>
 <div id="app"><p class="mensaje">Cargando…</p></div>
-<button class="fab" id="nueva" aria-label="Apuntar una cita"><span>+</span> Nueva cita</button>
-<div class="velo" id="velo"><form class="hoja" id="formCita" autocomplete="off">
-<h3>Apuntar una cita <button type="button" id="cerrarHoja" aria-label="Cerrar">×</button></h3>
+
+<button class="fab oculto" id="nueva" type="button" aria-label="Apuntar una cita"><span>+</span> Cita</button>
+<button class="lanzador oculto" id="lanzador" type="button" aria-controls="panelEris" aria-expanded="false"><span class="punto-luz" aria-hidden="true"></span>Eris</button>
+
+<!-- Menú -->
+<div class="velo" id="veloMenu"><div class="cajon" role="dialog" aria-label="Menú">
+  <div class="marca"><img src="icono-192.png" alt=""><div><b>Euxenos</b><span id="menuNegocio"></span></div></div>
+  <nav id="menuNav"></nav>
+</div></div>
+
+<!-- Panel de Eris -->
+<div class="panel-eris" id="panelEris" role="dialog" aria-label="Chat con Eris">
+  <div class="panel-cab"><div>Eris<small>Tu asistente · gestiona tu negocio hablando</small></div><div class="acc"><button type="button" id="erisNueva" title="Empezar de nuevo">Nueva</button><button type="button" class="x" id="erisCerrar" aria-label="Cerrar">×</button></div></div>
+  <div class="mensajes" id="erisMensajes" aria-live="polite"></div>
+  <div class="sugerencias" id="erisSug"></div>
+  <form class="escribir" id="erisForm"><textarea id="erisTexto" rows="1" maxlength="2000" placeholder="Pídele algo a Eris…" aria-label="Mensaje para Eris"></textarea><button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button></form>
+</div>
+
+<!-- Nueva cita -->
+<div class="velo abajo" id="veloCita"><form class="hoja" id="formCita" autocomplete="off">
+<h3>Apuntar una cita <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
 <label class="campo"><span>Cliente *</span><input name="cliente" required maxlength="120" placeholder="Nombre"></label>
 <div class="dos"><label class="campo"><span>Día *</span><input name="fecha" type="date" required></label>
 <label class="campo"><span>Hora *</span><input name="hora" type="time" required step="300"></label></div>
-<label class="campo"><span>Servicio</span><input name="servicio" maxlength="200" placeholder="Ej.: cambio de aceite, corte…"></label>
+<label class="campo"><span>Servicio</span><input name="servicio" maxlength="200" list="listaServicios" placeholder="Ej.: cambio de aceite, corte…"></label>
+<datalist id="listaServicios"></datalist>
 <label class="campo"><span>Teléfono</span><input name="telefono" type="tel" inputmode="tel" maxlength="30" placeholder="Opcional"></label>
 <label class="campo"><span>Notas</span><textarea name="notas" maxlength="500" placeholder="Opcional"></textarea></label>
-<button class="btn b-ok" type="submit" style="width:100%">Guardar cita</button>
+<button class="btn b-ok ancho" type="submit">Guardar cita</button>
 </form></div>
-<div class="velo" id="veloAcceso"><form class="hoja" id="formAcceso" autocomplete="on">
-<h3>Cambiar contraseña <button type="button" id="cerrarAcceso" aria-label="Cerrar">×</button></h3>
-<p style="color:var(--apagado);font-size:.9rem;margin:-4px 0 14px">Al cambiarla, se cerrará la sesión en los demás dispositivos.</p>
+
+<!-- Elemento del catálogo -->
+<div class="velo abajo" id="veloItem"><form class="hoja" id="formItem" autocomplete="off">
+<h3><span id="tituloItem">Añadir al catálogo</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<input type="hidden" name="id">
+<div class="pestanas" style="margin:0 0 14px"><button type="button" data-tipo="servicio" aria-pressed="true">Servicio</button><button type="button" data-tipo="producto" aria-pressed="false">Producto</button></div>
+<label class="campo"><span>Nombre *</span><input name="nombre" required maxlength="120" placeholder="Ej.: Corte de caballero"></label>
+<div class="dos"><label class="campo"><span>Precio</span><input name="precio" maxlength="40" placeholder="Ej.: 12 € o desde 30 €"></label>
+<label class="campo" id="campoDuracion"><span>Duración (min)</span><input name="duracion" type="number" inputmode="numeric" min="0" max="1440" step="5" placeholder="30"></label>
+<label class="campo oculto" id="campoStock"><span>Stock</span><input name="stock" maxlength="40" placeholder="Ej.: 6"></label></div>
+<label class="campo"><span>Descripción</span><textarea name="descripcion" maxlength="400" placeholder="Opcional: lo que incluye, marcas, notas para Eris…"></textarea></label>
+<label class="interruptor"><input type="checkbox" name="activo" checked> Disponible (Eris lo ofrece a los clientes)</label>
+<button class="btn b-ok ancho" type="submit">Guardar</button>
+<button class="btn b-no ancho oculto" type="button" id="borrarItem" style="margin-top:10px">Borrar del catálogo</button>
+</form></div>
+
+<!-- Cierre / vacaciones -->
+<div class="velo abajo" id="veloCierre"><form class="hoja" id="formCierre" autocomplete="off">
+<h3>Añadir cierre o vacaciones <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<div class="dos"><label class="campo"><span>Desde *</span><input name="desde" type="date" required></label>
+<label class="campo"><span>Hasta *</span><input name="hasta" type="date" required></label></div>
+<label class="campo"><span>Motivo</span><input name="motivo" maxlength="160" placeholder="Ej.: vacaciones, festivo local, reforma…"></label>
+<p class="ayuda">Eris avisará a los clientes de que esos días está cerrado y no ofrecerá citas.</p>
+<button class="btn b-ok ancho" type="submit" style="margin-top:12px">Guardar cierre</button>
+</form></div>
+
+<!-- Cambiar contraseña -->
+<div class="velo abajo" id="veloAcceso"><form class="hoja" id="formAcceso" autocomplete="on">
+<h3>Cambiar contraseña <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<p class="sub" style="margin:-4px 0 14px">Al cambiarla, se cerrará la sesión en los demás dispositivos.</p>
 <label class="campo"><span>Correo electrónico</span><input name="usuario" type="email" autocomplete="username" required></label>
 <label class="campo"><span>Contraseña nueva (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>
 <label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>
 <p class="error" id="errorAcceso"></p>
-<button class="btn b-ok" type="submit" style="width:100%">Guardar</button>
+<button class="btn b-ok ancho" type="submit">Guardar</button>
 </form></div>
-<div class="velo" id="veloAjustes"><div class="hoja ajustes" role="dialog" aria-label="Ajustes">
-<h3>Ajustes <button type="button" id="cerrarAjustes" aria-label="Cerrar">×</button></h3>
-<h4>Avisos en este dispositivo</h4>
-<div class="avisos" id="avisosAjustes"></div>
-<h4>Tu cuenta</h4>
-<div class="fila-ajuste"><p class="cuenta-txt" id="cuentaTxt"></p><button class="btn b-otra" type="button" data-cuenta="acceso">Cambiar contraseña</button><button class="btn b-no" type="button" data-cuenta="salir" style="width:100%">Cerrar sesión</button></div>
-<h4>Ayuda y privacidad</h4>
-<div class="fila-ajuste"><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=Ayuda%20con%20Eris%20Agenda">Escribir a soporte</a><a class="btn b-otra" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a><a class="btn b-no" style="width:100%" id="borrarCuenta" href="mailto:soporte@euxenos.com?subject=Borrar%20mi%20cuenta%20de%20Eris%20Agenda">Pedir que borren mi cuenta</a></div>
-<div class="instalar-app"></div>
-<p class="version">Eris Agenda · Euxenos</p>
-</div></div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (function(){
   var API = 'https://erisproject.app.n8n.cloud/webhook/eris-panel';
+  var API_APP = 'https://erisproject.app.n8n.cloud/webhook/eris-app';
   var q = new URLSearchParams(location.search);
   var enlaceN = q.get('n'), enlaceK = q.get('k'), n = null, k = null;
-  try {
-    localStorage.removeItem('eris-panel');
-    var g = JSON.parse(localStorage.getItem('eris-agenda') || 'null'); if (g) { n = g.n; k = g.k; }
-  } catch (e) {}
+  try { var g = JSON.parse(localStorage.getItem('eris-agenda') || 'null'); if (g) { n = g.n; k = g.k; } } catch (e) {}
   if (enlaceN && enlaceK) history.replaceState(null, '', location.pathname);
   var app = document.getElementById('app');
-  var datos = null, cargando = false, pausa = 0, vista = 'resumen', diaSel = null, mesVista = null;
-  try { vista = localStorage.getItem('eris-panel-vista') || 'resumen'; } catch (e) {}
+  var datos = null, info = null, cargando = false, pausa = 0, vista = 'hoy', diaSel = null, mesVista = null, tabCat = 'servicio';
   var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
   var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var SEMANA = [['lun','Lunes'],['mar','Martes'],['mie','Miércoles'],['jue','Jueves'],['vie','Viernes'],['sab','Sábado'],['dom','Domingo']];
+  var CLAVE_DIA = ['dom','lun','mar','mie','jue','vie','sab'];
   var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Finalizada', caducada:'Sin confirmar · cerrada' };
+  var VISTAS = {
+    hoy: { t:'Hoy', i:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><circle cx="12" cy="15" r="2"/>' },
+    calendario: { t:'Calendario', i:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2"/>' },
+    citas: { t:'Citas', i:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/>' },
+    catalogo: { t:'Catálogo', i:'<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="8" cy="8" r="1.5"/>' },
+    horario: { t:'Horario y cierres', i:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
+    pendientes: { t:'Pendientes', i:'<path d="M9 11l3 3 8-8"/><path d="M20 12v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h9"/>' },
+    ajustes: { t:'Ajustes', i:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>' },
+    cuenta: { t:'Cuenta', i:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>' }
+  };
 
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-  function hoyISO(){ var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
-  function nombreDia(iso){
-    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); if (!m) return iso || 'Sin fecha';
-    var d = new Date(+m[1], +m[2]-1, +m[3]);
+  function iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function hoyISO(){ return iso(new Date()); }
+  function fechaDe(s){ var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? new Date(+m[1], +m[2]-1, +m[3]) : null; }
+  function nombreDia(s){
+    var d = fechaDe(s); if (!d) return s || 'Sin fecha';
     var h = new Date(); h.setHours(0,0,0,0);
     var dif = Math.round((d - h) / 86400000);
     var base = DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()];
     if (dif === 0) return 'Hoy, ' + base; if (dif === 1) return 'Mañana, ' + base; if (dif === -1) return 'Ayer, ' + base;
     return base;
   }
+  function corta(s){ var d = fechaDe(s); return d ? d.getDate() + ' ' + MESES[d.getMonth()].slice(0,3) + (d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : '') : s; }
   function toast(t){ var el = document.getElementById('toast'); el.textContent = t; el.classList.add('ver'); clearTimeout(toast.t); toast.t = setTimeout(function(){ el.classList.remove('ver'); }, 2600); }
-  function llamar(cuerpo){
+  function svg(path){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
+  function post(url, cuerpo){
     // text/plain evita la comprobación previa del navegador (CORS)
-    return fetch(API, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=UTF-8' }, body: JSON.stringify(cuerpo), cache:'no-store' })
-      .then(function(r){ return r.json(); });
+    return fetch(url, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=UTF-8' }, body: JSON.stringify(cuerpo), cache:'no-store' }).then(function(r){ return r.json(); });
   }
+  function llamar(cuerpo){ return post(API, cuerpo); }
+  function llamarApp(accion, d){ return post(API_APP, { n:n, k:k, accion:accion, datos:d || {} }); }
+
+  // ---- Carga ----
   function cargar(){
     if (!n || !k) { pantallaLogin(); return; }
     if (cargando) return; cargando = true;
@@ -211,21 +315,37 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     llamar({ n:n, k:k, accion:'ver' }).then(function(d){
       cargando = false;
       if (!d || !d.ok) { olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu correo y contraseña.'); return; }
-      var primera = !datos; datos = d; document.getElementById('nueva').style.display = ''; pintar();
-      if (primera) comprobarAvisos();
+      var primera = !datos; datos = d; pintar();
+      if (primera) { comprobarAvisos(); cargarInfo(); }
     }).catch(function(){
       cargando = false; if (bR) bR.classList.remove('girando');
-      if (!datos) app.innerHTML = '<div class="mensaje"><h1>Sin conexión</h1><p>No se ha podido cargar el panel. Comprueba la conexión y vuelve a intentarlo.</p><p><button class="btn b-ok" onclick="location.reload()">Reintentar</button></p></div>';
+      if (!datos) app.innerHTML = '<div class="mensaje"><h1>Sin conexión</h1><p>No se ha podido cargar Euxenos. Comprueba la conexión y vuelve a intentarlo.</p><p><button class="btn b-ok" onclick="location.reload()">Reintentar</button></p></div>';
       else toast('Sin conexión: mostrando lo último cargado');
     });
   }
+  function cargarInfo(){
+    return llamarApp('datos-ver').then(function(r){ if (r && r.ok) { info = r.datos; if (datos) pintar(); } }).catch(function(){});
+  }
+  function aplicarInfo(r, txt){
+    if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido guardar'); return false; }
+    info = r.datos; pintar(); if (txt) toast(txt); return true;
+  }
+
+  // ---- Utilidades de negocio ----
+  function cierreDe(f){ if (!info) return null; for (var i = 0; i < (info.cierres || []).length; i++) { var c = info.cierres[i]; if (f >= c.desde && f <= c.hasta) return c; } return null; }
+  function horarioDe(f){ var d = fechaDe(f); return info && info.horario && d ? (info.horario[CLAVE_DIA[d.getDay()]] || '') : ''; }
+  function orden(a, b){ return ((a.fecha || '9999') + (a.hora || '99')).localeCompare((b.fecha || '9999') + (b.hora || '99')); }
+  function citas(){ return (datos && datos.citas) || []; }
+  function porConfirmar(){ return citas().filter(function(x){ return x.estado === 'pendiente'; }).sort(orden); }
+  function pendientesAbiertos(){ return info ? (info.pendientes || []).filter(function(p){ return !p.hecho; }) : []; }
+
+  // ---- Tarjeta de cita ----
   function tarjeta(c){
     var tel = c.telefono ? '<a href="tel:' + esc(c.telefono.replace(/\s/g,'')) + '">📞 ' + esc(c.telefono) + '</a>' : '';
     var mail = c.email ? '<a href="mailto:' + esc(c.email) + '">✉️ ' + esc(c.email) + '</a>' : '';
     var acc = '';
     if (c.estado === 'pendiente' || c.estado === 'propuesta') {
-      acc = '<div class="acciones">'
-        + '<button class="btn b-ok" data-a="confirmar" data-r="' + esc(c.ref) + '">✓ Confirmar</button>'
+      acc = '<div class="acciones"><button class="btn b-ok" data-a="confirmar" data-r="' + esc(c.ref) + '">✓ Confirmar</button>'
         + '<button class="btn b-otra" data-a="abrir" data-r="' + esc(c.ref) + '">Otra hora</button>'
         + '<button class="btn b-no" data-a="cancelar" data-r="' + esc(c.ref) + '" aria-label="Cancelar cita">✕</button></div>'
         + '<div class="proponer" id="p-' + esc(c.ref) + '"><input type="text" maxlength="200" placeholder="Ej.: el jueves a las 18:30 o el viernes a las 10:00" aria-label="Hora que propones">'
@@ -243,79 +363,212 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
       + (c.notas ? '<div class="notas">' + esc(c.notas) + '</div>' : '')
       + acc + '<div class="aviso" id="a-' + esc(c.ref) + '"></div></article>';
   }
-  function seccion(titulo, lista, vacio){
-    return '<h2>' + titulo + ' <span class="n">' + lista.length + '</span></h2>' + (lista.length ? lista.map(tarjeta).join('') : '<p class="vacio">' + vacio + '</p>');
+  function seccion(titulo, lista, vacio, extra){
+    return '<h2>' + titulo + ' <span class="n">' + lista.length + '</span>' + (extra || '') + '</h2>' + (lista.length ? lista.map(tarjeta).join('') : (vacio ? '<p class="vacio">' + vacio + '</p>' : ''));
   }
-  function orden(a, b){ return ((a.fecha || '9999') + (a.hora || '99')).localeCompare((b.fecha || '9999') + (b.hora || '99')); }
-  function iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
-  function calendario(c){
-    var hoy = hoyISO();
+
+  // ---- Vistas ----
+  function vistaHoy(){
+    var hoy = hoyISO(), d = new Date(), c = citas();
+    var pend = porConfirmar();
+    var hoyL = c.filter(function(x){ return x.fecha === hoy && (x.estado === 'confirmada' || x.estado === 'hecha'); }).sort(orden);
+    var prox = c.filter(function(x){ return x.fecha > hoy && x.estado === 'confirmada'; });
+    var cie = cierreDe(hoy), hor = horarioDe(hoy);
+    var h = '<div class="fecha-grande">' + DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div>';
+    if (cie) h += '<div class="franja cerrado"><b>Hoy está cerrado</b>' + (cie.motivo ? ': ' + esc(cie.motivo) : '') + ' (hasta el ' + esc(corta(cie.hasta)) + ').</div>';
+    else if (hor) h += '<p class="sub">' + (/cerrad/i.test(hor) ? 'Hoy no abres según tu horario.' : 'Horario de hoy: ' + esc(hor)) + '</p>';
+    h += '<div class="resumen"><span class="chip"><b>' + hoyL.length + '</b> hoy</span><span class="chip' + (pend.length ? ' alerta' : '') + '"><b>' + pend.length + '</b> por confirmar</span><span class="chip"><b>' + prox.length + '</b> próximas</span></div>';
+    h += '<div id="avisos"></div>';
+    h += seccion('Citas de hoy', hoyL, cie ? 'No hay citas: hoy está cerrado.' : 'No hay citas confirmadas para hoy. Pulsa «+ Cita» para apuntar una o pídeselo a Eris.');
+    if (pend.length) h += seccion('Por confirmar', pend, '');
+    var pa = pendientesAbiertos();
+    if (pa.length) {
+      h += '<h2>Pendientes <span class="n">' + pa.length + '</span><button class="accion" data-ir="pendientes">Ver todos</button></h2>';
+      h += pa.slice(0, 3).map(filaPendiente).join('');
+    }
+    return h;
+  }
+  function vistaCitas(){
+    var hoy = hoyISO(), c = citas();
+    var hace = new Date(); hace.setDate(hace.getDate() - 30); hace = iso(hace);
+    var pend = porConfirmar();
+    var prox = c.filter(function(x){ return x.fecha >= hoy && x.estado === 'confirmada'; }).sort(orden);
+    var prop = c.filter(function(x){ return x.estado === 'propuesta'; }).sort(orden);
+    var cad = c.filter(function(x){ return x.estado === 'caducada' && (x.fecha || '') >= hace; }).sort(orden).reverse();
+    var hist = c.filter(function(x){ return (x.estado === 'hecha' || x.estado === 'cancelada') && (x.fecha || '') >= hace && x.fecha < hoy; }).sort(orden).reverse();
+    return seccion('Por confirmar', pend, 'Nada pendiente. Cuando Eris recoja una petición de cita, aparecerá aquí.')
+      + seccion('Próximas', prox, 'No hay citas confirmadas próximamente.')
+      + (prop.length ? seccion('Esperando respuesta del cliente', prop, '') : '')
+      + (cad.length ? seccion('Pasaron sin confirmar (se cerraron solas)', cad, '') : '')
+      + (hist.length ? seccion('Últimos 30 días', hist, '') : '');
+  }
+  function vistaCalendario(){
+    var hoy = hoyISO(), c = citas();
     if (!diaSel) diaSel = hoy;
     if (!mesVista) { var p = diaSel.split('-'); mesVista = new Date(+p[0], +p[1]-1, 1); }
     var porDia = {};
     c.forEach(function(x){ if (!x.fecha || x.estado === 'cancelada') return; (porDia[x.fecha] = porDia[x.fecha] || []).push(x); });
-    var inicio = new Date(mesVista); var desfase = (inicio.getDay() + 6) % 7; inicio.setDate(1 - desfase);
-    var h = '<div class="mes"><button data-mes="-1" aria-label="Mes anterior">‹</button><h2>' + MESES[mesVista.getMonth()] + ' ' + mesVista.getFullYear() + '</h2><button data-mes="1" aria-label="Mes siguiente">›</button></div>';
-    h += '<div class="rejilla">' + ['L','M','X','J','V','S','D'].map(function(x){ return '<div class="cab">' + x + '</div>'; }).join('');
+    var inicio = new Date(mesVista); inicio.setDate(1 - (inicio.getDay() + 6) % 7);
+    var h = '<div class="mes"><button class="icono-btn" data-mes="-1" aria-label="Mes anterior">‹</button><h2>' + MESES[mesVista.getMonth()] + ' ' + mesVista.getFullYear() + '</h2><button class="icono-btn" data-mes="1" aria-label="Mes siguiente">›</button></div>';
+    h += '<div class="rejilla">' + ['L','M','X','J','V','S','D'].map(function(x){ return '<div class="cabd">' + x + '</div>'; }).join('');
     for (var i = 0; i < 42; i++) {
       var d = new Date(inicio); d.setDate(inicio.getDate() + i);
       if (i >= 35 && d.getMonth() !== mesVista.getMonth()) break;
       var k2 = iso(d), lista = porDia[k2] || [];
-      var cls = 'dia-c' + (d.getMonth() !== mesVista.getMonth() ? ' fuera' : '') + (k2 === hoy ? ' hoy' : '') + (k2 === diaSel ? ' sel' : '') + (k2 < hoy ? ' pasado' : '');
+      var cls = 'dia-c' + (d.getMonth() !== mesVista.getMonth() ? ' fuera' : '') + (k2 === hoy ? ' hoy' : '') + (k2 === diaSel ? ' sel' : '') + (k2 < hoy ? ' pasado' : '') + (cierreDe(k2) ? ' cierre' : '');
       var puntos = lista.length > 3 ? '<span class="num">' + lista.length + '</span>' : '<span class="puntos">' + lista.map(function(x){ return '<i class="punto' + (x.estado === 'pendiente' || x.estado === 'propuesta' ? ' p' : (x.estado === 'caducada' ? ' x' : '')) + '"></i>'; }).join('') + '</span>';
       h += '<button class="' + cls + '" data-dia="' + k2 + '" aria-label="' + esc(nombreDia(k2)) + ', ' + lista.length + ' citas">' + d.getDate() + puntos + '</button>';
     }
     h += '</div>';
-    var delDia = (porDia[diaSel] || []).slice().sort(orden);
-    var titulo = nombreDia(diaSel); h += '<h2>' + esc(titulo.charAt(0).toUpperCase() + titulo.slice(1)) + ' <span class="n">' + delDia.length + '</span></h2>';
-    h += delDia.length ? delDia.map(tarjeta).join('') : '<p class="vacio">No hay citas este día. Pulsa «+ Nueva cita» para apuntar una.</p>';
+    var delDia = (porDia[diaSel] || []).slice().sort(orden), cie = cierreDe(diaSel);
+    var titulo = nombreDia(diaSel);
+    if (cie) h += '<div class="franja cerrado"><b>Cerrado</b>' + (cie.motivo ? ': ' + esc(cie.motivo) : '') + ' (del ' + esc(corta(cie.desde)) + ' al ' + esc(corta(cie.hasta)) + ').</div>';
+    h += seccion(esc(titulo.charAt(0).toUpperCase() + titulo.slice(1)), delDia, 'No hay citas este día.');
     return h;
   }
-  function pintar(){
-    var hoy = hoyISO(), c = datos.citas || [];
-    var pend = c.filter(function(x){ return x.estado === 'pendiente'; }).sort(orden);
-    var hoyL = c.filter(function(x){ return x.fecha === hoy && (x.estado === 'confirmada' || x.estado === 'hecha'); }).sort(orden);
-    var prox = c.filter(function(x){ return x.fecha > hoy && x.estado === 'confirmada'; }).sort(orden);
-    var prop = c.filter(function(x){ return x.estado === 'propuesta'; }).sort(orden);
-    var hace3 = new Date(); hace3.setDate(hace3.getDate() - 3); hace3 = iso(hace3);
-    var cad = c.filter(function(x){ return x.estado === 'caducada' && (x.fecha || '') >= hace3; }).sort(orden).reverse();
-    var d = new Date();
-    app.innerHTML = '<header><div class="fila"><div><h1>' + esc(datos.negocio.nombre) + '</h1><div class="fecha-hoy">' + DIAS[d.getDay()] + ', ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div></div>'
-      + '<div class="botones-cab"><button class="recargar" id="recargar" aria-label="Actualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>'
-      + '<button class="recargar" data-ajustes aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>'
-      + '<div class="resumen"><span class="chip' + (pend.length ? ' alerta' : '') + '"><b>' + pend.length + '</b> por confirmar</span><span class="chip"><b>' + hoyL.length + '</b> hoy</span><span class="chip"><b>' + prox.length + '</b> próximas</span></div>'
-      + '<div class="pestanas"><button data-vista="resumen" aria-pressed="' + (vista === 'resumen') + '">Resumen</button><button data-vista="calendario" aria-pressed="' + (vista === 'calendario') + '">Calendario</button></div>'
-      + '</header>'
-      + '<main>'
-      + '<div class="avisos arriba oculto" id="avisos"></div>'
-      + (vista === 'calendario' ? calendario(c) : (seccion('Por confirmar', pend, 'Nada pendiente. Cuando Eris recoja una petición de cita, aparecerá aquí.')
-      + seccion('Hoy', hoyL, 'No hay citas confirmadas para hoy.')
-      + seccion('Próximos días', prox, 'No hay citas confirmadas en los próximos días.')
-      + (prop.length ? seccion('Esperando respuesta del cliente', prop, '') : '')
-      + (cad.length ? seccion('Pasaron sin confirmar (se cerraron solas)', cad, '') : '')))
-      + '</main>';
-    document.getElementById('recargar').addEventListener('click', cargar);
-    pintarAvisos(); pintarInstalar();
+  function vistaCatalogo(){
+    var lista = info ? (info.catalogo || []).filter(function(x){ return x.tipo === tabCat; }) : null;
+    var h = '<div class="pestanas"><button data-tab="servicio" aria-pressed="' + (tabCat === 'servicio') + '">Servicios</button><button data-tab="producto" aria-pressed="' + (tabCat === 'producto') + '">Productos</button></div>';
+    h += '<h2>' + (tabCat === 'servicio' ? 'Servicios' : 'Productos') + ' <span class="n">' + (lista ? lista.length : '…') + '</span><button class="accion" data-item="nuevo">+ Añadir</button></h2>';
+    if (!lista) return h + '<p class="vacio">Cargando…</p>';
+    if (!lista.length) h += '<p class="vacio">' + (tabCat === 'servicio' ? 'Aún no hay servicios. Añade lo que ofreces con su precio y duración: Eris lo usará para informar a tus clientes.' : 'Aún no hay productos. Añade lo que vendes con su precio y stock.') + '</p>';
+    h += lista.map(function(x){
+      var det = [x.tipo === 'servicio' && x.duracion ? x.duracion + ' min' : '', x.tipo === 'producto' && x.stock !== '' ? 'Stock: ' + x.stock : '', x.descripcion].filter(Boolean).join(' · ');
+      return '<button class="fila tocable' + (x.activo === false ? ' apagada' : '') + '" data-item="' + esc(x.id) + '"><span class="txt"><b>' + esc(x.nombre) + (x.activo === false ? '<span class="etq">No disponible</span>' : '') + '</b>' + (det ? '<span>' + esc(det) + '</span>' : '') + '</span><span class="precio">' + esc(x.precio || '') + '</span></button>';
+    }).join('');
+    h += '<p class="ayuda">Toca un elemento para cambiarlo. También puedes pedírselo a Eris: «sube el corte a 14 €», «quedan 3 champús».</p>';
+    return h;
   }
+  function vistaHorario(){
+    if (!info) return '<p class="vacio">Cargando…</p>';
+    var hor = info.horario || {}, hoy = hoyISO();
+    var h = '<h2>Horario semanal</h2><form id="formHorario" class="dias">';
+    SEMANA.forEach(function(s){ h += '<div class="dia-h"><label for="h-' + s[0] + '">' + s[1] + '</label><input id="h-' + s[0] + '" name="' + s[0] + '" maxlength="80" placeholder="9:00-14:00, 16:00-20:00 o cerrado" value="' + esc(hor[s[0]] || '') + '"></div>'; });
+    h += '<button class="btn b-ok ancho" type="submit" style="margin-top:6px">Guardar horario</button></form>';
+    var futuros = (info.cierres || []).filter(function(c){ return c.hasta >= hoy; });
+    h += '<h2>Cierres y vacaciones <span class="n">' + futuros.length + '</span><button class="accion" data-cierre="nuevo">+ Añadir</button></h2>';
+    if (!futuros.length) h += '<p class="vacio">No hay cierres previstos. Añade aquí vacaciones, festivos o días que no abras: Eris avisará a los clientes y no dará citas esos días.</p>';
+    h += futuros.map(function(c){ return '<div class="fila"><span class="txt"><b>' + (c.desde === c.hasta ? esc(nombreDia(c.desde)) : 'Del ' + esc(corta(c.desde)) + ' al ' + esc(corta(c.hasta))) + '</b>' + (c.motivo ? '<span>' + esc(c.motivo) + '</span>' : '') + '</span><button class="quitar" data-quitar-cierre="' + esc(c.id) + '" aria-label="Quitar cierre">✕</button></div>'; }).join('');
+    return h;
+  }
+  function filaPendiente(p){
+    return '<div class="fila' + (p.hecho ? ' hecho' : '') + '"><button class="check' + (p.hecho ? ' si' : '') + '" data-hecho="' + esc(p.id) + '" aria-label="' + (p.hecho ? 'Marcar como no hecho' : 'Marcar como hecho') + '">' + (p.hecho ? '✓' : '') + '</button><span class="txt"><b>' + esc(p.texto) + '</b></span><button class="quitar" data-quitar-p="' + esc(p.id) + '" aria-label="Borrar">✕</button></div>';
+  }
+  function vistaPendientes(){
+    if (!info) return '<p class="vacio">Cargando…</p>';
+    var abiertos = pendientesAbiertos(), hechos = (info.pendientes || []).filter(function(p){ return p.hecho; });
+    var h = '<form class="nuevo-p" id="formPendiente"><input name="texto" maxlength="200" placeholder="Ej.: falta tinte rubio, llamar al proveedor…" aria-label="Nuevo pendiente"><button class="btn b-ok" type="submit">Añadir</button></form>';
+    h += '<h2>Por hacer <span class="n">' + abiertos.length + '</span></h2>' + (abiertos.length ? abiertos.map(filaPendiente).join('') : '<p class="vacio">Nada pendiente. Apunta aquí lo que falta o hay que hacer, o díselo a Eris.</p>');
+    if (hechos.length) h += '<h2>Hechos <span class="n">' + hechos.length + '</span><button class="accion" data-limpiar>Borrar hechos</button></h2>' + hechos.map(filaPendiente).join('');
+    return h;
+  }
+  function vistaAjustes(){
+    var h = '<h2>Avisos en este dispositivo</h2><div class="caja" id="avisosAjustes"></div>';
+    h += '<h2>Lo que Eris debe saber</h2><form id="formInfo" class="caja"><p>Cuéntale a Eris lo que tus clientes deben saber y no está en el catálogo ni en el horario: cómo llegar, aparcamiento, formas de pago, normas, avisos de estos días…</p>'
+      + '<textarea name="texto" maxlength="3000" rows="5" placeholder="Ej.: Aparcamiento gratuito en la calle de atrás. Aceptamos Bizum y tarjeta. Esta semana no hacemos mechas.">' + esc(info ? info.info : '') + '</textarea>'
+      + '<button class="btn b-ok ancho" type="submit" style="margin-top:10px"' + (info ? '' : ' disabled') + '>Guardar</button></form>';
+    h += '<div class="instalar-app"></div>';
+    return h;
+  }
+  function vistaCuenta(){
+    var neg = (datos && datos.negocio) || {};
+    var asuntoPlan = encodeURIComponent('Cambiar de plan · ' + (neg.nombre || ''));
+    var asuntoBorrar = encodeURIComponent('Borrar mi cuenta de Euxenos');
+    var cuerpoBorrar = encodeURIComponent('Quiero que borréis mi cuenta de Euxenos y sus datos.\n\nNegocio: ' + (neg.nombre || '') + '\nCorreo de acceso: ' + (neg.usuario || ''));
+    return '<div class="caja" style="margin-top:16px"><p><b>' + esc(neg.nombre || '') + '</b><br>' + (neg.usuario ? 'Entras con ' + esc(neg.usuario) : '') + '</p></div>'
+      + '<h2>Tu plan</h2><div class="caja"><p>Para cambiar de plan, añadir servicios (más minutos de voz, otro canal, web…) o darte de baja, escríbenos y lo dejamos hecho. Sin permanencia.</p>'
+      + '<div class="columna"><a class="btn b-ok" href="mailto:soporte@euxenos.com?subject=' + asuntoPlan + '">Cambiar de plan</a><a class="btn b-otra" href="/#precios" target="_blank" rel="noopener">Ver planes y precios</a></div></div>'
+      + '<h2>Acceso</h2><div class="columna"><button class="btn b-otra" data-cuenta="acceso">Cambiar contraseña</button><button class="btn b-no ancho" data-cuenta="salir">Cerrar sesión</button></div>'
+      + '<h2>Ayuda y privacidad</h2><div class="columna"><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + encodeURIComponent('Ayuda con Euxenos') + '">Escribir a soporte</a><a class="btn b-otra" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>'
+      + '<a class="btn b-no ancho" href="mailto:soporte@euxenos.com?subject=' + asuntoBorrar + '&body=' + cuerpoBorrar + '">Pedir que borren mi cuenta</a></div>'
+      + '<p class="version">Euxenos · soporte@euxenos.com</p>';
+  }
+
+  function pintarMenu(){
+    var pc = porConfirmar().length, pp = pendientesAbiertos().length;
+    var orden = ['hoy','calendario','citas','catalogo','horario','pendientes','|','ajustes','cuenta'];
+    document.getElementById('menuNav').innerHTML = orden.map(function(v){
+      if (v === '|') return '<hr>';
+      var cuenta = v === 'citas' && pc ? pc : (v === 'pendientes' && pp ? pp : 0);
+      return '<button data-ir="' + v + '"' + (vista === v ? ' aria-current="page"' : '') + '>' + svg(VISTAS[v].i) + VISTAS[v].t + (cuenta ? '<span class="cuenta-n">' + cuenta + '</span>' : '') + '</button>';
+    }).join('');
+    document.getElementById('menuNegocio').textContent = (datos && datos.negocio.nombre) || '';
+  }
+  function pintar(){
+    if (!datos) return;
+    var cuerpo = { hoy: vistaHoy, calendario: vistaCalendario, citas: vistaCitas, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
+    var y = window.scrollY, hayAviso = porConfirmar().length > 0;
+    app.innerHTML = '<header><div class="cab">'
+      + '<button class="icono-btn" id="abrirMenu" aria-label="Abrir el menú">' + svg('<path d="M4 7h16M4 12h16M4 17h16"/>') + (hayAviso && vista !== 'hoy' && vista !== 'citas' ? '<span class="bolita"></span>' : '') + '</button>'
+      + '<div class="titulo"><small>' + esc(datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
+      + '<button class="icono-btn" id="recargar" aria-label="Actualizar">' + svg('<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>') + '</button>'
+      + '</div></header><main>' + cuerpo() + '</main>';
+    document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); });
+    document.getElementById('abrirMenu').addEventListener('click', abrirMenu);
+    document.getElementById('nueva').classList.toggle('oculto', ['hoy','calendario','citas'].indexOf(vista) < 0);
+    document.getElementById('lanzador').classList.remove('oculto');
+    window.scrollTo(0, pintar.vista === vista ? y : 0); pintar.vista = vista;
+    pintarMenu(); pintarAvisos(); pintarInstalar(); rellenarServicios();
+  }
+  function ir(v){ if (!VISTAS[v]) return; vista = v; cerrarMenu(); pintar(); }
+
+  // ---- Menú ----
+  var veloMenu = document.getElementById('veloMenu');
+  function abrirMenu(){ pintarMenu(); veloMenu.classList.add('abierto'); }
+  function cerrarMenu(){ veloMenu.classList.remove('abierto'); }
+  veloMenu.addEventListener('click', function(e){ var b = e.target.closest('[data-ir]'); if (b) { ir(b.getAttribute('data-ir')); return; } if (e.target === veloMenu) cerrarMenu(); });
+
+  // ---- Clics en la página ----
   app.addEventListener('click', function(e){
-    var t = e.target.closest('[data-vista],[data-mes],[data-dia]');
+    var t = e.target.closest('[data-ir]'); if (t) { ir(t.getAttribute('data-ir')); return; }
+    t = e.target.closest('[data-mes],[data-dia]');
     if (t) {
-      if (t.hasAttribute('data-vista')) { vista = t.getAttribute('data-vista'); try { localStorage.setItem('eris-panel-vista', vista); } catch (er) {} }
-      else if (t.hasAttribute('data-mes')) { mesVista = new Date(mesVista.getFullYear(), mesVista.getMonth() + (+t.getAttribute('data-mes')), 1); }
+      if (t.hasAttribute('data-mes')) mesVista = new Date(mesVista.getFullYear(), mesVista.getMonth() + (+t.getAttribute('data-mes')), 1);
       else { diaSel = t.getAttribute('data-dia'); var p = diaSel.split('-'); if (+p[1]-1 !== mesVista.getMonth()) mesVista = new Date(+p[0], +p[1]-1, 1); }
       pintar(); return;
     }
+    t = e.target.closest('[data-tab]'); if (t) { tabCat = t.getAttribute('data-tab'); pintar(); return; }
+    t = e.target.closest('[data-item]'); if (t) { abrirItem(t.getAttribute('data-item')); return; }
+    t = e.target.closest('[data-cierre]'); if (t) { abrirCierre(); return; }
+    t = e.target.closest('[data-quitar-cierre]');
+    if (t) { if (!confirmar('¿Quitar este cierre?')) return; t.disabled = true; llamarApp('cierre-borrar', { id: t.getAttribute('data-quitar-cierre') }).then(function(r){ aplicarInfo(r, 'Cierre quitado'); }).catch(sinConexion); return; }
+    t = e.target.closest('[data-hecho]');
+    if (t) { var id = t.getAttribute('data-hecho'), pe = (info.pendientes || []).filter(function(x){ return x.id === id; })[0]; t.disabled = true; llamarApp('pendiente-hecho', { id: id, hecho: !(pe && pe.hecho) }).then(function(r){ aplicarInfo(r); }).catch(sinConexion); return; }
+    t = e.target.closest('[data-quitar-p]'); if (t) { t.disabled = true; llamarApp('pendiente-borrar', { id: t.getAttribute('data-quitar-p') }).then(function(r){ aplicarInfo(r, 'Borrado'); }).catch(sinConexion); return; }
+    t = e.target.closest('[data-limpiar]');
+    if (t) { var hechos = (info.pendientes || []).filter(function(x){ return x.hecho; }); t.disabled = true;
+      hechos.reduce(function(pr, x){ return pr.then(function(){ return llamarApp('pendiente-borrar', { id: x.id }).then(function(r){ if (r && r.ok) info = r.datos; }); }); }, Promise.resolve()).then(function(){ pintar(); toast('Hechos borrados'); }).catch(sinConexion); return; }
+    t = e.target.closest('[data-cuenta]');
+    if (t) { if (t.getAttribute('data-cuenta') === 'acceso') abrirAcceso(); else { quitarAvisos(true); olvidar(); pantallaLogin('Has cerrado la sesión.'); } return; }
     var b = e.target.closest('button[data-a]'); if (!b) return;
-    var a = b.getAttribute('data-a'), ref = b.getAttribute('data-r');
-    if (a === 'abrir') { var p = document.getElementById('p-' + ref); p.classList.toggle('abierto'); var i = p.querySelector('input'); if (p.classList.contains('abierto')) i.focus(); return; }
+    accionCita(b.getAttribute('data-a'), b.getAttribute('data-r'));
+  });
+  app.addEventListener('submit', function(e){
+    var f = e.target; e.preventDefault();
+    var boton = f.querySelector('button[type=submit]'); if (boton) boton.disabled = true;
+    var listo = function(){ if (boton) boton.disabled = false; };
+    if (f.id === 'formHorario') {
+      var d = {}; SEMANA.forEach(function(s){ d[s[0]] = f[s[0]].value.trim() || 'cerrado'; });
+      llamarApp('horario-guardar', d).then(function(r){ listo(); aplicarInfo(r, 'Horario guardado'); }).catch(function(){ listo(); sinConexion(); });
+    } else if (f.id === 'formPendiente') {
+      var texto = f.texto.value.trim(); if (!texto) { listo(); return; }
+      llamarApp('pendiente-crear', { texto: texto }).then(function(r){ listo(); aplicarInfo(r, 'Apuntado'); var i = document.querySelector('#formPendiente input'); if (i) i.focus(); }).catch(function(){ listo(); sinConexion(); });
+    } else if (f.id === 'formInfo') {
+      llamarApp('info-guardar', { texto: f.texto.value }).then(function(r){ listo(); aplicarInfo(r, 'Guardado: Eris ya lo sabe'); }).catch(function(){ listo(); sinConexion(); });
+    } else listo();
+  });
+  function sinConexion(){ toast('Sin conexión, inténtalo de nuevo'); pintar(); }
+  function confirmar(t){ try { return window.confirm(t); } catch (e) { return true; } }
+
+  function accionCita(a, ref){
+    if (a === 'abrir') { var p = document.getElementById('p-' + ref); p.classList.toggle('abierto'); if (p.classList.contains('abierto')) p.querySelector('input').focus(); return; }
     var propuesta = '';
     if (a === 'proponer') { propuesta = document.querySelector('#p-' + ref + ' input').value.trim(); if (!propuesta) { toast('Escribe qué día y hora propones'); return; } }
     var botones = document.querySelectorAll('#c-' + ref + ' button'); botones.forEach(function(x){ x.disabled = true; });
     llamar({ n:n, k:k, accion:a, ref:ref, propuesta:propuesta }).then(function(r){
       if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido guardar'); botones.forEach(function(x){ x.disabled = false; }); return; }
-      var c = (datos.citas || []).filter(function(x){ return x.ref === ref; })[0];
+      var c = citas().filter(function(x){ return x.ref === ref; })[0];
       if (c) { c.estado = r.estado; if (a === 'proponer') c.propuesta = propuesta; }
-      var txt = { confirmar:'Cita confirmada', proponer:'Propuesta enviada', cancelar:'Cita cancelada', hecha:'Cita finalizada' }[a];
       pintar();
       var av = document.getElementById('a-' + ref);
       if (av && a !== 'hecha') {
@@ -323,34 +576,126 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
         if (r.whatsapp) h += '<div class="acciones"><a class="btn b-wa" href="' + esc(r.whatsapp) + '" target="_blank" rel="noopener">Avisar por WhatsApp</a></div>';
         av.innerHTML = h;
       }
-      toast(txt); pausa = Date.now() + 90000;
+      toast({ confirmar:'Cita confirmada', proponer:'Propuesta enviada', cancelar:'Cita cancelada', hecha:'Cita finalizada' }[a]); pausa = Date.now() + 90000;
     }).catch(function(){ toast('Sin conexión, inténtalo de nuevo'); botones.forEach(function(x){ x.disabled = false; }); });
-  });
-  // ---- Apuntar citas a mano ----
-  var velo = document.getElementById('velo'), form = document.getElementById('formCita');
-  function abrirHoja(){
-    if (!datos) return;
-    form.reset();
-    var d = new Date(); d.setMinutes(d.getMinutes() < 30 ? 30 : 60, 0, 0);
-    form.fecha.value = (vista === 'calendario' && diaSel && diaSel >= hoyISO()) ? diaSel : hoyISO();
-    form.hora.value = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-    velo.classList.add('abierto'); setTimeout(function(){ form.cliente.focus(); }, 50);
   }
-  function cerrarHoja(){ velo.classList.remove('abierto'); }
-  document.getElementById('nueva').addEventListener('click', abrirHoja);
-  document.getElementById('cerrarHoja').addEventListener('click', cerrarHoja);
-  velo.addEventListener('click', function(e){ if (e.target === velo) cerrarHoja(); });
-  form.addEventListener('submit', function(e){
+
+  // ---- Hojas ----
+  function abrirHoja(id){ document.getElementById(id).classList.add('abierto'); }
+  function cerrarHojas(){ document.querySelectorAll('.velo.abajo').forEach(function(v){ v.classList.remove('abierto'); }); }
+  document.querySelectorAll('.velo.abajo').forEach(function(v){
+    v.addEventListener('click', function(e){ if (e.target === v || e.target.closest('[data-cerrar]')) v.classList.remove('abierto'); });
+  });
+  // Nueva cita
+  var formCita = document.getElementById('formCita');
+  function rellenarServicios(){
+    var dl = document.getElementById('listaServicios');
+    dl.innerHTML = info ? (info.catalogo || []).filter(function(x){ return x.tipo === 'servicio' && x.activo !== false; }).map(function(x){ return '<option value="' + esc(x.nombre) + '">'; }).join('') : '';
+  }
+  document.getElementById('nueva').addEventListener('click', function(){
+    if (!datos) return;
+    formCita.reset();
+    var d = new Date(); d.setMinutes(d.getMinutes() < 30 ? 30 : 60, 0, 0);
+    formCita.fecha.value = (vista === 'calendario' && diaSel && diaSel >= hoyISO()) ? diaSel : hoyISO();
+    formCita.hora.value = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    abrirHoja('veloCita'); setTimeout(function(){ formCita.cliente.focus(); }, 50);
+  });
+  formCita.addEventListener('submit', function(e){
     e.preventDefault();
-    var boton = form.querySelector('button[type=submit]'); boton.disabled = true;
-    var c = { n:n, k:k, accion:'crear', cliente: form.cliente.value, fecha: form.fecha.value, hora: form.hora.value, servicio: form.servicio.value, telefono: form.telefono.value, notas: form.notas.value };
-    llamar(c).then(function(r){
+    var cie = cierreDe(formCita.fecha.value);
+    if (cie && !confirmar('Ese día está cerrado' + (cie.motivo ? ' (' + cie.motivo + ')' : '') + '. ¿Apuntar la cita igualmente?')) return;
+    var boton = formCita.querySelector('button[type=submit]'); boton.disabled = true;
+    llamar({ n:n, k:k, accion:'crear', cliente: formCita.cliente.value, fecha: formCita.fecha.value, hora: formCita.hora.value, servicio: formCita.servicio.value, telefono: formCita.telefono.value, notas: formCita.notas.value }).then(function(r){
       boton.disabled = false;
       if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido guardar'); return; }
       (datos.citas = datos.citas || []).push(r.cita);
-      cerrarHoja(); pintar(); toast('Cita apuntada'); pausa = Date.now() + 30000;
+      cerrarHojas(); pintar(); toast('Cita apuntada'); pausa = Date.now() + 30000;
     }).catch(function(){ boton.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
   });
+  // Catálogo
+  var formItem = document.getElementById('formItem'), tipoItem = 'servicio';
+  function ponerTipo(t){
+    tipoItem = t;
+    formItem.querySelectorAll('[data-tipo]').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-tipo') === t)); });
+    document.getElementById('campoDuracion').classList.toggle('oculto', t !== 'servicio');
+    document.getElementById('campoStock').classList.toggle('oculto', t !== 'producto');
+  }
+  formItem.addEventListener('click', function(e){ var b = e.target.closest('[data-tipo]'); if (b) ponerTipo(b.getAttribute('data-tipo')); });
+  function abrirItem(id){
+    if (!info) return;
+    var x = id === 'nuevo' ? null : (info.catalogo || []).filter(function(y){ return y.id === id; })[0];
+    formItem.reset(); formItem.id.value = x ? x.id : '';
+    document.getElementById('tituloItem').textContent = x ? 'Editar' : 'Añadir al catálogo';
+    ponerTipo(x ? x.tipo : tabCat);
+    if (x) { formItem.nombre.value = x.nombre || ''; formItem.precio.value = x.precio || ''; formItem.duracion.value = x.duracion || ''; formItem.stock.value = x.stock || ''; formItem.descripcion.value = x.descripcion || ''; formItem.activo.checked = x.activo !== false; }
+    document.getElementById('borrarItem').classList.toggle('oculto', !x);
+    abrirHoja('veloItem'); if (!x) setTimeout(function(){ formItem.nombre.focus(); }, 50);
+  }
+  formItem.addEventListener('submit', function(e){
+    e.preventDefault();
+    var boton = formItem.querySelector('button[type=submit]'); boton.disabled = true;
+    var d = { id: formItem.id.value, tipo: tipoItem, nombre: formItem.nombre.value, precio: formItem.precio.value, duracion: tipoItem === 'servicio' ? formItem.duracion.value : 0, stock: tipoItem === 'producto' ? formItem.stock.value : '', descripcion: formItem.descripcion.value, activo: formItem.activo.checked };
+    llamarApp('catalogo-guardar', d).then(function(r){ boton.disabled = false; if (aplicarInfo(r, 'Guardado en el catálogo')) { tabCat = tipoItem; cerrarHojas(); pintar(); } }).catch(function(){ boton.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
+  });
+  document.getElementById('borrarItem').addEventListener('click', function(){
+    if (!confirmar('¿Borrar «' + formItem.nombre.value + '» del catálogo?')) return;
+    llamarApp('catalogo-borrar', { id: formItem.id.value }).then(function(r){ if (aplicarInfo(r, 'Borrado del catálogo')) cerrarHojas(); }).catch(function(){ toast('Sin conexión, inténtalo de nuevo'); });
+  });
+  // Cierres
+  var formCierre = document.getElementById('formCierre');
+  function abrirCierre(){ formCierre.reset(); formCierre.desde.value = hoyISO(); formCierre.hasta.value = hoyISO(); abrirHoja('veloCierre'); }
+  formCierre.desde.addEventListener('change', function(){ if (!formCierre.hasta.value || formCierre.hasta.value < formCierre.desde.value) formCierre.hasta.value = formCierre.desde.value; });
+  formCierre.addEventListener('submit', function(e){
+    e.preventDefault();
+    var boton = formCierre.querySelector('button[type=submit]'); boton.disabled = true;
+    llamarApp('cierre-crear', { desde: formCierre.desde.value, hasta: formCierre.hasta.value, motivo: formCierre.motivo.value }).then(function(r){ boton.disabled = false; if (aplicarInfo(r, 'Cierre guardado')) cerrarHojas(); }).catch(function(){ boton.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
+  });
+
+  // ---- Eris ----
+  var panelEris = document.getElementById('panelEris'), lanzador = document.getElementById('lanzador');
+  var caja = document.getElementById('erisMensajes'), formEris = document.getElementById('erisForm'), textoEris = document.getElementById('erisTexto');
+  var conversacion = [], pensando = false;
+  var SUGERENCIAS = ['¿Qué tengo hoy?', 'Apunta una cita', 'Mueve una cita', 'Añade un servicio', 'Cerramos por vacaciones', 'Apunta que falta…'];
+  function claveConv(){ return 'euxenos-eris-' + (n || ''); }
+  function guardarConv(){ try { sessionStorage.setItem(claveConv(), JSON.stringify(conversacion.slice(-30))); } catch (e) {} }
+  function leerConv(){ try { conversacion = JSON.parse(sessionStorage.getItem(claveConv()) || '[]') || []; } catch (e) { conversacion = []; } }
+  function pintarConv(){
+    var saludo = '¡Hola! Soy Eris 👋 Puedo ver y cambiar tu agenda, tu catálogo, el horario, los cierres y los pendientes. Pídemelo como se lo dirías a alguien de tu equipo.';
+    caja.innerHTML = '<div class="m eris">' + esc(saludo) + '</div>' + conversacion.map(function(m){ return '<div class="m ' + (m.rol === 'eris' ? 'eris' : 'yo') + (m.error ? ' error' : '') + '">' + esc(m.texto) + '</div>'; }).join('') + (pensando ? '<div class="escribiendo" aria-label="Eris está escribiendo"><i></i><i></i><i></i></div>' : '');
+    document.getElementById('erisSug').innerHTML = conversacion.length ? '' : SUGERENCIAS.map(function(s){ return '<button type="button">' + esc(s) + '</button>'; }).join('');
+    caja.scrollTop = caja.scrollHeight;
+  }
+  function abrirEris(){ leerConv(); pintarConv(); panelEris.classList.add('abierto'); lanzador.setAttribute('aria-expanded', 'true'); if (window.innerWidth <= 520) lanzador.classList.add('oculto'); setTimeout(function(){ textoEris.focus(); }, 60); }
+  function cerrarEris(){ panelEris.classList.remove('abierto'); lanzador.setAttribute('aria-expanded', 'false'); if (datos) lanzador.classList.remove('oculto'); }
+  lanzador.addEventListener('click', function(){ panelEris.classList.contains('abierto') ? cerrarEris() : abrirEris(); });
+  document.getElementById('erisCerrar').addEventListener('click', cerrarEris);
+  document.getElementById('erisNueva').addEventListener('click', function(){ if (pensando) return; conversacion = []; guardarConv(); pintarConv(); textoEris.focus(); });
+  document.getElementById('erisSug').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    var s = b.textContent;
+    if (/…$|una cita$|un servicio$|vacaciones$/.test(s)) { textoEris.value = { 'Apunta una cita':'Apunta una cita a ', 'Mueve una cita':'Mueve la cita de ', 'Añade un servicio':'Añade al catálogo el servicio ', 'Cerramos por vacaciones':'Cerramos por vacaciones del ', 'Apunta que falta…':'Apunta que falta ' }[s] || s; textoEris.focus(); }
+    else enviarEris(s);
+  });
+  textoEris.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 520) { e.preventDefault(); formEris.requestSubmit(); } });
+  textoEris.addEventListener('input', function(){ textoEris.style.height = 'auto'; textoEris.style.height = Math.min(120, textoEris.scrollHeight) + 'px'; });
+  formEris.addEventListener('submit', function(e){ e.preventDefault(); enviarEris(textoEris.value); });
+  function enviarEris(texto){
+    texto = String(texto || '').trim(); if (!texto || pensando || !n) return;
+    var historial = conversacion.filter(function(m){ return !m.error; }).slice(-12).map(function(m){ return { rol: m.rol, texto: m.texto }; });
+    conversacion.push({ rol:'yo', texto: texto }); textoEris.value = ''; textoEris.style.height = '';
+    pensando = true; formEris.querySelector('button').disabled = true; pintarConv(); guardarConv();
+    post(API_APP, { n:n, k:k, accion:'chat', mensaje: texto, historial: historial }).then(function(r){
+      pensando = false; formEris.querySelector('button').disabled = false;
+      if (r && r.ok && r.respuesta) conversacion.push({ rol:'eris', texto: String(r.respuesta) });
+      else conversacion.push({ rol:'eris', texto: (r && r.motivo) || 'No he podido responder. Inténtalo de nuevo.', error: true });
+      guardarConv(); pintarConv();
+      pausa = 0; cargar(); cargarInfo();
+    }).catch(function(){
+      pensando = false; formEris.querySelector('button').disabled = false;
+      conversacion.push({ rol:'eris', texto: 'Sin conexión. Inténtalo de nuevo.', error: true }); pintarConv();
+    });
+  }
+
   // ---- Usuario y contraseña ----
   function derivar(usuario, clave){
     var enc = new TextEncoder();
@@ -359,13 +704,14 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     }).then(function(bits){ return Array.from(new Uint8Array(bits)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join(''); });
   }
   function guardarAcceso(nn, kk){ n = nn; k = kk; try { localStorage.setItem('eris-agenda', JSON.stringify({ n:n, k:k })); } catch (e) {} }
-  function olvidar(){ n = null; k = null; datos = null; try { localStorage.removeItem('eris-agenda'); } catch (e) {} }
+  function olvidar(){ try { sessionStorage.removeItem(claveConv()); } catch (e) {} n = null; k = null; datos = null; info = null; conversacion = []; try { localStorage.removeItem('eris-agenda'); } catch (e) {} }
+  function ocultarFlotantes(){ document.getElementById('nueva').classList.add('oculto'); lanzador.classList.add('oculto'); cerrarEris(); lanzador.classList.add('oculto'); }
   function pantallaLogin(aviso){
-    document.getElementById('nueva').style.display = 'none';
-    app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Eris Agenda</h1><p class="sub">Entra con tu correo para ver la agenda de tu negocio</p>'
+    ocultarFlotantes();
+    app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Euxenos</h1><p class="sub">Entra con tu correo para gestionar tu negocio</p>'
       + '<label class="campo"><span>Correo electrónico</span><input name="usuario" type="email" inputmode="email" autocomplete="username" required autocapitalize="none"></label>'
       + '<label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>'
-      + '<p class="error" id="errorLogin">' + esc(aviso || '') + '</p><button class="btn b-ok" type="submit" style="width:100%">Entrar</button>'
+      + '<p class="error" id="errorLogin">' + esc(aviso || '') + '</p><button class="btn b-ok ancho" type="submit">Entrar</button>'
       + '<p class="instalar">¿Aún no tienes cuenta? Usa el enlace de activación que te envió Euxenos. ¿Has olvidado la contraseña? Escríbenos a soporte@euxenos.com.</p><div class="instalar-app"></div></form>';
     pintarInstalar();
     var f = document.getElementById('formLogin');
@@ -376,18 +722,18 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
       derivar(u, f.clave.value).then(function(h){ return llamar({ accion:'login', usuario:u, hash:h }); }).then(function(r){
         boton.disabled = false;
         if (!r || !r.ok) { document.getElementById('errorLogin').textContent = (r && r.motivo) || 'No se ha podido entrar.'; return; }
-        guardarAcceso(r.n, r.k); cargar();
+        guardarAcceso(r.n, r.k); vista = 'hoy'; cargar();
       }).catch(function(){ boton.disabled = false; document.getElementById('errorLogin').textContent = 'Sin conexión, inténtalo de nuevo.'; });
     });
   }
   function pantallaAlta(nombre, sugerido, nn, kk){
-    document.getElementById('nueva').style.display = 'none';
-    app.innerHTML = '<form class="login" id="formAlta" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Activa Eris Agenda</h1><p class="sub">' + esc(nombre || 'Tu negocio') + ': crea tu acceso con tu correo y una contraseña</p>'
+    ocultarFlotantes();
+    app.innerHTML = '<form class="login" id="formAlta" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Activa tu cuenta</h1><p class="sub">' + esc(nombre || 'Tu negocio') + ': crea tu acceso a Euxenos con tu correo y una contraseña</p>'
       + '<label class="campo"><span>Correo electrónico</span><input name="usuario" type="email" inputmode="email" autocomplete="username" required autocapitalize="none" value="' + esc(sugerido || '') + '"></label>'
       + '<label class="campo"><span>Contraseña (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>'
       + '<label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>'
-      + '<p class="error" id="errorAlta"></p><button class="btn b-ok" type="submit" style="width:100%">Activar y entrar</button>'
-      + '<p class="instalar">A partir de ahora entrarás en euxenos.com/panel con este correo y contraseña, desde cualquier móvil u ordenador.</p></form>';
+      + '<p class="error" id="errorAlta"></p><button class="btn b-ok ancho" type="submit">Activar y entrar</button>'
+      + '<p class="instalar">A partir de ahora entrarás en la app Euxenos (o en euxenos.com/panel) con este correo y contraseña, desde cualquier móvil u ordenador.</p></form>';
     var f = document.getElementById('formAlta');
     f.addEventListener('submit', function(e){
       e.preventDefault();
@@ -409,10 +755,8 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
       else pantallaLogin('Este enlace no es válido.');
     }).catch(function(){ pantallaLogin('Sin conexión, inténtalo de nuevo.'); });
   }
-  var veloA = document.getElementById('veloAcceso'), formA = document.getElementById('formAcceso');
-  function abrirAcceso(){ formA.reset(); document.getElementById('errorAcceso').textContent = ''; if (datos && datos.negocio.usuario) formA.usuario.value = datos.negocio.usuario; veloA.classList.add('abierto'); }
-  document.getElementById('cerrarAcceso').addEventListener('click', function(){ veloA.classList.remove('abierto'); });
-  veloA.addEventListener('click', function(e){ if (e.target === veloA) veloA.classList.remove('abierto'); });
+  var formA = document.getElementById('formAcceso');
+  function abrirAcceso(){ formA.reset(); document.getElementById('errorAcceso').textContent = ''; if (datos && datos.negocio.usuario) formA.usuario.value = datos.negocio.usuario; abrirHoja('veloAcceso'); }
   formA.addEventListener('submit', function(e){
     e.preventDefault();
     var err = document.getElementById('errorAcceso'), u = formA.usuario.value.trim().toLowerCase();
@@ -421,29 +765,14 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     derivar(u, formA.clave1.value).then(function(h){ return llamar({ n:n, k:k, accion:'acceso', usuario:u, hash:h }); }).then(function(r){
       boton.disabled = false;
       if (!r || !r.ok) { err.textContent = (r && r.motivo) || 'No se ha podido guardar.'; return; }
-      guardarAcceso(r.n, r.k); datos.negocio.usuario = r.usuario; veloA.classList.remove('abierto'); pintar(); toast('Contraseña cambiada');
+      guardarAcceso(r.n, r.k); datos.negocio.usuario = r.usuario; cerrarHojas(); pintar(); toast('Contraseña cambiada');
     }).catch(function(){ boton.disabled = false; err.textContent = 'Sin conexión, inténtalo de nuevo.'; });
-  });
-  var veloAj = document.getElementById('veloAjustes');
-  function cerrarAjustes(){ veloAj.classList.remove('abierto'); }
-  document.getElementById('cerrarAjustes').addEventListener('click', cerrarAjustes);
-  veloAj.addEventListener('click', function(e){ if (e.target === veloAj) cerrarAjustes(); });
-  document.addEventListener('click', function(e){
-    if (e.target.closest('[data-ajustes]')) {
-      document.getElementById('cuentaTxt').textContent = datos && datos.negocio.usuario ? 'Entras con ' + datos.negocio.usuario : '';
-      document.getElementById('borrarCuenta').href = 'mailto:soporte@euxenos.com?subject=' + encodeURIComponent('Borrar mi cuenta de Eris Agenda') + '&body=' + encodeURIComponent('Quiero que borréis mi cuenta de Eris Agenda y sus datos.\n\nNegocio: ' + (datos ? datos.negocio.nombre : '') + '\nCorreo de acceso: ' + (datos && datos.negocio.usuario || ''));
-      pintarAvisos(); pintarInstalar(); veloAj.classList.add('abierto'); return;
-    }
-    var b = e.target.closest('[data-cuenta]'); if (!b) return;
-    cerrarAjustes();
-    if (b.getAttribute('data-cuenta') === 'acceso') abrirAcceso();
-    else { quitarAvisos(true); olvidar(); pantallaLogin('Has cerrado la sesión.'); }
   });
 
   // ---- Avisos al móvil (notificaciones) ----
   var hayPush = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
   var esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  var instalada = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  var instalada = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true || document.referrer.indexOf('android-app://') === 0;
   var estadoAvisos = 'cargando', suscripcion = null, swListo = null;
   if ('serviceWorker' in navigator) {
     swListo = navigator.serviceWorker.register('sw.js').then(function(){ return navigator.serviceWorker.ready; }).catch(function(){ hayPush = false; return null; });
@@ -465,7 +794,6 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     swListo.then(function(reg){ return reg ? reg.pushManager.getSubscription() : null; }).then(function(sub){
       suscripcion = sub; estadoAvisos = sub && Notification.permission === 'granted' ? 'activo' : (hayPush ? 'inactivo' : 'nosoporte'); pintarAvisos();
       if (sub && n && k) {
-        // Una vez al día recordamos al servidor este móvil por si se hubiera perdido
         var hoy = hoyISO(), ultima = ''; try { ultima = localStorage.getItem('eris-avisos-sync') || ''; } catch (e) {}
         if (ultima !== hoy + n) llamar({ n:n, k:k, accion:'avisos-alta', sub: sub.toJSON(), dispositivo: nombreDispositivo() }).then(function(r){ if (r && r.ok) try { localStorage.setItem('eris-avisos-sync', hoy + n); } catch (e) {} }).catch(function(){});
       }
@@ -477,18 +805,17 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     if (estadoAvisos === 'cargando') h = '<p>Comprobando los avisos de este dispositivo…</p>';
     else if (estadoAvisos === 'activo') { activo = true; h = '<p><b>🔔 Avisos activados.</b> Te avisamos al momento de cada petición de cita nueva y 15 minutos antes de cada cita.</p><div class="acciones"><button class="btn b-otra" data-avisos="probar">Enviar un aviso de prueba</button><button class="btn b-no" data-avisos="quitar">Desactivar</button></div>'; }
     else if (estadoAvisos === 'inactivo') h = '<p><b>🔕 Avisos desactivados.</b> Actívalos y te avisaremos al momento de cada petición de cita nueva y 15 minutos antes de cada cita, aunque tengas la app cerrada.</p><div class="acciones"><button class="btn b-ok" data-avisos="activar">Activar avisos</button></div>';
-    else if (estadoAvisos === 'ios') h = '<p><b>🔔 Avisos en iPhone:</b> primero añade Eris Agenda a la pantalla de inicio (botón Compartir → «Añadir a pantalla de inicio»), ábrela desde ese icono y vuelve aquí para activar los avisos.</p>';
-    else if (estadoAvisos === 'bloqueado') h = '<p><b>🔕 Los avisos están bloqueados</b> en este dispositivo. Para recibirlos, permite las notificaciones de Eris Agenda en los ajustes del móvil o del navegador y vuelve a abrirla.</p>';
-    else h = '<p><b>🔕 Este navegador no admite avisos.</b> Abre Eris Agenda con Chrome (Android u ordenador) o, en iPhone, desde el icono de la pantalla de inicio.</p>';
+    else if (estadoAvisos === 'ios') h = '<p><b>🔔 Avisos en iPhone:</b> primero añade Euxenos a la pantalla de inicio (botón Compartir → «Añadir a pantalla de inicio»), ábrela desde ese icono y vuelve aquí para activar los avisos.</p>';
+    else if (estadoAvisos === 'bloqueado') h = '<p><b>🔕 Los avisos están bloqueados</b> en este dispositivo. Para recibirlos, permite las notificaciones de Euxenos en los ajustes del móvil o del navegador y vuelve a abrirla.</p>';
+    else h = '<p><b>🔕 Este navegador no admite avisos.</b> Abre Euxenos con Chrome (Android u ordenador) o, en iPhone, desde el icono de la pantalla de inicio.</p>';
     var aj = document.getElementById('avisosAjustes');
-    if (aj) { aj.className = 'avisos' + (activo ? ' activo' : ''); aj.innerHTML = h; }
-    // En la página solo aparece la invitación mientras no estén activados (y si no ha dicho «Ahora no»)
+    if (aj) { aj.className = 'caja' + (activo ? ' activo' : ''); aj.innerHTML = h; }
+    // En «Hoy» solo aparece la invitación mientras no estén activados (y si no ha dicho «Ahora no»)
     var el = document.getElementById('avisos'); if (!el) return;
     var invitar = (estadoAvisos === 'inactivo' || estadoAvisos === 'ios') && !avisosNoQuiere();
-    if (!invitar) { el.className = 'avisos arriba oculto'; el.innerHTML = ''; return; }
-    el.className = 'avisos arriba';
-    el.innerHTML = estadoAvisos === 'ios' ? h + '<div class="acciones"><button class="ahora-no" data-avisos="ahora-no">Ahora no</button></div>'
-      : '<p><b>🔔 Activa los avisos en este móvil</b> y te avisaremos al momento de cada petición de cita nueva y 15 minutos antes de cada cita, aunque tengas la app cerrada.</p><div class="acciones"><button class="btn b-ok" data-avisos="activar">Activar avisos</button><button class="ahora-no" data-avisos="ahora-no">Ahora no</button></div>';
+    if (!invitar) { el.innerHTML = ''; return; }
+    el.innerHTML = '<div class="franja info">' + (estadoAvisos === 'ios' ? h.replace(/<\/?p>/g, '') : '<b>🔔 Activa los avisos en este móvil</b> y te avisaremos al momento de cada petición de cita nueva y 15 minutos antes de cada cita.')
+      + '<div class="acciones">' + (estadoAvisos === 'ios' ? '' : '<button class="btn b-ok" data-avisos="activar">Activar avisos</button>') + '<button class="btn b-otra" data-avisos="ahora-no" style="flex:0 0 auto">Ahora no</button></div></div>';
   }
   function fallo(m){ var e = new Error(m); e.propio = true; return e; }
   function activarAvisos(boton){
@@ -528,7 +855,7 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     var a = b.getAttribute('data-avisos');
     if (a === 'activar') activarAvisos(b);
     else if (a === 'quitar') quitarAvisos(false);
-    else if (a === 'ahora-no') { try { localStorage.setItem('eris-avisos-no', '1'); } catch (er) {} pintarAvisos(); toast('Puedes activarlos cuando quieras en Ajustes ⚙'); }
+    else if (a === 'ahora-no') { try { localStorage.setItem('eris-avisos-no', '1'); } catch (er) {} pintarAvisos(); toast('Puedes activarlos cuando quieras en ☰ → Ajustes'); }
     else if (a === 'probar') {
       b.disabled = true;
       llamar({ n:n, k:k, accion:'avisos-prueba' }).then(function(r){
@@ -540,14 +867,14 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     }
   });
 
-  // ---- Instalar la app en el móvil u ordenador ----
+  // ---- Instalar la app ----
   var promptInstalar = null;
   window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); promptInstalar = e; pintarInstalar(); });
-  window.addEventListener('appinstalled', function(){ promptInstalar = null; instalada = true; pintarInstalar(); toast('Eris Agenda instalada'); });
+  window.addEventListener('appinstalled', function(){ promptInstalar = null; instalada = true; pintarInstalar(); toast('Euxenos instalada'); });
   function pintarInstalar(){
     var h = '';
     if (instalada) h = '';
-    else if (promptInstalar) h = '<button class="btn b-otra" type="button" data-instalar>📲 Instalar Eris Agenda en este dispositivo</button>';
+    else if (promptInstalar) h = '<h2>App</h2><button class="btn b-otra ancho" type="button" data-instalar>📲 Instalar Euxenos en este dispositivo</button>';
     else if (esIOS) h = '<p class="instalar"><b>Tenla como una app:</b> pulsa el botón Compartir de Safari y luego «Añadir a pantalla de inicio».</p>';
     else h = '<p class="instalar"><b>Tenla como una app:</b> abre el menú del navegador (⋮) y pulsa «Instalar aplicación» o «Añadir a pantalla de inicio».</p>';
     document.querySelectorAll('.instalar-app').forEach(function(el){ el.innerHTML = h; });
@@ -557,9 +884,13 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     var pr = promptInstalar; promptInstalar = null;
     pr.prompt(); pr.userChoice.then(function(){ pintarInstalar(); });
   });
-  function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !document.querySelector('.proponer.abierto') && !velo.classList.contains('abierto') && !veloA.classList.contains('abierto') && !veloAj.classList.contains('abierto') && !!datos; }
-  document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) cargar(); });
+
+  // ---- Refresco ----
+  function algoAbierto(){ return !!document.querySelector('.velo.abierto') || panelEris.classList.contains('abierto') || !!document.querySelector('.proponer.abierto') || (document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName)); }
+  function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !algoAbierto() && !!datos; }
+  document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) { cargar(); cargarInfo(); } });
   setInterval(function(){ if (puedeRefrescar()) cargar(); }, 60000);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { cerrarHojas(); cerrarMenu(); } });
   if (enlaceN && enlaceK) comprobarEnlace(enlaceN, enlaceK); else cargar();
 })();
 </script>

@@ -3,7 +3,7 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.euxenos.agenda",
+      "package_name": "com.euxenos.app",
       "sha256_cert_fingerprints": [
         "20:44:56:1E:7B:AF:56:66:92:22:89:AE:5E:96:7B:98:8A:C1:10:97:8B:C5:C4:D8:47:BB:4E:2E:75:D2:D9:1F"
       ]
