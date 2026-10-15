@@ -1,8 +1,8 @@
 {
-  "packageId": "com.euxenos.agenda",
+  "packageId": "com.euxenos.app",
   "host": "euxenos.com",
-  "name": "Eris Agenda",
-  "launcherName": "Eris Agenda",
+  "name": "Euxenos",
+  "launcherName": "Euxenos",
   "display": "standalone",
   "orientation": "portrait",
   "themeColor": "#04120E",
