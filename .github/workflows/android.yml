@@ -5,12 +5,14 @@ on:
   push:
     paths: ['android/**', '.github/workflows/android.yml']
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   compilar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with: { distribution: temurin, java-version: '17' }
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
@@ -22,15 +24,24 @@ jobs:
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
       - name: Generar el proyecto Android
         working-directory: android
-        run: bubblewrap update --skipVersionUpgrade --manifest=./twa-manifest.json
+        run: |
+          set -o pipefail
+          bubblewrap update --skipVersionUpgrade --manifest=./twa-manifest.json 2>&1 | tee ../proyecto.log
       - name: Compilar el paquete (.aab sin firmar) y un .apk de prueba
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon bundleRelease assembleRelease
-      - uses: actions/upload-artifact@v4
-        with:
-          name: eris-agenda-sin-firmar
-          path: |
-            android/app/build/outputs/bundle/release/*.aab
-            android/app/build/outputs/apk/release/*.apk
+          ./gradlew --no-daemon bundleRelease assembleRelease 2>&1 | tee ../compilacion.log
+          exit ${PIPESTATUS[0]}
+      - name: Guardar el resultado en la rama android-salida
+        if: always()
+        run: |
+          mkdir -p /tmp/salida
+          cp android/app/build/outputs/bundle/release/*.aab /tmp/salida/ 2>/dev/null || true
+          cp android/app/build/outputs/apk/release/*.apk /tmp/salida/ 2>/dev/null || true
+          cp *.log /tmp/salida/ 2>/dev/null || true
+          cd /tmp/salida
+          git init -q -b android-salida
+          git config user.name "github-actions"; git config user.email "actions@github.com"
+          git add -A; git commit -q -m "Compilación ${GITHUB_SHA::7}"
+          git push -f -q "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" android-salida
