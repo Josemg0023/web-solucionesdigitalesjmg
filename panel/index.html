@@ -273,6 +273,7 @@ textarea{min-height:90px;resize:vertical}
   var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   var SEMANA = [['lun','Lunes'],['mar','Martes'],['mie','Miércoles'],['jue','Jueves'],['vie','Viernes'],['sab','Sábado'],['dom','Domingo']];
   var CLAVE_DIA = ['dom','lun','mar','mie','jue','vie','sab'];
+  var FIN = ['hecha','cancelada','caducada'];
   var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Finalizada', caducada:'Sin confirmar · cerrada' };
   var VISTAS = {
     hoy: { t:'Hoy', i:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><circle cx="12" cy="15" r="2"/>' },
@@ -353,6 +354,7 @@ textarea{min-height:90px;resize:vertical}
     } else if (c.estado === 'confirmada') {
       acc = '<div class="acciones"><button class="btn b-otra" data-a="hecha" data-r="' + esc(c.ref) + '">Marcar como finalizada</button><button class="btn b-no" data-a="cancelar" data-r="' + esc(c.ref) + '">Cancelar</button></div>';
     }
+    if (FIN.indexOf(c.estado) >= 0 || (c.fecha && c.fecha < hoyISO() && c.estado !== 'confirmada')) acc += '<div class="acciones"><button class="btn b-no" data-a="borrar" data-r="' + esc(c.ref) + '">🗑 Borrar</button></div>';
     return '<article class="cita ' + esc(c.estado) + '" id="c-' + esc(c.ref) + '">'
       + '<div class="arriba"><div><div class="hora">' + esc(c.hora || '—') + '</div><div class="dia">' + esc(nombreDia(c.fecha)) + '</div></div>'
       + '<span class="estado e-' + esc(c.estado) + '">' + esc(ETIQUETAS[c.estado] || c.estado) + '</span></div>'
@@ -400,7 +402,21 @@ textarea{min-height:90px;resize:vertical}
       + seccion('Próximas', prox, 'No hay citas confirmadas próximamente.')
       + (prop.length ? seccion('Esperando respuesta del cliente', prop, '') : '')
       + (cad.length ? seccion('Pasaron sin confirmar (se cerraron solas)', cad, '') : '')
-      + (hist.length ? seccion('Últimos 30 días', hist, '') : '');
+      + (hist.length ? seccion('Últimos 30 días', hist, '') : '')
+      + (pasadasBorrables().length ? '<button class="btn b-no ancho" data-borrar-pasadas style="margin-top:14px">🗑 Borrar todas las citas pasadas (' + pasadasBorrables().length + ')</button>' : '');
+  }
+  function pasadasBorrables(){ var hoy = hoyISO(); return citas().filter(function(x){ return (x.fecha || '') < hoy && (FIN.indexOf(x.estado) >= 0 || !x.fecha); }); }
+  function borrarPasadas(b){
+    var nb = pasadasBorrables().length;
+    if (!nb) { toast('No hay citas pasadas que borrar'); return; }
+    if (!confirmar('¿Borrar ' + nb + (nb === 1 ? ' cita pasada' : ' citas pasadas') + ' (finalizadas, canceladas o que se cerraron solas)? No se puede deshacer.')) return;
+    if (b) b.disabled = true;
+    llamarApp('citas-pasadas-borrar').then(function(r){
+      if (b) b.disabled = false;
+      if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido borrar'); return; }
+      var refs = r.refs || []; datos.citas = citas().filter(function(x){ return refs.indexOf(x.ref) < 0; }); pintar();
+      toast(r.borradas ? (r.borradas === 1 ? '1 cita borrada' : r.borradas + ' citas borradas') : 'No había citas pasadas');
+    }).catch(function(){ if (b) b.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
   }
   function vistaCalendario(){
     var hoy = hoyISO(), c = citas();
@@ -467,6 +483,10 @@ textarea{min-height:90px;resize:vertical}
     h += '<h2>Lo que Eris debe saber</h2><form id="formInfo" class="caja"><p>Cuéntale a Eris lo que tus clientes deben saber y no está en el catálogo ni en el horario: cómo llegar, aparcamiento, formas de pago, normas, avisos de estos días…</p>'
       + '<textarea name="texto" maxlength="3000" rows="5" placeholder="Ej.: Aparcamiento gratuito en la calle de atrás. Aceptamos Bizum y tarjeta. Esta semana no hacemos mechas.">' + esc(info ? info.info : '') + '</textarea>'
       + '<button class="btn b-ok ancho" type="submit" style="margin-top:10px"' + (info ? '' : ' disabled') + '>Guardar</button></form>';
+    var auto = !(info && info.ajustes && info.ajustes.autoborrar === false);
+    h += '<h2>Citas pasadas</h2><div class="caja"><label class="interruptor" style="margin:0 0 6px"><input type="checkbox" data-autoborrar' + (auto ? ' checked' : '') + (info ? '' : ' disabled') + '> <span>Borrar automáticamente las citas finalizadas, canceladas o que se cerraron solas, 24 horas después de su hora</span></label>'
+      + '<p class="ayuda" style="margin:0 0 10px">Así la agenda se queda limpia y no guardas datos de clientes que ya no necesitas. Las citas confirmadas que aún no han pasado nunca se borran.</p>'
+      + '<button class="btn b-no ancho" data-borrar-pasadas>🗑 Borrar ahora las citas pasadas</button></div>';
     h += '<div class="instalar-app"></div>';
     return h;
   }
@@ -527,6 +547,9 @@ textarea{min-height:90px;resize:vertical}
       else { diaSel = t.getAttribute('data-dia'); var p = diaSel.split('-'); if (+p[1]-1 !== mesVista.getMonth()) mesVista = new Date(+p[0], +p[1]-1, 1); }
       pintar(); return;
     }
+    t = e.target.closest('[data-borrar-pasadas]'); if (t) { borrarPasadas(t); return; }
+    t = e.target.closest('[data-autoborrar]');
+    if (t) { var on = t.checked; t.disabled = true; llamarApp('ajustes-guardar', { autoborrar: on }).then(function(r){ aplicarInfo(r, on ? 'Se borrarán solas 24 h después' : 'Ya no se borrarán solas'); }).catch(sinConexion); return; }
     t = e.target.closest('[data-tab]'); if (t) { tabCat = t.getAttribute('data-tab'); pintar(); return; }
     t = e.target.closest('[data-item]'); if (t) { abrirItem(t.getAttribute('data-item')); return; }
     t = e.target.closest('[data-cierre]'); if (t) { abrirCierre(); return; }
@@ -561,6 +584,14 @@ textarea{min-height:90px;resize:vertical}
   function confirmar(t){ try { return window.confirm(t); } catch (e) { return true; } }
 
   function accionCita(a, ref){
+    if (a === 'borrar') {
+      if (!confirmar('¿Borrar esta cita? No se puede deshacer.')) return;
+      llamarApp('cita-borrar', { ref: ref }).then(function(r){
+        if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido borrar'); return; }
+        datos.citas = citas().filter(function(x){ return x.ref !== ref; }); pintar(); toast('Cita borrada');
+      }).catch(function(){ toast('Sin conexión, inténtalo de nuevo'); });
+      return;
+    }
     if (a === 'abrir') { var p = document.getElementById('p-' + ref); p.classList.toggle('abierto'); if (p.classList.contains('abierto')) p.querySelector('input').focus(); return; }
     var propuesta = '';
     if (a === 'proponer') { propuesta = document.querySelector('#p-' + ref + ' input').value.trim(); if (!propuesta) { toast('Escribe qué día y hora propones'); return; } }
