@@ -4,3 +4,5 @@ wrangler.jsonc
 .assetsignore
 README.md
 netlify.toml
+android
+.github

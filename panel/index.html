@@ -59,6 +59,16 @@ h2 .n{background:var(--tarjeta);border:1px solid var(--linea);border-radius:999p
 .instalar-app .btn{width:100%;margin-top:18px}
 .instalar-app .instalar{margin-top:18px}
 .avisos.arriba{margin:14px 0 4px;border-color:rgba(52,211,153,.45);background:rgba(16,185,129,.08)}
+.avisos.oculto{display:none}
+.avisos .ahora-no{flex:0 0 auto;background:none;border:0;color:var(--apagado);font:inherit;font-size:.88rem;cursor:pointer;padding:10px 8px}
+.botones-cab{display:flex;gap:8px;flex:none}
+.ajustes h4{font-family:'Sora',system-ui,sans-serif;font-size:.85rem;letter-spacing:.03em;text-transform:uppercase;color:var(--apagado);margin:18px 0 8px}
+.ajustes h4:first-of-type{margin-top:0}
+.ajustes .avisos{margin:0}
+.ajustes .fila-ajuste{display:flex;flex-direction:column;gap:8px}
+.ajustes .fila-ajuste .btn{width:100%}
+.ajustes .cuenta-txt{font-size:.88rem;color:var(--apagado);margin:0 0 4px}
+.ajustes .version{margin-top:18px;font-size:.78rem;color:#6F9888;text-align:center}
 .cliente{font-weight:700;font-size:1.05rem;margin:12px 0 2px}
 .servicio{color:#CFE9DF}
 .meta{color:var(--apagado);font-size:.85rem;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 12px}
@@ -148,6 +158,17 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
 <p class="error" id="errorAcceso"></p>
 <button class="btn b-ok" type="submit" style="width:100%">Guardar</button>
 </form></div>
+<div class="velo" id="veloAjustes"><div class="hoja ajustes" role="dialog" aria-label="Ajustes">
+<h3>Ajustes <button type="button" id="cerrarAjustes" aria-label="Cerrar">×</button></h3>
+<h4>Avisos en este dispositivo</h4>
+<div class="avisos" id="avisosAjustes"></div>
+<h4>Tu cuenta</h4>
+<div class="fila-ajuste"><p class="cuenta-txt" id="cuentaTxt"></p><button class="btn b-otra" type="button" data-cuenta="acceso">Cambiar contraseña</button><button class="btn b-no" type="button" data-cuenta="salir" style="width:100%">Cerrar sesión</button></div>
+<h4>Ayuda y privacidad</h4>
+<div class="fila-ajuste"><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=Ayuda%20con%20Eris%20Agenda">Escribir a soporte</a><a class="btn b-otra" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a><a class="btn b-no" style="width:100%" id="borrarCuenta" href="mailto:soporte@euxenos.com?subject=Borrar%20mi%20cuenta%20de%20Eris%20Agenda">Pedir que borren mi cuenta</a></div>
+<div class="instalar-app"></div>
+<p class="version">Eris Agenda · Euxenos</p>
+</div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (function(){
@@ -260,19 +281,18 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     var cad = c.filter(function(x){ return x.estado === 'caducada' && (x.fecha || '') >= hace3; }).sort(orden).reverse();
     var d = new Date();
     app.innerHTML = '<header><div class="fila"><div><h1>' + esc(datos.negocio.nombre) + '</h1><div class="fecha-hoy">' + DIAS[d.getDay()] + ', ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div></div>'
-      + '<button class="recargar" id="recargar" aria-label="Actualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button></div>'
+      + '<div class="botones-cab"><button class="recargar" id="recargar" aria-label="Actualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>'
+      + '<button class="recargar" data-ajustes aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>'
       + '<div class="resumen"><span class="chip' + (pend.length ? ' alerta' : '') + '"><b>' + pend.length + '</b> por confirmar</span><span class="chip"><b>' + hoyL.length + '</b> hoy</span><span class="chip"><b>' + prox.length + '</b> próximas</span></div>'
       + '<div class="pestanas"><button data-vista="resumen" aria-pressed="' + (vista === 'resumen') + '">Resumen</button><button data-vista="calendario" aria-pressed="' + (vista === 'calendario') + '">Calendario</button></div>'
       + '</header>'
       + '<main>'
+      + '<div class="avisos arriba oculto" id="avisos"></div>'
       + (vista === 'calendario' ? calendario(c) : (seccion('Por confirmar', pend, 'Nada pendiente. Cuando Eris recoja una petición de cita, aparecerá aquí.')
       + seccion('Hoy', hoyL, 'No hay citas confirmadas para hoy.')
       + seccion('Próximos días', prox, 'No hay citas confirmadas en los próximos días.')
       + (prop.length ? seccion('Esperando respuesta del cliente', prop, '') : '')
       + (cad.length ? seccion('Pasaron sin confirmar (se cerraron solas)', cad, '') : '')))
-      + '<div class="avisos" id="avisos"></div>'
-      + '<div class="cuenta"><button data-cuenta="acceso">Cambiar contraseña' + (datos.negocio.usuario ? ' (' + esc(datos.negocio.usuario) + ')' : '') + '</button><button data-cuenta="salir">Cerrar sesión</button></div>'
-      + '<div class="instalar-app"></div>'
       + '</main>';
     document.getElementById('recargar').addEventListener('click', cargar);
     pintarAvisos(); pintarInstalar();
@@ -404,8 +424,18 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
       guardarAcceso(r.n, r.k); datos.negocio.usuario = r.usuario; veloA.classList.remove('abierto'); pintar(); toast('Contraseña cambiada');
     }).catch(function(){ boton.disabled = false; err.textContent = 'Sin conexión, inténtalo de nuevo.'; });
   });
+  var veloAj = document.getElementById('veloAjustes');
+  function cerrarAjustes(){ veloAj.classList.remove('abierto'); }
+  document.getElementById('cerrarAjustes').addEventListener('click', cerrarAjustes);
+  veloAj.addEventListener('click', function(e){ if (e.target === veloAj) cerrarAjustes(); });
   document.addEventListener('click', function(e){
+    if (e.target.closest('[data-ajustes]')) {
+      document.getElementById('cuentaTxt').textContent = datos && datos.negocio.usuario ? 'Entras con ' + datos.negocio.usuario : '';
+      document.getElementById('borrarCuenta').href = 'mailto:soporte@euxenos.com?subject=' + encodeURIComponent('Borrar mi cuenta de Eris Agenda') + '&body=' + encodeURIComponent('Quiero que borréis mi cuenta de Eris Agenda y sus datos.\n\nNegocio: ' + (datos ? datos.negocio.nombre : '') + '\nCorreo de acceso: ' + (datos && datos.negocio.usuario || ''));
+      pintarAvisos(); pintarInstalar(); veloAj.classList.add('abierto'); return;
+    }
     var b = e.target.closest('[data-cuenta]'); if (!b) return;
+    cerrarAjustes();
     if (b.getAttribute('data-cuenta') === 'acceso') abrirAcceso();
     else { quitarAvisos(true); olvidar(); pantallaLogin('Has cerrado la sesión.'); }
   });
@@ -441,20 +471,24 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
       }
     }).catch(function(){ estadoAvisos = 'nosoporte'; pintarAvisos(); });
   }
+  function avisosNoQuiere(){ try { return localStorage.getItem('eris-avisos-no') === '1'; } catch (e) { return false; } }
   function pintarAvisos(){
-    var el = document.getElementById('avisos'); if (!el) return;
     var h = '', activo = false;
     if (estadoAvisos === 'cargando') h = '<p>Comprobando los avisos de este dispositivo…</p>';
-    else if (estadoAvisos === 'activo') { activo = true; h = '<p><b>🔔 Avisos activados en este dispositivo.</b> Te avisamos al momento de cada petición de cita nueva y 15 minutos antes de cada cita.</p><div class="acciones"><button class="btn b-otra" data-avisos="probar">Enviar un aviso de prueba</button><button class="btn b-no" data-avisos="quitar">Desactivar</button></div>'; }
-    else if (estadoAvisos === 'inactivo') h = '<p><b>🔔 Activa los avisos en este móvil</b> y te avisaremos al momento de cada petición de cita nueva y 15 minutos antes de cada cita, aunque tengas la app cerrada.</p><div class="acciones"><button class="btn b-ok" data-avisos="activar">Activar avisos</button></div>';
+    else if (estadoAvisos === 'activo') { activo = true; h = '<p><b>🔔 Avisos activados.</b> Te avisamos al momento de cada petición de cita nueva y 15 minutos antes de cada cita.</p><div class="acciones"><button class="btn b-otra" data-avisos="probar">Enviar un aviso de prueba</button><button class="btn b-no" data-avisos="quitar">Desactivar</button></div>'; }
+    else if (estadoAvisos === 'inactivo') h = '<p><b>🔕 Avisos desactivados.</b> Actívalos y te avisaremos al momento de cada petición de cita nueva y 15 minutos antes de cada cita, aunque tengas la app cerrada.</p><div class="acciones"><button class="btn b-ok" data-avisos="activar">Activar avisos</button></div>';
     else if (estadoAvisos === 'ios') h = '<p><b>🔔 Avisos en iPhone:</b> primero añade Eris Agenda a la pantalla de inicio (botón Compartir → «Añadir a pantalla de inicio»), ábrela desde ese icono y vuelve aquí para activar los avisos.</p>';
-    else if (estadoAvisos === 'bloqueado') h = '<p><b>🔕 Los avisos están bloqueados</b> en este navegador. Para recibirlos, permite las notificaciones de euxenos.com en los ajustes del navegador y vuelve a abrir Eris Agenda.</p>';
+    else if (estadoAvisos === 'bloqueado') h = '<p><b>🔕 Los avisos están bloqueados</b> en este dispositivo. Para recibirlos, permite las notificaciones de Eris Agenda en los ajustes del móvil o del navegador y vuelve a abrirla.</p>';
     else h = '<p><b>🔕 Este navegador no admite avisos.</b> Abre Eris Agenda con Chrome (Android u ordenador) o, en iPhone, desde el icono de la pantalla de inicio.</p>';
-    var arriba = estadoAvisos === 'inactivo' || estadoAvisos === 'ios', main = el.parentNode;
-    el.className = 'avisos' + (activo ? ' activo' : '') + (arriba ? ' arriba' : '');
-    el.innerHTML = h;
-    // Mientras no estén activados, la invitación va arriba del todo; luego, abajo
-    if (main) { if (arriba) { if (main.firstChild !== el) main.insertBefore(el, main.firstChild); } else { var cu = main.querySelector('.cuenta'); if (cu && el.nextSibling !== cu) main.insertBefore(el, cu); } }
+    var aj = document.getElementById('avisosAjustes');
+    if (aj) { aj.className = 'avisos' + (activo ? ' activo' : ''); aj.innerHTML = h; }
+    // En la página solo aparece la invitación mientras no estén activados (y si no ha dicho «Ahora no»)
+    var el = document.getElementById('avisos'); if (!el) return;
+    var invitar = (estadoAvisos === 'inactivo' || estadoAvisos === 'ios') && !avisosNoQuiere();
+    if (!invitar) { el.className = 'avisos arriba oculto'; el.innerHTML = ''; return; }
+    el.className = 'avisos arriba';
+    el.innerHTML = estadoAvisos === 'ios' ? h + '<div class="acciones"><button class="ahora-no" data-avisos="ahora-no">Ahora no</button></div>'
+      : '<p><b>🔔 Activa los avisos en este móvil</b> y te avisaremos al momento de cada petición de cita nueva y 15 minutos antes de cada cita, aunque tengas la app cerrada.</p><div class="acciones"><button class="btn b-ok" data-avisos="activar">Activar avisos</button><button class="ahora-no" data-avisos="ahora-no">Ahora no</button></div>';
   }
   function fallo(m){ var e = new Error(m); e.propio = true; return e; }
   function activarAvisos(boton){
@@ -474,7 +508,7 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     }).then(function(sub){
       return llamar({ n:n, k:k, accion:'avisos-alta', sub: sub.toJSON(), dispositivo: nombreDispositivo() }).then(function(r){
         if (!r || !r.ok) { sub.unsubscribe(); throw fallo((r && r.motivo) || 'No se han podido activar los avisos'); }
-        suscripcion = sub; estadoAvisos = 'activo'; pintarAvisos();
+        suscripcion = sub; estadoAvisos = 'activo'; try { localStorage.removeItem('eris-avisos-no'); } catch (e) {} pintarAvisos();
         try { localStorage.setItem('eris-avisos-sync', hoyISO() + n); } catch (e) {}
         toast('Avisos activados. Te enviamos uno de prueba');
         return llamar({ n:n, k:k, accion:'avisos-prueba' });
@@ -487,13 +521,14 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     sub.unsubscribe().catch(function(){});
     suscripcion = null; estadoAvisos = 'inactivo';
     try { localStorage.removeItem('eris-avisos-sync'); } catch (e) {}
-    if (!silencio) { pintarAvisos(); toast('Avisos desactivados en este dispositivo'); }
+    if (!silencio) { try { localStorage.setItem('eris-avisos-no', '1'); } catch (e) {} pintarAvisos(); toast('Avisos desactivados. Puedes volver a activarlos en Ajustes'); }
   }
   document.addEventListener('click', function(e){
     var b = e.target.closest('[data-avisos]'); if (!b) return;
     var a = b.getAttribute('data-avisos');
     if (a === 'activar') activarAvisos(b);
     else if (a === 'quitar') quitarAvisos(false);
+    else if (a === 'ahora-no') { try { localStorage.setItem('eris-avisos-no', '1'); } catch (er) {} pintarAvisos(); toast('Puedes activarlos cuando quieras en Ajustes ⚙'); }
     else if (a === 'probar') {
       b.disabled = true;
       llamar({ n:n, k:k, accion:'avisos-prueba' }).then(function(r){
@@ -522,7 +557,7 @@ header>*{max-width:640px;margin-left:auto;margin-right:auto}
     var pr = promptInstalar; promptInstalar = null;
     pr.prompt(); pr.userChoice.then(function(){ pintarInstalar(); });
   });
-  function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !document.querySelector('.proponer.abierto') && !velo.classList.contains('abierto') && !veloA.classList.contains('abierto') && !!datos; }
+  function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !document.querySelector('.proponer.abierto') && !velo.classList.contains('abierto') && !veloA.classList.contains('abierto') && !veloAj.classList.contains('abierto') && !!datos; }
   document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) cargar(); });
   setInterval(function(){ if (puedeRefrescar()) cargar(); }, 60000);
   if (enlaceN && enlaceK) comprobarEnlace(enlaceN, enlaceK); else cargar();
