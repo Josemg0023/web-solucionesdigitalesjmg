@@ -187,6 +187,17 @@ textarea{min-height:90px;resize:vertical}
 .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120%);background:#E9FBF4;color:#04120E;font-weight:700;font-size:.9rem;padding:10px 16px;border-radius:12px;transition:transform .25s,visibility .25s;visibility:hidden;z-index:60;max-width:calc(100% - 32px)}
 .toast.ver{transform:translateX(-50%) translateY(0);visibility:visible}
 .oculto{display:none !important}
+.pedido{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:14px;margin-bottom:10px}
+.pedido.nuevo{border-color:rgba(245,185,66,.6);box-shadow:0 0 0 1px rgba(245,185,66,.12) inset}
+.pedido.entregado,.pedido.cancelado{opacity:.55}
+.lineas{list-style:none;margin:10px 0 0;padding:0;border-top:1px dashed var(--linea)}
+.lineas li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--linea);font-size:.95rem}
+.lineas li small{display:block;color:#F7D58C;font-size:.82rem}
+.lineas li b{font-weight:700;margin-right:4px}
+.total{display:flex;justify-content:space-between;margin-top:8px;font-family:'Sora',system-ui,sans-serif;font-weight:700}
+.tipo{display:inline-block;font-size:.75rem;font-weight:700;padding:3px 8px;border-radius:999px;margin-top:6px;background:rgba(96,165,250,.15);color:#9CC8FF}
+.tipo.dom{background:rgba(209,16,74,.15);color:#FF9DB8}
+.e-nuevo{background:rgba(245,185,66,.18);color:#F7D58C}.e-cocina{background:rgba(96,165,250,.15);color:#9CC8FF}.e-listo{background:rgba(16,185,129,.18);color:var(--verde-luz)}.e-entregado{background:rgba(255,255,255,.08);color:var(--apagado)}.e-cancelado{background:rgba(209,16,74,.15);color:#FF8FB0}
 </style>
 </head>
 <body>
@@ -268,14 +279,17 @@ textarea{min-height:90px;resize:vertical}
   try { var g = JSON.parse(localStorage.getItem('eris-agenda') || 'null'); if (g) { n = g.n; k = g.k; } } catch (e) {}
   if (enlaceN && enlaceK) history.replaceState(null, '', location.pathname);
   var app = document.getElementById('app');
-  var datos = null, info = null, cargando = false, pausa = 0, vista = 'hoy', diaSel = null, mesVista = null, tabCat = 'servicio';
+  var pedidos = null, pedidosVistos = null, datos = null, info = null, cargando = false, pausa = 0, vista = 'hoy', diaSel = null, mesVista = null, tabCat = 'servicio';
   var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
   var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   var SEMANA = [['lun','Lunes'],['mar','Martes'],['mie','Miércoles'],['jue','Jueves'],['vie','Viernes'],['sab','Sábado'],['dom','Domingo']];
   var CLAVE_DIA = ['dom','lun','mar','mie','jue','vie','sab'];
   var FIN = ['hecha','cancelada','caducada'];
+  var EST_PED = { nuevo:'Nuevo', cocina:'En cocina', listo:'Listo', entregado:'Entregado', cancelado:'Cancelado' };
+  if (q.get('v') === 'pedidos') vista = 'pedidos';
   var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Finalizada', caducada:'Sin confirmar · cerrada' };
   var VISTAS = {
+    pedidos: { t:'Pedidos', i:'<path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>' },
     hoy: { t:'Hoy', i:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><circle cx="12" cy="15" r="2"/>' },
     calendario: { t:'Calendario', i:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2"/>' },
     citas: { t:'Citas', i:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/>' },
@@ -317,13 +331,27 @@ textarea{min-height:90px;resize:vertical}
       cargando = false;
       if (!d || !d.ok) { olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu correo y contraseña.'); return; }
       var primera = !datos; datos = d; pintar();
-      if (primera) { comprobarAvisos(); cargarInfo(); }
+      if (primera) { comprobarAvisos(); cargarInfo(); cargarPedidos(); }
     }).catch(function(){
       cargando = false; if (bR) bR.classList.remove('girando');
       if (!datos) app.innerHTML = '<div class="mensaje"><h1>Sin conexión</h1><p>No se ha podido cargar Euxenos. Comprueba la conexión y vuelve a intentarlo.</p><p><button class="btn b-ok" onclick="location.reload()">Reintentar</button></p></div>';
       else toast('Sin conexión: mostrando lo último cargado');
     });
   }
+  function pedidosOn(){ return !!((info && info.ajustes && info.ajustes.pedidos) || (pedidos && pedidos.length)); }
+  function activos(){ return (pedidos || []).filter(function(p){ return p.estado === 'nuevo' || p.estado === 'cocina' || p.estado === 'listo'; }); }
+  function cargarPedidos(){
+    if (!n || !k) return Promise.resolve();
+    return llamarApp('pedidos-ver').then(function(r){
+      if (!r || !r.ok) return;
+      var antes = pedidosVistos; pedidos = r.pedidos || [];
+      var nuevos = pedidos.filter(function(p){ return p.estado === 'nuevo'; }).map(function(p){ return p.ref; });
+      if (antes && nuevos.some(function(ref){ return antes.indexOf(ref) < 0; })) { pitido(); toast('🛎️ Pedido nuevo'); }
+      pedidosVistos = pedidos.map(function(p){ return p.ref; });
+      if (datos && !algoAbierto()) pintar(); else if (datos) pintarMenu();
+    }).catch(function(){});
+  }
+  function pitido(){ try { var c = new (window.AudioContext || window.webkitAudioContext)(); [0, .18].forEach(function(t){ var o = c.createOscillator(), g = c.createGain(); o.frequency.value = 880; o.connect(g); g.connect(c.destination); g.gain.setValueAtTime(.25, c.currentTime + t); g.gain.exponentialRampToValueAtTime(.001, c.currentTime + t + .15); o.start(c.currentTime + t); o.stop(c.currentTime + t + .16); }); } catch (e) {} }
   function cargarInfo(){
     return llamarApp('datos-ver').then(function(r){ if (r && r.ok) { info = r.datos; if (datos) pintar(); } }).catch(function(){});
   }
@@ -369,6 +397,49 @@ textarea{min-height:90px;resize:vertical}
     return '<h2>' + titulo + ' <span class="n">' + lista.length + '</span>' + (extra || '') + '</h2>' + (lista.length ? lista.map(tarjeta).join('') : (vacio ? '<p class="vacio">' + vacio + '</p>' : ''));
   }
 
+  // ---- Pedidos ----
+  function hace(iso){ var m = Math.round((Date.now() - new Date(iso).getTime()) / 60000); if (!(m >= 0)) return ''; if (m < 1) return 'ahora mismo'; if (m < 60) return 'hace ' + m + ' min'; var h = Math.floor(m / 60); return h < 24 ? 'hace ' + h + ' h' : 'hace ' + Math.floor(h / 24) + ' d'; }
+  function tarjetaPedido(p){
+    var sig = { nuevo:['cocina','👨‍🍳 Pasar a cocina'], cocina:['listo','✓ Listo'], listo:['entregado', p.tipo === 'domicilio' ? '🛵 Entregado' : '✓ Recogido'] }[p.estado];
+    var acc = '';
+    if (sig) acc = '<div class="acciones"><button class="btn b-ok" data-ped="' + esc(p.ref) + '" data-est="' + sig[0] + '">' + sig[1] + '</button>' + (p.estado !== 'listo' ? '<button class="btn b-no" data-ped="' + esc(p.ref) + '" data-est="cancelado" aria-label="Cancelar pedido">✕</button>' : '') + '</div>';
+    var tel = String(p.telefono || '').replace(/\D/g, ''); if (tel.length === 9) tel = '34' + tel;
+    if (p.estado === 'listo' && tel.length >= 10) {
+      var msg = 'Hola ' + String(p.cliente || '').split(' ')[0] + ', tu pedido de ' + ((datos && datos.negocio.nombre) || '') + (p.tipo === 'domicilio' ? ' ya va de camino 🛵' : ' ya está listo para recoger 🔥') + (p.total ? ' Total: ' + p.total + '.' : '');
+      acc += '<div class="acciones"><a class="btn b-wa" href="https://wa.me/' + tel + '?text=' + encodeURIComponent(msg) + '" target="_blank" rel="noopener">Avisar por WhatsApp</a></div>';
+    }
+    return '<article class="pedido ' + esc(p.estado) + '">'
+      + '<div class="arriba"><div><div class="hora">' + esc(/^\d{1,2}:\d{2}$/.test(p.hora) ? p.hora : ((p.hora || 'lo antes posible').charAt(0).toUpperCase() + (p.hora || 'lo antes posible').slice(1))) + '</div><div class="dia">Pedido ' + esc(p.ref) + ' · ' + esc(hace(p.creada)) + '</div></div><span class="estado e-' + esc(p.estado) + '">' + esc(EST_PED[p.estado] || p.estado) + '</span></div>'
+      + '<div class="cliente">' + esc(p.cliente) + '</div>'
+      + '<span class="tipo' + (p.tipo === 'domicilio' ? ' dom' : '') + '">' + (p.tipo === 'domicilio' ? '🛵 A domicilio' : '🥡 Para recoger') + '</span>'
+      + (p.direccion ? '<div class="servicio" style="margin-top:6px">📍 ' + esc(p.direccion) + '</div>' : '')
+      + '<ul class="lineas">' + (p.lineas || []).map(function(l){ return '<li><span><b>' + esc(l.cantidad) + '×</b>' + esc(l.nombre) + (l.notas ? '<small>' + esc(l.notas) + '</small>' : '') + '</span><span>' + esc(l.precio || '') + '</span></li>'; }).join('') + '</ul>'
+      + (p.total ? '<div class="total"><span>Total</span><span>' + esc(p.total) + '</span></div>' : '')
+      + (p.notas ? '<div class="notas">' + esc(p.notas) + '</div>' : '')
+      + '<div class="meta">' + (p.telefono ? '<a href="tel:' + esc(String(p.telefono).replace(/\s/g, '')) + '">📞 ' + esc(p.telefono) + '</a>' : '') + '<span>vía ' + esc(p.canal || 'Eris') + '</span></div>'
+      + acc + '</article>';
+  }
+  function grupoPedidos(titulo, lista, vacio){ return '<h2>' + titulo + ' <span class="n">' + lista.length + '</span></h2>' + (lista.length ? lista.map(tarjetaPedido).join('') : (vacio ? '<p class="vacio">' + vacio + '</p>' : '')); }
+  function porHora(a, b){ return String(a.creada).localeCompare(String(b.creada)); }
+  function vistaPedidos(){
+    if (!pedidos) return '<p class="vacio" style="margin-top:16px">Cargando pedidos…</p>';
+    var de = function(e){ return pedidos.filter(function(p){ return p.estado === e; }).sort(porHora); };
+    var hechos = pedidos.filter(function(p){ return p.estado === 'entregado' || p.estado === 'cancelado'; });
+    return grupoPedidos('Nuevos', de('nuevo'), 'No hay pedidos nuevos. Cuando Eris tome uno, sonará un aviso y aparecerá aquí.')
+      + grupoPedidos('En cocina', de('cocina'), '')
+      + grupoPedidos('Listos', de('listo'), '')
+      + (hechos.length ? grupoPedidos('Entregados y cancelados (últimas 36 h)', hechos, '') : '');
+  }
+  function cambiarPedido(ref, est, b){
+    if (est === 'cancelado' && !confirmar('¿Cancelar este pedido?')) return;
+    if (b) b.disabled = true;
+    llamarApp('pedido-estado', { ref: ref, estado: est }).then(function(r){
+      if (!r || !r.ok) { if (b) b.disabled = false; toast((r && r.motivo) || 'No se ha podido cambiar'); return; }
+      (pedidos || []).forEach(function(p){ if (p.ref === ref) p.estado = est; });
+      pintar(); toast({ cocina:'Pedido en cocina', listo:'Pedido listo', entregado:'Pedido entregado', cancelado:'Pedido cancelado' }[est] || 'Hecho');
+    }).catch(function(){ if (b) b.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
+  }
+
   // ---- Vistas ----
   function vistaHoy(){
     var hoy = hoyISO(), d = new Date(), c = citas();
@@ -381,6 +452,9 @@ textarea{min-height:90px;resize:vertical}
     else if (hor) h += '<p class="sub">' + (/cerrad/i.test(hor) ? 'Hoy no abres según tu horario.' : 'Horario de hoy: ' + esc(hor)) + '</p>';
     h += '<div class="resumen"><span class="chip"><b>' + hoyL.length + '</b> hoy</span><span class="chip' + (pend.length ? ' alerta' : '') + '"><b>' + pend.length + '</b> por confirmar</span><span class="chip"><b>' + prox.length + '</b> próximas</span></div>';
     h += '<div id="avisos"></div>';
+    var ORD = { nuevo:0, cocina:1, listo:2 };
+    var act = activos().sort(function(x, y){ return (ORD[x.estado] - ORD[y.estado]) || porHora(x, y); });
+    if (pedidosOn() && act.length) h += '<h2>Pedidos en marcha <span class="n">' + act.length + '</span><button class="accion" data-ir="pedidos">Ver todos</button></h2>' + act.map(tarjetaPedido).join('');
     h += seccion('Citas de hoy', hoyL, cie ? 'No hay citas: hoy está cerrado.' : 'No hay citas confirmadas para hoy. Pulsa «+ Cita» para apuntar una o pídeselo a Eris.');
     if (pend.length) h += seccion('Por confirmar', pend, '');
     var pa = pendientesAbiertos();
@@ -506,24 +580,26 @@ textarea{min-height:90px;resize:vertical}
 
   function pintarMenu(){
     var pc = porConfirmar().length, pp = pendientesAbiertos().length;
-    var orden = ['hoy','calendario','citas','catalogo','horario','pendientes','|','ajustes','cuenta'];
+    var orden = (pedidosOn() ? ['hoy','pedidos'] : ['hoy']).concat(['calendario','citas','catalogo','horario','pendientes','|','ajustes','cuenta']);
     document.getElementById('menuNav').innerHTML = orden.map(function(v){
       if (v === '|') return '<hr>';
-      var cuenta = v === 'citas' && pc ? pc : (v === 'pendientes' && pp ? pp : 0);
+      var pn = (pedidos || []).filter(function(p){ return p.estado === 'nuevo'; }).length;
+      var cuenta = v === 'citas' && pc ? pc : (v === 'pendientes' && pp ? pp : (v === 'pedidos' && pn ? pn : 0));
       return '<button data-ir="' + v + '"' + (vista === v ? ' aria-current="page"' : '') + '>' + svg(VISTAS[v].i) + VISTAS[v].t + (cuenta ? '<span class="cuenta-n">' + cuenta + '</span>' : '') + '</button>';
     }).join('');
     document.getElementById('menuNegocio').textContent = (datos && datos.negocio.nombre) || '';
   }
   function pintar(){
     if (!datos) return;
-    var cuerpo = { hoy: vistaHoy, calendario: vistaCalendario, citas: vistaCitas, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
-    var y = window.scrollY, hayAviso = porConfirmar().length > 0;
+    var cuerpo = { pedidos: vistaPedidos, hoy: vistaHoy, calendario: vistaCalendario, citas: vistaCitas, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
+    if (vista === 'pedidos' && !pedidosOn() && pedidos) vista = 'hoy';
+    var y = window.scrollY, hayAviso = porConfirmar().length > 0 || (pedidos || []).some(function(p){ return p.estado === 'nuevo'; });
     app.innerHTML = '<header><div class="cab">'
       + '<button class="icono-btn" id="abrirMenu" aria-label="Abrir el menú">' + svg('<path d="M4 7h16M4 12h16M4 17h16"/>') + (hayAviso && vista !== 'hoy' && vista !== 'citas' ? '<span class="bolita"></span>' : '') + '</button>'
       + '<div class="titulo"><small>' + esc(datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
       + '<button class="icono-btn" id="recargar" aria-label="Actualizar">' + svg('<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>') + '</button>'
       + '</div></header><main>' + cuerpo() + '</main>';
-    document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); });
+    document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); });
     document.getElementById('abrirMenu').addEventListener('click', abrirMenu);
     document.getElementById('nueva').classList.toggle('oculto', ['hoy','calendario','citas'].indexOf(vista) < 0);
     document.getElementById('lanzador').classList.remove('oculto');
@@ -547,6 +623,7 @@ textarea{min-height:90px;resize:vertical}
       else { diaSel = t.getAttribute('data-dia'); var p = diaSel.split('-'); if (+p[1]-1 !== mesVista.getMonth()) mesVista = new Date(+p[0], +p[1]-1, 1); }
       pintar(); return;
     }
+    t = e.target.closest('[data-ped]'); if (t) { cambiarPedido(t.getAttribute('data-ped'), t.getAttribute('data-est'), t); return; }
     t = e.target.closest('[data-borrar-pasadas]'); if (t) { borrarPasadas(t); return; }
     t = e.target.closest('[data-autoborrar]');
     if (t) { var on = t.checked; t.disabled = true; llamarApp('ajustes-guardar', { autoborrar: on }).then(function(r){ aplicarInfo(r, on ? 'Se borrarán solas 24 h después' : 'Ya no se borrarán solas'); }).catch(sinConexion); return; }
@@ -720,7 +797,7 @@ textarea{min-height:90px;resize:vertical}
       if (r && r.ok && r.respuesta) conversacion.push({ rol:'eris', texto: String(r.respuesta) });
       else conversacion.push({ rol:'eris', texto: (r && r.motivo) || 'No he podido responder. Inténtalo de nuevo.', error: true });
       guardarConv(); pintarConv();
-      pausa = 0; cargar(); cargarInfo();
+      pausa = 0; cargar(); cargarInfo(); cargarPedidos();
     }).catch(function(){
       pensando = false; formEris.querySelector('button').disabled = false;
       conversacion.push({ rol:'eris', texto: 'Sin conexión. Inténtalo de nuevo.', error: true }); pintarConv();
@@ -735,7 +812,8 @@ textarea{min-height:90px;resize:vertical}
     }).then(function(bits){ return Array.from(new Uint8Array(bits)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join(''); });
   }
   function guardarAcceso(nn, kk){ n = nn; k = kk; try { localStorage.setItem('eris-agenda', JSON.stringify({ n:n, k:k })); } catch (e) {} }
-  function olvidar(){ try { sessionStorage.removeItem(claveConv()); } catch (e) {} n = null; k = null; datos = null; info = null; conversacion = []; try { localStorage.removeItem('eris-agenda'); } catch (e) {} }
+  function olvidarPedidos(){ pedidos = null; pedidosVistos = null; }
+  function olvidar(){ olvidarPedidos(); try { sessionStorage.removeItem(claveConv()); } catch (e) {} n = null; k = null; datos = null; info = null; conversacion = []; try { localStorage.removeItem('eris-agenda'); } catch (e) {} }
   function ocultarFlotantes(){ document.getElementById('nueva').classList.add('oculto'); lanzador.classList.add('oculto'); cerrarEris(); lanzador.classList.add('oculto'); }
   function pantallaLogin(aviso){
     ocultarFlotantes();
@@ -807,7 +885,7 @@ textarea{min-height:90px;resize:vertical}
   var estadoAvisos = 'cargando', suscripcion = null, swListo = null;
   if ('serviceWorker' in navigator) {
     swListo = navigator.serviceWorker.register('sw.js').then(function(){ return navigator.serviceWorker.ready; }).catch(function(){ hayPush = false; return null; });
-    navigator.serviceWorker.addEventListener('message', function(e){ if (e.data && e.data.tipo === 'eris-actualizar' && puedeRefrescar()) cargar(); });
+    navigator.serviceWorker.addEventListener('message', function(e){ if (e.data && e.data.tipo === 'eris-actualizar') { cargarPedidos(); if (puedeRefrescar()) cargar(); } });
   }
   function bytesClave(b64){
     var pad = '='.repeat((4 - b64.length % 4) % 4), raw = atob((b64 + pad).replace(/-/g, '+').replace(/_/g, '/'));
@@ -919,8 +997,9 @@ textarea{min-height:90px;resize:vertical}
   // ---- Refresco ----
   function algoAbierto(){ return !!document.querySelector('.velo.abierto') || panelEris.classList.contains('abierto') || !!document.querySelector('.proponer.abierto') || (document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName)); }
   function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !algoAbierto() && !!datos; }
-  document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) { cargar(); cargarInfo(); } });
+  document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) { cargar(); cargarInfo(); cargarPedidos(); } });
   setInterval(function(){ if (puedeRefrescar()) cargar(); }, 60000);
+  setInterval(function(){ if (!document.hidden && datos && pedidosOn()) cargarPedidos(); }, 20000);
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { cerrarHojas(); cerrarMenu(); } });
   if (enlaceN && enlaceK) comprobarEnlace(enlaceN, enlaceK); else cargar();
 })();
