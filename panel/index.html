@@ -174,6 +174,18 @@ textarea{min-height:90px;resize:vertical}
 .escribir button{flex:none;width:46px;height:46px;border-radius:12px;border:0;background:#D1104A;color:#fff;cursor:pointer;display:grid;place-items:center}
 .escribir button:disabled{opacity:.5}
 .escribir svg{width:20px;height:20px}
+.escribir .mic{background:#EAF7F1;color:#0B7A57;border:1px solid rgba(14,159,110,.45)}
+.escribir.grabando textarea{display:none}
+.escribir .grabacion{display:none;flex:1;align-items:center;gap:10px;min-height:46px;padding:0 12px;border-radius:12px;background:#FDECF1;color:#8A0B30;font-weight:700;font-size:.95rem}
+.escribir.grabando .grabacion{display:flex}
+.escribir .grabacion i{width:10px;height:10px;border-radius:50%;background:#D1104A;animation:late 1s infinite}
+@keyframes late{50%{opacity:.25}}
+.escribir .grabacion button{margin-left:auto;width:auto;height:auto;padding:6px 10px;background:none;color:#8A0B30;font-weight:700;font-size:.85rem}
+.escribir.grabando .mic{background:#D1104A;color:#fff;border-color:#D1104A}
+.escribir.grabando .enviar{display:none}
+.m .voz{display:block;font-size:.72rem;opacity:.75;margin-bottom:3px}
+.panel-cab button.altavoz{font-size:1.05rem;padding:6px 8px}
+.panel-cab button.altavoz[aria-pressed="false"]{opacity:.55}
 @media (max-width:520px){.panel-eris{inset:0;width:auto;height:auto;border-radius:0}}
 /* Varios */
 .mensaje{max-width:440px;margin:18vh auto 0;padding:0 16px;text-align:center;color:var(--apagado)}
@@ -214,10 +226,10 @@ textarea{min-height:90px;resize:vertical}
 
 <!-- Panel de Eris -->
 <div class="panel-eris" id="panelEris" role="dialog" aria-label="Chat con Eris">
-  <div class="panel-cab"><div>Eris<small>Tu asistente · gestiona tu negocio hablando</small></div><div class="acc"><button type="button" id="erisNueva" title="Empezar de nuevo">Nueva</button><button type="button" class="x" id="erisCerrar" aria-label="Cerrar">×</button></div></div>
+  <div class="panel-cab"><div>Eris<small>Tu asistente · gestiona tu negocio hablando</small></div><div class="acc"><button type="button" class="altavoz" id="erisAltavoz" aria-pressed="true" title="Eris te contesta en voz alta cuando le hablas">🔊</button><button type="button" id="erisNueva" title="Empezar de nuevo">Nueva</button><button type="button" class="x" id="erisCerrar" aria-label="Cerrar">×</button></div></div>
   <div class="mensajes" id="erisMensajes" aria-live="polite"></div>
   <div class="sugerencias" id="erisSug"></div>
-  <form class="escribir" id="erisForm"><textarea id="erisTexto" rows="1" maxlength="2000" placeholder="Pídele algo a Eris…" aria-label="Mensaje para Eris"></textarea><button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button></form>
+  <form class="escribir" id="erisForm"><textarea id="erisTexto" rows="1" maxlength="2000" placeholder="Escribe o pulsa el micro y habla…" aria-label="Mensaje para Eris"></textarea><div class="grabacion" aria-live="polite"><i></i><span id="erisTiempo">Te escucho… 0:00</span><button type="button" id="erisCancelar">Cancelar</button></div><button type="button" class="mic" id="erisMic" aria-label="Hablar con Eris" title="Pulsa, habla y vuelve a pulsar para enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button type="submit" class="enviar" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button></form>
 </div>
 
 <!-- Nueva cita -->
@@ -768,13 +780,13 @@ textarea{min-height:90px;resize:vertical}
   function guardarConv(){ try { sessionStorage.setItem(claveConv(), JSON.stringify(conversacion.slice(-30))); } catch (e) {} }
   function leerConv(){ try { conversacion = JSON.parse(sessionStorage.getItem(claveConv()) || '[]') || []; } catch (e) { conversacion = []; } }
   function pintarConv(){
-    var saludo = '¡Hola! Soy Eris 👋 Puedo ver y cambiar tu agenda, tu catálogo, el horario, los cierres y los pendientes. Pídemelo como se lo dirías a alguien de tu equipo.';
-    caja.innerHTML = '<div class="m eris">' + esc(saludo) + '</div>' + conversacion.map(function(m){ return '<div class="m ' + (m.rol === 'eris' ? 'eris' : 'yo') + (m.error ? ' error' : '') + '">' + esc(m.texto) + '</div>'; }).join('') + (pensando ? '<div class="escribiendo" aria-label="Eris está escribiendo"><i></i><i></i><i></i></div>' : '');
+    var saludo = '¡Hola! Soy Eris 👋 Puedo ver y cambiar tu agenda, tu catálogo, el horario, los cierres y los pendientes. Pídemelo como se lo dirías a alguien de tu equipo: escribiendo o pulsando el micro 🎤 y hablando.';
+    caja.innerHTML = '<div class="m eris">' + esc(saludo) + '</div>' + conversacion.map(function(m){ return '<div class="m ' + (m.rol === 'eris' ? 'eris' : 'yo') + (m.error ? ' error' : '') + '">' + (m.voz ? '<span class="voz">🎤 por voz</span>' : '') + esc(m.texto) + '</div>'; }).join('') + (pensando ? '<div class="escribiendo" aria-label="Eris está escribiendo"><i></i><i></i><i></i></div>' : '');
     document.getElementById('erisSug').innerHTML = conversacion.length ? '' : SUGERENCIAS.map(function(s){ return '<button type="button">' + esc(s) + '</button>'; }).join('');
     caja.scrollTop = caja.scrollHeight;
   }
   function abrirEris(){ leerConv(); pintarConv(); panelEris.classList.add('abierto'); lanzador.setAttribute('aria-expanded', 'true'); if (window.innerWidth <= 520) lanzador.classList.add('oculto'); setTimeout(function(){ textoEris.focus(); }, 60); }
-  function cerrarEris(){ panelEris.classList.remove('abierto'); lanzador.setAttribute('aria-expanded', 'false'); if (datos) lanzador.classList.remove('oculto'); }
+  function cerrarEris(){ if (typeof pararGrabacion === 'function' && grabador && grabador.state === 'recording') { cancelada = true; pararGrabacion(); } if (typeof callar === 'function') callar(); panelEris.classList.remove('abierto'); lanzador.setAttribute('aria-expanded', 'false'); if (datos) lanzador.classList.remove('oculto'); }
   lanzador.addEventListener('click', function(){ panelEris.classList.contains('abierto') ? cerrarEris() : abrirEris(); });
   document.getElementById('erisCerrar').addEventListener('click', cerrarEris);
   document.getElementById('erisNueva').addEventListener('click', function(){ if (pensando) return; conversacion = []; guardarConv(); pintarConv(); textoEris.focus(); });
@@ -787,22 +799,89 @@ textarea{min-height:90px;resize:vertical}
   textoEris.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 520) { e.preventDefault(); formEris.requestSubmit(); } });
   textoEris.addEventListener('input', function(){ textoEris.style.height = 'auto'; textoEris.style.height = Math.min(120, textoEris.scrollHeight) + 'px'; });
   formEris.addEventListener('submit', function(e){ e.preventDefault(); enviarEris(textoEris.value); });
-  function enviarEris(texto){
-    texto = String(texto || '').trim(); if (!texto || pensando || !n) return;
+  function enviarEris(texto, audio){
+    texto = String(texto || '').trim(); if ((!texto && !audio) || pensando || !n) return;
     var historial = conversacion.filter(function(m){ return !m.error; }).slice(-12).map(function(m){ return { rol: m.rol, texto: m.texto }; });
-    conversacion.push({ rol:'yo', texto: texto }); textoEris.value = ''; textoEris.style.height = '';
-    pensando = true; formEris.querySelector('button').disabled = true; pintarConv(); guardarConv();
-    post(API_APP, { n:n, k:k, accion:'chat', mensaje: texto, historial: historial }).then(function(r){
-      pensando = false; formEris.querySelector('button').disabled = false;
-      if (r && r.ok && r.respuesta) conversacion.push({ rol:'eris', texto: String(r.respuesta) });
+    var mio = audio ? { rol:'yo', texto:'…', voz:true } : { rol:'yo', texto: texto };
+    conversacion.push(mio); textoEris.value = ''; textoEris.style.height = '';
+    pensando = true; botonesEris(true); pintarConv(); guardarConv();
+    var cuerpo = { n:n, k:k, accion:'chat', mensaje: texto, historial: historial };
+    if (audio) { cuerpo.audio = audio.datos; cuerpo.audioTipo = audio.tipo; cuerpo.voz = altavozOn(); }
+    post(API_APP, cuerpo).then(function(r){
+      pensando = false; botonesEris(false);
+      if (audio) mio.texto = (r && r.transcripcion) ? r.transcripcion : '(mensaje de voz)';
+      if (r && r.ok && r.respuesta) { conversacion.push({ rol:'eris', texto: String(r.respuesta) }); if (audio && altavozOn()) hablar(String(r.respuesta), r.audio); }
       else conversacion.push({ rol:'eris', texto: (r && r.motivo) || 'No he podido responder. Inténtalo de nuevo.', error: true });
       guardarConv(); pintarConv();
       pausa = 0; cargar(); cargarInfo(); cargarPedidos();
     }).catch(function(){
-      pensando = false; formEris.querySelector('button').disabled = false;
+      pensando = false; botonesEris(false);
+      if (audio) mio.texto = '(mensaje de voz)';
       conversacion.push({ rol:'eris', texto: 'Sin conexión. Inténtalo de nuevo.', error: true }); pintarConv();
     });
   }
+  function botonesEris(off){ formEris.querySelectorAll('button').forEach(function(b){ if (b.id !== 'erisCancelar') b.disabled = off; }); }
+
+  // ---- Voz: Eris escucha y anota ----
+  var micBtn = document.getElementById('erisMic'), grabador = null, trozos = [], flujo = null, relojVoz = null, inicioVoz = 0, cancelada = false, reproductor = null;
+  var SILENCIO = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+  function altavozOn(){ try { return localStorage.getItem('euxenos-eris-altavoz') !== '0'; } catch (e) { return true; } }
+  function pintarAltavoz(){ var b = document.getElementById('erisAltavoz'), on = altavozOn(); b.setAttribute('aria-pressed', String(on)); b.textContent = on ? '🔊' : '🔇'; b.title = on ? 'Eris te contesta en voz alta cuando le hablas (pulsa para silenciar)' : 'Eris no habla (pulsa para que te conteste en voz alta)'; }
+  document.getElementById('erisAltavoz').addEventListener('click', function(){ var on = !altavozOn(); try { localStorage.setItem('euxenos-eris-altavoz', on ? '1' : '0'); } catch (e) {} pintarAltavoz(); if (!on) callar(); toast(on ? 'Eris te contestará en voz alta' : 'Eris no hablará'); });
+  pintarAltavoz();
+  function tipoGrabacion(){
+    var opciones = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/aac'];
+    if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
+    for (var i = 0; i < opciones.length; i++) if (MediaRecorder.isTypeSupported(opciones[i])) return opciones[i];
+    return '';
+  }
+  function callar(){ try { if (reproductor) { reproductor.pause(); } } catch (e) {} try { window.speechSynthesis && speechSynthesis.cancel(); } catch (e) {} }
+  function hablar(texto, audio){
+    callar();
+    if (audio && reproductor) { reproductor.src = 'data:audio/mpeg;base64,' + audio; reproductor.play().catch(function(){ hablarNavegador(texto); }); return; }
+    hablarNavegador(texto);
+  }
+  function hablarNavegador(texto){
+    try {
+      if (!window.speechSynthesis) return;
+      var u = new SpeechSynthesisUtterance(String(texto).replace(/[*_#`>]/g, '')); u.lang = 'es-ES'; u.rate = 1.05;
+      var v = speechSynthesis.getVoices().filter(function(x){ return /^es(-|_)ES/i.test(x.lang); })[0]; if (v) u.voice = v;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function pararReloj(){ clearInterval(relojVoz); relojVoz = null; }
+  var ICONO_MIC = micBtn.innerHTML, ICONO_PARAR = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
+  function terminarGrabacion(){ micBtn.innerHTML = ICONO_MIC; formEris.classList.remove('grabando'); micBtn.setAttribute('aria-label', 'Hablar con Eris'); pararReloj(); if (flujo) { flujo.getTracks().forEach(function(t){ t.stop(); }); flujo = null; } }
+  function empezarGrabacion(){
+    if (pensando) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { toast('Este navegador no permite grabar audio. Prueba con Chrome o Safari actualizados.'); return; }
+    callar();
+    // Desbloquea el sonido ahora, con el toque del usuario, para poder reproducir la respuesta después (iPhone)
+    try { reproductor = reproductor || new Audio(); reproductor.src = SILENCIO; reproductor.play().catch(function(){}); } catch (e) {}
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(function(s){
+      flujo = s; trozos = []; cancelada = false;
+      var tipo = tipoGrabacion();
+      try { grabador = tipo ? new MediaRecorder(s, { mimeType: tipo }) : new MediaRecorder(s); } catch (e) { grabador = new MediaRecorder(s); }
+      grabador.ondataavailable = function(e){ if (e.data && e.data.size) trozos.push(e.data); };
+      grabador.onstop = function(){
+        var tipoFinal = (grabador && grabador.mimeType) || tipo || 'audio/webm';
+        terminarGrabacion();
+        if (cancelada || !trozos.length) return;
+        var blob = new Blob(trozos, { type: tipoFinal });
+        if (blob.size < 1500) { toast('No te he oído. Mantén el micro un poco más.'); return; }
+        var lector = new FileReader();
+        lector.onloadend = function(){ var b64 = String(lector.result || '').split(',')[1] || ''; if (b64) enviarEris('', { datos: b64, tipo: tipoFinal }); };
+        lector.readAsDataURL(blob);
+      };
+      grabador.start();
+      inicioVoz = Date.now(); micBtn.innerHTML = ICONO_PARAR; formEris.classList.add('grabando'); micBtn.setAttribute('aria-label', 'Parar y enviar');
+      var t = document.getElementById('erisTiempo');
+      relojVoz = setInterval(function(){ var sg = Math.floor((Date.now() - inicioVoz) / 1000); t.textContent = 'Te escucho… ' + Math.floor(sg / 60) + ':' + String(sg % 60).padStart(2, '0'); if (sg >= 90) pararGrabacion(); }, 250);
+    }).catch(function(){ toast('Necesito permiso para usar el micrófono. Actívalo en los ajustes del navegador o del móvil.'); });
+  }
+  function pararGrabacion(){ if (grabador && grabador.state === 'recording') grabador.stop(); else terminarGrabacion(); }
+  micBtn.addEventListener('click', function(){ if (grabador && grabador.state === 'recording') pararGrabacion(); else empezarGrabacion(); });
+  document.getElementById('erisCancelar').addEventListener('click', function(){ cancelada = true; pararGrabacion(); });
 
   // ---- Usuario y contraseña ----
   function derivar(usuario, clave){
