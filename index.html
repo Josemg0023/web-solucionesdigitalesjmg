@@ -271,6 +271,19 @@ a{color:inherit}
 .pack li.no{color:#6E9286;text-decoration:line-through}
 .pack li.no::before{background:transparent;border:1px solid #4B6E62}
 .pack .boton{margin-top:auto;justify-content:center;padding:12px 18px;font-size:.95rem}
+.pack .pack-botones{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pack .pack-botones .boton{margin-top:0;padding:12px 10px}
+.contratar-dialogo{border:0;border-radius:18px;padding:0;max-width:440px;width:calc(100% - 32px);background:var(--fondo-2);color:var(--claro);box-shadow:0 30px 80px -20px rgba(0,0,0,.8),inset 0 0 0 1px var(--linea)}
+.contratar-dialogo::backdrop{background:rgba(2,10,8,.75)}
+.contratar-dialogo form{padding:24px 22px;display:grid;gap:12px}
+.contratar-dialogo h3{font-family:var(--display);font-size:1.3rem;margin:0}
+.contratar-dialogo .resumen{margin:0;color:#CFE9DF;font-size:.93rem}
+.contratar-dialogo label{display:grid;gap:4px;font-size:.88rem;color:var(--apagado)}
+.contratar-dialogo input[type=email],.contratar-dialogo input[type=text]{font:inherit;font-size:1rem;padding:11px 12px;border-radius:10px;border:1px solid var(--linea);background:rgba(4,18,14,.8);color:var(--claro)}
+.contratar-dialogo .casilla{display:flex;gap:8px;align-items:center}
+.contratar-dialogo .nota{margin:0;font-size:.82rem;color:#7FA798}
+.contratar-dialogo .error{margin:0;color:#FF8FAE;font-size:.9rem}
+.contratar-dialogo .fila{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
 .pack-medida{margin-top:22px;border-radius:18px;padding:26px;border:1px dashed rgba(16,185,129,.55);background:rgba(6,24,19,.55)}
 .medida-cabeza{display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}
 .pack-medida h3{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:0 0 6px}
@@ -488,7 +501,7 @@ a{color:inherit}
           <p class="coniva" data-mes="42,35 €/mes con IVA" data-anual="423,50 €/año con IVA">423,50 €/año con IVA</p>
           <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">99 € <small>+ IVA</small></span><span class="alta-iva">119,79 € con IVA</span></div>
           <ul><li>Asistente por chat 24 horas</li><li>En tu Instagram, WhatsApp o Google</li><li>Recoge peticiones de cita</li><li>Te avisa al momento</li><li class="no">Web propia</li><li class="no">Llamadas de voz</li></ul>
-          <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
+          <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="esencial" data-nombre="Esencial">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Esencial">Información</button></div>
         </article>
         <article class="pack">
           <h3>Básico</h3>
@@ -498,7 +511,7 @@ a{color:inherit}
           <p class="coniva" data-mes="66,55 €/mes con IVA" data-anual="665,50 €/año con IVA">665,50 €/año con IVA</p>
           <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 390 € <small>+ IVA</small></span><span class="alta-iva">desde 471,90 € con IVA</span></div>
           <ul><li>Web con diseño propio</li><li>Asistente por chat 24 horas</li><li>Recoge peticiones de cita</li><li>Te avisa al momento</li><li class="no">Llamadas de voz</li></ul>
-          <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
+          <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="basico" data-nombre="Básico">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Básico">Información</button></div>
         </article>
         <article class="pack">
           <h3>Completo</h3>
@@ -508,7 +521,7 @@ a{color:inherit}
           <p class="coniva" data-mes="119,79 €/mes con IVA" data-anual="1.197,90 €/año con IVA">1.197,90 €/año con IVA</p>
           <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 600 € <small>+ IVA</small></span><span class="alta-iva">desde 726 € con IVA</span></div>
           <ul><li>Todo lo del Básico</li><li>Llamadas de voz con IA (150 min/mes)</li><li>Citas en tu calendario</li><li>Web de hasta 5 secciones</li></ul>
-          <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
+          <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="completo" data-nombre="Completo">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Completo">Información</button></div>
         </article>
         <article class="pack">
           <h3>Plus</h3>
@@ -518,7 +531,7 @@ a{color:inherit}
           <p class="coniva" data-mes="240,79 €/mes con IVA" data-anual="2.407,90 €/año con IVA">2.407,90 €/año con IVA</p>
           <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 1.000 € <small>+ IVA</small></span><span class="alta-iva">desde 1.210 € con IVA</span></div>
           <ul><li>Todo lo del Completo</li><li>Presupuestos automáticos en PDF</li><li>Tú los apruebas con un clic</li><li>Llamadas de voz (300 min/mes)</li></ul>
-          <button class="boton boton-borde" type="button" data-abrir-eris>Me interesa</button>
+          <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="plus" data-nombre="Plus">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Plus">Información</button></div>
         </article>
       </div>
       <div class="pack-medida">
@@ -618,6 +631,19 @@ a{color:inherit}
   </div>
 </footer>
 
+<dialog class="contratar-dialogo" id="dialogo-contratar" aria-labelledby="contratar-titulo">
+  <form method="dialog" id="form-contratar" novalidate>
+    <h3 id="contratar-titulo">Contratar</h3>
+    <p class="resumen" id="contratar-resumen"></p>
+    <label>Tu email (aquí te llegan la factura y el acceso)<input type="email" name="email" required autocomplete="email"></label>
+    <label>Tu nombre<input type="text" name="nombre" autocomplete="name"></label>
+    <label>Nombre del negocio<input type="text" name="negocio" autocomplete="organization"></label>
+    <label class="casilla"><input type="checkbox" name="canarias"> Mi negocio está en Canarias, Ceuta o Melilla (sin IVA)</label>
+    <p class="nota" id="contratar-nota"></p>
+    <p class="error" id="contratar-error" hidden></p>
+    <div class="fila"><button class="boton boton-borde" type="button" data-cerrar-contratar>Cancelar</button><button class="boton boton-luz" type="submit" id="contratar-ir">Ir al pago</button></div>
+  </form>
+</dialog>
 <button class="boton boton-luz lanzador" type="button" data-abrir-eris aria-controls="panel-eris" aria-expanded="false">
   <span class="punto" aria-hidden="true"></span>Contáctanos
 </button>
@@ -1310,9 +1336,62 @@ a{color:inherit}
     lanzador.style.display = '';
     lanzador.focus();
   }
+  function infoPack(ev){
+    var nombre = ev.currentTarget.getAttribute('data-info-pack');
+    abrir();
+    if(eleccion.classList.contains('activa')) document.getElementById('elegir-chat').click();
+    var intentos = 0;
+    (function esperar(){
+      var campo = document.querySelector('#chat-n8n textarea');
+      if(campo){ setTimeout(function(){ enviarAlChat('Quiero más información sobre el Pack ' + nombre + '.'); }, 250); return; }
+      if(++intentos < 50) setTimeout(esperar, 200);
+    })();
+  }
+  document.querySelectorAll('[data-info-pack]').forEach(function(b){ b.addEventListener('click', infoPack); });
   document.querySelectorAll('[data-abrir-eris]').forEach(function(b){ b.addEventListener('click', abrir); });
     panel.querySelector('.cerrar').addEventListener('click', cerrar);
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && panel.classList.contains('abierto')) cerrar(); });
+})();
+
+// Contratar un pack (Stripe)
+(function(){
+  var dlg = document.getElementById('dialogo-contratar'); if(!dlg) return;
+  var form = document.getElementById('form-contratar');
+  var err = document.getElementById('contratar-error');
+  var ir = document.getElementById('contratar-ir');
+  var pack = null;
+  function periodo(){ var b = document.querySelector('.periodo button[aria-pressed="true"]'); return b && b.getAttribute('data-periodo') === 'mes' ? 'mes' : 'anual'; }
+  document.querySelectorAll('[data-contratar]').forEach(function(b){
+    b.addEventListener('click', function(){
+      pack = { id: b.getAttribute('data-contratar'), nombre: b.getAttribute('data-nombre') };
+      var tarjeta = b.closest('.pack');
+      var cuota = tarjeta.querySelector('.cifra').textContent.replace(/\s+/g,' ').trim();
+      var alta = tarjeta.querySelector('.alta-v').textContent.replace(/\s+/g,' ').trim();
+      document.getElementById('contratar-titulo').textContent = 'Contratar el Pack ' + pack.nombre;
+      document.getElementById('contratar-resumen').textContent = 'Pago ' + (periodo() === 'mes' ? 'mensual' : 'anual (2 meses gratis)') + ': ' + cuota + ', más el alta (' + alta.replace(/^desde /,'') + ', pago único).';
+      document.getElementById('contratar-nota').textContent = (pack.id === 'esencial' ? '' : 'Es el precio base del pack; si tu negocio necesita algo más, te lo confirmamos antes de empezar. ') + 'Pagas con tarjeta en Stripe, de forma segura. Sin permanencia.';
+      err.hidden = true; ir.disabled = false; ir.textContent = 'Ir al pago';
+      if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
+      form.email.focus();
+    });
+  });
+  dlg.querySelector('[data-cerrar-contratar]').addEventListener('click', function(){ dlg.close(); });
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = form.email.value.trim();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent = 'Escribe un email válido.'; err.hidden = false; form.email.focus(); return; }
+    err.hidden = true; ir.disabled = true; ir.textContent = 'Preparando el pago…';
+    fetch('https://erisproject.app.n8n.cloud/webhook/euxenos-pago', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ servicios: [pack.id], periodo: periodo(), email: email, nombre: form.nombre.value.trim(), negocio: form.negocio.value.trim(), canarias: form.canarias.checked, origen: 'Web (botón Contratar)' })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if(d && d.ok && d.enlace){ location.href = d.enlace; return; }
+      throw new Error((d && d.motivo) || 'error');
+    }).catch(function(){
+      err.textContent = 'No hemos podido preparar el pago. Inténtalo de nuevo o escríbenos a soporte@euxenos.com.';
+      err.hidden = false; ir.disabled = false; ir.textContent = 'Ir al pago';
+    });
+  });
 })();
 
 // Opiniones
