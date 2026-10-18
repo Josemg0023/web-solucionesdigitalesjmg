@@ -582,8 +582,8 @@ textarea{min-height:90px;resize:vertical}
     var asuntoBorrar = encodeURIComponent('Borrar mi cuenta de Euxenos');
     var cuerpoBorrar = encodeURIComponent('Quiero que borréis mi cuenta de Euxenos y sus datos.\n\nNegocio: ' + (neg.nombre || '') + '\nCorreo de acceso: ' + (neg.usuario || ''));
     return '<div class="caja" style="margin-top:16px"><p><b>' + esc(neg.nombre || '') + '</b><br>' + (neg.usuario ? 'Entras con ' + esc(neg.usuario) : '') + '</p></div>'
-      + '<h2>Tu plan</h2><div class="caja"><p>Mejora o cambia tu plan y añade servicios (más minutos de voz, otro canal, web…) desde la web, con pago seguro. Sin permanencia.</p>'
-      + '<div class="columna"><a class="btn b-ok" href="/#precios" target="_blank" rel="noopener">Mejorar o cambiar de plan</a><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + asuntoBaja + '">Darme de baja</a></div></div>'
+      + '<h2>Tu plan</h2><div class="caja"><p>Cambia tu plan a uno mayor o menor, y añade o quita servicios (minutos de voz, otro canal, web…) desde la web, con pago seguro. Sin permanencia.</p>'
+      + '<div class="columna"><a class="btn b-ok" href="/#precios" target="_blank" rel="noopener">Cambiar de plan</a><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + asuntoBaja + '">Darme de baja</a></div></div>'
       + '<h2>Acceso</h2><div class="columna"><button class="btn b-otra" data-cuenta="acceso">Cambiar contraseña</button><button class="btn b-no ancho" data-cuenta="salir">Cerrar sesión</button></div>'
       + '<h2>Ayuda y privacidad</h2><div class="columna"><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + encodeURIComponent('Ayuda con Euxenos') + '">Escribir a soporte</a><a class="btn b-otra" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>'
       + '<a class="btn b-no ancho" href="mailto:soporte@euxenos.com?subject=' + asuntoBorrar + '&body=' + cuerpoBorrar + '">Pedir que borren mi cuenta</a></div>'
