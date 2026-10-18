@@ -780,7 +780,7 @@ textarea{min-height:90px;resize:vertical}
   function guardarConv(){ try { sessionStorage.setItem(claveConv(), JSON.stringify(conversacion.slice(-30))); } catch (e) {} }
   function leerConv(){ try { conversacion = JSON.parse(sessionStorage.getItem(claveConv()) || '[]') || []; } catch (e) { conversacion = []; } }
   function pintarConv(){
-    var saludo = '¡Hola! Soy Eris 👋 Puedo ver y cambiar tu agenda, tu catálogo, el horario, los cierres y los pendientes. Pídemelo como se lo dirías a alguien de tu equipo: escribiendo o pulsando el micro 🎤 y hablando.';
+    var saludo = '¡Hola! Soy Eris 👋 Me encargo de tu agenda' + (pedidosOn() ? ', los pedidos' : '') + ', el catálogo, el horario, los cierres y los pendientes. Pídemelo como se lo dirías a alguien de tu equipo.';
     caja.innerHTML = '<div class="m eris">' + esc(saludo) + '</div>' + conversacion.map(function(m){ return '<div class="m ' + (m.rol === 'eris' ? 'eris' : 'yo') + (m.error ? ' error' : '') + '">' + (m.voz ? '<span class="voz">🎤 por voz</span>' : '') + esc(m.texto) + '</div>'; }).join('') + (pensando ? '<div class="escribiendo" aria-label="Eris está escribiendo"><i></i><i></i><i></i></div>' : '');
     document.getElementById('erisSug').innerHTML = conversacion.length ? '' : SUGERENCIAS.map(function(s){ return '<button type="button">' + esc(s) + '</button>'; }).join('');
     caja.scrollTop = caja.scrollHeight;
