@@ -103,6 +103,25 @@ textarea{min-height:90px;resize:vertical}
 .caja.activo{border-color:rgba(52,211,153,.45)}
 .ayuda{font-size:.84rem;color:var(--tenue);line-height:1.5;margin:8px 0 0}
 .ayuda b{color:var(--apagado)}
+.herr{display:flex;gap:8px;margin-top:12px}.herr .btn{font-size:.88rem;min-height:42px}
+.plantillas{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px}
+.plantillas button{font:inherit;font-size:.86rem;font-weight:600;padding:8px 12px;border-radius:999px;background:var(--tarjeta);border:1px solid var(--linea);color:var(--claro);cursor:pointer}
+.rev{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--linea)}
+.rev .check{margin-top:9px}.rev-c{flex:1;min-width:0;display:grid;gap:6px}
+.rev-c input{min-height:40px;padding:8px 10px}.rev.no .rev-c{opacity:.45}
+.rev-pie{display:grid;grid-template-columns:1fr auto;gap:6px}
+.rev-tipo{font:inherit;font-size:.8rem;font-weight:700;border-radius:10px;border:1px solid var(--linea);background:none;color:var(--verde-luz);padding:0 10px;cursor:pointer}
+.leyendo{display:flex;align-items:center;gap:12px;color:var(--apagado);padding:18px 2px}
+.leyendo i{width:22px;height:22px;border-radius:50%;border:3px solid var(--linea);border-top-color:var(--verde-luz);animation:gira 0.8s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+.camara{position:relative;border-radius:16px;overflow:hidden;background:#000;aspect-ratio:4/3}
+.camara video{width:100%;height:100%;object-fit:cover;display:block}
+.camara .mira{position:absolute;left:10%;right:10%;top:34%;height:32%;border:2px solid var(--verde-luz);border-radius:12px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+.esc-estado{color:var(--apagado);font-size:.9rem;margin:10px 0}
+.stock-ctl{display:grid;grid-template-columns:64px 1fr 64px;gap:10px;align-items:center;margin:6px 0 12px}
+.stock-ctl button{height:58px;font-size:1.7rem;font-weight:800;border-radius:14px;border:1px solid var(--linea);background:var(--tarjeta);color:var(--claro);cursor:pointer}
+.stock-ctl input{text-align:center;font-size:1.5rem;font-weight:700;min-height:58px}
+.campo-cod{display:grid;grid-template-columns:1fr auto;gap:8px}.campo-cod button{min-width:52px;border-radius:12px;border:1px solid var(--linea);background:var(--tarjeta);color:var(--claro);font-size:1.1rem;cursor:pointer}
 .columna{display:flex;flex-direction:column;gap:8px}
 .version{margin-top:22px;font-size:.78rem;color:var(--tenue);text-align:center}
 /* Calendario */
@@ -254,10 +273,37 @@ textarea{min-height:90px;resize:vertical}
 <div class="dos"><label class="campo"><span>Precio</span><input name="precio" maxlength="40" placeholder="Ej.: 12 € o desde 30 €"></label>
 <label class="campo" id="campoDuracion"><span>Duración (min)</span><input name="duracion" type="number" inputmode="numeric" min="0" max="1440" step="5" placeholder="30"></label>
 <label class="campo oculto" id="campoStock"><span>Stock</span><input name="stock" maxlength="40" placeholder="Ej.: 6"></label></div>
+<div class="campo oculto" id="campoCodigo"><span>Código de barras</span><div class="campo-cod"><input name="codigo" maxlength="40" inputmode="numeric" placeholder="Opcional" aria-label="Código de barras"><button type="button" id="codigoEscanear" aria-label="Escanear el código con la cámara" title="Escanear con la cámara">▦</button></div></div>
 <label class="campo"><span>Descripción</span><textarea name="descripcion" maxlength="400" placeholder="Opcional: lo que incluye, marcas, notas para Eris…"></textarea></label>
 <label class="interruptor"><input type="checkbox" name="activo" checked> Disponible (Eris lo ofrece a los clientes)</label>
 <button class="btn b-ok ancho" type="submit">Guardar</button>
 <button class="btn b-no ancho oculto" type="button" id="borrarItem" style="margin-top:10px">Borrar del catálogo</button>
+</form></div>
+
+<!-- Revisar lo leído de una foto/PDF o de una plantilla -->
+<input type="file" id="archivoCat" accept="image/*,application/pdf" hidden>
+<div class="velo abajo" id="veloRevisar"><form class="hoja" id="formRevisar" autocomplete="off">
+<h3><span id="revisarTitulo">Revisa antes de guardar</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<p class="ayuda" id="revisarAyuda" style="margin:0 0 6px"></p>
+<div id="revisarLista"></div>
+<button class="btn b-ok ancho" type="submit" id="revisarGuardar" style="margin-top:14px">Guardar</button>
+</form></div>
+
+<!-- Escáner de código de barras -->
+<div class="velo abajo" id="veloEscaner"><div class="hoja">
+<h3>Escanear código <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<div class="camara"><video id="escVideo" playsinline muted autoplay></video><div class="mira"></div></div>
+<p class="esc-estado" id="escEstado">Apunta al código de barras del producto.</p>
+<form id="formCodigo" class="campo-cod" autocomplete="off"><input name="codigo" inputmode="numeric" maxlength="40" placeholder="O escribe el código" aria-label="Código de barras"><button type="submit" aria-label="Buscar">→</button></form>
+</div></div>
+
+<!-- Ajustar stock -->
+<div class="velo abajo" id="veloStock"><form class="hoja" id="formStock" autocomplete="off">
+<h3><span id="stockTitulo">Stock</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<p class="sub" id="stockInfo"></p>
+<div class="stock-ctl"><button type="button" data-stock="-1" aria-label="Quitar uno">−</button><input name="stock" type="number" inputmode="numeric" step="1" aria-label="Unidades en stock"><button type="button" data-stock="1" aria-label="Añadir uno">+</button></div>
+<button class="btn b-ok ancho" type="submit">Guardar stock</button>
+<div class="herr"><button class="btn b-otra" type="button" id="stockOtro">▦ Escanear otro</button><button class="btn b-otra" type="button" id="stockEditar">Editar producto</button></div>
 </form></div>
 
 <!-- Cierre / vacaciones -->
@@ -533,12 +579,16 @@ textarea{min-height:90px;resize:vertical}
     var h = '<div class="pestanas"><button data-tab="servicio" aria-pressed="' + (tabCat === 'servicio') + '">Servicios</button><button data-tab="producto" aria-pressed="' + (tabCat === 'producto') + '">Productos</button></div>';
     h += '<h2>' + (tabCat === 'servicio' ? 'Servicios' : 'Productos') + ' <span class="n">' + (lista ? lista.length : '…') + '</span><button class="accion" data-item="nuevo">+ Añadir</button></h2>';
     if (!lista) return h + '<p class="vacio">Cargando…</p>';
-    if (!lista.length) h += '<p class="vacio">' + (tabCat === 'servicio' ? 'Aún no hay servicios. Añade lo que ofreces con su precio y duración: Eris lo usará para informar a tus clientes.' : 'Aún no hay productos. Añade lo que vendes con su precio y stock.') + '</p>';
+    h += '<div class="herr" style="margin:0 0 12px"><button class="btn b-otra" data-importar>📷 Foto o PDF</button>' + (tabCat === 'producto' ? '<button class="btn b-otra" data-escanear>▦ Escanear</button>' : '') + '</div>';
+    if (!lista.length) {
+      h += '<p class="vacio">' + (tabCat === 'servicio' ? 'Aún no hay servicios. Haz una foto a tu lista de precios o empieza con una plantilla:' : 'Aún no hay productos. Haz una foto a la carta o a una factura del proveedor, escanea los códigos de barras o empieza con una plantilla:') + '</p>';
+      h += '<div class="plantillas">' + Object.keys(typeof PLANTILLAS === 'object' ? PLANTILLAS : {}).map(function(c){ return '<button data-plantilla="' + c + '">' + esc(PLANTILLAS[c].t) + '</button>'; }).join('') + '</div>';
+    }
     h += lista.map(function(x){
       var det = [x.tipo === 'servicio' && x.duracion ? x.duracion + ' min' : '', x.tipo === 'producto' && x.stock !== '' ? 'Stock: ' + x.stock : '', x.descripcion].filter(Boolean).join(' · ');
       return '<button class="fila tocable' + (x.activo === false ? ' apagada' : '') + '" data-item="' + esc(x.id) + '"><span class="txt"><b>' + esc(x.nombre) + (x.activo === false ? '<span class="etq">No disponible</span>' : '') + '</b>' + (det ? '<span>' + esc(det) + '</span>' : '') + '</span><span class="precio">' + esc(x.precio || '') + '</span></button>';
     }).join('');
-    h += '<p class="ayuda">Toca un elemento para cambiarlo. También puedes pedírselo a Eris: «sube el corte a 14 €», «quedan 3 champús».</p>';
+    h += '<p class="ayuda">Toca un elemento para cambiarlo. También puedes pedírselo a Eris: «sube el corte a 14 €», «quedan 3 champús».' + (tabCat === 'producto' ? ' Con <b>▦ Escanear</b> das de alta un producto o sumas y restas stock con la cámara.' : '') + '</p>';
     return h;
   }
   function vistaHorario(){
@@ -641,6 +691,9 @@ textarea{min-height:90px;resize:vertical}
     if (t) { var on = t.checked; t.disabled = true; llamarApp('ajustes-guardar', { autoborrar: on }).then(function(r){ aplicarInfo(r, on ? 'Se borrarán solas 24 h después' : 'Ya no se borrarán solas'); }).catch(sinConexion); return; }
     t = e.target.closest('[data-tab]'); if (t) { tabCat = t.getAttribute('data-tab'); pintar(); return; }
     t = e.target.closest('[data-item]'); if (t) { abrirItem(t.getAttribute('data-item')); return; }
+    t = e.target.closest('[data-importar]'); if (t) { archivoCat.value = ''; archivoCat.click(); return; }
+    t = e.target.closest('[data-escanear]'); if (t) { abrirEscaner('stock'); return; }
+    t = e.target.closest('[data-plantilla]'); if (t) { usarPlantilla(t.getAttribute('data-plantilla')); return; }
     t = e.target.closest('[data-cierre]'); if (t) { abrirCierre(); return; }
     t = e.target.closest('[data-quitar-cierre]');
     if (t) { if (!confirmar('¿Quitar este cierre?')) return; t.disabled = true; llamarApp('cierre-borrar', { id: t.getAttribute('data-quitar-cierre') }).then(function(r){ aplicarInfo(r, 'Cierre quitado'); }).catch(sinConexion); return; }
@@ -702,9 +755,9 @@ textarea{min-height:90px;resize:vertical}
 
   // ---- Hojas ----
   function abrirHoja(id){ document.getElementById(id).classList.add('abierto'); }
-  function cerrarHojas(){ document.querySelectorAll('.velo.abajo').forEach(function(v){ v.classList.remove('abierto'); }); }
+  function cerrarHojas(){ pararCamara(); document.querySelectorAll('.velo.abajo').forEach(function(v){ v.classList.remove('abierto'); }); }
   document.querySelectorAll('.velo.abajo').forEach(function(v){
-    v.addEventListener('click', function(e){ if (e.target === v || e.target.closest('[data-cerrar]')) v.classList.remove('abierto'); });
+    v.addEventListener('click', function(e){ if (e.target === v || e.target.closest('[data-cerrar]')) { v.classList.remove('abierto'); if (v.id === 'veloEscaner') { pararCamara(); if (escModo === 'campo') abrirHoja('veloItem'); } } });
   });
   // Nueva cita
   var formCita = document.getElementById('formCita');
@@ -739,28 +792,216 @@ textarea{min-height:90px;resize:vertical}
     formItem.querySelectorAll('[data-tipo]').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-tipo') === t)); });
     document.getElementById('campoDuracion').classList.toggle('oculto', t !== 'servicio');
     document.getElementById('campoStock').classList.toggle('oculto', t !== 'producto');
+    document.getElementById('campoCodigo').classList.toggle('oculto', t !== 'producto');
   }
   formItem.addEventListener('click', function(e){ var b = e.target.closest('[data-tipo]'); if (b) ponerTipo(b.getAttribute('data-tipo')); });
-  function abrirItem(id){
+  function abrirItem(id, previo){
     if (!info) return;
     var x = id === 'nuevo' ? null : (info.catalogo || []).filter(function(y){ return y.id === id; })[0];
     formItem.reset(); formItem.id.value = x ? x.id : '';
     document.getElementById('tituloItem').textContent = x ? 'Editar' : 'Añadir al catálogo';
-    ponerTipo(x ? x.tipo : tabCat);
-    if (x) { formItem.nombre.value = x.nombre || ''; formItem.precio.value = x.precio || ''; formItem.duracion.value = x.duracion || ''; formItem.stock.value = x.stock || ''; formItem.descripcion.value = x.descripcion || ''; formItem.activo.checked = x.activo !== false; }
+    var v = x || previo;
+    ponerTipo(v && v.tipo ? v.tipo : tabCat);
+    if (v) { formItem.nombre.value = v.nombre || ''; formItem.precio.value = v.precio || ''; formItem.duracion.value = v.duracion || ''; formItem.stock.value = v.stock || ''; formItem.descripcion.value = v.descripcion || ''; formItem.codigo.value = v.codigo || ''; formItem.activo.checked = v.activo !== false; }
     document.getElementById('borrarItem').classList.toggle('oculto', !x);
-    abrirHoja('veloItem'); if (!x) setTimeout(function(){ formItem.nombre.focus(); }, 50);
+    abrirHoja('veloItem'); if (!x) setTimeout(function(){ (previo && previo.nombre ? formItem.precio : formItem.nombre).focus(); }, 50);
   }
+  document.getElementById('codigoEscanear').addEventListener('click', function(){ abrirEscaner('campo'); });
   formItem.addEventListener('submit', function(e){
     e.preventDefault();
     var boton = formItem.querySelector('button[type=submit]'); boton.disabled = true;
-    var d = { id: formItem.id.value, tipo: tipoItem, nombre: formItem.nombre.value, precio: formItem.precio.value, duracion: tipoItem === 'servicio' ? formItem.duracion.value : 0, stock: tipoItem === 'producto' ? formItem.stock.value : '', descripcion: formItem.descripcion.value, activo: formItem.activo.checked };
+    var d = { id: formItem.id.value, tipo: tipoItem, nombre: formItem.nombre.value, precio: formItem.precio.value, duracion: tipoItem === 'servicio' ? formItem.duracion.value : 0, stock: tipoItem === 'producto' ? formItem.stock.value : '', codigo: tipoItem === 'producto' ? formItem.codigo.value.trim() : '', descripcion: formItem.descripcion.value, activo: formItem.activo.checked };
     llamarApp('catalogo-guardar', d).then(function(r){ boton.disabled = false; if (aplicarInfo(r, 'Guardado en el catálogo')) { tabCat = tipoItem; cerrarHojas(); pintar(); } }).catch(function(){ boton.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
   });
   document.getElementById('borrarItem').addEventListener('click', function(){
     if (!confirmar('¿Borrar «' + formItem.nombre.value + '» del catálogo?')) return;
     llamarApp('catalogo-borrar', { id: formItem.id.value }).then(function(r){ if (aplicarInfo(r, 'Borrado del catálogo')) cerrarHojas(); }).catch(function(){ toast('Sin conexión, inténtalo de nuevo'); });
   });
+
+  // ---- Catálogo rápido: plantillas, foto/PDF y revisión ----
+  var PLANTILLAS = {
+    peluqueria: { t:'Peluquería', i:[['Corte de señora',45],['Corte de caballero',30],['Corte infantil',20],['Lavar y peinar',30],['Tinte',90],['Mechas',120],['Tratamiento hidratante',30],['Recogido',60]] },
+    barberia: { t:'Barbería', i:[['Corte',30],['Corte y barba',45],['Arreglo de barba',20],['Afeitado clásico',30],['Corte infantil',20],['Degradado con diseño',40]] },
+    taller: { t:'Taller', i:[['Cambio de aceite y filtros',60],['Revisión pre-ITV',60],['Cambio de pastillas de freno',90],['Cambio de neumáticos',45],['Diagnosis electrónica',30],['Carga de aire acondicionado',60],['Alineado de dirección',45]] },
+    estetica: { t:'Estética', i:[['Limpieza facial',60],['Manicura',45],['Pedicura',60],['Depilación de piernas',45],['Depilación de cejas',15],['Masaje relajante',60],['Uñas de gel',90]] },
+    clinica: { t:'Clínica / fisio', i:[['Primera consulta',45],['Sesión de fisioterapia',45],['Masaje descontracturante',45],['Punción seca',30],['Osteopatía',60]] },
+    restaurante: { t:'Restaurante', p:true, i:[['Menú del día'],['Ensalada de la casa'],['Croquetas caseras'],['Hamburguesa de la casa'],['Postre casero'],['Refresco'],['Café']] },
+    tienda: { t:'Tienda', p:true, escanear:true, i:[] }
+  };
+  var revision = [], formRevisar = document.getElementById('formRevisar'), listaRev = document.getElementById('revisarLista');
+  function abrirRevision(items, titulo, ayuda){
+    revision = items.map(function(x){ return { tipo: x.tipo === 'producto' ? 'producto' : 'servicio', nombre: x.nombre || '', precio: x.precio || '', duracion: x.duracion || 0, descripcion: x.descripcion || '', stock: x.stock || '', sel: true }; });
+    document.getElementById('revisarTitulo').textContent = titulo;
+    document.getElementById('revisarAyuda').textContent = ayuda;
+    pintarRevision(); abrirHoja('veloRevisar');
+  }
+  function pintarRevision(){
+    listaRev.innerHTML = revision.map(function(x, i){
+      return '<div class="rev' + (x.sel ? '' : ' no') + '"><button type="button" class="check' + (x.sel ? ' si' : '') + '" data-rsel="' + i + '" aria-label="Incluir">' + (x.sel ? '✓' : '') + '</button><div class="rev-c">' +
+        '<input data-r="' + i + '" data-k="nombre" maxlength="120" value="' + esc(x.nombre) + '" aria-label="Nombre">' +
+        '<div class="rev-pie"><input data-r="' + i + '" data-k="precio" maxlength="40" placeholder="Precio (ej.: 12 €)" value="' + esc(x.precio) + '" aria-label="Precio">' +
+        '<button type="button" class="rev-tipo" data-rtipo="' + i + '">' + (x.tipo === 'servicio' ? 'Servicio' + (x.duracion ? ' · ' + x.duracion + ' min' : '') : 'Producto' + (x.stock ? ' · ' + esc(x.stock) + ' ud' : '')) + '</button></div></div></div>';
+    }).join('');
+    var n = revision.filter(function(x){ return x.sel && x.nombre.trim(); }).length;
+    var b = document.getElementById('revisarGuardar'); b.textContent = n ? 'Guardar ' + n + (n === 1 ? ' elemento' : ' elementos') : 'Marca algo para guardar'; b.disabled = !n;
+  }
+  listaRev.addEventListener('input', function(e){ var el = e.target.closest('[data-r]'); if (el) { revision[+el.getAttribute('data-r')][el.getAttribute('data-k')] = el.value; } });
+  listaRev.addEventListener('change', function(){ pintarRevision(); });
+  listaRev.addEventListener('click', function(e){
+    var b = e.target.closest('[data-rsel]'); if (b) { var x = revision[+b.getAttribute('data-rsel')]; x.sel = !x.sel; pintarRevision(); return; }
+    b = e.target.closest('[data-rtipo]'); if (b) { var y = revision[+b.getAttribute('data-rtipo')]; y.tipo = y.tipo === 'servicio' ? 'producto' : 'servicio'; pintarRevision(); }
+  });
+  formRevisar.addEventListener('submit', function(e){
+    e.preventDefault();
+    var items = revision.filter(function(x){ return x.sel && x.nombre.trim(); }).map(function(x){ return { tipo: x.tipo, nombre: x.nombre.trim(), precio: x.precio.trim(), duracion: x.tipo === 'servicio' ? x.duracion : 0, descripcion: x.descripcion, stock: x.tipo === 'producto' ? x.stock : '' }; });
+    if (!items.length) return;
+    var boton = document.getElementById('revisarGuardar'); boton.disabled = true; boton.textContent = 'Guardando…';
+    llamarApp('catalogo-varios', { items: items }).then(function(r){
+      pintarRevision();
+      var res = r && r.resultado, txt = res ? [res.nuevos ? res.nuevos + (res.nuevos === 1 ? ' añadido' : ' añadidos') : '', res.actualizados ? res.actualizados + (res.actualizados === 1 ? ' actualizado' : ' actualizados') : ''].filter(Boolean).join(' y ') : '';
+      var serv = items.filter(function(x){ return x.tipo === 'servicio'; }).length;
+      if (aplicarInfo(r, 'Catálogo: ' + txt)) { tabCat = serv >= items.length - serv ? 'servicio' : 'producto'; cerrarHojas(); pintar(); }
+    }).catch(function(){ pintarRevision(); toast('Sin conexión, inténtalo de nuevo'); });
+  });
+  function usarPlantilla(c){
+    var p = PLANTILLAS[c]; if (!p) return;
+    if (p.escanear) { toast('Escanea tus productos uno a uno o haz una foto a la factura del proveedor'); abrirEscaner('stock'); return; }
+    abrirRevision(p.i.map(function(x){ return { tipo: p.p ? 'producto' : 'servicio', nombre: x[0], duracion: x[1] || 0 }; }), 'Plantilla: ' + p.t, 'Pon tus precios, quita lo que no hagas (✓) y cambia los nombres a tu gusto. Luego podrás añadir más.');
+  }
+  // Foto o PDF → Eris lo lee
+  var archivoCat = document.getElementById('archivoCat');
+  function reducirFoto(file){
+    return new Promise(function(ok, mal){
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function(){
+        var max = 2000, w = img.naturalWidth, h = img.naturalHeight, f = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement('canvas'); c.width = Math.round(w * f); c.height = Math.round(h * f);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        ok({ datos: c.toDataURL('image/jpeg', 0.85).split(',')[1], tipo: 'image/jpeg' });
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); mal(new Error('foto')); };
+      img.src = url;
+    });
+  }
+  function leerBase64(file){
+    return new Promise(function(ok, mal){ var fr = new FileReader(); fr.onload = function(){ ok({ datos: String(fr.result).split(',')[1], tipo: file.type || 'application/pdf' }); }; fr.onerror = mal; fr.readAsDataURL(file); });
+  }
+  archivoCat.addEventListener('change', function(){
+    var file = archivoCat.files && archivoCat.files[0]; if (!file) return;
+    var pdf = /pdf/i.test(file.type) || /\.pdf$/i.test(file.name);
+    if (pdf && file.size > 9 * 1024 * 1024) { toast('El PDF es muy grande (máx. 9 MB)'); return; }
+    document.getElementById('revisarTitulo').textContent = 'Leyendo ' + (pdf ? 'el PDF' : 'la foto') + '…';
+    document.getElementById('revisarAyuda').textContent = '';
+    listaRev.innerHTML = '<div class="leyendo"><i></i>Eris está sacando los servicios, productos y precios. Tarda unos segundos.</div>';
+    var b = document.getElementById('revisarGuardar'); b.disabled = true; b.textContent = 'Esperando…';
+    abrirHoja('veloRevisar');
+    (pdf ? leerBase64(file) : reducirFoto(file)).then(function(a){
+      return post(API_APP, { n:n, k:k, accion:'catalogo-leer', archivo: a.datos, archivoTipo: a.tipo, datos:{} });
+    }).then(function(r){
+      if (!r || !r.ok || !r.items || !r.items.length) { cerrarHojas(); toast((r && r.motivo) || 'No se ha podido leer'); return; }
+      abrirRevision(r.items, 'He encontrado ' + r.items.length + (r.items.length === 1 ? ' elemento' : ' elementos'), 'Revisa nombres y precios, quita lo que sobre (✓) y toca «Servicio/Producto» si alguno está mal. Si ya existe uno con el mismo nombre, se actualiza.');
+    }).catch(function(){ cerrarHojas(); toast('No se ha podido enviar. Revisa la conexión'); });
+  });
+
+  // ---- Escáner de códigos de barras ----
+  var escVideo = document.getElementById('escVideo'), escEstado = document.getElementById('escEstado'), formCodigo = document.getElementById('formCodigo');
+  var camara = null, detector = null, lectorZX = null, escModo = 'stock', escTimer = 0, escListo = false;
+  var ZXING_URL = 'https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js';
+  function cargarScript(src){ return new Promise(function(ok, mal){ if (window.ZXing) { ok(); return; } var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = mal; document.head.appendChild(s); }); }
+  function pararCamara(){
+    clearTimeout(escTimer); escListo = false;
+    if (lectorZX) { try { lectorZX.reset(); } catch (e) {} lectorZX = null; }
+    if (camara) { camara.getTracks().forEach(function(t){ t.stop(); }); camara = null; }
+    if (escVideo) escVideo.srcObject = null;
+  }
+  function abrirEscaner(modo){
+    escModo = modo || 'stock';
+    if (escModo === 'campo') document.getElementById('veloItem').classList.remove('abierto'); else cerrarHojas();
+    formCodigo.reset(); escEstado.textContent = 'Abriendo la cámara…';
+    abrirHoja('veloEscaner'); escListo = true;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { escEstado.textContent = 'Este móvil no deja usar la cámara aquí. Escribe el código debajo.'; return; }
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false }).then(function(st){
+      if (!escListo) { st.getTracks().forEach(function(t){ t.stop(); }); return; }
+      camara = st; escVideo.srcObject = st; escVideo.play().catch(function(){});
+      escEstado.textContent = 'Apunta al código de barras del producto.';
+      if ('BarcodeDetector' in window) {
+        BarcodeDetector.getSupportedFormats().then(function(f){
+          var quiero = ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','code_93','itf','codabar','qr_code'];
+          detector = new BarcodeDetector({ formats: f.filter(function(x){ return quiero.indexOf(x) >= 0; }) });
+          buscarEnVideo();
+        }).catch(usarZXing);
+      } else usarZXing();
+    }).catch(function(){ escEstado.textContent = 'No hay permiso para la cámara. Actívalo en los ajustes del móvil o escribe el código debajo.'; });
+  }
+  function buscarEnVideo(){
+    if (!camara || !detector) return;
+    if (escVideo.readyState < 2) { escTimer = setTimeout(buscarEnVideo, 200); return; }
+    detector.detect(escVideo).then(function(c){
+      if (c && c.length && c[0].rawValue) codigoLeido(c[0].rawValue); else escTimer = setTimeout(buscarEnVideo, 180);
+    }).catch(function(){ escTimer = setTimeout(buscarEnVideo, 400); });
+  }
+  function usarZXing(){
+    cargarScript(ZXING_URL).then(function(){
+      if (!camara) return;
+      lectorZX = new ZXing.BrowserMultiFormatReader();
+      lectorZX.decodeFromStream(camara, escVideo, function(res){ if (res && lectorZX) codigoLeido(res.getText()); });
+    }).catch(function(){ escEstado.textContent = 'No se ha podido cargar el lector. Escribe el código debajo.'; });
+  }
+  formCodigo.addEventListener('submit', function(e){ e.preventDefault(); var c = formCodigo.codigo.value.trim(); if (c) codigoLeido(c); });
+  function codigoLeido(cod){
+    cod = String(cod).trim().replace(/[^0-9A-Za-z-]/g, '').slice(0, 40); if (!cod) return;
+    pararCamara(); try { navigator.vibrate && navigator.vibrate(70); } catch (e) {}
+    document.getElementById('veloEscaner').classList.remove('abierto');
+    if (escModo === 'campo') { formItem.codigo.value = cod; abrirHoja('veloItem'); return; }
+    var x = (info && info.catalogo || []).filter(function(y){ return y.codigo === cod; })[0];
+    if (x) { abrirStock(x); return; }
+    toast('Producto nuevo: buscando su nombre…');
+    buscarProducto(cod).then(function(p){
+      tabCat = 'producto'; pintar();
+      abrirItem('nuevo', { tipo:'producto', nombre: p ? p.nombre : '', descripcion: p ? p.desc : '', codigo: cod, stock: '1' });
+      if (!p) toast('No lo encuentro en internet: escribe el nombre');
+    });
+  }
+  function buscarProducto(cod){
+    var bases = ['https://world.openfoodfacts.org', 'https://world.openproductsfacts.org', 'https://world.openbeautyfacts.org'];
+    function probar(i){
+      if (i >= bases.length) return Promise.resolve(null);
+      var ctl = window.AbortController ? new AbortController() : null, t = setTimeout(function(){ if (ctl) ctl.abort(); }, 6000);
+      return fetch(bases[i] + '/api/v2/product/' + encodeURIComponent(cod) + '.json?fields=product_name,product_name_es,generic_name_es,brands,quantity', ctl ? { signal: ctl.signal } : {}).then(function(r){ return r.json(); }).then(function(j){
+        clearTimeout(t);
+        var p = j && j.status === 1 && j.product;
+        var nom = p && (p.product_name_es || p.product_name || p.generic_name_es);
+        if (!nom) return probar(i + 1);
+        var marca = p.brands ? String(p.brands).split(',')[0].trim() : '';
+        return { nombre: [nom.trim(), marca && nom.toLowerCase().indexOf(marca.toLowerCase()) < 0 ? marca : '', p.quantity || ''].filter(Boolean).join(' ').slice(0, 120), desc: marca ? 'Marca: ' + marca : '' };
+      }).catch(function(){ clearTimeout(t); return probar(i + 1); });
+    }
+    return probar(0);
+  }
+  // Ajustar stock
+  var formStock = document.getElementById('formStock'), itemStock = null;
+  function numStock(v){ var m = String(v == null ? '' : v).replace(',', '.').match(/-?\d+(\.\d+)?/); return m ? Math.round(parseFloat(m[0])) : 0; }
+  function abrirStock(x){
+    itemStock = x;
+    document.getElementById('stockTitulo').textContent = x.nombre;
+    document.getElementById('stockInfo').textContent = 'Stock actual: ' + (x.stock !== '' && x.stock != null ? x.stock : 'sin apuntar') + (x.precio ? ' · ' + x.precio : '') + '. Usa + al recibir mercancía y − al vender.';
+    formStock.stock.value = numStock(x.stock);
+    abrirHoja('veloStock');
+  }
+  formStock.addEventListener('click', function(e){
+    var b = e.target.closest('[data-stock]'); if (!b) return;
+    formStock.stock.value = Math.max(0, numStock(formStock.stock.value) + (+b.getAttribute('data-stock')));
+  });
+  formStock.addEventListener('submit', function(e){
+    e.preventDefault(); if (!itemStock) return;
+    var boton = formStock.querySelector('button[type=submit]'); boton.disabled = true;
+    var nuevo = String(Math.max(0, numStock(formStock.stock.value)));
+    llamarApp('catalogo-guardar', { id: itemStock.id, nombre: itemStock.nombre, stock: nuevo }).then(function(r){
+      boton.disabled = false; if (aplicarInfo(r, itemStock.nombre + ': ' + nuevo + ' en stock')) { tabCat = 'producto'; cerrarHojas(); pintar(); }
+    }).catch(function(){ boton.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
+  });
+  document.getElementById('stockOtro').addEventListener('click', function(){ abrirEscaner('stock'); });
+  document.getElementById('stockEditar').addEventListener('click', function(){ var id = itemStock && itemStock.id; cerrarHojas(); if (id) abrirItem(id); });
   // Cierres
   var formCierre = document.getElementById('formCierre');
   function abrirCierre(){ formCierre.reset(); formCierre.desde.value = hoyISO(); formCierre.hasta.value = hoyISO(); abrirHoja('veloCierre'); }
