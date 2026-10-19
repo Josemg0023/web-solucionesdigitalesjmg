@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /panel/
+Disallow: /pagar.html
+Disallow: /gracias.html
+
+Sitemap: https://euxenos.com/sitemap.xml
