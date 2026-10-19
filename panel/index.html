@@ -228,6 +228,16 @@ textarea{min-height:90px;resize:vertical}
 .total{display:flex;justify-content:space-between;margin-top:8px;font-family:'Sora',system-ui,sans-serif;font-weight:700}
 .tipo{display:inline-block;font-size:.75rem;font-weight:700;padding:3px 8px;border-radius:999px;margin-top:6px;background:rgba(96,165,250,.15);color:#9CC8FF}
 .tipo.dom{background:rgba(209,16,74,.15);color:#FF9DB8}
+.conv{margin-top:10px;border:1px solid var(--linea);border-radius:12px;background:rgba(255,255,255,.03)}
+.conv summary{cursor:pointer;padding:9px 12px;font-size:.88rem;font-weight:700;color:var(--verde-luz);list-style:none}
+.conv summary::-webkit-details-marker{display:none}
+.conv[open] summary{border-bottom:1px solid var(--linea)}
+.conv .msgs{padding:10px 12px;display:grid;gap:7px;max-height:320px;overflow:auto}
+.conv .m{font-size:.88rem;line-height:1.4;padding:7px 10px;border-radius:12px;max-width:88%}
+.conv .m.eris{background:rgba(16,185,129,.12);justify-self:start}
+.conv .m.cli{background:rgba(96,165,250,.13);justify-self:end;text-align:right}
+.conv .m i{display:block;font-style:normal;font-size:.72rem;color:var(--apagado);margin-bottom:2px}
+.conv .espera{padding:9px 12px;font-size:.85rem;color:var(--apagado)}
 .e-nuevo{background:rgba(245,185,66,.18);color:#F7D58C}.e-cocina{background:rgba(96,165,250,.15);color:#9CC8FF}.e-listo{background:rgba(16,185,129,.18);color:var(--verde-luz)}.e-entregado{background:rgba(255,255,255,.08);color:var(--apagado)}.e-cancelado{background:rgba(209,16,74,.15);color:#FF8FB0}
 </style>
 </head>
@@ -457,6 +467,19 @@ textarea{min-height:90px;resize:vertical}
 
   // ---- Pedidos ----
   function hace(iso){ var m = Math.round((Date.now() - new Date(iso).getTime()) / 60000); if (!(m >= 0)) return ''; if (m < 1) return 'ahora mismo'; if (m < 60) return 'hace ' + m + ' min'; var h = Math.floor(m / 60); return h < 24 ? 'hace ' + h + ' h' : 'hace ' + Math.floor(h / 24) + ' d'; }
+  var convAbiertas = {};
+  function conversacionPedido(p){
+    var porTel = /tel/i.test(p.canal || '');
+    var txt = String(p.transcripcion || '').trim();
+    if (!txt) return porTel && (p.estado === 'nuevo' || p.estado === 'cocina') ? '<div class="conv"><div class="espera">📞 La conversación de la llamada aparecerá aquí al colgar.</div></div>' : '';
+    var msgs = txt.split('\n').map(function(l){
+      var m = /^\[(\d+:\d{2})\]\s*(Eris|Cliente):\s*(.*)$/.exec(l);
+      if (!m) return l ? '<div class="m eris">' + esc(l) + '</div>' : '';
+      return '<div class="m ' + (m[2] === 'Eris' ? 'eris' : 'cli') + '"><i>' + (m[2] === 'Eris' ? 'Eris' : 'Cliente') + ' · ' + m[1] + '</i>' + esc(m[3]) + '</div>';
+    }).join('');
+    return '<details class="conv" data-conv="' + esc(p.ref) + '"' + (convAbiertas[p.ref] ? ' open' : '') + '><summary>' + (porTel ? '📞 Ver la llamada' : '💬 Ver la conversación') + '</summary><div class="msgs">' + msgs + '</div></details>';
+  }
+  document.addEventListener('toggle', function(e){ var d = e.target; if (d && d.getAttribute && d.getAttribute('data-conv')) convAbiertas[d.getAttribute('data-conv')] = d.open; }, true);
   function tarjetaPedido(p){
     var sig = { nuevo:['cocina','👨‍🍳 Pasar a cocina'], cocina:['listo','✓ Listo'], listo:['entregado', p.tipo === 'domicilio' ? '🛵 Entregado' : '✓ Recogido'] }[p.estado];
     var acc = '';
@@ -475,6 +498,7 @@ textarea{min-height:90px;resize:vertical}
       + (p.total ? '<div class="total"><span>Total</span><span>' + esc(p.total) + '</span></div>' : '')
       + (p.notas ? '<div class="notas">' + esc(p.notas) + '</div>' : '')
       + '<div class="meta">' + (p.telefono ? '<a href="tel:' + esc(String(p.telefono).replace(/\s/g, '')) + '">📞 ' + esc(p.telefono) + '</a>' : '') + '<span>vía ' + esc(p.canal || 'Eris') + '</span></div>'
+      + conversacionPedido(p)
       + acc + '</article>';
   }
   function grupoPedidos(titulo, lista, vacio){ return '<h2>' + titulo + ' <span class="n">' + lista.length + '</span></h2>' + (lista.length ? lista.map(tarjetaPedido).join('') : (vacio ? '<p class="vacio">' + vacio + '</p>' : '')); }
