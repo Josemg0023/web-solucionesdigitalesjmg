@@ -1087,6 +1087,16 @@ a{color:inherit}
       metadata: modoChat === 'medida' ? { modo: 'medida' } : undefined,
       i18n: { en: { title: 'Eris', subtitle: '', footer: '', getStarted: 'OK', inputPlaceholder: t.i, closeButtonTooltip: 'X' } }
     });
+    limitarMensaje(contenedor);
+  }
+  // Máximo 800 caracteres por mensaje (el servidor también recorta)
+  var MAX_MENSAJE = 800;
+  function limitarMensaje(contenedor){
+    function aplicar(){ contenedor.querySelectorAll('textarea').forEach(function(c){ if(c.maxLength !== MAX_MENSAJE) c.maxLength = MAX_MENSAJE; }); }
+    aplicar();
+    if(contenedor._limite) return;
+    contenedor._limite = new MutationObserver(aplicar);
+    contenedor._limite.observe(contenedor, { childList: true, subtree: true });
   }
   function cambiarIdioma(nuevo){
     if(!TEXTOS[nuevo] || nuevo === idioma) { marcarIdioma(); return; }
