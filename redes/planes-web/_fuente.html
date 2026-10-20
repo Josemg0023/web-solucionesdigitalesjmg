@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link href="../../vendor/fuentes/fuentes.css" rel="stylesheet">
+<!-- Vídeos de los planes para la web (horizontal 16:9). Se abre con ?plan=esencial|basico|completo|plus
+     y se renderiza fotograma a fotograma llamando a window.render(t). -->
+<style>
+:root{--fondo:#04120E;--claro:#E9FBF4;--apagado:#9CC3B5;--esm:#34D399;--esm2:#10B981;--rubi:#E0336F;--linea:rgba(52,211,153,.22);--panel:rgba(233,251,244,.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1280px;height:720px;overflow:hidden;background:var(--fondo)}
+#v{position:relative;width:1280px;height:720px;overflow:hidden;color:var(--claro);font-family:'Figtree',sans-serif}
+#v::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 500px at 100% 0%,rgba(209,16,74,.20),transparent 70%),radial-gradient(700px 520px at 0% 100%,rgba(16,185,129,.16),transparent 70%),linear-gradient(rgba(52,211,153,.03) 1px,transparent 1px) 0 0/64px 64px,linear-gradient(90deg,rgba(52,211,153,.03) 1px,transparent 1px) 0 0/64px 64px}
+.top{position:absolute;left:64px;right:64px;top:40px;display:flex;justify-content:space-between;align-items:center;z-index:5}
+.marca{display:flex;align-items:center;gap:12px;font-family:'Sora';font-weight:700;font-size:24px}
+.marca img{width:36px;height:36px}
+.chip-plan{font-size:17px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--esm);border:1px solid var(--linea);border-radius:999px;padding:8px 16px;background:rgba(52,211,153,.08)}
+.barra{position:absolute;left:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--rubi),var(--esm));z-index:6}
+.esc{position:absolute;inset:0;padding:120px 64px 60px;opacity:0;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.esc.centro{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:0;padding-top:90px}
+.a{opacity:0;transform:translateY(24px)}
+h1{font-family:'Sora';font-weight:800;font-size:74px;line-height:1.02;letter-spacing:-.035em}
+h2{font-family:'Sora';font-weight:800;font-size:50px;line-height:1.06;letter-spacing:-.03em}
+.g{background:linear-gradient(90deg,#E0336F,#b56a8a 50%,#34D399);-webkit-background-clip:text;color:transparent}
+.e{color:var(--esm)}
+.sub{font-size:25px;line-height:1.4;color:#CFE9DF;margin-top:22px;max-width:560px}
+.esc.centro .sub{max-width:820px}
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.esc.centro .chips{justify-content:center}
+.chip{font-size:20px;font-weight:600;padding:10px 18px;border-radius:999px;background:var(--panel);border:1px solid var(--linea)}
+.lista{margin-top:26px;display:grid;gap:14px}
+.lista div{display:flex;gap:14px;align-items:center;font-size:24px;font-weight:500}
+.lista div::before{content:"✓";display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:10px;background:rgba(52,211,153,.16);color:var(--esm);font-weight:800}
+/* Móvil con chat */
+.movil{justify-self:center;width:330px;height:540px;border-radius:44px;background:#0b1d17;border:2px solid var(--linea);box-shadow:0 30px 80px rgba(0,0,0,.45);padding:18px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.cab{display:flex;align-items:center;gap:12px;padding:6px 6px 14px;border-bottom:1px solid var(--linea)}
+.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--esm),var(--esm2));display:grid;place-items:center;font-family:'Sora';font-weight:800;color:#04120E}
+.cab b{display:block;font-size:17px}.cab span{font-size:14px;color:var(--apagado)}
+.msg{max-width:84%;font-size:17px;line-height:1.35;padding:11px 14px;border-radius:18px}
+.msg.cli{align-self:flex-end;background:#1f3a31;border-bottom-right-radius:6px}
+.msg.eris{align-self:flex-start;background:var(--claro);color:#0b1d17;border-bottom-left-radius:6px}
+.msg small{display:block;font-size:12px;opacity:.6;margin-top:4px}
+.aviso{margin-top:auto;background:rgba(52,211,153,.14);border:1px solid var(--esm);border-radius:16px;padding:12px 14px;font-size:15px}
+.aviso b{color:var(--esm)}
+/* Navegador */
+.nav{justify-self:center;width:560px;height:400px;border-radius:18px;background:#0b1d17;border:2px solid var(--linea);box-shadow:0 30px 80px rgba(0,0,0,.45);overflow:hidden;position:relative}
+.nav .barra-nav{height:40px;display:flex;align-items:center;gap:8px;padding:0 14px;background:#10261f;border-bottom:1px solid var(--linea)}
+.nav .barra-nav i{width:11px;height:11px;border-radius:50%;background:#2c4a40}
+.nav .url{margin-left:12px;font-size:14px;color:var(--apagado);background:#0b1d17;border-radius:8px;padding:5px 12px}
+.nav .heroe{padding:30px 30px 0}
+.nav .heroe b{display:block;font-family:'Sora';font-size:30px;font-weight:800;line-height:1.1}
+.nav .heroe span{display:block;margin-top:10px;font-size:15px;color:var(--apagado)}
+.nav .bloques{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:22px 30px}
+.nav .bloques div{height:74px;border-radius:12px;background:var(--panel);border:1px solid var(--linea)}
+.widget{position:absolute;right:16px;bottom:16px;width:270px;background:#0e231c;border:1px solid var(--esm);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.widget .msg{font-size:14px;padding:9px 12px}
+/* Llamada y calendario */
+.tarjeta{justify-self:center;width:440px;background:#0b1d17;border:2px solid var(--linea);border-radius:28px;padding:28px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.llamada .et{font-size:16px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--apagado)}
+.llamada .num{font-family:'Sora';font-weight:800;font-size:36px;margin-top:8px}
+.onda{display:flex;gap:6px;align-items:center;height:70px;margin:22px 0}
+.onda i{flex:1;border-radius:4px;background:var(--esm)}
+.llamada .dice{background:var(--claro);color:#0b1d17;border-radius:18px 18px 18px 6px;padding:14px 16px;font-size:18px;line-height:1.35}
+.cal .mes{font-family:'Sora';font-weight:700;font-size:22px;margin-bottom:16px}
+.cal .fila{display:flex;gap:14px;align-items:center;padding:14px;border-radius:14px;background:var(--panel);margin-top:10px;font-size:18px}
+.cal .fila b{font-family:'Sora';min-width:70px}
+.cal .fila.nueva{background:rgba(52,211,153,.16);border:1px solid var(--esm)}
+.cal .ok{margin-left:auto;font-size:14px;font-weight:700;color:#04120E;background:var(--esm);padding:5px 10px;border-radius:999px}
+/* Presupuesto */
+.pdf{justify-self:center;width:440px;background:#F4FBF8;color:#0b1d17;border-radius:18px;padding:28px 30px;box-shadow:0 30px 80px rgba(0,0,0,.5);position:relative}
+.pdf .t{font-family:'Sora';font-weight:800;font-size:24px}
+.pdf .c{font-size:14px;color:#4b6b60;margin-top:4px}
+.pdf .l{display:flex;justify-content:space-between;font-size:17px;padding:11px 0;border-bottom:1px solid #d6e9e1}
+.pdf .tot{display:flex;justify-content:space-between;font-family:'Sora';font-weight:800;font-size:22px;padding-top:14px}
+.pdf .btn{margin-top:20px;text-align:center;font-family:'Sora';font-weight:700;font-size:19px;color:#04120E;background:var(--esm);border-radius:14px;padding:14px}
+.sello{position:absolute;top:24px;right:24px;transform:rotate(-8deg);border:3px solid var(--esm2);color:var(--esm2);font-family:'Sora';font-weight:800;font-size:18px;padding:6px 12px;border-radius:10px}
+/* Precio */
+.precio{margin-top:30px;display:flex;gap:22px;align-items:stretch;justify-content:center}
+.precio .caja{background:var(--panel);border:1px solid var(--linea);border-radius:24px;padding:22px 34px;min-width:280px}
+.precio .caja.dest{border-color:var(--esm);background:rgba(52,211,153,.12)}
+.precio .et{font-size:16px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--esm)}
+.precio .cifra{font-family:'Sora';font-weight:800;font-size:54px;margin-top:6px}
+.precio .cifra small{font-size:22px;font-weight:600;color:var(--apagado)}
+.precio .iva{font-size:17px;color:var(--apagado);margin-top:4px}
+.pie{margin-top:26px;font-size:22px;color:#CFE9DF}
+.pie b{color:var(--esm)}
+</style></head><body><div id="v">
+<div class="top"><div class="marca"><img src="../../marca/euxenos-simbolo.svg" alt="">Euxenos</div><div class="chip-plan" id="chip"></div></div>
+<div id="escenas"></div>
+<div class="barra" id="barra"></div>
+</div>
+<script>
+var P = {
+  esencial: {
+    nombre: 'Pack Esencial',
+    escenas: [
+      { centro: true, html: '<h1 class="a">Pack <span class="g">Esencial</span></h1><p class="sub a">Eris atiende a tus clientes donde ya te escriben.</p><div class="chips a"><span class="chip">Instagram</span><span class="chip">WhatsApp</span><span class="chip">Google</span></div>' },
+      { html: '<div><h2 class="a">Contesta por ti, <span class="e">24 horas</span></h2><p class="sub a">Resuelve dudas y recoge las peticiones de cita, aunque estés trabajando o sea de noche.</p></div>' +
+        '<div class="movil"><div class="cab"><div class="avatar">E</div><div><b>Peluquería Lúa</b><span>WhatsApp · responde Eris</span></div></div>' +
+        '<div class="msg cli a" data-d="0.6">¿Tenéis hueco mañana por la tarde?<small>23:40</small></div>' +
+        '<div class="msg eris a" data-d="2.2">Hola. Sí: mañana a las 17:30 o a las 18:15. ¿Cuál te va mejor?<small>23:40</small></div>' +
+        '<div class="msg cli a" data-d="4.0">17:30 perfecto<small>23:41</small></div>' +
+        '<div class="aviso a" data-d="5.4"><b>Nueva petición de cita</b><br>Mañana 17:30 · te avisamos al momento</div></div>' },
+      { centro: true, html: '<h2 class="a">Sin web propia.<br><span class="g">Sin complicaciones.</span></h2><div class="lista a" style="text-align:left"><div>Responde dudas con la información de tu negocio</div><div>Recoge las peticiones de cita</div><div>Te avisa al momento en el móvil</div></div>' },
+      { centro: true, precio: true, html: '<h2 class="a">Pack <span class="g">Esencial</span></h2><div class="precio a"><div class="caja dest"><div class="et">Al año · 2 meses gratis</div><div class="cifra">350 €<small> + IVA</small></div><div class="iva">423,50 € con IVA</div></div><div class="caja"><div class="et">Al mes</div><div class="cifra">35 €<small> + IVA</small></div><div class="iva">42,35 € con IVA</div></div></div><p class="pie a">Alta 99 € + IVA · <b>euxenos.com</b></p>' }
+    ]
+  },
+  basico: {
+    nombre: 'Pack Básico',
+    escenas: [
+      { centro: true, html: '<h1 class="a">Pack <span class="g">Básico</span></h1><p class="sub a">Tu propia web, con Eris dentro.</p>' },
+      { html: '<div><h2 class="a">Una web hecha <span class="e">para tu negocio</span></h2><p class="sub a">Con Eris en el chat: atiende cada visita, a cualquier hora, y te pasa los clientes interesados.</p></div>' +
+        '<div class="nav a" data-d="0.3"><div class="barra-nav"><i></i><i></i><i></i><span class="url">tunegocio.es</span></div>' +
+        '<div class="heroe"><b>Reformas Atrium</b><span>Cocinas y baños en Talavera · presupuesto sin compromiso</span></div><div class="bloques"><div></div><div></div><div></div></div>' +
+        '<div class="widget a" data-d="1.6"><div class="msg cli" style="font-size:14px">¿Hacéis presupuesto sin compromiso?</div><div class="msg eris a" data-d="3.0">Sí. Cuéntame qué quieres reformar y te llamamos para verlo.</div></div></div>' },
+      { centro: true, html: '<h2 class="a">Todo incluido</h2><div class="lista a" style="text-align:left"><div>Diseño a medida, hasta 5 secciones</div><div>Asistente de chat las 24 horas</div><div>Alojamiento, mantenimiento y mejoras</div><div>Avisos al momento de cada cliente</div></div>' },
+      { centro: true, precio: true, html: '<h2 class="a">Pack <span class="g">Básico</span></h2><div class="precio a"><div class="caja dest"><div class="et">Al año · 2 meses gratis</div><div class="cifra">550 €<small> + IVA</small></div><div class="iva">665,50 € con IVA</div></div><div class="caja"><div class="et">Al mes</div><div class="cifra">55 €<small> + IVA</small></div><div class="iva">66,55 € con IVA</div></div></div><p class="pie a">Alta desde 390 € + IVA · <b>euxenos.com</b></p>' }
+    ]
+  },
+  completo: {
+    nombre: 'Pack Completo',
+    escenas: [
+      { centro: true, html: '<h1 class="a">Pack <span class="g">Completo</span></h1><p class="sub a">Todo lo del Básico, y además Eris contesta tu teléfono.</p><div class="chips a"><span class="chip">Web</span><span class="chip">Chat</span><span class="chip">Llamadas</span><span class="chip">Citas</span></div>' },
+      { html: '<div><h2 class="a">Atiende las llamadas <span class="e">que no puedes coger</span></h2><p class="sub a">Da la información de tu negocio y apunta la cita.</p></div>' +
+        '<div class="tarjeta llamada a" data-d="0.3"><div class="et">Llamada entrante</div><div class="num">600 12 34 56</div><div class="onda" id="onda"></div><div class="dice a" data-d="1.6">Hola, has llamado a Clínica Creta. Soy Eris. ¿En qué te puedo ayudar?</div></div>' },
+      { html: '<div><h2 class="a">Y la cita, <span class="e">en tu calendario</span></h2><p class="sub a">Incluye unos 150 minutos de llamadas al mes.</p></div>' +
+        '<div class="tarjeta cal a" data-d="0.3"><div class="mes">Jueves, 23 de octubre</div><div class="fila"><b>09:00</b>Limpieza dental</div><div class="fila nueva a" data-d="1.4"><b>10:00</b>Revisión · Ana G.<span class="ok">Nueva</span></div><div class="fila"><b>12:30</b>Ortodoncia</div></div>' },
+      { centro: true, precio: true, html: '<h2 class="a">Pack <span class="g">Completo</span></h2><div class="precio a"><div class="caja dest"><div class="et">Al año · 2 meses gratis</div><div class="cifra">990 €<small> + IVA</small></div><div class="iva">1.197,90 € con IVA</div></div><div class="caja"><div class="et">Al mes</div><div class="cifra">99 €<small> + IVA</small></div><div class="iva">119,79 € con IVA</div></div></div><p class="pie a">Precios desde · alta desde 600 € + IVA · <b>euxenos.com</b></p>' }
+    ]
+  },
+  plus: {
+    nombre: 'Pack Plus',
+    escenas: [
+      { centro: true, html: '<h1 class="a">Pack <span class="g">Plus</span></h1><p class="sub a">Para negocios que hacen presupuestos.</p><div class="chips a"><span class="chip">Talleres</span><span class="chip">Reformas</span><span class="chip">Instalaciones</span></div>' },
+      { html: '<div><h2 class="a">Eris prepara <span class="e">el presupuesto</span></h2><p class="sub a">Recoge lo que necesita el cliente y lo deja listo en PDF. Tú lo apruebas con un clic.</p></div>' +
+        '<div class="pdf a" data-d="0.3"><div class="t">Presupuesto P-0142</div><div class="c">Talleres Tete · Seat León 2017</div><div style="margin-top:14px"><div class="l a" data-d="0.9"><span>Pastillas de freno (eje delantero)</span><b>90 €</b></div><div class="l a" data-d="1.3"><span>Mano de obra</span><b>45 €</b></div><div class="l a" data-d="1.7"><span>Revisión de líquido</span><b>15 €</b></div></div><div class="tot a" data-d="2.1"><span>Total + IVA</span><span>150 €</span></div><div class="btn a" data-d="2.8">Aprobar y enviar</div><div class="sello a" data-d="4.2">ENVIADO</div></div>' },
+      { html: '<div><h2 class="a">Cuando lo acepta, <span class="e">le da cita</span></h2><p class="sub a">Con unos 300 minutos de llamadas al mes.</p></div>' +
+        '<div class="tarjeta cal a" data-d="0.3"><div class="mes">Viernes, 24 de octubre</div><div class="fila nueva a" data-d="1.0"><b>09:30</b>Presupuesto P-0142 aceptado<span class="ok">Cita</span></div><div class="fila"><b>12:00</b>Cambio de aceite</div></div>' },
+      { centro: true, precio: true, html: '<h2 class="a">Pack <span class="g">Plus</span></h2><div class="precio a"><div class="caja dest"><div class="et">Al año · 2 meses gratis</div><div class="cifra">1.990 €<small> + IVA</small></div><div class="iva">2.407,90 € con IVA</div></div><div class="caja"><div class="et">Al mes</div><div class="cifra">199 €<small> + IVA</small></div><div class="iva">240,79 € con IVA</div></div></div><p class="pie a">Precios desde · alta desde 1.000 € + IVA · <b>euxenos.com</b></p>' }
+    ]
+  }
+};
+var plan = (new URLSearchParams(location.search).get('plan')) || 'esencial';
+var C = P[plan];
+document.getElementById('chip').textContent = C.nombre;
+var cont = document.getElementById('escenas');
+C.escenas.forEach(function(s){ var d = document.createElement('div'); d.className = 'esc' + (s.centro ? ' centro' : ''); d.innerHTML = s.html; cont.appendChild(d); });
+var onda = document.getElementById('onda'); if (onda) for (var i = 0; i < 34; i++) onda.appendChild(document.createElement('i'));
+// T = inicio de cada escena (s); se ajusta a la locución desde fuera con window.T y window.FIN
+var T = window.T || [0, 3, 10, 15], FIN = window.FIN || 22;
+var esc = [].slice.call(document.querySelectorAll('.esc'));
+function ease(x){ x = Math.max(0, Math.min(1, x)); return 1 - Math.pow(1 - x, 3); }
+window.render = function(t){
+  T = window.T || T; FIN = window.FIN || FIN;
+  esc.forEach(function(s, i){
+    var ini = T[i], fin = i + 1 < T.length ? T[i + 1] : FIN + 1;
+    var vis = t >= ini - 0.001 && t < fin;
+    var fadeOut = ease((fin - t) / 0.35), fadeIn = ease((t - ini) / 0.35);
+    s.style.opacity = vis ? Math.min(fadeIn, fadeOut) : 0;
+    var auto = [].filter.call(s.querySelectorAll('.a'), function(h){ return !h.hasAttribute('data-d'); });
+    auto.forEach(function(h, k){ var p = ease((t - ini - 0.1 - k * 0.35) / 0.45); h.style.opacity = p; h.style.transform = 'translateY(' + (24 * (1 - p)) + 'px)'; });
+    s.querySelectorAll('.a[data-d]').forEach(function(h){ var p = ease((t - ini - parseFloat(h.getAttribute('data-d'))) / 0.4); h.style.opacity = p; h.style.transform = (h.classList.contains('sello') ? 'rotate(-8deg) scale(' + (1.6 - .6 * p) + ')' : 'translateY(' + (24 * (1 - p)) + 'px)'); });
+  });
+  if (onda) [].forEach.call(onda.children, function(b, k){ b.style.height = (12 + 46 * Math.abs(Math.sin(t * 5 + k * 0.7)) * (0.4 + 0.6 * Math.abs(Math.sin(t * 1.3 + k)))) + 'px'; });
+  document.getElementById('barra').style.width = (Math.min(1, t / FIN) * 100) + '%';
+};
+render(0);
+</script>
+</body></html>

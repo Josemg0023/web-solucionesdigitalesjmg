@@ -275,6 +275,16 @@ a{color:inherit}
 .pack .boton{margin-top:auto;justify-content:center;padding:12px 18px;font-size:.95rem}
 .pack .pack-botones{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .pack .pack-botones .boton{margin-top:0;padding:12px 10px}
+.pack .ver-video{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:auto 0 10px;padding:10px 12px;font:inherit;font-size:.92rem;font-weight:600;color:var(--esmeralda-luz);background:rgba(52,211,153,.07);border:1px dashed var(--linea);border-radius:12px;cursor:pointer;transition:background-color .2s,border-color .2s}
+.pack .ver-video:hover,.pack .ver-video:focus-visible{background:rgba(52,211,153,.14);border-color:var(--esmeralda)}
+.ver-video-icono{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--esmeralda);color:#04120E;font-size:.7rem;padding-left:2px}
+.pack .ver-video + .pack-botones{margin-top:0}
+.video-dialogo{border:0;border-radius:18px;padding:0;width:min(920px,calc(100% - 24px));background:#04120E;color:var(--claro);box-shadow:0 30px 80px -20px rgba(0,0,0,.8);overflow:hidden}
+.video-dialogo::backdrop{background:rgba(2,10,8,.82)}
+.video-dialogo video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000}
+.video-dialogo .video-pie{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px}
+.video-dialogo .video-pie b{font-family:var(--display)}
+.video-dialogo .cerrar-video{font:inherit;font-weight:600;color:var(--claro);background:transparent;border:1px solid var(--linea);border-radius:10px;padding:8px 14px;cursor:pointer}
 .contratar-dialogo{border:0;border-radius:18px;padding:0;max-width:440px;width:calc(100% - 32px);background:var(--fondo-2);color:var(--claro);box-shadow:0 30px 80px -20px rgba(0,0,0,.8),inset 0 0 0 1px var(--linea)}
 .contratar-dialogo::backdrop{background:rgba(2,10,8,.75)}
 .contratar-dialogo form{padding:24px 22px;display:grid;gap:12px}
@@ -517,6 +527,7 @@ a{color:inherit}
           <p class="coniva" data-mes="42,35 €/mes con IVA" data-anual="423,50 €/año con IVA">423,50 €/año con IVA</p>
           <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">99 € <small>+ IVA</small></span><span class="alta-iva">119,79 € con IVA</span></div>
           <ul><li>Asistente por chat 24 horas</li><li>En tu Instagram, WhatsApp o Google</li><li>Recoge peticiones de cita</li><li>Te avisa al momento</li><li class="no">Web propia</li><li class="no">Llamadas de voz</li></ul>
+          <button class="ver-video" type="button" data-video="esencial" data-nombre="Esencial"><span class="ver-video-icono" aria-hidden="true">▶</span>Ver vídeo · 20 s</button>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="esencial" data-nombre="Esencial">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Esencial">Información</button></div>
         </article>
         <article class="pack">
@@ -527,6 +538,7 @@ a{color:inherit}
           <p class="coniva" data-mes="66,55 €/mes con IVA" data-anual="665,50 €/año con IVA">665,50 €/año con IVA</p>
           <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 390 € <small>+ IVA</small></span><span class="alta-iva">desde 471,90 € con IVA</span></div>
           <ul><li>Web con diseño propio</li><li>Asistente por chat 24 horas</li><li>Recoge peticiones de cita</li><li>Te avisa al momento</li><li class="no">Llamadas de voz</li></ul>
+          <button class="ver-video" type="button" data-video="basico" data-nombre="Básico"><span class="ver-video-icono" aria-hidden="true">▶</span>Ver vídeo · 20 s</button>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="basico" data-nombre="Básico">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Básico">Información</button></div>
         </article>
         <article class="pack">
@@ -537,6 +549,7 @@ a{color:inherit}
           <p class="coniva" data-mes="119,79 €/mes con IVA" data-anual="1.197,90 €/año con IVA">1.197,90 €/año con IVA</p>
           <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 600 € <small>+ IVA</small></span><span class="alta-iva">desde 726 € con IVA</span></div>
           <ul><li>Todo lo del Básico</li><li>Llamadas de voz con IA (150 min/mes)</li><li>Citas en tu calendario</li><li>Web de hasta 5 secciones</li></ul>
+          <button class="ver-video" type="button" data-video="completo" data-nombre="Completo"><span class="ver-video-icono" aria-hidden="true">▶</span>Ver vídeo · 20 s</button>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="completo" data-nombre="Completo">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Completo">Información</button></div>
         </article>
         <article class="pack">
@@ -547,6 +560,7 @@ a{color:inherit}
           <p class="coniva" data-mes="240,79 €/mes con IVA" data-anual="2.407,90 €/año con IVA">2.407,90 €/año con IVA</p>
           <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 1.000 € <small>+ IVA</small></span><span class="alta-iva">desde 1.210 € con IVA</span></div>
           <ul><li>Todo lo del Completo</li><li>Presupuestos automáticos en PDF</li><li>Tú los apruebas con un clic</li><li>Llamadas de voz (300 min/mes)</li></ul>
+          <button class="ver-video" type="button" data-video="plus" data-nombre="Plus"><span class="ver-video-icono" aria-hidden="true">▶</span>Ver vídeo · 20 s</button>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="plus" data-nombre="Plus">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Plus">Información</button></div>
         </article>
       </div>
@@ -648,6 +662,10 @@ a{color:inherit}
   </div>
 </footer>
 
+<dialog class="video-dialogo" id="dialogo-video" aria-labelledby="video-titulo">
+  <video id="video-plan" controls playsinline preload="none"></video>
+  <div class="video-pie"><b id="video-titulo">Pack</b><button class="cerrar-video" type="button" id="cerrar-video">Cerrar</button></div>
+</dialog>
 <dialog class="contratar-dialogo" id="dialogo-contratar" aria-labelledby="contratar-titulo">
   <form method="dialog" id="form-contratar" novalidate>
     <h3 id="contratar-titulo">Contratar</h3>
@@ -1415,6 +1433,25 @@ a{color:inherit}
       if(++intentos < 50) setTimeout(esperar, 200);
     })();
   }
+  // Vídeo corto de cada plan (redes/planes-web/<plan>.mp4)
+  (function(){
+    var d = document.getElementById('dialogo-video'), v = document.getElementById('video-plan');
+    if (!d || !v || !d.showModal) return;
+    function cerrar(){ try { v.pause(); } catch(e) {} v.removeAttribute('src'); v.load(); if (d.open) d.close(); }
+    document.querySelectorAll('[data-video]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var k = b.getAttribute('data-video');
+        document.getElementById('video-titulo').textContent = 'Pack ' + b.getAttribute('data-nombre');
+        v.poster = '/redes/planes-web/' + k + '-portada.jpg';
+        v.src = '/redes/planes-web/' + k + '.mp4';
+        d.showModal();
+        var p = v.play(); if (p && p.catch) p.catch(function(){});
+      });
+    });
+    document.getElementById('cerrar-video').addEventListener('click', cerrar);
+    d.addEventListener('click', function(e){ if (e.target === d) cerrar(); });
+    d.addEventListener('close', function(){ try { v.pause(); } catch(e) {} });
+  })();
   document.querySelectorAll('[data-info-pack]').forEach(function(b){ b.addEventListener('click', infoPack); });
   document.querySelectorAll('[data-abrir-eris]').forEach(function(b){ b.addEventListener('click', abrir); });
     panel.querySelector('.cerrar').addEventListener('click', cerrar);
