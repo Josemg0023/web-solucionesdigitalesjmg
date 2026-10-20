@@ -330,7 +330,7 @@ textarea{min-height:90px;resize:vertical}
 <div class="velo abajo" id="veloAcceso"><form class="hoja" id="formAcceso" autocomplete="on">
 <h3>Cambiar contraseña <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
 <p class="sub" style="margin:-4px 0 14px">Al cambiarla, se cerrará la sesión en los demás dispositivos.</p>
-<label class="campo"><span>Correo electrónico</span><input name="usuario" type="email" autocomplete="username" required></label>
+<label class="campo"><span>Usuario o correo</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false"></label>
 <label class="campo"><span>Contraseña nueva (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>
 <label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>
 <p class="error" id="errorAcceso"></p>
@@ -397,7 +397,7 @@ textarea{min-height:90px;resize:vertical}
     var bR = document.getElementById('recargar'); if (bR) bR.classList.add('girando');
     llamar({ n:n, k:k, accion:'ver' }).then(function(d){
       cargando = false;
-      if (!d || !d.ok) { olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu correo y contraseña.'); return; }
+      if (!d || !d.ok) { olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu usuario o correo y tu contraseña.'); return; }
       var primera = !datos; datos = d; pintar();
       if (primera) { comprobarAvisos(); cargarInfo(); cargarPedidos(); }
     }).catch(function(){
@@ -1162,7 +1162,7 @@ textarea{min-height:90px;resize:vertical}
   function pantallaLogin(aviso){
     ocultarFlotantes();
     app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Euxenos</h1><p class="sub">Entra con tu correo para gestionar tu negocio</p>'
-      + '<label class="campo"><span>Correo electrónico</span><input name="usuario" type="email" inputmode="email" autocomplete="username" required autocapitalize="none"></label>'
+      + '<label class="campo"><span>Usuario o correo</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false"></label>'
       + '<label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>'
       + '<p class="error" id="errorLogin">' + esc(aviso || '') + '</p><button class="btn b-ok ancho" type="submit">Entrar</button>'
       + '<p class="instalar">¿Aún no tienes cuenta? Usa el enlace de activación que te envió Euxenos. ¿Has olvidado la contraseña? Escríbenos a soporte@euxenos.com.</p><div class="instalar-app"></div></form>';
@@ -1181,12 +1181,12 @@ textarea{min-height:90px;resize:vertical}
   }
   function pantallaAlta(nombre, sugerido, nn, kk){
     ocultarFlotantes();
-    app.innerHTML = '<form class="login" id="formAlta" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Activa tu cuenta</h1><p class="sub">' + esc(nombre || 'Tu negocio') + ': crea tu acceso a Euxenos con tu correo y una contraseña</p>'
-      + '<label class="campo"><span>Correo electrónico</span><input name="usuario" type="email" inputmode="email" autocomplete="username" required autocapitalize="none" value="' + esc(sugerido || '') + '"></label>'
+    app.innerHTML = '<form class="login" id="formAlta" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Activa tu cuenta</h1><p class="sub">' + esc(nombre || 'Tu negocio') + ': crea tu acceso a Euxenos con un usuario o tu correo y una contraseña</p>'
+      + '<label class="campo"><span>Usuario o correo</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false" value="' + esc(sugerido || '') + '"></label>'
       + '<label class="campo"><span>Contraseña (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>'
       + '<label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>'
       + '<p class="error" id="errorAlta"></p><button class="btn b-ok ancho" type="submit">Activar y entrar</button>'
-      + '<p class="instalar">A partir de ahora entrarás en la app Euxenos (o en euxenos.com/panel) con este correo y contraseña, desde cualquier móvil u ordenador.</p></form>';
+      + '<p class="instalar">A partir de ahora entrarás en la app Euxenos (o en euxenos.com/panel) con este usuario o correo y tu contraseña, desde cualquier móvil u ordenador.</p></form>';
     var f = document.getElementById('formAlta');
     f.addEventListener('submit', function(e){
       e.preventDefault();
@@ -1204,7 +1204,7 @@ textarea{min-height:90px;resize:vertical}
     app.innerHTML = '<p class="mensaje">Comprobando tu enlace…</p>';
     llamar({ n:nn, k:kk, accion:'ver' }).then(function(r){
       if (r && r.activar) pantallaAlta(r.nombre, r.sugerido, nn, kk);
-      else if (r && r.activado) { if (n && k) cargar(); else pantallaLogin('Tu cuenta ya está activada: entra con tu correo y contraseña.'); }
+      else if (r && r.activado) { if (n && k) cargar(); else pantallaLogin('Tu cuenta ya está activada: entra con tu usuario o correo y tu contraseña.'); }
       else pantallaLogin('Este enlace no es válido.');
     }).catch(function(){ pantallaLogin('Sin conexión, inténtalo de nuevo.'); });
   }
