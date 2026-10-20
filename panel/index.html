@@ -1451,10 +1451,20 @@ textarea{min-height:90px;resize:vertical}
 
   // ---- Refresco ----
   function algoAbierto(){ return !!document.querySelector('.velo.abierto') || panelEris.classList.contains('abierto') || !!document.querySelector('.proponer.abierto') || (document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName)); }
+  // Ahorro de ejecuciones: los avisos al móvil (push) ya refrescan al momento cuando entra algo nuevo.
+  // El refresco periódico es solo un respaldo, más espaciado, y se para si nadie toca la pantalla en 20 min.
+  var ultimoToque = Date.now(), INACTIVO = 20 * 60000;
+  function activa(){ return Date.now() - ultimoToque < INACTIVO; }
+  ['pointerdown', 'keydown', 'touchstart', 'wheel'].forEach(function(ev){
+    document.addEventListener(ev, function(){
+      var dormida = !activa(); ultimoToque = Date.now();
+      if (dormida && puedeRefrescar()) { cargar(); cargarPedidos(); }
+    }, { passive: true });
+  });
   function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !algoAbierto() && !!datos; }
-  document.addEventListener('visibilitychange', function(){ if (puedeRefrescar()) { cargar(); cargarInfo(); cargarPedidos(); } });
-  setInterval(function(){ if (puedeRefrescar()) cargar(); }, 60000);
-  setInterval(function(){ if (!document.hidden && datos && pedidosOn()) cargarPedidos(); }, 20000);
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) ultimoToque = Date.now(); if (puedeRefrescar()) { cargar(); cargarInfo(); cargarPedidos(); } });
+  setInterval(function(){ if (puedeRefrescar() && activa()) cargar(); }, 5 * 60000);
+  setInterval(function(){ if (!document.hidden && datos && pedidosOn() && activa()) cargarPedidos(); }, 2 * 60000);
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { cerrarHojas(); cerrarMenu(); } });
   if (enlaceReset) pantallaNuevaClave(enlaceReset);
   else if (enlaceN && enlaceK) comprobarEnlace(enlaceN, enlaceK);
