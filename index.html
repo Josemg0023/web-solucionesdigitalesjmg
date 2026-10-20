@@ -313,12 +313,16 @@ a{color:inherit}
 .menu-cabecera{display:flex;align-items:center;gap:22px}
 .menu-cabecera a{text-decoration:none;font-weight:600;color:var(--apagado)}
 .menu-cabecera a:hover{color:var(--claro)}
+.selector-idioma-cabecera{display:flex;gap:4px;padding:6px;border-radius:10px;border:1px solid var(--linea);background:rgba(255,255,255,.03)}
+.boton-idioma-cabecera{font:inherit;font-size:.8rem;font-weight:700;color:var(--apagado);background:transparent;border:0;border-radius:6px;padding:6px 10px;cursor:pointer;letter-spacing:.02em;transition:color .2s,background-color .2s}
+.boton-idioma-cabecera:hover{color:var(--claro)}
+.boton-idioma-cabecera[aria-pressed="true"]{background:var(--esmeralda);color:#04120E}
 .cabecera{z-index:25}
 .menu-desplegable{position:relative}
 .boton-menu{font:inherit;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--claro);background:transparent;border:1px solid var(--linea);border-radius:12px;padding:10px 14px;min-height:44px}
 .boton-menu:hover,.boton-menu[aria-expanded="true"]{border-color:var(--esmeralda-luz);color:var(--esmeralda-luz)}
 .redes-cabecera{display:flex;gap:8px}.redes-cabecera a{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--linea);border-radius:12px;color:var(--claro);transition:color .2s,border-color .2s}.redes-cabecera a:hover{color:var(--esmeralda-luz);border-color:var(--esmeralda-luz)}
-@media (max-width:520px){.menu-cabecera{gap:8px}.redes-cabecera{gap:6px}.redes-cabecera a{width:38px;height:38px}.redes-cabecera svg{width:18px;height:18px}.boton-menu{padding:8px 11px;min-height:40px}.cabecera .envoltura{gap:8px}.insignia-beta{display:none}}
+@media (max-width:520px){.menu-cabecera{gap:8px}.redes-cabecera{gap:6px}.redes-cabecera a{width:38px;height:38px}.redes-cabecera svg{width:18px;height:18px}.boton-menu{padding:8px 11px;min-height:40px}.cabecera .envoltura{gap:8px}.insignia-beta{display:none}.selector-idioma-cabecera{padding:4px;gap:2px}.boton-idioma-cabecera{padding:5px 8px;font-size:.75rem}}
 .lista-menu{position:absolute;right:0;top:calc(100% + 10px);margin:0;padding:8px;list-style:none;min-width:230px;background:#0A2A20;border:1px solid var(--linea);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.5)}
 .lista-menu[hidden]{display:none}
 .lista-menu .acceso-menu{border-top:1px solid var(--linea);margin-top:6px;padding-top:6px}
@@ -367,6 +371,11 @@ a{color:inherit}
         <a href="https://www.tiktok.com/@euxenos.ai" target="_blank" rel="noopener" aria-label="TikTok de Euxenos"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
       </div>
       <a class="acceso-cabecera" href="/panel/" title="App Euxenos: gestiona tu negocio con Eris"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 10h18M8 14.5h2M14 14.5h2"/></svg>Acceso clientes</a>
+      <div class="selector-idioma-cabecera" role="group" aria-label="Idioma">
+        <button type="button" class="boton-idioma-cabecera" data-idioma-cabecera="es" aria-pressed="true" title="Español">ES</button>
+        <button type="button" class="boton-idioma-cabecera" data-idioma-cabecera="en" aria-pressed="false" title="English">EN</button>
+        <button type="button" class="boton-idioma-cabecera" data-idioma-cabecera="fr" aria-pressed="false" title="Français">FR</button>
+      </div>
       <div class="menu-desplegable">
         <button type="button" class="boton-menu" id="boton-menu" aria-expanded="false" aria-controls="lista-menu">Menú <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
         <ul class="lista-menu" id="lista-menu" hidden>
@@ -987,6 +996,11 @@ a{color:inherit}
 }
 }
 ];
+  var idiomaPagina = 'es';
+  try { idiomaPagina = localStorage.getItem('euxenos-idioma-pagina') || 'es'; } catch(e) { idiomaPagina = 'es'; }
+  if(!['es','en','fr'].includes(idiomaPagina)) idiomaPagina = 'es';
+  document.documentElement.lang = idiomaPagina;
+
   var etiqueta = document.getElementById('sector-actual');
   var contador = document.getElementById('contador');
   var hilo = document.getElementById('hilo');
@@ -994,13 +1008,13 @@ a{color:inherit}
   var pie = document.getElementById('reloj-pie');
   var actual = 0, temporizador = null;
   var sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  document.getElementById('anterior').addEventListener('click', function(){ mostrar((actual - 1 + escenas.length) % escenas.length); arrancar(20000); });
-  document.getElementById('siguiente').addEventListener('click', function(){ mostrar((actual + 1) % escenas.length); arrancar(20000); });
+  document.getElementById('anterior').addEventListener('click', function(){ mostrar((actual - 1 + escenasActuales.length) % escenasActuales.length); arrancar(20000); });
+  document.getElementById('siguiente').addEventListener('click', function(){ mostrar((actual + 1) % escenasActuales.length); arrancar(20000); });
 
   var NOMBRES = { en:'inglés', fr:'francés' };
   function mostrar(i){
     actual = i;
-    var e = escenas[i], l = e.idioma || 'es', textos = e.v[l];
+    var e = escenasActuales[i], l = e.idioma || 'es', textos = e.v[l];
     var h = e.hora.split(':'), m = (+h[0] * 60 + (+h[1]) + 1) % 1440;
     var hora2 = ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2);
     etiqueta.textContent = e.sector;
@@ -1021,19 +1035,55 @@ a{color:inherit}
   function arrancar(espera){
     parar();
     temporizador = setTimeout(function siguiente(){
-      if(!document.hidden){ mostrar((actual + 1) % escenas.length); }
+      if(!document.hidden){ mostrar((actual + 1) % escenasActuales.length); }
       temporizador = setTimeout(siguiente, PASO);
     }, espera || PASO);
   }
   function barajar(lista){ for(var i = lista.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var tmp = lista[i]; lista[i] = lista[j]; lista[j] = tmp; } return lista; }
-  barajar(escenas);
-  // Entre 4 y 5 ejemplos salen en inglés o francés, repartidos entre los dos idiomas
-  var cuantos = 4 + Math.floor(Math.random() * 2), usados = { en: 0, fr: 0 };
-  barajar(escenas.slice()).slice(0, cuantos).forEach(function(e){
-    var op = barajar(Object.keys(e.v).filter(function(k){ return k !== 'es'; }));
-    op.sort(function(x, y){ return usados[x] - usados[y]; });
-    e.idioma = op[0]; usados[e.idioma]++;
+
+  function filtrarEjemplos(idioma){
+    var disponibles = escenas.filter(function(e){ return e.v[idioma]; });
+    if(disponibles.length === 0) disponibles = escenas;
+    barajar(disponibles);
+    return disponibles;
+  }
+
+  var escenasActuales = filtrarEjemplos(idiomaPagina);
+  // Asignar idioma a cada escena basado en idiomaPagina
+  escenasActuales.forEach(function(e){ e.idioma = idiomaPagina; });
+
+  function cambiarIdiomaPagina(nuevoIdioma){
+    if(nuevoIdioma === idiomaPagina || !['es','en','fr'].includes(nuevoIdioma)) return;
+    idiomaPagina = nuevoIdioma;
+    try { localStorage.setItem('euxenos-idioma-pagina', idiomaPagina); } catch(e) {}
+    document.documentElement.lang = idiomaPagina;
+
+    // Actualizar botones
+    document.querySelectorAll('[data-idioma-cabecera]').forEach(function(b){
+      b.setAttribute('aria-pressed', b.getAttribute('data-idioma-cabecera') === idiomaPagina ? 'true' : 'false');
+    });
+
+    // Recargar ejemplos
+    escenasActuales = filtrarEjemplos(idiomaPagina);
+    escenasActuales.forEach(function(e){ e.idioma = idiomaPagina; });
+    actual = 0;
+    parar();
+    mostrar(0);
+    arrancar(PASO);
+  }
+
+  // Event listeners para selector de idioma en header
+  document.querySelectorAll('[data-idioma-cabecera]').forEach(function(b){
+    b.addEventListener('click', function(){
+      cambiarIdiomaPagina(b.getAttribute('data-idioma-cabecera'));
+    });
   });
+
+  // Marcar botón inicial
+  document.querySelectorAll('[data-idioma-cabecera]').forEach(function(b){
+    b.setAttribute('aria-pressed', b.getAttribute('data-idioma-cabecera') === idiomaPagina ? 'true' : 'false');
+  });
+
   mostrar(0);
   arrancar(PASO);
 })();

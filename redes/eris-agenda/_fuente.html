@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link href="../../vendor/fuentes/fuentes.css" rel="stylesheet">
+<style>
+:root{--fondo:#04120E;--claro:#E9FBF4;--apagado:#9CC3B5;--esm:#34D399;--rubi:#E0336F;--linea:rgba(52,211,153,.18)}
+*{box-sizing:border-box;margin:0}
+body{background:#000}
+.s{width:1080px;height:1350px;position:relative;overflow:hidden;background:var(--fondo);color:var(--claro);font-family:'Figtree',sans-serif;padding:96px 98px}
+.s::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 520px at 92% 0%,rgba(209,16,74,.28),transparent 70%),linear-gradient(rgba(52,211,153,.035) 1px,transparent 1px) 0 0/90px 90px,linear-gradient(90deg,rgba(52,211,153,.035) 1px,transparent 1px) 0 0/90px 90px}
+.s>*{position:relative}
+.top{display:flex;justify-content:space-between;align-items:center}
+.marca{display:flex;align-items:center;gap:20px;font-family:'Sora';font-weight:700;font-size:40px}
+.marca img{width:60px;height:60px}
+.n{color:var(--apagado);font-size:30px}
+h1{font-family:'Sora';font-weight:800;font-size:104px;line-height:1.02;letter-spacing:-.035em}
+h2{font-family:'Sora';font-weight:800;font-size:76px;line-height:1.05;letter-spacing:-.03em}
+.g{background:linear-gradient(90deg,#E0336F,#9b6a80 55%,#34D399);-webkit-background-clip:text;color:transparent}
+.r{color:var(--rubi)}.e{color:var(--esm)}
+.sub{font-size:42px;color:#CFE9DF;line-height:1.35;margin-top:34px}
+.pie{position:absolute;left:98px;right:98px;bottom:96px;display:flex;justify-content:space-between;font-size:32px;color:var(--apagado)}
+.pie b{color:var(--esm);font-weight:700}
+.tel{position:absolute;right:98px;bottom:0;width:560px;height:760px;border-radius:64px 64px 0 0;border:10px solid #1d3a30;border-bottom:0;background-size:100% auto;background-repeat:no-repeat;box-shadow:0 -30px 90px -20px rgba(16,185,129,.35)}
+.lista{margin-top:46px;display:grid;gap:22px;font-size:38px;color:#CFE9DF}
+.lista div{display:flex;gap:18px;align-items:center}
+.lista i{font-style:normal;width:62px;height:62px;border-radius:18px;display:grid;place-items:center;background:rgba(52,211,153,.12);border:1px solid var(--linea);font-size:32px;flex:none}
+.noti{width:884px;background:rgba(233,251,244,.97);color:#0b1d17;border-radius:36px;padding:30px 34px;display:flex;gap:26px;box-shadow:0 30px 80px -20px rgba(0,0,0,.7)}
+.noti img{width:84px;height:84px;border-radius:22px;flex:none}
+.noti .t{font-weight:800;font-size:34px;font-family:'Sora'}
+.noti .x{font-size:31px;color:#2f4a40;margin-top:6px;line-height:1.3}
+.noti .h{font-size:26px;color:#5b7a6e;display:flex;justify-content:space-between;margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:16px;margin-top:40px}
+.chips span{font-size:34px;padding:14px 26px;border-radius:999px;border:1px solid var(--linea);background:rgba(52,211,153,.08)}
+.boton{display:inline-block;margin-top:50px;background:#10B981;color:#04120E;font-weight:800;font-size:40px;padding:26px 46px;border-radius:999px;font-family:'Sora'}
+</style></head><body>
+
+<!-- 1 -->
+<section class="s" id="s1">
+  <div class="top"><div class="marca"><img src="../../marca/euxenos-simbolo.svg">Euxenos</div><div class="n">1/6</div></div>
+  <div style="margin-top:150px"><h1>¿Se te ha <span class="r">olvidado</span> alguna cita <span class="g">este mes?</span></h1>
+  <p class="sub" style="max-width:880px">Te presentamos <b style="color:var(--claro)">Eris Agenda</b>: la agenda que se acuerda por ti.</p></div>
+  <div class="tel" style="background-image:url(_cap_resumen.png);width:440px;height:470px"></div>
+  <div class="pie"><span>@euxenos.ai</span></div>
+</section>
+
+<!-- 2 -->
+<section class="s" id="s2">
+  <div class="top"><div class="marca"><img src="../../marca/euxenos-simbolo.svg">Euxenos</div><div class="n">2/6</div></div>
+  <div style="margin-top:90px"><h2>Eris coge las citas <span class="e">por ti</span></h2>
+  <div class="lista">
+    <div><i>💬</i>Chat de tu web</div><div><i>🎙️</i>Voz</div><div><i>📞</i>Teléfono</div><div><i>🌙</i>24 horas, también de noche</div>
+  </div></div>
+  <div class="tel" style="background-image:url(_cap_resumen.png);background-position:0 -330px;height:520px"></div>
+  <div class="pie" style="width:300px"><span>Todo llega a tu agenda.</span></div>
+</section>
+
+<!-- 3 -->
+<section class="s" id="s3">
+  <div class="top"><div class="marca"><img src="../../marca/euxenos-simbolo.svg">Euxenos</div><div class="n">3/6</div></div>
+  <div style="margin-top:90px"><h2>Tú solo <span class="e">confirmas</span> con un toque</h2>
+  <p class="sub" style="max-width:860px">Confirmar, proponer otra hora o cancelar. Tu cliente recibe el aviso por email o WhatsApp.</p></div>
+  <div class="tel" style="background-image:url(_cap_resumen.png);background-position:0 -290px;height:620px"></div>
+</section>
+
+<!-- 4 -->
+<section class="s" id="s4">
+  <div class="top"><div class="marca"><img src="../../marca/euxenos-simbolo.svg">Euxenos</div><div class="n">4/6</div></div>
+  <div style="margin-top:90px"><h2>Te avisa <span class="e">en el móvil</span></h2>
+  <p class="sub">Aunque tengas la app cerrada.</p></div>
+  <div style="margin-top:80px;display:grid;gap:34px">
+    <div class="noti"><img src="../../panel/icono-192.png"><div style="flex:1"><div class="h"><span>Eris Agenda</span><span>ahora</span></div><div class="t">🕓 Nueva petición de cita</div><div class="x">Lucía Martín – Corte y peinado · vie 16/10 a las 10:30. Toca para confirmarla.</div></div></div>
+    <div class="noti"><img src="../../panel/icono-192.png"><div style="flex:1"><div class="h"><span>Eris Agenda</span><span>12:15</span></div><div class="t">⏰ En 15 min: Adrián López</div><div class="x">Corte de pelo caballero a las 12:30 · Tel. 611 222 333</div></div></div>
+  </div>
+  <div class="pie"><span>Cada petición nueva y 15 min antes de cada cita.</span></div>
+</section>
+
+<!-- 5 -->
+<section class="s" id="s5">
+  <div class="top"><div class="marca"><img src="../../marca/euxenos-simbolo.svg">Euxenos</div><div class="n">5/6</div></div>
+  <div style="margin-top:90px"><h2>Y se <span class="g">ordena sola</span></h2>
+  <div class="lista">
+    <div><i>📅</i>Calendario del mes</div><div><i>✍️</i>Apunta citas a mano</div><div><i>🧹</i>Lo que pasa sin confirmar se cierra solo</div>
+  </div></div>
+  <div class="tel" style="background-image:url(_cap_calendario.png);background-position:0 -200px;height:560px"></div>
+</section>
+
+<!-- 6 -->
+<section class="s" id="s6">
+  <div class="top"><div class="marca"><img src="../../marca/euxenos-simbolo.svg">Euxenos</div><div class="n">6/6</div></div>
+  <div style="margin-top:150px"><h1 style="font-size:96px">Ningún cliente <span class="g">sin respuesta.</span></h1>
+  <p class="sub">Para talleres, peluquerías, clínicas, despachos… Se instala en el móvil como una app.</p>
+  <div class="chips"><span>🔧 Talleres</span><span>✂️ Peluquerías</span><span>🩺 Clínicas</span><span>⚖️ Despachos</span></div>
+  <div class="boton">Pruébala en euxenos.com</div></div>
+  <div class="pie"><span>@euxenos.ai</span><b>Escríbenos →</b></div>
+</section>
+</body></html>
