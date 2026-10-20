@@ -17,6 +17,30 @@
 <meta name="theme-color" content="#04120E">
 <link href="vendor/n8n-chat/style.css" rel="stylesheet">
 <link href="vendor/fuentes/fuentes.css" rel="stylesheet">
+<script>
+// Consentimiento (cookies y almacenamiento del navegador): 'aceptadas' | 'rechazadas' | null (sin decidir).
+// Lo técnico imprescindible (sesión del chat, recordar esta decisión) no necesita permiso.
+// Las preferencias (idioma de la web y de Eris) solo se guardan entre visitas si se aceptan; si no, duran hasta cerrar la pestaña.
+window.euxConsent = (function(){
+  var K = 'euxenos-cookies', PREF = ['euxenos-idioma-pagina', 'eris-idioma'];
+  function estado(){ try { return localStorage.getItem(K); } catch(e) { return null; } }
+  function almacen(){ return estado() === 'aceptadas' ? localStorage : sessionStorage; }
+  return {
+    estado: estado,
+    get: function(k){ try { return almacen().getItem(k); } catch(e) { return null; } },
+    set: function(k, v){ try { almacen().setItem(k, v); } catch(e) {} },
+    guardar: function(v){
+      try {
+        localStorage.setItem(K, v); localStorage.removeItem('euxenos-aviso-cookies');
+        PREF.forEach(function(k){
+          if (v === 'rechazadas') { var x = localStorage.getItem(k); if (x !== null) { sessionStorage.setItem(k, x); localStorage.removeItem(k); } }
+          else { var y = sessionStorage.getItem(k); if (y !== null) localStorage.setItem(k, y); }
+        });
+      } catch(e) {}
+    }
+  };
+})();
+</script>
 <style>
 :root{
   --fondo:#04120E;        /* esmeralda casi negro */
@@ -164,7 +188,7 @@ a{color:inherit}
 .aviso-cookies b{display:block;font-family:var(--display);color:var(--claro);font-size:1rem;margin-bottom:6px}
 .aviso-cookies p{margin:0 0 14px}
 .aviso-cookies .botones{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.aviso-cookies button{font:inherit;font-weight:600;cursor:pointer;border:0;border-radius:10px;padding:9px 18px;background:var(--esmeralda);color:#04120E}
+.aviso-cookies button{font:inherit;font-weight:600;cursor:pointer;border:0;border-radius:10px;padding:9px 18px;min-width:110px;background:var(--esmeralda);color:#04120E}
 .aviso-cookies button:hover{background:var(--esmeralda-luz)}
 .aviso-cookies a{color:var(--esmeralda-luz);font-weight:600}
 @media (max-width:640px){.aviso-cookies{left:12px;right:12px;bottom:84px;max-width:none}}
@@ -332,7 +356,8 @@ a{color:inherit}
 .boton-menu{font:inherit;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--claro);background:transparent;border:1px solid var(--linea);border-radius:12px;padding:10px 14px;min-height:44px}
 .boton-menu:hover,.boton-menu[aria-expanded="true"]{border-color:var(--esmeralda-luz);color:var(--esmeralda-luz)}
 .redes-cabecera{display:flex;gap:8px}.redes-cabecera a{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--linea);border-radius:12px;color:var(--claro);transition:color .2s,border-color .2s}.redes-cabecera a:hover{color:var(--esmeralda-luz);border-color:var(--esmeralda-luz)}
-@media (max-width:520px){.menu-cabecera{gap:8px}.redes-cabecera{gap:6px}.redes-cabecera a{width:38px;height:38px}.redes-cabecera svg{width:18px;height:18px}.boton-menu{padding:8px 11px;min-height:40px}.cabecera .envoltura{gap:8px}.insignia-beta{display:none}.selector-idioma-cabecera{padding:4px;gap:2px}.boton-idioma-cabecera{padding:5px 8px;font-size:.75rem}}
+@media (max-width:520px){.menu-cabecera{gap:8px}.redes-cabecera{display:none}.redes-cabecera a{width:38px;height:38px}.redes-cabecera svg{width:18px;height:18px}.boton-menu{padding:8px 11px;min-height:40px}.cabecera .envoltura{gap:8px}.insignia-beta{display:none}.selector-idioma-cabecera{padding:4px;gap:2px}.boton-idioma-cabecera{padding:5px 8px;font-size:.75rem}}
+@media (max-width:359px){.marca span{display:none}}
 .lista-menu{position:absolute;right:0;top:calc(100% + 10px);margin:0;padding:8px;list-style:none;min-width:230px;background:#0A2A20;border:1px solid var(--linea);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.5)}
 .lista-menu[hidden]{display:none}
 .lista-menu .acceso-menu{border-top:1px solid var(--linea);margin-top:6px;padding-top:6px}
@@ -647,7 +672,7 @@ a{color:inherit}
     <span>© 2026 Euxenos · Versión beta</span>
     <span class="correos"><span>Teléfono: <a href="tel:+34919933642">919 93 36 42</a></span><span>Contacto: <a href="mailto:contacto@euxenos.com">contacto@euxenos.com</a></span><span>Soporte a clientes: <a href="mailto:soporte@euxenos.com">soporte@euxenos.com</a></span><span>¿Ya eres cliente? <a href="/panel/">Entra en la app Euxenos</a></span></span>
     <span>El chat y las llamadas los atiende Eris, una asistente con inteligencia artificial.</span>
-    <span class="legales"><a href="https://www.instagram.com/euxenos.ai/" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@euxenos.ai" target="_blank" rel="noopener">TikTok</a><a href="/aviso-legal.html">Aviso legal</a><a href="/privacidad.html">Privacidad</a><a href="/cookies.html">Cookies</a></span>
+    <span class="legales"><a href="https://www.instagram.com/euxenos.ai/" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@euxenos.ai" target="_blank" rel="noopener">TikTok</a><a href="/aviso-legal.html">Aviso legal</a><a href="/privacidad.html">Privacidad</a><a href="/cookies.html">Cookies</a><a href="/cookies.html" data-configurar-cookies>Configurar cookies</a></span>
   </div>
 </footer>
 
@@ -1004,7 +1029,7 @@ a{color:inherit}
 }
 ];
   var idiomaPagina = 'es';
-  try { idiomaPagina = localStorage.getItem('euxenos-idioma-pagina') || 'es'; } catch(e) { idiomaPagina = 'es'; }
+  idiomaPagina = euxConsent.get('euxenos-idioma-pagina') || 'es';
   if(!['es','en','fr'].includes(idiomaPagina)) idiomaPagina = 'es';
   document.documentElement.lang = idiomaPagina;
 
@@ -1062,7 +1087,7 @@ a{color:inherit}
   function cambiarIdiomaPagina(nuevoIdioma){
     if(nuevoIdioma === idiomaPagina || !['es','en','fr'].includes(nuevoIdioma)) return;
     idiomaPagina = nuevoIdioma;
-    try { localStorage.setItem('euxenos-idioma-pagina', idiomaPagina); } catch(e) {}
+    euxConsent.set('euxenos-idioma-pagina', idiomaPagina);
     document.documentElement.lang = idiomaPagina;
 
     // Actualizar botones
@@ -1114,7 +1139,7 @@ a{color:inherit}
     it:{h:'Ciao! Sono Eris di Euxenos 👋', p:'Con chi sto parlando?', i:'Scrivi il tuo messaggio...', b:'Preferisci parlare?', l:'Chiama Eris', c:'Connessione…', e:'Ti ascolto', s:'Eris sta parlando', f:'Chiamata terminata', m:'Per parlare con Eris, consenti il microfono. Se non puoi, scrivile qui.', a:'Stai parlando con Eris, un\'assistente con intelligenza artificiale. Consenti il microfono.', x:'Riaggancia', q:'Come preferisci contattarci?', o1:'In chat', o1d:'Scrivimi e ti rispondo subito', o2:'Con una chiamata', o2d:'Parlami a voce da qui, senza comporre nessun numero', n:'La chiamata è gratuita e dal browser: basta consentire il microfono.', nv:'Al momento la linea vocale non è disponibile. Ti rispondo in chat con le stesse informazioni.', sg:'La chiamata si è chiusa. Continuiamo qui: dove eravamo rimasti?', pl:'Continuando accetti l\'<a href="/privacidad.html" target="_blank">informativa sulla privacy</a>: conserviamo la conversazione per assisterti.', md1:'Componiamo il tuo pacchetto su misura 🧩', md2:'Come ti chiami e di cosa si occupa la tua attività? Ti propongo i servizi più adatti, con il prezzo, e poi togli o aggiungi quello che vuoi.'}
   };
   var modulo = null, appChat = null, idioma = 'es', modoChat = 'normal';
-  try { idioma = localStorage.getItem('eris-idioma') || ''; } catch(e) { idioma = ''; }
+  idioma = euxConsent.get('eris-idioma') || '';
   if(!TEXTOS[idioma]){
     var nav = (navigator.language || 'es').slice(0,2).toLowerCase();
     idioma = TEXTOS[nav] ? nav : 'es';
@@ -1158,7 +1183,7 @@ a{color:inherit}
   function cambiarIdioma(nuevo){
     if(!TEXTOS[nuevo] || nuevo === idioma) { marcarIdioma(); return; }
     idioma = nuevo;
-    try { localStorage.setItem('eris-idioma', idioma); } catch(e) {}
+    euxConsent.set('eris-idioma', idioma);
     marcarIdioma();
     if(modulo) montarChat();
     textosLlamada();
@@ -1517,21 +1542,20 @@ a{color:inherit}
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !l.hidden){ cerrar(); b.focus(); } });
 })();
 </script>
-<div class="aviso-cookies" id="aviso-cookies" role="region" aria-label="Aviso de cookies" hidden>
-  <b>Tu privacidad, primero</b>
-  <p>En Euxenos no usamos cookies de análisis ni de publicidad. Solo guardamos en tu navegador lo imprescindible para que la web y el chat funcionen, como el idioma que eliges.</p>
-  <div class="botones"><button type="button" id="cookies-ok">Entendido</button><a href="/cookies.html">Más información</a></div>
+<div class="aviso-cookies" id="aviso-cookies" role="dialog" aria-labelledby="cookies-titulo" aria-describedby="cookies-texto" hidden>
+  <b id="cookies-titulo">Tu privacidad, primero</b>
+  <p id="cookies-texto">Usamos solo lo imprescindible para que la web y el chat funcionen. Si aceptas, además recordaremos tus preferencias, como el idioma, para la próxima visita. No usamos cookies de análisis ni de publicidad.</p>
+  <div class="botones"><button type="button" id="cookies-rechazar">Rechazar</button><button type="button" id="cookies-aceptar">Aceptar</button><a href="/cookies.html">Más información</a></div>
 </div>
 <script>
 (function(){
   var aviso = document.getElementById('aviso-cookies');
-  var visto = false;
-  try { visto = localStorage.getItem('euxenos-aviso-cookies') === '1'; } catch(e) {}
-  if (!visto) aviso.hidden = false;
-  document.getElementById('cookies-ok').addEventListener('click', function(){
-    aviso.hidden = true;
-    try { localStorage.setItem('euxenos-aviso-cookies', '1'); } catch(e) {}
-  });
+  function mostrar(){ aviso.hidden = false; }
+  function elegir(v){ euxConsent.guardar(v); aviso.hidden = true; }
+  if (!euxConsent.estado() || /[?&]cookies=configurar/.test(location.search)) mostrar();
+  document.getElementById('cookies-aceptar').addEventListener('click', function(){ elegir('aceptadas'); });
+  document.getElementById('cookies-rechazar').addEventListener('click', function(){ elegir('rechazadas'); });
+  document.querySelectorAll('[data-configurar-cookies]').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); mostrar(); }); });
 })();
 </script>
 </body>
