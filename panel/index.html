@@ -330,7 +330,8 @@ textarea{min-height:90px;resize:vertical}
 <div class="velo abajo" id="veloAcceso"><form class="hoja" id="formAcceso" autocomplete="on">
 <h3>Cambiar contraseña <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
 <p class="sub" style="margin:-4px 0 14px">Al cambiarla, se cerrará la sesión en los demás dispositivos.</p>
-<label class="campo"><span>Usuario o correo</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false"></label>
+<label class="campo"><span>Usuario</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false"></label>
+<label class="campo"><span>Correo electrónico</span><input name="correo" type="email" inputmode="email" autocomplete="email" required autocapitalize="none"></label>
 <label class="campo"><span>Contraseña nueva (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>
 <label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>
 <p class="error" id="errorAcceso"></p>
@@ -397,7 +398,7 @@ textarea{min-height:90px;resize:vertical}
     var bR = document.getElementById('recargar'); if (bR) bR.classList.add('girando');
     llamar({ n:n, k:k, accion:'ver' }).then(function(d){
       cargando = false;
-      if (!d || !d.ok) { olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu usuario o correo y tu contraseña.'); return; }
+      if (!d || !d.ok) { var gb = bioGuardada(); if (gb && gb.k === k) bioBorrar(); olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu usuario o correo y tu contraseña.'); return; }
       var primera = !datos; datos = d; pintar();
       if (primera) { comprobarAvisos(); cargarInfo(); cargarPedidos(); }
     }).catch(function(){
@@ -654,11 +655,11 @@ textarea{min-height:90px;resize:vertical}
     var neg = (datos && datos.negocio) || {};
     var asuntoBaja = encodeURIComponent('Darme de baja · ' + (neg.nombre || ''));
     var asuntoBorrar = encodeURIComponent('Borrar mi cuenta de Euxenos');
-    var cuerpoBorrar = encodeURIComponent('Quiero que borréis mi cuenta de Euxenos y sus datos.\n\nNegocio: ' + (neg.nombre || '') + '\nCorreo de acceso: ' + (neg.usuario || ''));
-    return '<div class="caja" style="margin-top:16px"><p><b>' + esc(neg.nombre || '') + '</b><br>' + (neg.usuario ? 'Entras con ' + esc(neg.usuario) : '') + '</p></div>'
+    var cuerpoBorrar = encodeURIComponent('Quiero que borréis mi cuenta de Euxenos y sus datos.\n\nNegocio: ' + (neg.nombre || '') + '\nUsuario de acceso: ' + (neg.usuario || ''));
+    return '<div class="caja" style="margin-top:16px"><p><b>' + esc(neg.nombre || '') + '</b><br>' + (neg.usuario ? 'Entras con el usuario <b>' + esc(neg.usuario) + '</b>' + (neg.correo && neg.correo !== neg.usuario ? ' o con el correo <b>' + esc(neg.correo) + '</b>' : '') : '') + '</p></div>'
       + '<h2>Tu plan</h2><div class="caja"><p>Cambia tu plan a uno mayor o menor, y añade o quita servicios (minutos de voz, otro canal, web…) desde la web, con pago seguro. Sin permanencia.</p>'
       + '<div class="columna"><a class="btn b-ok" href="/#precios" target="_blank" rel="noopener">Cambiar de plan</a><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + asuntoBaja + '">Darme de baja</a></div></div>'
-      + '<h2>Acceso</h2><div class="columna"><button class="btn b-otra" data-cuenta="acceso">Cambiar contraseña</button><button class="btn b-no ancho" data-cuenta="salir">Cerrar sesión</button></div>'
+      + '<h2>Acceso</h2><div class="columna">' + (bioPosible ? '<button class="btn b-otra" data-cuenta="bio">' + (bioGuardada() ? 'Quitar Face ID o huella en este móvil' : 'Entrar con Face ID o huella en este móvil') + '</button>' : '') + '<button class="btn b-otra" data-cuenta="acceso">Cambiar contraseña</button><button class="btn b-no ancho" data-cuenta="salir">Cerrar sesión</button></div>'
       + '<h2>Ayuda y privacidad</h2><div class="columna"><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + encodeURIComponent('Ayuda con Euxenos') + '">Escribir a soporte</a><a class="btn b-otra" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>'
       + '<a class="btn b-no ancho" href="mailto:soporte@euxenos.com?subject=' + asuntoBorrar + '&body=' + cuerpoBorrar + '">Pedir que borren mi cuenta</a></div>'
       + '<p class="version">Euxenos · soporte@euxenos.com</p>';
@@ -728,7 +729,7 @@ textarea{min-height:90px;resize:vertical}
     if (t) { var hechos = (info.pendientes || []).filter(function(x){ return x.hecho; }); t.disabled = true;
       hechos.reduce(function(pr, x){ return pr.then(function(){ return llamarApp('pendiente-borrar', { id: x.id }).then(function(r){ if (r && r.ok) info = r.datos; }); }); }, Promise.resolve()).then(function(){ pintar(); toast('Hechos borrados'); }).catch(sinConexion); return; }
     t = e.target.closest('[data-cuenta]');
-    if (t) { if (t.getAttribute('data-cuenta') === 'acceso') abrirAcceso(); else { quitarAvisos(true); olvidar(); pantallaLogin('Has cerrado la sesión.'); } return; }
+    if (t) { if (t.getAttribute('data-cuenta') === 'acceso') abrirAcceso(); else if (t.getAttribute('data-cuenta') === 'bio') { if (bioGuardada()) { bioBorrar(); toast('Face ID o huella quitado de este móvil'); pintar(); } else activarBio((datos && datos.negocio && datos.negocio.usuario) || '', function(ok){ if (ok) toast('Listo: la próxima vez entra con Face ID o huella'); pintar(); }); } else { quitarAvisos(true); olvidar(); pantallaLogin('Has cerrado la sesión.'); } return; }
     var b = e.target.closest('button[data-a]'); if (!b) return;
     accionCita(b.getAttribute('data-a'), b.getAttribute('data-r'));
   });
@@ -1155,18 +1156,76 @@ textarea{min-height:90px;resize:vertical}
       return crypto.subtle.deriveBits({ name:'PBKDF2', hash:'SHA-256', salt: enc.encode('eris-panel:' + usuario), iterations:150000 }, key, 256);
     }).then(function(bits){ return Array.from(new Uint8Array(bits)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join(''); });
   }
+  function dosHashes(u, c, clave){ return Promise.all([derivar(u, clave), derivar(c, clave)]); }
+
+  // ---- Face ID o huella (WebAuthn del propio móvil) ----
+  // Desbloquea la sesión guardada en este dispositivo. La contraseña sigue siendo la llave de la cuenta.
+  var BIO = 'eris-bio', BIO_ICONO = '🔒';
+  var bioPosible = !!(window.PublicKeyCredential && navigator.credentials && window.isSecureContext);
+  function b64(buf){ return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+  function deb64(s){ s = s.replace(/-/g,'+').replace(/_/g,'/'); while (s.length % 4) s += '='; var b = atob(s), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
+  function azar(nb){ var a = new Uint8Array(nb); crypto.getRandomValues(a); return a; }
+  function bioGuardada(){ try { var g = JSON.parse(localStorage.getItem(BIO) || 'null'); return g && g.id && g.n && g.k ? g : null; } catch (e) { return null; } }
+  function bioBorrar(){ try { localStorage.removeItem(BIO); } catch (e) {} }
+  function bioActualizar(){ var g = bioGuardada(); if (g && g.n === n) { g.k = k; try { localStorage.setItem(BIO, JSON.stringify(g)); } catch (e) {} } }
+  function desbloqueada(){ try { sessionStorage.setItem('eris-desbloqueada', '1'); } catch (e) {} }
+  function estaDesbloqueada(){ try { return sessionStorage.getItem('eris-desbloqueada') === '1'; } catch (e) { return true; } }
+  function plataformaBio(){ if (!bioPosible || !PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) return Promise.resolve(false); return PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(function(){ return false; }); }
+  function activarBio(usuario, hecho){
+    navigator.credentials.create({ publicKey: {
+      challenge: azar(32), rp: { name: 'Euxenos' },
+      user: { id: azar(16), name: usuario || 'euxenos', displayName: usuario || 'Euxenos' },
+      pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+      authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' },
+      timeout: 60000, attestation: 'none' } }).then(function(c){
+      try { localStorage.setItem(BIO, JSON.stringify({ id: b64(c.rawId), n: n, k: k, usuario: usuario })); } catch (e) {}
+      desbloqueada(); hecho(true);
+    }).catch(function(){ hecho(false); });
+  }
+  function entrarConBio(el){
+    var g = bioGuardada(); if (!g) return;
+    if (el) el.textContent = '';
+    navigator.credentials.get({ publicKey: { challenge: azar(32), allowCredentials: [{ type: 'public-key', id: deb64(g.id) }], userVerification: 'required', timeout: 60000 } }).then(function(){
+      guardarAcceso(g.n, g.k); desbloqueada(); vista = 'hoy'; cargar();
+    }).catch(function(){ if (el) el.textContent = 'No se ha podido comprobar. Inténtalo otra vez o entra con tu contraseña.'; });
+  }
+  function ofrecerBio(usuario, seguir){
+    if (bioGuardada()) { bioActualizar(); seguir(); return; }
+    var no = false; try { no = localStorage.getItem('eris-bio-no') === '1'; } catch (e) {}
+    if (no) { seguir(); return; }
+    plataformaBio().then(function(si){
+      if (!si) { seguir(); return; }
+      ocultarFlotantes();
+      app.innerHTML = '<div class="login"><img class="logo" src="icono-192.png" alt=""><h1>Entra más rápido</h1><p class="sub">¿Quieres entrar en este móvil con Face ID o tu huella, sin escribir la contraseña?</p>'
+        + '<button class="btn b-ok ancho" id="bioSi">' + BIO_ICONO + ' Activar Face ID o huella</button><button class="btn b-otra ancho" id="bioNo" style="margin-top:10px">Ahora no</button>'
+        + '<p class="instalar">Solo se guarda en este móvil. Puedes quitarlo cuando quieras en Cuenta.</p></div>';
+      document.getElementById('bioSi').addEventListener('click', function(){ activarBio(usuario, function(ok){ if (ok) toast('Face ID o huella activado'); seguir(); }); });
+      document.getElementById('bioNo').addEventListener('click', function(){ try { localStorage.setItem('eris-bio-no', '1'); } catch (e) {} seguir(); });
+    });
+  }
+  function pantallaBloqueo(){
+    ocultarFlotantes();
+    app.innerHTML = '<div class="login"><img class="logo" src="icono-192.png" alt=""><h1>Euxenos</h1><p class="sub">Desbloquea para ver tu negocio</p>'
+      + '<button class="btn b-ok ancho" id="bioEntrar">' + BIO_ICONO + ' Entrar con Face ID o huella</button>'
+      + '<p class="error" id="errorBio"></p><button class="btn b-otra ancho" id="bioClave" style="margin-top:6px">Entrar con contraseña</button></div>';
+    var el = document.getElementById('errorBio');
+    document.getElementById('bioEntrar').addEventListener('click', function(){ entrarConBio(el); });
+    document.getElementById('bioClave').addEventListener('click', function(){ olvidar(); pantallaLogin(); });
+  }
   function guardarAcceso(nn, kk){ n = nn; k = kk; try { localStorage.setItem('eris-agenda', JSON.stringify({ n:n, k:k })); } catch (e) {} }
   function olvidarPedidos(){ pedidos = null; pedidosVistos = null; }
   function olvidar(){ olvidarPedidos(); try { sessionStorage.removeItem(claveConv()); } catch (e) {} n = null; k = null; datos = null; info = null; conversacion = []; try { localStorage.removeItem('eris-agenda'); } catch (e) {} }
   function ocultarFlotantes(){ document.getElementById('nueva').classList.add('oculto'); lanzador.classList.add('oculto'); cerrarEris(); lanzador.classList.add('oculto'); }
   function pantallaLogin(aviso){
     ocultarFlotantes();
-    app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Euxenos</h1><p class="sub">Entra con tu correo para gestionar tu negocio</p>'
+    app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Euxenos</h1><p class="sub">Entra con tu usuario o tu correo para gestionar tu negocio</p>'
       + '<label class="campo"><span>Usuario o correo</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false"></label>'
       + '<label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>'
       + '<p class="error" id="errorLogin">' + esc(aviso || '') + '</p><button class="btn b-ok ancho" type="submit">Entrar</button>'
+      + (bioGuardada() ? '<button class="btn b-otra ancho" type="button" id="botonBio" style="margin-top:10px">' + BIO_ICONO + ' Entrar con Face ID o huella</button>' : '')
       + '<p class="instalar">¿Aún no tienes cuenta? Usa el enlace de activación que te envió Euxenos. ¿Has olvidado la contraseña? Escríbenos a soporte@euxenos.com.</p><div class="instalar-app"></div></form>';
     pintarInstalar();
+    var bb = document.getElementById('botonBio'); if (bb) bb.addEventListener('click', function(){ entrarConBio(document.getElementById('errorLogin')); });
     var f = document.getElementById('formLogin');
     f.addEventListener('submit', function(e){
       e.preventDefault();
@@ -1175,14 +1234,15 @@ textarea{min-height:90px;resize:vertical}
       derivar(u, f.clave.value).then(function(h){ return llamar({ accion:'login', usuario:u, hash:h }); }).then(function(r){
         boton.disabled = false;
         if (!r || !r.ok) { document.getElementById('errorLogin').textContent = (r && r.motivo) || 'No se ha podido entrar.'; return; }
-        guardarAcceso(r.n, r.k); vista = 'hoy'; cargar();
+        guardarAcceso(r.n, r.k); vista = 'hoy'; desbloqueada(); ofrecerBio(r.usuario || u, cargar);
       }).catch(function(){ boton.disabled = false; document.getElementById('errorLogin').textContent = 'Sin conexión, inténtalo de nuevo.'; });
     });
   }
   function pantallaAlta(nombre, sugerido, nn, kk){
     ocultarFlotantes();
-    app.innerHTML = '<form class="login" id="formAlta" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Activa tu cuenta</h1><p class="sub">' + esc(nombre || 'Tu negocio') + ': crea tu acceso a Euxenos con un usuario o tu correo y una contraseña</p>'
-      + '<label class="campo"><span>Usuario o correo</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false" value="' + esc(sugerido || '') + '"></label>'
+    app.innerHTML = '<form class="login" id="formAlta" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Activa tu cuenta</h1><p class="sub">' + esc(nombre || 'Tu negocio') + ': crea tu acceso a Euxenos con un usuario, tu correo y una contraseña</p>'
+      + '<label class="campo"><span>Usuario (para entrar)</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false" placeholder="por ejemplo: peluqueria.ana"></label>'
+      + '<label class="campo"><span>Correo electrónico</span><input name="correo" type="email" inputmode="email" autocomplete="email" required autocapitalize="none" value="' + esc(sugerido || '') + '"></label>'
       + '<label class="campo"><span>Contraseña (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>'
       + '<label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>'
       + '<p class="error" id="errorAlta"></p><button class="btn b-ok ancho" type="submit">Activar y entrar</button>'
@@ -1190,13 +1250,13 @@ textarea{min-height:90px;resize:vertical}
     var f = document.getElementById('formAlta');
     f.addEventListener('submit', function(e){
       e.preventDefault();
-      var err = document.getElementById('errorAlta'), u = f.usuario.value.trim().toLowerCase();
+      var err = document.getElementById('errorAlta'), u = f.usuario.value.trim().toLowerCase(), c = f.correo.value.trim().toLowerCase();
       if (f.clave1.value !== f.clave2.value) { err.textContent = 'Las contraseñas no coinciden.'; return; }
       var boton = f.querySelector('button'); boton.disabled = true; err.textContent = '';
-      derivar(u, f.clave1.value).then(function(h){ return llamar({ n:nn, k:kk, accion:'alta', usuario:u, hash:h }); }).then(function(r){
+      dosHashes(u, c, f.clave1.value).then(function(h){ return llamar({ n:nn, k:kk, accion:'alta', usuario:u, hash:h[0], correo:c, hash_correo:h[1] }); }).then(function(r){
         boton.disabled = false;
         if (!r || !r.ok) { err.textContent = (r && r.motivo) || 'No se ha podido activar.'; return; }
-        guardarAcceso(r.n, r.k); toast('Cuenta activada'); cargar();
+        guardarAcceso(r.n, r.k); toast('Cuenta activada'); ofrecerBio(r.usuario, cargar);
       }).catch(function(){ boton.disabled = false; err.textContent = 'Sin conexión, inténtalo de nuevo.'; });
     });
   }
@@ -1209,16 +1269,16 @@ textarea{min-height:90px;resize:vertical}
     }).catch(function(){ pantallaLogin('Sin conexión, inténtalo de nuevo.'); });
   }
   var formA = document.getElementById('formAcceso');
-  function abrirAcceso(){ formA.reset(); document.getElementById('errorAcceso').textContent = ''; if (datos && datos.negocio.usuario) formA.usuario.value = datos.negocio.usuario; abrirHoja('veloAcceso'); }
+  function abrirAcceso(){ formA.reset(); document.getElementById('errorAcceso').textContent = ''; if (datos && datos.negocio.usuario) formA.usuario.value = datos.negocio.usuario; if (datos && (datos.negocio.correo || datos.negocio.email)) formA.correo.value = datos.negocio.correo || datos.negocio.email; abrirHoja('veloAcceso'); }
   formA.addEventListener('submit', function(e){
     e.preventDefault();
-    var err = document.getElementById('errorAcceso'), u = formA.usuario.value.trim().toLowerCase();
+    var err = document.getElementById('errorAcceso'), u = formA.usuario.value.trim().toLowerCase(), c = formA.correo.value.trim().toLowerCase();
     if (formA.clave1.value !== formA.clave2.value) { err.textContent = 'Las contraseñas no coinciden.'; return; }
     var boton = formA.querySelector('button[type=submit]'); boton.disabled = true; err.textContent = '';
-    derivar(u, formA.clave1.value).then(function(h){ return llamar({ n:n, k:k, accion:'acceso', usuario:u, hash:h }); }).then(function(r){
+    dosHashes(u, c, formA.clave1.value).then(function(h){ return llamar({ n:n, k:k, accion:'acceso', usuario:u, hash:h[0], correo:c, hash_correo:h[1] }); }).then(function(r){
       boton.disabled = false;
       if (!r || !r.ok) { err.textContent = (r && r.motivo) || 'No se ha podido guardar.'; return; }
-      guardarAcceso(r.n, r.k); datos.negocio.usuario = r.usuario; cerrarHojas(); pintar(); toast('Contraseña cambiada');
+      guardarAcceso(r.n, r.k); bioActualizar(); datos.negocio.usuario = r.usuario; datos.negocio.correo = r.correo; cerrarHojas(); pintar(); toast('Contraseña cambiada');
     }).catch(function(){ boton.disabled = false; err.textContent = 'Sin conexión, inténtalo de nuevo.'; });
   });
 
@@ -1345,7 +1405,9 @@ textarea{min-height:90px;resize:vertical}
   setInterval(function(){ if (puedeRefrescar()) cargar(); }, 60000);
   setInterval(function(){ if (!document.hidden && datos && pedidosOn()) cargarPedidos(); }, 20000);
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { cerrarHojas(); cerrarMenu(); } });
-  if (enlaceN && enlaceK) comprobarEnlace(enlaceN, enlaceK); else cargar();
+  if (enlaceN && enlaceK) comprobarEnlace(enlaceN, enlaceK);
+  else if (n && k && bioGuardada() && bioGuardada().n === n && !estaDesbloqueada()) pantallaBloqueo();
+  else cargar();
 })();
 </script>
 </body>
