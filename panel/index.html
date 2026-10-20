@@ -344,9 +344,9 @@ textarea{min-height:90px;resize:vertical}
   var API = 'https://erisproject.app.n8n.cloud/webhook/eris-panel';
   var API_APP = 'https://erisproject.app.n8n.cloud/webhook/eris-app';
   var q = new URLSearchParams(location.search);
-  var enlaceN = q.get('n'), enlaceK = q.get('k'), n = null, k = null;
+  var enlaceN = q.get('n'), enlaceK = q.get('k'), enlaceReset = (q.get('reset') || '').replace(/[^a-f0-9]/gi, ''), n = null, k = null;
   try { var g = JSON.parse(localStorage.getItem('eris-agenda') || 'null'); if (g) { n = g.n; k = g.k; } } catch (e) {}
-  if (enlaceN && enlaceK) history.replaceState(null, '', location.pathname);
+  if ((enlaceN && enlaceK) || enlaceReset) history.replaceState(null, '', location.pathname);
   var app = document.getElementById('app');
   var pedidos = null, pedidosVistos = null, datos = null, info = null, cargando = false, pausa = 0, vista = 'hoy', diaSel = null, mesVista = null, tabCat = 'servicio';
   var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
@@ -1223,8 +1223,10 @@ textarea{min-height:90px;resize:vertical}
       + '<label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>'
       + '<p class="error" id="errorLogin">' + esc(aviso || '') + '</p><button class="btn b-ok ancho" type="submit">Entrar</button>'
       + (bioGuardada() ? '<button class="btn b-otra ancho" type="button" id="botonBio" style="margin-top:10px">' + BIO_ICONO + ' Entrar con Face ID o huella</button>' : '')
-      + '<p class="instalar">¿Aún no tienes cuenta? Usa el enlace de activación que te envió Euxenos. ¿Has olvidado la contraseña? Escríbenos a soporte@euxenos.com.</p><div class="instalar-app"></div></form>';
+      + '<button class="btn b-otra ancho" type="button" id="botonOlvido" style="margin-top:10px">¿Has olvidado la contraseña?</button>'
+      + '<p class="instalar">¿Aún no tienes cuenta? Usa el enlace de activación que te envió Euxenos.</p><div class="instalar-app"></div></form>';
     pintarInstalar();
+    document.getElementById('botonOlvido').addEventListener('click', function(){ pantallaOlvido(document.getElementById('formLogin').usuario.value.trim()); });
     var bb = document.getElementById('botonBio'); if (bb) bb.addEventListener('click', function(){ entrarConBio(document.getElementById('errorLogin')); });
     var f = document.getElementById('formLogin');
     f.addEventListener('submit', function(e){
@@ -1259,6 +1261,55 @@ textarea{min-height:90px;resize:vertical}
         guardarAcceso(r.n, r.k); toast('Cuenta activada'); ofrecerBio(r.usuario, cargar);
       }).catch(function(){ boton.disabled = false; err.textContent = 'Sin conexión, inténtalo de nuevo.'; });
     });
+  }
+  // ---- He olvidado la contraseña ----
+  function pantallaOlvido(sugerido){
+    ocultarFlotantes();
+    app.innerHTML = '<form class="login" id="formOlvido" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Recuperar contraseña</h1><p class="sub">Escribe tu usuario o tu correo y te enviaremos un enlace para elegir una contraseña nueva.</p>'
+      + '<label class="campo"><span>Usuario o correo</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false" value="' + esc(sugerido || '') + '"></label>'
+      + '<p class="error" id="errorOlvido"></p><button class="btn b-ok ancho" type="submit">Enviarme el enlace</button>'
+      + '<button class="btn b-otra ancho" type="button" id="volverLogin" style="margin-top:10px">Volver a entrar</button></form>';
+    document.getElementById('volverLogin').addEventListener('click', function(){ pantallaLogin(); });
+    var f = document.getElementById('formOlvido');
+    f.addEventListener('submit', function(e){
+      e.preventDefault();
+      var u = f.usuario.value.trim().toLowerCase(), err = document.getElementById('errorOlvido'), boton = f.querySelector('button[type=submit]');
+      if (!u) return;
+      boton.disabled = true; err.textContent = '';
+      llamar({ accion:'recuperar', usuario:u }).then(function(r){
+        boton.disabled = false;
+        if (!r || !r.ok) { err.textContent = (r && r.motivo) || 'No se ha podido enviar. Inténtalo de nuevo.'; return; }
+        app.innerHTML = '<div class="login"><img class="logo" src="icono-192.png" alt=""><h1>Revisa tu correo</h1><p class="sub">' + esc(r.mensaje || 'Si hay una cuenta con ese usuario o correo, te hemos enviado un enlace.') + '</p>'
+          + '<button class="btn b-otra ancho" id="volverLogin2">Volver a entrar</button></div>';
+        document.getElementById('volverLogin2').addEventListener('click', function(){ pantallaLogin(); });
+      }).catch(function(){ boton.disabled = false; err.textContent = 'Sin conexión, inténtalo de nuevo.'; });
+    });
+  }
+  function pantallaNuevaClave(token){
+    ocultarFlotantes();
+    app.innerHTML = '<p class="mensaje">Comprobando tu enlace…</p>';
+    llamar({ accion:'reset-ver', token:token }).then(function(r){
+      if (!r || !r.ok) { pantallaLogin((r && r.motivo) || 'El enlace no es válido o ha caducado.'); return; }
+      app.innerHTML = '<form class="login" id="formNueva" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Nueva contraseña</h1><p class="sub">' + esc(r.nombre || 'Tu negocio') + ': elige una contraseña nueva. Se cerrará la sesión en los demás dispositivos.</p>'
+        + '<label class="campo"><span>Usuario</span><input name="usuario" type="text" autocomplete="username" readonly value="' + esc(r.usuario || '') + '"></label>'
+        + '<label class="campo"><span>Correo electrónico</span><input name="correo" type="email" readonly value="' + esc(r.correo || '') + '"></label>'
+        + '<label class="campo"><span>Contraseña nueva (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>'
+        + '<label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>'
+        + '<p class="error" id="errorNueva"></p><button class="btn b-ok ancho" type="submit">Guardar y entrar</button></form>';
+      var f = document.getElementById('formNueva');
+      f.addEventListener('submit', function(e){
+        e.preventDefault();
+        var err = document.getElementById('errorNueva'), u = String(r.usuario || '').toLowerCase(), c = String(r.correo || '').toLowerCase();
+        if (f.clave1.value !== f.clave2.value) { err.textContent = 'Las contraseñas no coinciden.'; return; }
+        var boton = f.querySelector('button'); boton.disabled = true; err.textContent = '';
+        dosHashes(u, c, f.clave1.value).then(function(h){ return llamar({ accion:'reset-guardar', token:token, usuario:u, correo:c, hash:h[0], hash_correo:h[1] }); }).then(function(x){
+          boton.disabled = false;
+          if (!x || !x.ok) { err.textContent = (x && x.motivo) || 'No se ha podido guardar.'; return; }
+          var g = bioGuardada(); if (g && g.n === x.n) bioBorrar();
+          guardarAcceso(x.n, x.k); desbloqueada(); toast('Contraseña cambiada'); vista = 'hoy'; ofrecerBio(x.usuario || u, cargar);
+        }).catch(function(){ boton.disabled = false; err.textContent = 'Sin conexión, inténtalo de nuevo.'; });
+      });
+    }).catch(function(){ pantallaLogin('Sin conexión, inténtalo de nuevo.'); });
   }
   function comprobarEnlace(nn, kk){
     app.innerHTML = '<p class="mensaje">Comprobando tu enlace…</p>';
@@ -1405,7 +1456,8 @@ textarea{min-height:90px;resize:vertical}
   setInterval(function(){ if (puedeRefrescar()) cargar(); }, 60000);
   setInterval(function(){ if (!document.hidden && datos && pedidosOn()) cargarPedidos(); }, 20000);
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { cerrarHojas(); cerrarMenu(); } });
-  if (enlaceN && enlaceK) comprobarEnlace(enlaceN, enlaceK);
+  if (enlaceReset) pantallaNuevaClave(enlaceReset);
+  else if (enlaceN && enlaceK) comprobarEnlace(enlaceN, enlaceK);
   else if (n && k && bioGuardada() && bioGuardada().n === n && !estaDesbloqueada()) pantallaBloqueo();
   else cargar();
 })();
