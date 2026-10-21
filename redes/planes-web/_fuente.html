@@ -107,7 +107,7 @@ h2{font-family:'Sora';font-weight:800;font-size:50px;line-height:1.06;letter-spa
 <div class="barra" id="barra"></div>
 </div>
 <script>
-var PRECIO = function(n, ano, mes, anoIva, mesIva, pie){ return { centro: true, html: '<h2 class="a">Pack <span class="g">' + n + '</span></h2><div class="precio a"><div class="caja dest"><div class="et">Al año · 2 meses gratis</div><div class="cifra">' + ano + ' €<small> + IVA</small></div><div class="iva">' + anoIva + ' € con IVA</div></div><div class="caja"><div class="et">Al mes</div><div class="cifra">' + mes + ' €<small> + IVA</small></div><div class="iva">' + mesIva + ' € con IVA</div></div></div><p class="pie a">' + pie + ' · <b>euxenos.com</b></p>' }; };
+var PRECIO = function(n, mesIva, mes, altaIva, alta){ return { centro: true, html: '<h2 class="a">Pack <span class="g">' + n + '</span></h2><div class="precio a"><div class="caja dest"><div class="et">Al mes · IVA incluido</div><div class="cifra">' + mesIva + ' €<small> /mes</small></div><div class="iva">' + mes + ' € + IVA</div></div><div class="caja"><div class="et">Alta · pago único</div><div class="cifra"><small>desde </small>' + altaIva + ' €</div><div class="iva">IVA incluido · ' + alta + ' € + IVA</div></div></div><p class="pie a">Pago anual: 2 meses gratis · <b>euxenos.com</b></p>' }; };
 var APP = '<div class="movil app"><div class="push a" data-d="0.4"><b>Euxenos</b> · Nueva petición de cita<br>Laura · jueves 17:30</div><div class="cab"><div class="avatar">E</div><div><b>Hoy</b><span>App Euxenos · tu agenda</span></div></div>' +
   '<div class="cita a" data-d="1.2"><div><b>Jueves 17:30</b><span>Corte y peinado · Laura</span></div><div class="botones"><i class="ok-b">Confirmar</i><i>Otra hora</i></div></div>' +
   '<div class="cita conf a" data-d="2.6"><div><b>Jueves 17:30</b><span>Confirmada · se lo avisamos a Laura</span></div></div>' +
@@ -118,7 +118,7 @@ var P = {
     escenas: [
       { html: '<div><h1 class="a">Pack <span class="g">Básico</span></h1><p class="sub a">Tu propia web, hecha a medida, con alojamiento, mantenimiento y mejoras incluidos.</p><div class="chips a"><span class="chip">Hasta 5 secciones</span><span class="chip">Sin tocar nada técnico</span></div></div>' +
         '<div class="nav a" data-d="0.4"><div class="barra-nav"><i></i><i></i><i></i><span class="url">tunegocio.es</span></div><div class="heroe"><b>Peluquería Lúa</b><span>Talavera · cita previa · lunes a sábado</span></div><div class="bloques"><div></div><div></div><div></div></div></div>' },
-      { html: '<div><h2 class="a">Eris atiende <span class="e">cada visita</span></h2><p class="sub a">A cualquier hora, con la información real de tu negocio: servicios, precios, horario y vacaciones.</p></div>' +
+      { html: '<div><h2 class="a">Cuando tú no llegas, <span class="e">responde Eris</span></h2><p class="sub a">Mientras atiendes en el local o cuando has cerrado, contesta a cada visita con la información real de tu negocio.</p></div>' +
         '<div class="nav a" data-d="0.2"><div class="barra-nav"><i></i><i></i><i></i><span class="url">tunegocio.es</span></div><div class="heroe"><b>Peluquería Lúa</b><span>Talavera · cita previa</span></div>' +
         '<div class="widget a" data-d="0.8"><div class="msg cli" style="font-size:14px">¿Cuánto cuesta un tinte? ¿Abrís el sábado?</div><div class="msg eris a" data-d="2.2">El tinte de raíz son 32 €, con peinado. El sábado abrimos de 9:00 a 14:00.</div></div></div>' },
       { html: '<div><h2 class="a">Y si quiere cita, <span class="e">se la propone</span></h2><p class="sub a">Comprueba tu horario y le ofrece una hora libre, antes de que se vaya a otra web.</p></div>' +
@@ -127,17 +127,17 @@ var P = {
         '<div class="msg eris a" data-d="1.6">El jueves tengo hueco a las 17:30 o a las 18:15. ¿Cuál prefieres?</div>' +
         '<div class="msg cli a" data-d="3.0">17:30</div>' +
         '<div class="msg eris a" data-d="3.8">Hecho. La peluquería te la confirma en breve.</div></div>' },
-      { html: '<div><h2 class="a">Todo llega a la <span class="e">app Euxenos</span></h2><div class="lista a"><div>Confirmas la cita con un toque</div><div>Aviso al momento en tu móvil</div><div>Recordatorio antes de cada cita</div></div></div>' + APP },
-      { centro: true, html: '<h2 class="a">Una web que no solo se ve bien.<br><span class="g">Trabaja por ti.</span></h2>' },
-      PRECIO('Básico', '550', '55', '665,50', '66,55', 'Alta desde 390 € + IVA')
+      { html: '<div><h2 class="a">Y tú decides <span class="e">desde la app</span></h2><div class="lista a"><div>Confirmas la cita con un toque</div><div>Aviso al momento en tu móvil</div><div>Recordatorio antes de cada cita</div></div></div>' + APP },
+      { centro: true, html: '<h2 class="a">Una más de tu equipo.<br><span class="g">No un sustituto.</span></h2><p class="sub a">Te cubre cuando no llegas.</p>' },
+      PRECIO('Básico', '66,55', '55', '471,90', '390')
     ]
   },
   completo: {
     nombre: 'Pack Completo',
     escenas: [
-      { centro: true, html: '<h1 class="a">Pack <span class="g">Completo</span></h1><p class="sub a">Todo lo del Básico, y además Eris coge el teléfono.</p><div class="chips a"><span class="chip">Web</span><span class="chip">Chat</span><span class="chip">App</span><span class="chip">Llamadas</span></div>' },
-      { html: '<div><h2 class="a">Sin cambiar <span class="e">de número</span></h2><p class="sub a">Le desvías a Eris las llamadas que no puedes atender: cuando comunica, no lo coges o estás cerrado.</p></div>' +
-        '<div class="tarjeta desvio a" data-d="0.3"><div class="paso-d"><span class="ico">☎</span><div><b>925 00 00 00</b><span>Tu número de siempre</span></div></div><div class="flecha a" data-d="1.0">↓ si no lo coges</div><div class="paso-d e a" data-d="1.4"><span class="ico">E</span><div><b>Eris contesta</b><span>Con el nombre de tu negocio</span></div></div></div>' },
+      { centro: true, html: '<h1 class="a">Pack <span class="g">Completo</span></h1><p class="sub a">Todo lo del Básico, y además Eris coge el teléfono cuando tú no puedes.</p><div class="chips a"><span class="chip">Web</span><span class="chip">Chat</span><span class="chip">App</span><span class="chip">Llamadas</span></div>' },
+      { html: '<div><h2 class="a">Si puedes, <span class="e">lo coges tú</span></h2><p class="sub a">Como siempre. Solo si estás con un cliente, comunicas o has cerrado, la llamada pasa a Eris. Sin cambiar de número.</p></div>' +
+        '<div class="tarjeta desvio a" data-d="0.3"><div class="paso-d"><span class="ico">☎</span><div><b>925 00 00 00</b><span>Tu número de siempre</span></div></div><div class="flecha a" data-d="1.0">↓ solo si no puedes cogerlo</div><div class="paso-d e a" data-d="1.4"><span class="ico">E</span><div><b>Eris contesta</b><span>Con el nombre de tu negocio</span></div></div></div>' },
       { html: '<div><h2 class="a">Atiende la llamada <span class="e">como tú</span></h2><p class="sub a">Explica servicios, precios y horarios, en el idioma de quien llama.</p></div>' +
         '<div class="tarjeta llamada a" data-d="0.3"><div class="et">Llamada entrante</div><div class="num">600 12 34 56</div><div class="onda" id="onda"></div><div class="dice a" data-d="1.0">Hola, has llamado a Clínica Creta. Soy Eris. ¿En qué te puedo ayudar?</div></div>' },
       { html: '<div><h2 class="a">Y la cita, <span class="e">en tu agenda</span></h2><p class="sub a">Si el cliente quiere cita, Eris se la apunta.</p></div>' +
@@ -145,25 +145,25 @@ var P = {
       { html: '<div><h2 class="a">Y a ti, <span class="e">el aviso</span></h2><p class="sub a">Con su nombre, su teléfono y lo que necesitaba, por si quieres llamarle tú.</p></div>' +
         '<div class="tarjeta aviso-l a" data-d="0.3"><div class="et">Llamada atendida por Eris</div><div class="linea"><span>Nombre</span><b>Ana García</b></div><div class="linea a" data-d="0.8"><span>Teléfono</span><b>600 12 34 56</b></div><div class="linea a" data-d="1.3"><span>Necesita</span><b>Revisión, jueves 10:00</b></div></div>' },
       { centro: true, html: '<h2 class="a">Ideal si estás con un cliente<br><span class="g">y no puedes coger el móvil.</span></h2><div class="chips a"><span class="chip">Unos 150 minutos de llamadas al mes</span></div>' },
-      PRECIO('Completo', '990', '99', '1.197,90', '119,79', 'Precios desde · alta desde 600 € + IVA')
+      PRECIO('Completo', '119,79', '99', '726', '600')
     ]
   },
   plus: {
     nombre: 'Pack Plus',
     escenas: [
       { centro: true, html: '<h1 class="a">Pack <span class="g">Plus</span></h1><p class="sub a">Para talleres, reformas e instalaciones, donde el cliente siempre pregunta:</p><div class="bocadillo a">¿Cuánto me costaría?</div>' },
-      { html: '<div><h2 class="a">Eris hace <span class="e">las preguntas</span></h2><p class="sub a">Recoge todo lo que hace falta y te prepara el presupuesto en PDF.</p></div>' +
+      { html: '<div><h2 class="a">Eris hace <span class="e">las preguntas</span></h2><p class="sub a">Mientras tú trabajas, recoge lo que hace falta y te prepara el presupuesto en PDF.</p></div>' +
         '<div class="movil"><div class="cab"><div class="avatar">E</div><div><b>Talleres Tete</b><span>WhatsApp · Eris</span></div></div>' +
         '<div class="msg cli a" data-d="0.3">¿Cuánto me costaría cambiar las pastillas?</div>' +
         '<div class="msg eris a" data-d="1.3">Te preparo el presupuesto. ¿Qué coche es y de qué año?</div>' +
         '<div class="msg cli a" data-d="2.6">Seat León de 2017</div>' +
         '<div class="msg eris a" data-d="3.4">Perfecto. En cuanto el taller lo revise, te lo envío.</div></div>' },
-      { html: '<div><h2 class="a">Tú lo revisas y <span class="e">lo apruebas</span></h2><p class="sub a">Con un clic. Y Eris se lo envía al cliente.</p></div>' +
+      { html: '<div><h2 class="a">Tú lo revisas y <span class="e">lo apruebas</span></h2><p class="sub a">Ajustas lo que haga falta y lo apruebas con un clic. Eris se lo envía.</p></div>' +
         '<div class="pdf a" data-d="0.2"><div class="t">Presupuesto P-0142</div><div class="c">Talleres Tete · Seat León 2017</div><div style="margin-top:14px"><div class="l"><span>Pastillas de freno (eje delantero)</span><b>90 €</b></div><div class="l"><span>Mano de obra</span><b>45 €</b></div><div class="l"><span>Revisión de líquido</span><b>15 €</b></div></div><div class="tot"><span>Total + IVA</span><span>150 €</span></div><div class="btn a" data-d="0.9">Aprobar y enviar</div><div class="sello a" data-d="2.0">ENVIADO</div></div>' },
       { html: '<div><h2 class="a">Si lo acepta, <span class="e">le da cita</span></h2><p class="sub a">Sin que tengas que llamarle.</p></div>' +
         '<div class="tarjeta cal a" data-d="0.3"><div class="mes">Viernes, 24 de octubre</div><div class="fila nueva a" data-d="0.9"><b>09:30</b>Presupuesto P-0142 aceptado<span class="ok">Cita</span></div><div class="fila"><b>12:00</b>Cambio de aceite</div></div>' },
-      { centro: true, html: '<h2 class="a">Presupuestos en minutos,<br><span class="g">no en días.</span></h2><p class="sub a">Y no se te enfría ningún cliente.</p><div class="chips a"><span class="chip">Todo lo del Completo</span><span class="chip">Unos 300 minutos de llamadas al mes</span></div>' },
-      PRECIO('Plus', '1.990', '199', '2.407,90', '240,79', 'Precios desde · alta desde 1.000 € + IVA')
+      { centro: true, html: '<h2 class="a">Tú decides.<br><span class="g">Eris te quita el papeleo.</span></h2><p class="sub a">Y no se te enfría ningún cliente.</p><div class="chips a"><span class="chip">Todo lo del Completo</span><span class="chip">Unos 300 minutos de llamadas al mes</span></div>' },
+      PRECIO('Plus', '240,79', '199', '1.210', '1.000')
     ]
   }
 };

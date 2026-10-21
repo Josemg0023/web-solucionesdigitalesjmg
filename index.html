@@ -8,7 +8,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta property="og:title" content="Euxenos · Tu negocio, siempre atendido">
-<meta property="og:description" content="Una asistente con IA que atiende a tus clientes por chat, por voz y por teléfono, las 24 horas.">
+<meta property="og:description" content="Una asistente con IA que se suma a tu equipo: atiende a tus clientes por chat, por voz y por teléfono cuando tú no llegas.">
 <meta property="og:image" content="https://euxenos.com/og-image.png">
 <link rel="canonical" href="https://euxenos.com/">
 <meta property="og:url" content="https://euxenos.com/">
@@ -134,6 +134,16 @@ a{color:inherit}
 .servicio .ejemplo a{color:var(--esmeralda-luz);font-weight:600;text-decoration:none;white-space:nowrap}
 
 /* Cómo trabajamos */
+.equipo-flujo{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:18px;align-items:stretch}
+.equipo-flujo li.paso{border:1px solid var(--linea);border-radius:18px;padding:24px 22px;background:linear-gradient(160deg,rgba(13,48,38,.55),rgba(6,24,19,.75))}
+.equipo-flujo li.paso.eris{border-color:var(--esmeralda-luz);box-shadow:0 0 40px -16px rgba(52,211,153,.6)}
+.equipo-flujo .et{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--esmeralda-luz);margin-bottom:10px}
+.equipo-flujo h3{font-family:var(--display);font-weight:700;font-size:1.2rem;line-height:1.25;margin:0 0 8px}
+.equipo-flujo p{margin:0;color:var(--apagado);font-size:.97rem}
+.equipo-flujo li.flecha{display:grid;place-items:center;color:var(--esmeralda-luz);font-size:1.6rem}
+.equipo-cierre{margin:36px 0 0;font-size:1.1rem;color:#CFE9DF;max-width:62ch;border-left:2px solid var(--rubi);padding-left:16px}
+@media (max-width:860px){.equipo-flujo{grid-template-columns:1fr}.equipo-flujo li.flecha{transform:rotate(90deg);padding:2px 0}}
+.equipo-flujo li.flecha.o{transform:none;font-family:var(--display);font-weight:700;font-size:1.1rem;color:var(--apagado)}
 .pasos-fondo{background:var(--fondo-2);border-top:1px solid var(--linea);border-bottom:1px solid var(--linea)}
 .pasos{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:40px;counter-reset:paso}
 .pasos li{counter-increment:paso}
@@ -413,7 +423,7 @@ a{color:inherit}
       <div>
         <a class="lema" href="#por-que-euxenos"><span class="lema-gr" lang="grc">εὔξενος</span><span>«el que recibe bien a quien llega»</span></a>
         <h1>Ningún cliente sin respuesta. <span class="degradado-texto">Nunca.</span></h1>
-        <p class="intro">Una asistente con IA que atiende a tus clientes por chat, por voz y por teléfono, las 24 horas. Creamos tu web, automatizamos lo repetitivo y te ayudamos a que te encuentren.</p>
+        <p class="intro">Una asistente con IA que se suma a tu equipo: atiende a tus clientes por chat, por voz y por teléfono cuando tú no llegas, a cualquier hora. Creamos tu web, automatizamos lo repetitivo y te ayudamos a que te encuentren.</p>
         <div class="acciones">
           <button class="boton boton-luz" type="button" data-abrir-eris>Contáctanos</button>
         </div>
@@ -437,6 +447,21 @@ a{color:inherit}
     </div>
   </section>
 
+  <section class="seccion" id="equipo">
+    <div class="envoltura">
+      <h2>Una más de tu equipo, no un sustituto</h2>
+      <p class="bajada">Tú y tu gente seguís atendiendo como siempre. Eris entra solo cuando no llegáis, para que ningún cliente se quede sin respuesta.</p>
+      <ol class="equipo-flujo">
+        <li class="paso"><span class="et">Peluquería, 11:40</span><h3>Suena el teléfono</h3><p>Estás en el local, con un cliente en el sillón.</p></li>
+        <li class="flecha" aria-hidden="true">→</li>
+        <li class="paso"><span class="et">¿Puedes cogerlo?</span><h3>Lo coges tú, como siempre</h3><p>Nada cambia en tu forma de atender. Eris no interviene.</p></li>
+        <li class="flecha o" aria-hidden="true">o</li>
+        <li class="paso eris"><span class="et">¿Estás cortando el pelo?</span><h3>Contesta Eris por ti</h3><p>Atiende a quien llama, le da cita si la quiere y te deja el aviso en el móvil.</p></li>
+      </ol>
+      <p class="equipo-cierre">Con los mensajes de la web, WhatsApp o Instagram pasa igual: respondes tú cuando puedes y Eris cubre el resto, también de noche y en festivos.</p>
+    </div>
+  </section>
+
   <section class="seccion" id="servicios">
     <div class="envoltura">
       <h2>Lo que creamos para tu negocio</h2>
@@ -449,7 +474,7 @@ a{color:inherit}
         </article>
         <article class="servicio">
           <h3>Asistente que contesta tu teléfono</h3>
-          <p>Cuando estás ocupado o fuera de horario, una asistente con IA coge las llamadas de tu negocio: atiende con naturalidad, resuelve dudas, apunta los datos de quien llama y te avisa al momento. No tienes que cambiar de número: basta con desviar las llamadas que no puedas coger.</p>
+          <p>Si puedes coger el teléfono, lo coges tú, como siempre. Cuando estás con un cliente, comunicas o has cerrado, una asistente con IA coge esa llamada por ti: atiende con naturalidad, resuelve dudas, apunta los datos de quien llama y te avisa al momento. No tienes que cambiar de número: basta con desviar las llamadas que no puedas coger.</p>
           <p class="ejemplo">Pruébalo tú mismo: llama al <a href="tel:+34919933642">919 93 36 42</a> y te atenderá Eris, nuestra asistente. Así atendería el teléfono de tu negocio.</p>
         </article>
         <article class="servicio">
@@ -529,7 +554,7 @@ a{color:inherit}
           <p class="coniva">IVA incluido · <span data-mes="55 €/mes + IVA" data-anual="550 €/año + IVA · 2 meses gratis">55 €/mes + IVA</span></p>
           <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 471,90 € <small>IVA incluido</small></span><span class="alta-iva">390 € + IVA</span></div>
           <ul><li>Web con diseño propio</li><li>Asistente por chat 24 horas</li><li>Gestiona las peticiones de cita</li><li>App Euxenos: agenda y avisos al móvil</li><li class="no">Llamadas de voz</li></ul>
-          <div class="pack-video" data-video="basico"><video muted playsinline preload="none" poster="/redes/planes-web/basico-portada.jpg" aria-label="Vídeo del Pack Básico (48 segundos)"><source src="/redes/planes-web/basico.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 48 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
+          <div class="pack-video" data-video="basico"><video muted playsinline preload="none" poster="/redes/planes-web/basico-portada.jpg" aria-label="Vídeo del Pack Básico (45 segundos)"><source src="/redes/planes-web/basico.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 45 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="basico" data-nombre="Básico">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Básico">Información</button></div>
         </article>
         <article class="pack">
@@ -539,7 +564,7 @@ a{color:inherit}
           <p class="coniva">IVA incluido · <span data-mes="99 €/mes + IVA" data-anual="990 €/año + IVA · 2 meses gratis">99 €/mes + IVA</span></p>
           <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 726 € <small>IVA incluido</small></span><span class="alta-iva">600 € + IVA</span></div>
           <ul><li>Todo lo del Básico</li><li>Llamadas de voz con IA (150 min/mes)</li><li>Citas en tu calendario</li><li>Web de hasta 5 secciones</li></ul>
-          <div class="pack-video" data-video="completo"><video muted playsinline preload="none" poster="/redes/planes-web/completo-portada.jpg" aria-label="Vídeo del Pack Completo (34 segundos)"><source src="/redes/planes-web/completo.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 34 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
+          <div class="pack-video" data-video="completo"><video muted playsinline preload="none" poster="/redes/planes-web/completo-portada.jpg" aria-label="Vídeo del Pack Completo (39 segundos)"><source src="/redes/planes-web/completo.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 39 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="completo" data-nombre="Completo">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Completo">Información</button></div>
         </article>
         <article class="pack">
@@ -549,7 +574,7 @@ a{color:inherit}
           <p class="coniva">IVA incluido · <span data-mes="199 €/mes + IVA" data-anual="1.990 €/año + IVA · 2 meses gratis">199 €/mes + IVA</span></p>
           <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 1.210 € <small>IVA incluido</small></span><span class="alta-iva">1.000 € + IVA</span></div>
           <ul><li>Todo lo del Completo</li><li>Eris prepara presupuestos en PDF</li><li>Tú los revisas y apruebas con un clic</li><li>Llamadas de voz (300 min/mes)</li></ul>
-          <div class="pack-video" data-video="plus"><video muted playsinline preload="none" poster="/redes/planes-web/plus-portada.jpg" aria-label="Vídeo del Pack Plus (36 segundos)"><source src="/redes/planes-web/plus.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 36 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
+          <div class="pack-video" data-video="plus"><video muted playsinline preload="none" poster="/redes/planes-web/plus-portada.jpg" aria-label="Vídeo del Pack Plus (37 segundos)"><source src="/redes/planes-web/plus.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 37 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="plus" data-nombre="Plus">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Plus">Información</button></div>
         </article>
       </div>
@@ -1454,7 +1479,7 @@ a{color:inherit}
       var alta = tarjeta.querySelector('.alta-v').textContent.replace(/\s+/g,' ').trim();
       document.getElementById('contratar-titulo').textContent = 'Contratar el Pack ' + pack.nombre;
       document.getElementById('contratar-resumen').textContent = 'Pago ' + (periodo() === 'mes' ? 'mensual' : 'anual (2 meses gratis)') + ': ' + cuota + ', más el alta (' + alta.replace(/^desde /,'') + ', pago único).';
-      document.getElementById('contratar-nota').textContent = (pack.id === 'esencial' ? '' : 'Es el precio base del pack; si tu negocio necesita algo más, te lo confirmamos antes de empezar. ') + 'Pagas con tarjeta en Stripe, de forma segura. Sin permanencia.';
+      document.getElementById('contratar-nota').textContent = 'Es el precio base del pack; si tu negocio necesita algo más, te lo confirmamos antes de empezar. ' + 'Pagas con tarjeta en Stripe, de forma segura. Sin permanencia.';
       err.hidden = true; ir.disabled = false; ir.textContent = 'Ir al pago';
       if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
       form.email.focus();
