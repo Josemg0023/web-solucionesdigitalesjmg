@@ -325,6 +325,11 @@ a{color:inherit}
 .contratar-dialogo .nota{margin:0;font-size:.82rem;color:#7FA798}
 .contratar-dialogo .error{margin:0;color:#FF8FAE;font-size:.9rem}
 .contratar-dialogo .fila{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.precio-pack{display:grid;gap:8px;margin:0 0 18px}
+.pr-linea{display:grid;gap:1px;padding:10px 14px;border-radius:12px;background:rgba(52,211,153,.07);border:1px solid var(--linea)}
+.pr-t{font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--apagado)}.pr-t small{font-size:inherit;font-weight:500;text-transform:none;letter-spacing:0}
+.pack .pr-v{font-family:var(--display);font-weight:800;font-size:1.75rem;line-height:1.15;letter-spacing:-.02em;color:var(--claro);white-space:nowrap;margin:0}
+.pr-iva{font-size:.82rem;color:var(--apagado)}
 .alta-caja{display:flex;flex-direction:column;gap:2px;margin:12px 0 18px;padding:10px 14px;border-radius:12px;background:rgba(52,211,153,.07);border:1px solid var(--linea)}
 .alta-t{font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--apagado)}
 .alta-v{font-family:var(--display);font-weight:700;font-size:1.15rem;color:var(--claro)}.alta-v small{font-family:var(--texto);font-weight:500;font-size:.85rem;color:var(--apagado)}
@@ -541,7 +546,7 @@ a{color:inherit}
   <section class="seccion precios-fondo" id="precios">
     <div class="envoltura">
       <h2>Precios claros, sin sorpresas</h2>
-      <p class="bajada">Una cuota de alta para montarlo todo y una mensualidad que incluye el mantenimiento y las mejoras. Todos los precios llevan el IVA incluido. Si pagas el año, te regalamos dos meses.</p>
+      <p class="bajada">Un alta que pagas una sola vez, al contratar, para montarlo todo, y una cuota mensual que incluye el mantenimiento y las mejoras. Todos los precios llevan el IVA incluido. Si pagas el año, te regalamos dos meses.</p>
       <div class="periodo" role="group" aria-label="Forma de pago">
         <button type="button" data-periodo="mes" aria-pressed="true">Mensual</button>
         <button type="button" data-periodo="anual" aria-pressed="false">Anual <span class="ahorro">2 meses gratis</span></button>
@@ -550,19 +555,21 @@ a{color:inherit}
         <article class="pack destacado"><span class="etiqueta">Para empezar</span>
           <h3>Básico</h3>
           <p class="para">Negocios que quieren su propia web</p>
-          <p class="cifra"><span data-mes="66,55" data-anual="665,50">66,55</span> <small data-mes="€/mes" data-anual="€/año">€/mes</small></p>
-          <p class="coniva">IVA incluido · <span data-mes="55 €/mes + IVA" data-anual="550 €/año + IVA · 2 meses gratis">55 €/mes + IVA</span></p>
-          <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 471,90 € <small>IVA incluido</small></span><span class="alta-iva">390 € + IVA</span></div>
-          <ul><li>Web con diseño propio</li><li>Asistente por chat 24 horas</li><li>Gestiona las peticiones de cita</li><li>App Euxenos: agenda y avisos al móvil</li><li class="no">Llamadas de voz</li></ul>
+          <div class="precio-pack">
+            <div class="pr-linea"><span class="pr-t">Alta del servicio <small>· pago único al contratar</small></span><span class="pr-v alta-v">471,90 €</span><span class="pr-iva">IVA incluido · 390 € + IVA</span></div>
+            <div class="pr-linea pr-cuota"><span class="pr-t"><span data-mes="Coste mensual" data-anual="Coste anual">Coste mensual</span> <small data-mes="· cada mes" data-anual="· 2 meses gratis">· cada mes</small></span><span class="pr-v cifra"><span data-mes="66,55 €/mes" data-anual="665,50 €/año">66,55 €/mes</span></span><span class="pr-iva">IVA incluido · <span data-mes="55 €/mes + IVA" data-anual="550 €/año + IVA">55 €/mes + IVA</span></span></div>
+          </div>
+          <ul><li>Web con diseño propio</li><li>Asistente 24 h en tu web, WhatsApp e Instagram</li><li>Gestiona las peticiones de cita</li><li>App Euxenos: agenda y avisos al móvil</li><li class="no">Llamadas de voz</li></ul>
           <div class="pack-video" data-video="basico"><video muted playsinline preload="none" poster="/redes/planes-web/basico-portada.jpg" aria-label="Vídeo del Pack Básico (45 segundos)"><source src="/redes/planes-web/basico.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 45 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="basico" data-nombre="Básico">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Básico">Información</button></div>
         </article>
         <article class="pack">
           <h3>Completo</h3>
           <p class="para">Clínicas y negocios con muchas llamadas</p>
-          <p class="cifra"><span data-mes="119,79" data-anual="1.197,90">119,79</span> <small data-mes="€/mes" data-anual="€/año">€/mes</small></p>
-          <p class="coniva">IVA incluido · <span data-mes="99 €/mes + IVA" data-anual="990 €/año + IVA · 2 meses gratis">99 €/mes + IVA</span></p>
-          <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 726 € <small>IVA incluido</small></span><span class="alta-iva">600 € + IVA</span></div>
+          <div class="precio-pack">
+            <div class="pr-linea"><span class="pr-t">Alta del servicio <small>· pago único al contratar</small></span><span class="pr-v alta-v">726 €</span><span class="pr-iva">IVA incluido · 600 € + IVA</span></div>
+            <div class="pr-linea pr-cuota"><span class="pr-t"><span data-mes="Coste mensual" data-anual="Coste anual">Coste mensual</span> <small data-mes="· cada mes" data-anual="· 2 meses gratis">· cada mes</small></span><span class="pr-v cifra"><span data-mes="119,79 €/mes" data-anual="1.197,90 €/año">119,79 €/mes</span></span><span class="pr-iva">IVA incluido · <span data-mes="99 €/mes + IVA" data-anual="990 €/año + IVA">99 €/mes + IVA</span></span></div>
+          </div>
           <ul><li>Todo lo del Básico</li><li>Llamadas de voz con IA (150 min/mes)</li><li>Citas en tu calendario</li><li>Web de hasta 5 secciones</li></ul>
           <div class="pack-video" data-video="completo"><video muted playsinline preload="none" poster="/redes/planes-web/completo-portada.jpg" aria-label="Vídeo del Pack Completo (39 segundos)"><source src="/redes/planes-web/completo.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 39 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="completo" data-nombre="Completo">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Completo">Información</button></div>
@@ -570,15 +577,16 @@ a{color:inherit}
         <article class="pack">
           <h3>Plus</h3>
           <p class="para">Talleres, reformas y negocios con presupuestos</p>
-          <p class="cifra"><span data-mes="240,79" data-anual="2.407,90">240,79</span> <small data-mes="€/mes" data-anual="€/año">€/mes</small></p>
-          <p class="coniva">IVA incluido · <span data-mes="199 €/mes + IVA" data-anual="1.990 €/año + IVA · 2 meses gratis">199 €/mes + IVA</span></p>
-          <div class="alta-caja"><span class="alta-t">Alta · pago único</span><span class="alta-v">desde 1.210 € <small>IVA incluido</small></span><span class="alta-iva">1.000 € + IVA</span></div>
+          <div class="precio-pack">
+            <div class="pr-linea"><span class="pr-t">Alta del servicio <small>· pago único al contratar</small></span><span class="pr-v alta-v">1.210 €</span><span class="pr-iva">IVA incluido · 1.000 € + IVA</span></div>
+            <div class="pr-linea pr-cuota"><span class="pr-t"><span data-mes="Coste mensual" data-anual="Coste anual">Coste mensual</span> <small data-mes="· cada mes" data-anual="· 2 meses gratis">· cada mes</small></span><span class="pr-v cifra"><span data-mes="240,79 €/mes" data-anual="2.407,90 €/año">240,79 €/mes</span></span><span class="pr-iva">IVA incluido · <span data-mes="199 €/mes + IVA" data-anual="1.990 €/año + IVA">199 €/mes + IVA</span></span></div>
+          </div>
           <ul><li>Todo lo del Completo</li><li>Eris prepara presupuestos en PDF</li><li>Tú los revisas y apruebas con un clic</li><li>Llamadas de voz (300 min/mes)</li></ul>
           <div class="pack-video" data-video="plus"><video muted playsinline preload="none" poster="/redes/planes-web/plus-portada.jpg" aria-label="Vídeo del Pack Plus (37 segundos)"><source src="/redes/planes-web/plus.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 37 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="plus" data-nombre="Plus">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Plus">Información</button></div>
         </article>
       </div>
-      <p class="nota-precios">Precios de lanzamiento (fase beta). Los precios grandes llevan el IVA incluido (21 %, península y Baleares); debajo tienes el importe sin IVA. En Canarias, Ceuta y Melilla no se aplica IVA (el impuesto local lo gestiona el cliente). El presupuesto exacto depende de tu negocio: cuéntanos qué necesitas y te preparamos una propuesta a medida, sin compromiso.</p>
+      <p class="nota-precios">Precios de lanzamiento (fase beta). Los precios grandes llevan el IVA incluido (21 %, península y Baleares); debajo tienes el importe sin IVA. En Canarias, Ceuta y Melilla no se aplica IVA (el impuesto local lo gestiona el cliente). Al contratar pagas el alta y la primera cuota; después, solo la cuota de cada mes (o de cada año, si eliges el pago anual).</p>
     </div>
     <script>
     (function(){
@@ -1478,7 +1486,7 @@ a{color:inherit}
       var cuota = tarjeta.querySelector('.cifra').textContent.replace(/\s+/g,' ').trim();
       var alta = tarjeta.querySelector('.alta-v').textContent.replace(/\s+/g,' ').trim();
       document.getElementById('contratar-titulo').textContent = 'Contratar el Pack ' + pack.nombre;
-      document.getElementById('contratar-resumen').textContent = 'Pago ' + (periodo() === 'mes' ? 'mensual' : 'anual (2 meses gratis)') + ': ' + cuota + ', más el alta (' + alta.replace(/^desde /,'') + ', pago único).';
+      document.getElementById('contratar-resumen').textContent = 'Alta del servicio (pago único): ' + alta + '. Coste ' + (periodo() === 'mes' ? 'mensual' : 'anual (2 meses gratis)') + ': ' + cuota + '. IVA incluido.';
       document.getElementById('contratar-nota').textContent = 'Es el precio base del pack; si tu negocio necesita algo más, te lo confirmamos antes de empezar. ' + 'Pagas con tarjeta en Stripe, de forma segura. Sin permanencia.';
       err.hidden = true; ir.disabled = false; ir.textContent = 'Ir al pago';
       if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
