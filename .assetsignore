@@ -6,3 +6,4 @@ README.md
 netlify.toml
 android
 .github
+worker.js

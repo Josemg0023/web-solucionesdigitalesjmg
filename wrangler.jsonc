@@ -1,9 +1,13 @@
 {
-  // Configuración de la web de Euxenos en Cloudflare (solo archivos estáticos, sin servidor)
+  // Configuración de la web de Euxenos en Cloudflare.
+  // La web son archivos estáticos; worker.js solo atiende /api/meta (mensajes de WhatsApp e Instagram para Eris).
   "name": "euxenos",
   "compatibility_date": "2026-10-01",
+  "main": "worker.js",
   "assets": {
     "directory": "./",
-    "not_found_handling": "404-page"
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
   }
 }
