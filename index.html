@@ -507,7 +507,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
         <article class="servicio">
           <h3>Automatizaciones</h3>
           <p>Las tareas repetitivas se hacen solas: un cliente rellena un formulario, sus datos se guardan, recibe la confirmación por email y un recordatorio antes de su cita.</p>
-          <p class="ejemplo">Una academia recibe cada matrícula ordenada y el alumno tiene su confirmación por email al momento.</p>
+          <p class="ejemplo">Una academia recibe las matrículas de septiembre ordenadas en una hoja, y cada alumno su confirmación por email al momento, sin que nadie las teclee.</p>
         </article>
       </div>
     </div>
@@ -777,6 +777,56 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 (function(){
   var escenas = [
 {
+"sector": "Peluquerías",
+"hora": "23:05",
+"canal": "Instagram",
+"quien": "Peluquería cerrada. Una clienta",
+"via": "por",
+"hecho": "Cita reservada y recordatorio programado",
+"v": {
+"es": [
+"¿Tenéis hueco para corte y mechas el sábado?",
+"El sábado a las 10:00 podemos hacer las dos cosas. ¿Te lo reservo?",
+"¡Sí, porfa! Soy Marta",
+"Reservado, Marta: sábado a las 10:00, corte y mechas. <b>¡Te esperamos!<\/b>"
+],
+"fr": [
+"Bonsoir ! Vous avez de la place samedi pour une coupe et des mèches ?",
+"Bonsoir ! Samedi à 10 h, on peut faire les deux. Je vous le réserve ?",
+"Oui, s'il vous plaît ! Je m'appelle Claire",
+"C'est réservé, Claire : samedi à 10 h, coupe et mèches. <b>À samedi !<\/b>"
+]
+}
+},
+{
+"sector": "Centros de estética",
+"hora": "21:30",
+"canal": "WhatsApp",
+"quien": "Centro cerrado. Una clienta",
+"via": "por",
+"hecho": "Cita en la agenda y recordatorio el jueves",
+"v": {
+"es": [
+"¿Tenéis hueco para uñas semipermanentes el viernes?",
+"¡Hola! El viernes a las 17:30 tenemos hueco. ¿Te lo reservo?",
+"¡Sí! Soy Laura",
+"Reservado, Laura: viernes a las 17:30, uñas semipermanentes. <b>El jueves te llega un recordatorio.<\/b>"
+],
+"en": [
+"Hi! Do you have a slot for gel nails on Friday?",
+"Hi! We have a slot on Friday at 5:30 pm. Shall I book it for you?",
+"Yes! I'm Laura",
+"Booked, Laura: Friday at 5:30 pm, gel nails. <b>You'll get a reminder on Thursday.<\/b>"
+],
+"fr": [
+"Bonsoir ! Vous avez de la place vendredi pour une pose de vernis semi-permanent ?",
+"Bonsoir ! Vendredi à 17 h 30, nous avons un créneau. Je vous le réserve ?",
+"Oui ! Je m'appelle Léa",
+"C'est réservé, Léa : vendredi à 17 h 30, vernis semi-permanent. <b>Vous recevrez un rappel jeudi.<\/b>"
+]
+}
+},
+{
 "sector": "Clínicas dentales",
 "hora": "13:10",
 "canal": "WhatsApp",
@@ -801,84 +851,6 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 "Désolée pour la douleur. Demain à 10 h 30, il y a un créneau d'urgence. Je vous le réserve ?",
 "Oui, merci. Je m'appelle Thomas",
 "C'est réservé, Thomas : demain à 10 h 30. <b>Nous vous enverrons un rappel dans la matinée.<\/b>"
-]
-}
-},
-{
-"sector": "Hoteles y casas rurales",
-"hora": "02:30",
-"canal": "la web",
-"quien": "Recepción cerrada. Una viajera",
-"via": "desde",
-"hecho": "Reserva guardada",
-"v": {
-"es": [
-"¡Hola! ¿Tenéis una habitación doble para 2 noches desde el viernes?",
-"¡Hola! Sí, tenemos una doble con vistas a la sierra para el viernes y el sábado. ¿Te la reservo?",
-"Sí, porfa. Soy Elena",
-"Hecho, Elena: habitación doble de viernes a domingo. <b>Te llega la confirmación por email.<\/b>"
-],
-"en": [
-"Hi! Do you have a double room for 2 nights from Friday?",
-"Hi! Yes, we have a double room with mountain views for Friday and Saturday. Shall I book it for you?",
-"Yes, please. I'm Emma",
-"Done, Emma: double room from Friday to Sunday. <b>You'll get the confirmation by email.<\/b>"
-],
-"fr": [
-"Bonjour ! Avez-vous une chambre double pour 2 nuits à partir de vendredi ?",
-"Bonjour ! Oui, nous avons une chambre double avec vue sur la montagne pour vendredi et samedi. Je vous la réserve ?",
-"Oui, s'il vous plaît. Je m'appelle Camille",
-"C'est fait, Camille : chambre double du vendredi au dimanche. <b>Vous recevrez la confirmation par e-mail.<\/b>"
-]
-}
-},
-{
-"sector": "Peluquerías",
-"hora": "23:05",
-"canal": "Instagram",
-"quien": "Peluquería cerrada. Una clienta",
-"via": "por",
-"hecho": "Cita reservada y recordatorio programado",
-"v": {
-"es": [
-"¿Tenéis hueco para corte y mechas el sábado?",
-"El sábado a las 10:00 podemos hacer las dos cosas. ¿Te lo reservo?",
-"¡Sí, porfa! Soy Marta",
-"Reservado, Marta: sábado a las 10:00, corte y mechas. <b>¡Te esperamos!<\/b>"
-],
-"fr": [
-"Bonsoir ! Vous avez de la place samedi pour une coupe et des mèches ?",
-"Bonsoir ! Samedi à 10 h, on peut faire les deux. Je vous le réserve ?",
-"Oui, s'il vous plaît ! Je m'appelle Claire",
-"C'est réservé, Claire : samedi à 10 h, coupe et mèches. <b>À samedi !<\/b>"
-]
-}
-},
-{
-"sector": "Restaurantes",
-"hora": "01:12",
-"canal": "la web",
-"quien": "Cocina cerrada. Un cliente",
-"via": "desde",
-"hecho": "Reserva guardada y cocina avisada",
-"v": {
-"es": [
-"¡Buenas! ¿Tenéis mesa para 6 el sábado a las 21:30?",
-"¡Buenas! Sí, hay sitio. ¿A nombre de quién? ¿Alguien tiene alergias o intolerancias?",
-"A nombre de Luis. Uno de nosotros es celíaco",
-"Reservado: sábado a las 21:30, 6 personas, a nombre de Luis. <b>La celiaquía queda avisada en cocina.<\/b>"
-],
-"en": [
-"Hi! Do you have a table for 6 on Saturday at 9:30 pm?",
-"Hi! Yes, we have space. What name should I put it under? Does anyone have allergies or intolerances?",
-"Under Tom. One of us is coeliac",
-"Booked: Saturday at 9:30 pm, 6 people, under Tom. <b>The kitchen knows about the coeliac guest.<\/b>"
-],
-"fr": [
-"Bonsoir ! Vous avez une table pour 6 samedi à 21 h 30 ?",
-"Bonsoir ! Oui, il y a de la place. À quel nom ? Quelqu'un a-t-il des allergies ou des intolérances ?",
-"Au nom de Julien. L'un de nous est cœliaque",
-"C'est réservé : samedi à 21 h 30, 6 personnes, au nom de Julien. <b>La cuisine est prévenue pour la maladie cœliaque.<\/b>"
 ]
 }
 },
@@ -928,6 +900,62 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 }
 },
 {
+"sector": "Restaurantes",
+"hora": "01:12",
+"canal": "la web",
+"quien": "Cocina cerrada. Un cliente",
+"via": "desde",
+"hecho": "Reserva guardada y cocina avisada",
+"v": {
+"es": [
+"¡Buenas! ¿Tenéis mesa para 6 el sábado a las 21:30?",
+"¡Buenas! Sí, hay sitio. ¿A nombre de quién? ¿Alguien tiene alergias o intolerancias?",
+"A nombre de Luis. Uno de nosotros es celíaco",
+"Reservado: sábado a las 21:30, 6 personas, a nombre de Luis. <b>La celiaquía queda avisada en cocina.<\/b>"
+],
+"en": [
+"Hi! Do you have a table for 6 on Saturday at 9:30 pm?",
+"Hi! Yes, we have space. What name should I put it under? Does anyone have allergies or intolerances?",
+"Under Tom. One of us is coeliac",
+"Booked: Saturday at 9:30 pm, 6 people, under Tom. <b>The kitchen knows about the coeliac guest.<\/b>"
+],
+"fr": [
+"Bonsoir ! Vous avez une table pour 6 samedi à 21 h 30 ?",
+"Bonsoir ! Oui, il y a de la place. À quel nom ? Quelqu'un a-t-il des allergies ou des intolérances ?",
+"Au nom de Julien. L'un de nous est cœliaque",
+"C'est réservé : samedi à 21 h 30, 6 personnes, au nom de Julien. <b>La cuisine est prévenue pour la maladie cœliaque.<\/b>"
+]
+}
+},
+{
+"sector": "Pastelerías",
+"hora": "20:40",
+"canal": "Instagram",
+"quien": "Pastelería cerrada. Un cliente",
+"via": "por",
+"hecho": "Encargo apuntado para la pastelería",
+"v": {
+"es": [
+"¿Me hacéis una tarta de cumpleaños para 15 personas el sábado?",
+"¡Claro! ¿De qué sabor la quieres y qué nombre ponemos en la tarta?",
+"De chocolate, y que ponga «Felicidades, Sara». Soy Álvaro",
+"Encargo apuntado, Álvaro: tarta de chocolate para 15, sábado a las 12:00. <b>Mañana la pastelería te confirma el precio.<\/b>"
+],
+"en": [
+"Could you make a birthday cake for 15 people on Saturday?",
+"Of course! What flavour would you like, and what name should we write on it?",
+"Chocolate, and «Happy birthday, Sara». I'm Alex",
+"Order noted, Alex: chocolate cake for 15, Saturday at 12:00. <b>The bakery will confirm the price tomorrow.<\/b>"
+],
+"fr": [
+"Vous pouvez me faire un gâteau d'anniversaire pour 15 personnes samedi ?",
+"Bien sûr ! Quel parfum voulez-vous, et quel prénom écrit-on sur le gâteau ?",
+"Chocolat, avec « Joyeux anniversaire, Sarah ». Je m'appelle Antoine",
+"Commande notée, Antoine : gâteau au chocolat pour 15, samedi à 12 h. <b>La pâtisserie vous confirme le prix demain.<\/b>"
+]
+}
+},
+{
 "sector": "Estudios de tatuajes",
 "hora": "12:10",
 "canal": "Instagram",
@@ -972,50 +1000,6 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 }
 },
 {
-"sector": "Tiendas de alimentación",
-"hora": "12:30",
-"canal": "WhatsApp",
-"quien": "Tienda llena de gente. Una clienta",
-"via": "por",
-"hecho": "Pedido apuntado para preparar",
-"v": {
-"es": [
-"¿Me preparáis un pedido para recoger mañana? Un kilo de tomates y una docena de huevos",
-"¡Claro! Lo tendrás listo mañana desde las 9:00. ¿A nombre de quién?",
-"De Lucía",
-"Apuntado para Lucía. <b>Mañana desde las 9:00 lo tienes preparado.<\/b>"
-],
-"en": [
-"Could you get an order ready for me to pick up tomorrow? A kilo of tomatoes and a dozen eggs",
-"Of course! It'll be ready tomorrow from 9:00. What name should I put it under?",
-"Lucy",
-"Noted for Lucy. <b>It'll be ready for you tomorrow from 9:00.<\/b>"
-]
-}
-},
-{
-"sector": "Tiendas online",
-"hora": "00:20",
-"canal": "la web",
-"quien": "Atención al cliente cerrada. Un cliente molesto",
-"via": "desde",
-"hecho": "Queja calmada y dueño avisado",
-"v": {
-"es": [
-"Llevo 10 días esperando el pedido 4821, esto es una vergüenza",
-"Entiendo tu enfado y lo siento. Tu paquete está parado en el centro de reparto: lo marco como incidencia prioritaria. También puedo devolverte los gastos de envío.",
-"Vale, gracias por encargarte",
-"Hecho. <b>El responsable te escribe mañana por la mañana con una solución.<\/b>"
-],
-"fr": [
-"Ça fait 10 jours que j'attends ma commande 4821, c'est inadmissible !",
-"Je comprends votre agacement, je suis désolée. Votre colis est bloqué au centre de tri : je signale l'incident en priorité. Je peux aussi vous proposer le remboursement des frais de livraison.",
-"D'accord, merci de vous en occuper",
-"C'est fait. <b>Le responsable vous écrit demain matin avec une solution.<\/b>"
-]
-}
-},
-{
 "sector": "Gestorías y abogados",
 "hora": "21:50",
 "canal": "WhatsApp",
@@ -1025,14 +1009,14 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 "v": {
 "es": [
 "Buenas, me ha llegado una carta de Hacienda y no sé qué hacer. ¿Me podéis ayudar?",
-"Claro, para eso estamos. ¿Me dices tu nombre y qué pone en la carta? Si puedes, mándame una foto.",
-"Soy Carmen. Es un requerimiento del IVA del segundo trimestre",
+"Claro, para eso estamos. ¿Me dices tu nombre, qué pone en la carta y de qué fecha es?",
+"Soy Carmen. Es un requerimiento del IVA del segundo trimestre, con fecha del lunes",
 "Gracias, Carmen. Te dejo una llamada con la gestora mañana a las 9:30. <b>Ya tendrá tu caso delante cuando te llame.<\/b>"
 ],
 "en": [
 "Hi, I've received a letter from the Spanish tax office and I don't know what to do. Can you help?",
-"Of course, that's what we're here for. Can you tell me your name and what the letter says? A photo would help.",
-"I'm Sarah. It's a request about my VAT for the second quarter",
+"Of course, that's what we're here for. Can you tell me your name, what the letter says and what date it has?",
+"I'm Sarah. It's a request about my VAT for the second quarter, dated Monday",
 "Thanks, Sarah. I've booked you a call with our advisor tomorrow at 9:30. <b>She'll already have your case in front of her.<\/b>"
 ]
 }
@@ -1047,15 +1031,43 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 "v": {
 "es": [
 "Hola, ¿cuándo empieza el próximo curso para sacarse el carné de coche?",
-"¡Hola! El próximo curso de teórico empieza el lunes a las 18:00. ¿Quieres que te reserve plaza?",
+"¡Hola! El próximo curso de teórico empieza el lunes a las 18:00 y la matrícula con el teórico son 150 €. ¿Te reservo plaza?",
 "Sí, porfa. Me llamo Hugo",
-"Plaza reservada, Hugo. <b>Mañana te llamamos para explicarte los precios y las prácticas.<\/b>"
+"Plaza reservada, Hugo. <b>Mañana te llamamos para explicarte las prácticas.<\/b>"
 ],
 "en": [
 "Hi, when does the next course to get a car licence start?",
-"Hi! The next theory course starts on Monday at 18:00. Shall I save you a place?",
+"Hi! The next theory course starts on Monday at 18:00, and enrolment with the theory course is €150. Shall I save you a place?",
 "Yes, please. I'm Hugo",
-"Place booked, Hugo. <b>We'll call you tomorrow to explain the prices and the driving lessons.<\/b>"
+"Place booked, Hugo. <b>We'll call you tomorrow to explain the driving lessons.<\/b>"
+]
+}
+},
+{
+"sector": "Hoteles y casas rurales",
+"hora": "02:30",
+"canal": "la web",
+"quien": "Recepción cerrada. Una viajera",
+"via": "desde",
+"hecho": "Solicitud de reserva guardada",
+"v": {
+"es": [
+"¡Hola! ¿Tenéis una habitación doble para 2 noches desde el viernes?",
+"¡Hola! Sí, tenemos una doble con vistas a la sierra para el viernes y el sábado. ¿Te la reservo?",
+"Sí, porfa. Soy Elena",
+"Apuntado, Elena: habitación doble de viernes a domingo. <b>Recepción te la confirma a primera hora.<\/b>"
+],
+"en": [
+"Hi! Do you have a double room for 2 nights from Friday?",
+"Hi! Yes, we have a double room with mountain views for Friday and Saturday. Shall I book it for you?",
+"Yes, please. I'm Emma",
+"Noted, Emma: double room from Friday to Sunday. <b>Reception will confirm it first thing in the morning.<\/b>"
+],
+"fr": [
+"Bonjour ! Avez-vous une chambre double pour 2 nuits à partir de vendredi ?",
+"Bonjour ! Oui, nous avons une chambre double avec vue sur la montagne pour vendredi et samedi. Je vous la réserve ?",
+"Oui, s'il vous plaît. Je m'appelle Camille",
+"C'est noté, Camille : chambre double du vendredi au dimanche. <b>La réception vous la confirme dès demain matin.<\/b>"
 ]
 }
 }
@@ -1108,8 +1120,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
   function filtrarEjemplos(idioma){
     var disponibles = escenas.filter(function(e){ return e.v[idioma]; });
     if(disponibles.length === 0) disponibles = escenas;
-    barajar(disponibles);
-    return disponibles;
+    return disponibles; // orden fijo: primero los sectores que más venden
   }
 
   var escenasActuales = filtrarEjemplos(idiomaPagina);
