@@ -73,6 +73,7 @@ function filtrar(cuerpo) {
           id: m.id,
           tipo: m.type,
           texto: textoWhatsApp(m),
+          boton: botonWhatsApp(m),
           cuenta: (v.metadata && v.metadata.phone_number_id) || '',
           hora: Number(m.timestamp) || 0,
         });
@@ -91,6 +92,7 @@ function filtrar(cuerpo) {
         id: m.mid,
         tipo: m.text ? 'text' : (adj || 'otro'),
         texto: m.text || '',
+        boton: (m.quick_reply && m.quick_reply.payload) || '',
         cuenta: e.id || '',
         hora: Math.floor((Number(ev.timestamp) || 0) / 1000),
       });
@@ -110,6 +112,15 @@ function textoWhatsApp(m) {
     case 'image': case 'video': case 'document': return (m[m.type] && m[m.type].caption) || '';
     default: return '';
   }
+}
+
+function botonWhatsApp(m) {
+  if (m.type === 'interactive') {
+    const i = m.interactive || {};
+    return (i.button_reply && i.button_reply.id) || (i.list_reply && i.list_reply.id) || '';
+  }
+  if (m.type === 'button') return (m.button && m.button.payload) || '';
+  return '';
 }
 
 async function firmaValida(crudo, cabecera, secreto) {
