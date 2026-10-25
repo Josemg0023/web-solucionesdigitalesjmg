@@ -89,6 +89,11 @@ a{color:inherit}
 .portada h1{font-family:var(--display);font-weight:800;font-size:clamp(2.5rem,5.4vw,4.3rem);line-height:1.03;letter-spacing:-.035em;margin:0 0 24px}
 .portada p.intro{font-size:1.2rem;color:var(--apagado);max-width:34ch;margin:0 0 36px}
 .portada .nota{font-size:.9rem;color:#7FA798;margin-top:18px}
+.portada .gancho-precio{margin:14px 0 22px;color:#CFE9DF;font-size:1rem}
+.portada .gancho-precio strong{color:var(--esmeralda-luz)}
+.letra-clara{list-style:none;padding:0;margin:16px 0 0;max-width:70ch;display:grid;gap:8px;color:#9FC2B5;font-size:.9rem}
+.letra-clara a{color:var(--esmeralda-luz)}
+a.boton{text-decoration:none;display:inline-flex;align-items:center}
 
 /* La conversación */
 .movil{position:relative;border-radius:24px;padding:22px 20px 26px;max-width:430px;margin-left:auto;
@@ -416,7 +421,7 @@ a{color:inherit}
           <li class="acceso-menu"><a href="/panel/"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 10h18M8 14.5h2M14 14.5h2"/></svg><span>Acceso clientes<small>App Euxenos: tu negocio con Eris</small></span></a></li>
         </ul>
       </div>
-      <button class="boton boton-borde" type="button" data-abrir-eris>Contáctanos</button>
+      <button class="boton boton-borde" type="button" data-abrir-eris>Habla con Eris</button>
     </nav>
   </div>
 </header>
@@ -428,11 +433,13 @@ a{color:inherit}
       <div>
         <a class="lema" href="#por-que-euxenos"><span class="lema-gr" lang="grc">εὔξενος</span><span>«el que recibe bien a quien llega»</span></a>
         <h1>Ningún cliente sin respuesta. <span class="degradado-texto">Nunca.</span></h1>
-        <p class="intro">Una asistente con IA que se suma a tu equipo: atiende a tus clientes por chat, por voz y por teléfono cuando tú no llegas, a cualquier hora. Creamos tu web, automatizamos lo repetitivo y te ayudamos a que te encuentren.</p>
+        <p class="intro">Eris coge el teléfono y contesta tu web, WhatsApp e Instagram cuando tú no llegas, a cualquier hora. Le da cita a tu cliente y a ti te deja el aviso en el móvil.</p>
+        <p class="gancho-precio"><strong>Desde 66,55 €/mes</strong>, IVA incluido · Sin permanencia</p>
         <div class="acciones">
-          <button class="boton boton-luz" type="button" data-abrir-eris>Contáctanos</button>
+          <a class="boton boton-luz" href="tel:+34919933642">📞 Llama y pruébala: 919 93 36 42</a>
+          <button class="boton boton-borde" type="button" data-abrir-eris>Escríbele o háblale desde aquí</button>
         </div>
-        <p class="nota">Por chat o por llamada: elige cómo prefieres hablar con nuestra asistente con IA, y el equipo te contacta después.</p>
+        <p class="nota">Así atendería el teléfono de tu negocio. Si te interesa, te deja tus datos y el equipo te llama.</p>
       </div>
 
       <div class="movil" aria-label="Ejemplos de conversaciones con clientes">
@@ -546,7 +553,7 @@ a{color:inherit}
   <section class="seccion precios-fondo" id="precios">
     <div class="envoltura">
       <h2>Precios claros, sin sorpresas</h2>
-      <p class="bajada">Un alta que pagas una sola vez, al contratar, para montarlo todo, y una cuota mensual que incluye el mantenimiento y las mejoras. Todos los precios llevan el IVA incluido. Si pagas el año, te regalamos dos meses.</p>
+      <p class="bajada">Un alta que pagas una sola vez, al contratar, para montarlo todo, y una cuota mensual que incluye el mantenimiento y las mejoras. Todos los precios llevan el IVA incluido. <strong>Sin permanencia:</strong> te das de baja cuando quieras. Si pagas el año, te regalamos dos meses.</p>
       <div class="periodo" role="group" aria-label="Forma de pago">
         <button type="button" data-periodo="mes" aria-pressed="true">Mensual</button>
         <button type="button" data-periodo="anual" aria-pressed="false">Anual <span class="ahorro">2 meses gratis</span></button>
@@ -554,12 +561,12 @@ a{color:inherit}
       <div class="packs">
         <article class="pack destacado"><span class="etiqueta">Para empezar</span>
           <h3>Básico</h3>
-          <p class="para">Negocios que quieren su propia web</p>
+          <p class="para">Todos los canales, para empezar</p>
           <div class="precio-pack">
             <div class="pr-linea"><span class="pr-t">Alta del servicio <small>· pago único al contratar</small></span><span class="pr-v alta-v">471,90 €</span><span class="pr-iva">IVA incluido · 390 € + IVA</span></div>
             <div class="pr-linea pr-cuota"><span class="pr-t"><span data-mes="Coste mensual" data-anual="Coste anual">Coste mensual</span> <small data-mes="· cada mes" data-anual="· 2 meses gratis">· cada mes</small></span><span class="pr-v cifra"><span data-mes="66,55 €/mes" data-anual="665,50 €/año">66,55 €/mes</span></span><span class="pr-iva">IVA incluido · <span data-mes="55 €/mes + IVA" data-anual="550 €/año + IVA">55 €/mes + IVA</span></span></div>
           </div>
-          <ul><li>Web con diseño propio</li><li>Asistente 24 h en tu web, WhatsApp e Instagram</li><li>Gestiona las peticiones de cita</li><li>App Euxenos: agenda y avisos al móvil</li><li class="no">Llamadas de voz</li></ul>
+          <ul><li>Web propia, hasta 5 secciones</li><li>Eris 24 h en tu web, WhatsApp e Instagram</li><li>Eris coge tu teléfono y las llamadas desde la web (50 min/mes)</li><li>Recoge las peticiones de cita</li><li>App Euxenos: agenda y avisos al móvil</li></ul>
           <div class="pack-video" data-video="basico"><video muted playsinline preload="none" poster="/redes/planes-web/basico-portada.jpg" aria-label="Vídeo del Pack Básico (45 segundos)"><source src="/redes/planes-web/basico.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 45 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="basico" data-nombre="Básico">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Básico">Información</button></div>
         </article>
@@ -570,7 +577,7 @@ a{color:inherit}
             <div class="pr-linea"><span class="pr-t">Alta del servicio <small>· pago único al contratar</small></span><span class="pr-v alta-v">726 €</span><span class="pr-iva">IVA incluido · 600 € + IVA</span></div>
             <div class="pr-linea pr-cuota"><span class="pr-t"><span data-mes="Coste mensual" data-anual="Coste anual">Coste mensual</span> <small data-mes="· cada mes" data-anual="· 2 meses gratis">· cada mes</small></span><span class="pr-v cifra"><span data-mes="119,79 €/mes" data-anual="1.197,90 €/año">119,79 €/mes</span></span><span class="pr-iva">IVA incluido · <span data-mes="99 €/mes + IVA" data-anual="990 €/año + IVA">99 €/mes + IVA</span></span></div>
           </div>
-          <ul><li>Todo lo del Básico</li><li>Llamadas de voz con IA (150 min/mes)</li><li>Citas en tu calendario</li><li>Web de hasta 5 secciones</li></ul>
+          <ul><li>Todo lo del Básico</li><li>Teléfono y llamadas web: 150 min/mes</li><li>Eris apunta las citas en tu calendario</li></ul>
           <div class="pack-video" data-video="completo"><video muted playsinline preload="none" poster="/redes/planes-web/completo-portada.jpg" aria-label="Vídeo del Pack Completo (39 segundos)"><source src="/redes/planes-web/completo.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 39 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="completo" data-nombre="Completo">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Completo">Información</button></div>
         </article>
@@ -581,12 +588,18 @@ a{color:inherit}
             <div class="pr-linea"><span class="pr-t">Alta del servicio <small>· pago único al contratar</small></span><span class="pr-v alta-v">1.210 €</span><span class="pr-iva">IVA incluido · 1.000 € + IVA</span></div>
             <div class="pr-linea pr-cuota"><span class="pr-t"><span data-mes="Coste mensual" data-anual="Coste anual">Coste mensual</span> <small data-mes="· cada mes" data-anual="· 2 meses gratis">· cada mes</small></span><span class="pr-v cifra"><span data-mes="240,79 €/mes" data-anual="2.407,90 €/año">240,79 €/mes</span></span><span class="pr-iva">IVA incluido · <span data-mes="199 €/mes + IVA" data-anual="1.990 €/año + IVA">199 €/mes + IVA</span></span></div>
           </div>
-          <ul><li>Todo lo del Completo</li><li>Eris prepara presupuestos en PDF</li><li>Tú los revisas y apruebas con un clic</li><li>Llamadas de voz (300 min/mes)</li></ul>
+          <ul><li>Todo lo del Completo</li><li>Eris prepara presupuestos en PDF</li><li>Tú los revisas y apruebas con un clic</li><li>Teléfono y llamadas web: 300 min/mes</li></ul>
           <div class="pack-video" data-video="plus"><video muted playsinline preload="none" poster="/redes/planes-web/plus-portada.jpg" aria-label="Vídeo del Pack Plus (37 segundos)"><source src="/redes/planes-web/plus.mp4" type="video/mp4"></video><span class="pv-pista">▶ Vídeo · 37 s</span><button class="pv-sonido" type="button" aria-pressed="false">🔇 Activar sonido</button></div>
           <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="plus" data-nombre="Plus">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Plus">Información</button></div>
         </article>
       </div>
       <p class="nota-precios">Precios de lanzamiento (fase beta). Los precios grandes llevan el IVA incluido (21 %, península y Baleares); debajo tienes el importe sin IVA. En Canarias, Ceuta y Melilla no se aplica IVA (el impuesto local lo gestiona el cliente). Al contratar pagas el alta y la primera cuota; después, solo la cuota de cada mes (o de cada año, si eliges el pago anual).</p>
+      <ul class="letra-clara">
+        <li><strong>Minutos de voz:</strong> si un mes te acercas al límite, te avisamos antes. Si quieres, añades 150 minutos más por 47,19 €/mes (39 € + IVA). Nunca cobramos nada extra sin tu aceptación.</li>
+        <li><strong>Sin permanencia:</strong> te das de baja cuando quieras escribiendo a soporte@euxenos.com.</li>
+        <li><strong>A medida:</strong> ficha de Google, anuncios locales, Eris Escaparate y automatizaciones van con presupuesto sin compromiso.</li>
+        <li>Todo el detalle en las <a href="/condiciones.html">condiciones del servicio</a>.</li>
+      </ul>
     </div>
     <script>
     (function(){
@@ -650,9 +663,10 @@ a{color:inherit}
   <section class="seccion cierre" id="contacto">
     <div class="envoltura">
       <h2>Cuéntanos qué te quita tiempo</h2>
-      <p class="bajada">Escríbenos o llámanos desde aquí mismo, como prefieras, y te atendemos al momento. Después preparamos un presupuesto a medida, sin compromiso.</p>
+      <p class="bajada">Llámanos o escríbele a Eris, como prefieras, y te atendemos al momento. Si quieres que te llame una persona del equipo, díselo y deja tu teléfono y la hora que te viene bien.</p>
       <div class="acciones">
-        <button class="boton boton-luz" type="button" data-abrir-eris>Contáctanos</button>
+        <a class="boton boton-luz" href="tel:+34919933642">📞 Llamar al 919 93 36 42</a>
+        <button class="boton boton-borde" type="button" data-abrir-eris>Escribir a Eris</button>
       </div>
       <ul class="vias">
         <li><span class="via-t">Teléfono</span><a href="tel:+34919933642">919 93 36 42</a></li>
@@ -694,7 +708,7 @@ a{color:inherit}
     <span>© 2026 Euxenos · Versión beta</span>
     <span class="correos"><span>Teléfono: <a href="tel:+34919933642">919 93 36 42</a></span><span>Contacto: <a href="mailto:contacto@euxenos.com">contacto@euxenos.com</a></span><span>Soporte a clientes: <a href="mailto:soporte@euxenos.com">soporte@euxenos.com</a></span><span>¿Ya eres cliente? <a href="/panel/">Entra en la app Euxenos</a></span></span>
     <span>El chat y las llamadas los atiende Eris, una asistente con inteligencia artificial.</span>
-    <span class="legales"><a href="https://www.instagram.com/euxenos.ai/" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@euxenos.ai" target="_blank" rel="noopener">TikTok</a><a href="/aviso-legal.html">Aviso legal</a><a href="/privacidad.html">Privacidad</a><a href="/cookies.html">Cookies</a><a href="/cookies.html" data-configurar-cookies>Configurar cookies</a></span>
+    <span class="legales"><a href="https://www.instagram.com/euxenos.ai/" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@euxenos.ai" target="_blank" rel="noopener">TikTok</a><a href="/aviso-legal.html">Aviso legal</a><a href="/privacidad.html">Privacidad</a><a href="/cookies.html">Cookies</a><a href="/condiciones.html">Condiciones</a><a href="/cookies.html" data-configurar-cookies>Configurar cookies</a></span>
   </div>
 </footer>
 
@@ -712,7 +726,7 @@ a{color:inherit}
   </form>
 </dialog>
 <button class="boton boton-luz lanzador" type="button" data-abrir-eris aria-controls="panel-eris" aria-expanded="false">
-  <span class="punto" aria-hidden="true"></span>Contáctanos
+  <span class="punto" aria-hidden="true"></span>Habla con Eris
 </button>
 
 <div class="panel" id="panel-eris" role="dialog" aria-label="Chat con Eris">
