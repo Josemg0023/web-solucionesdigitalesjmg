@@ -301,7 +301,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 .periodo button[aria-pressed="true"]{background:var(--esmeralda);color:#04120E}
 .periodo .ahorro{font-size:.75rem;font-weight:700;color:var(--rubi-luz);margin-left:6px}
 .periodo button[aria-pressed="true"] .ahorro{color:#04120E}
-.packs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1060px;margin-left:auto;margin-right:auto}
+.packs{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;max-width:1240px;margin-left:auto;margin-right:auto}
 .pack{position:relative;display:flex;flex-direction:column;border-radius:18px;padding:26px 22px;background:linear-gradient(160deg,rgba(13,48,38,.6),rgba(6,24,19,.8));border:1px solid var(--linea)}
 .pack.destacado{border-color:var(--esmeralda-luz);box-shadow:0 0 40px -14px rgba(52,211,153,.6)}
 .pack .etiqueta{position:absolute;top:-12px;left:22px;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--rubi);border-radius:6px;padding:3px 9px}
@@ -346,6 +346,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 .alta-v{font-family:var(--display);font-weight:700;font-size:1.15rem;color:var(--claro)}.alta-v small{font-family:var(--texto);font-weight:500;font-size:.85rem;color:var(--apagado)}
 .alta-iva{font-size:.82rem;color:var(--apagado)}
 .nota-precios{color:#7FA798;font-size:.9rem;margin:28px 0 0;max-width:70ch}
+@media (max-width:1180px){.packs{grid-template-columns:repeat(2,1fr);max-width:820px}}
 @media (max-width:900px){.packs{grid-template-columns:1fr;max-width:520px}}
 @media (max-width:620px){.packs{grid-template-columns:1fr}.pack .para{min-height:0}}
 .menu-cabecera{display:flex;align-items:center;gap:22px}
@@ -446,7 +447,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
         <a class="lema" href="#por-que-euxenos"><span class="lema-gr" lang="grc">εὔξενος</span><span>«el que recibe bien a quien llega»</span></a>
         <h1>Ningún cliente sin respuesta. <span class="degradado-texto">Nunca.</span></h1>
         <p class="intro">Eris coge el teléfono y contesta tu web, WhatsApp e Instagram cuando tú no llegas, a cualquier hora. Le da cita a tu cliente y a ti te deja el aviso en el móvil.</p>
-        <p class="gancho-precio"><strong>Desde 66,55 €/mes</strong>, IVA incluido · Sin permanencia</p>
+        <p class="gancho-precio"><strong>Desde 42,35 €/mes</strong>, IVA incluido · Sin permanencia</p>
         <div class="acciones">
           <a class="boton boton-luz" href="tel:+34919933642">📞 Llama y pruébala: 919 93 36 42</a>
           <button class="boton boton-borde" type="button" data-abrir-eris>Escríbele o háblale desde aquí</button>
@@ -571,9 +572,19 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
         <button type="button" data-periodo="anual" aria-pressed="false">Anual <span class="ahorro">2 meses gratis</span></button>
       </div>
       <div class="packs">
-        <article class="pack destacado"><span class="etiqueta">Para empezar</span>
+        <article class="pack">
+          <h3>Esencial</h3>
+          <p class="para">Solo chat, sin web: peluquerías, barberías y negocios de barrio</p>
+          <div class="precio-pack">
+            <div class="pr-linea"><span class="pr-t">Alta del servicio <small>· pago único al contratar</small></span><span class="pr-v alta-v">119,79 €</span><span class="pr-iva">IVA incluido · 99 € + IVA</span></div>
+            <div class="pr-linea pr-cuota"><span class="pr-t"><span data-mes="Coste mensual" data-anual="Coste anual">Coste mensual</span> <small data-mes="· cada mes" data-anual="· 2 meses gratis">· cada mes</small></span><span class="pr-v cifra"><span data-mes="42,35 €/mes" data-anual="423,50 €/año">42,35 €/mes</span></span><span class="pr-iva">IVA incluido · <span data-mes="35 €/mes + IVA" data-anual="350 €/año + IVA">35 €/mes + IVA</span></span></div>
+          </div>
+          <ul><li>Eris 24 h por chat en tu WhatsApp, Instagram y Google</li><li>Recoge las peticiones de cita</li><li>App Euxenos: agenda y avisos al móvil</li><li>Sin web propia ni teléfono (los tienes en el Básico)</li></ul>
+          <div class="pack-botones"><button class="boton boton-luz" type="button" data-contratar="esencial" data-nombre="Esencial">Contratar</button><button class="boton boton-borde" type="button" data-info-pack="Esencial">Información</button></div>
+        </article>
+        <article class="pack destacado"><span class="etiqueta">Recomendado</span>
           <h3>Básico</h3>
-          <p class="para">Todos los canales, para empezar</p>
+          <p class="para">Web propia y todos los canales</p>
           <div class="precio-pack">
             <div class="pr-linea"><span class="pr-t">Alta del servicio <small>· pago único al contratar</small></span><span class="pr-v alta-v">471,90 €</span><span class="pr-iva">IVA incluido · 390 € + IVA</span></div>
             <div class="pr-linea pr-cuota"><span class="pr-t"><span data-mes="Coste mensual" data-anual="Coste anual">Coste mensual</span> <small data-mes="· cada mes" data-anual="· 2 meses gratis">· cada mes</small></span><span class="pr-v cifra"><span data-mes="66,55 €/mes" data-anual="665,50 €/año">66,55 €/mes</span></span><span class="pr-iva">IVA incluido · <span data-mes="55 €/mes + IVA" data-anual="550 €/año + IVA">55 €/mes + IVA</span></span></div>
