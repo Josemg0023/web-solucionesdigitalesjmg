@@ -217,8 +217,10 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 .panel-cabecera small a{color:#7CF0C4 !important}
 .idiomas{display:flex;align-items:center;gap:6px;padding:8px 14px;background:#0A1F18;border-bottom:1px solid rgba(52,211,153,.25)}
 .idiomas span{font-size:.78rem;color:#9CC3B5;margin-right:2px}
-.idiomas button{font:inherit;font-size:.82rem;font-weight:600;color:#CFE9DF;background:transparent;border:1px solid rgba(52,211,153,.3);border-radius:7px;padding:4px 10px;cursor:pointer}
-.idiomas button[aria-pressed="true"]{background:#10B981;border-color:#10B981;color:#04120E}
+.idiomas button{display:flex;align-items:center;background:transparent;border:0;border-radius:6px;padding:4px;cursor:pointer;opacity:.55;transition:opacity .2s,box-shadow .2s}
+.idiomas button svg{display:block;width:24px;height:16px;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
+.idiomas button:hover{opacity:.9}
+.idiomas button[aria-pressed="true"]{opacity:1;box-shadow:0 0 0 2px #10B981}
 .idiomas select{font:inherit;font-size:.82rem;color:#CFE9DF;background:#0A1F18;border:1px solid rgba(52,211,153,.3);border-radius:7px;padding:4px 6px;cursor:pointer;margin-left:auto}
 .idiomas select.activo{border-color:#10B981;color:#fff}
 .cerrar{background:transparent;border:0;color:#fff;font-size:1.6rem;line-height:1;cursor:pointer;padding:4px 10px;border-radius:8px}
@@ -737,15 +739,15 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
   </div>
   <div class="idiomas" role="group" aria-label="Idioma de la conversación">
     <span>Idioma:</span>
-    <button type="button" data-idioma="es" aria-pressed="true">Español</button>
-    <button type="button" data-idioma="en" aria-pressed="false">English</button>
+    <button type="button" data-idioma="es" aria-pressed="true" title="Español" aria-label="Español"><svg viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="2" fill="#AA151B"/><rect y=".5" width="3" height="1" fill="#F1BF00"/></svg></button>
+    <button type="button" data-idioma="en" aria-pressed="false" title="English" aria-label="English"><svg viewBox="0 0 60 30" aria-hidden="true"><clipPath id="cu"><path d="M0 0v30h60V0z"/></clipPath><clipPath id="ct"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><g clip-path="url(#cu)"><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#ct)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg></button>
+    <button type="button" data-idioma="fr" aria-pressed="false" title="Français" aria-label="Français"><svg viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#002395"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ED2939"/></svg></button>
     <select id="otros-idiomas" aria-label="Otros idiomas">
       <option value="">Otros…</option>
       <option value="ca">Català</option>
       <option value="va">Valencià</option>
       <option value="gl">Galego</option>
       <option value="eu">Euskara</option>
-      <option value="fr">Français</option>
       <option value="pt">Português</option>
       <option value="de">Deutsch</option>
       <option value="it">Italiano</option>
@@ -1192,7 +1194,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
   var otros = document.getElementById('otros-idiomas');
   function marcarIdioma(){
     botonesIdioma.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-idioma') === idioma ? 'true' : 'false'); });
-    var esOtro = idioma !== 'es' && idioma !== 'en';
+    var esOtro = ['es','en','fr'].indexOf(idioma) < 0;
     otros.value = esOtro ? idioma : '';
     otros.classList.toggle('activo', esOtro);
   }
