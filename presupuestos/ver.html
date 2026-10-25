@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Tu presupuesto</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="documento.css">
+<style>
+:root{--fondo:#eef3f1;--texto:#1d2a26;--marca:#1f6f5c}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:var(--fondo);color:var(--texto);font-family:"Helvetica Neue",Arial,sans-serif}
+main{padding:20px 16px 150px}
+.aviso-leer{max-width:820px;margin:0 auto 12px;font-size:14px;color:#4b5e57;display:flex;gap:8px;align-items:center}
+.fin{max-width:820px;margin:14px auto 0;text-align:center;font-size:13px;color:#6b7d77}
+.barra{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #d5e0dc;box-shadow:0 -6px 24px rgba(0,0,0,.08);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.barra-in{max-width:820px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.estado{font-size:14px;color:#4b5e57;flex:1 1 260px}
+.estado b{color:var(--texto)}
+.leido{display:flex;gap:9px;align-items:flex-start;font-size:14px;cursor:pointer;flex:1 1 260px}
+.leido input{width:20px;height:20px;margin:0;accent-color:var(--marca);flex:none}
+.botones{display:flex;gap:10px;flex-wrap:wrap}
+button{font:inherit;font-weight:700;border-radius:10px;padding:12px 18px;cursor:pointer;min-height:46px}
+.b-aceptar{background:var(--marca);color:#fff;border:0}
+.b-aceptar:disabled{background:#c9d6d1;color:#6b7d77;cursor:not-allowed}
+.b-dudas{background:#fff;color:var(--marca);border:1.5px solid var(--marca)}
+.oculto{display:none!important}
+.hecho{position:fixed;inset:0;background:rgba(10,30,24,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:5}
+.hecho-caja{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:26px 22px;text-align:center}
+.hecho-caja .ok{width:56px;height:56px;border-radius:50%;background:var(--marca);color:#fff;font-size:30px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.hecho-caja h2{margin:0 0 8px;font-size:21px}
+.hecho-caja p{margin:6px 0;color:#4b5e57;font-size:14.5px}
+.hecho-caja .demo{background:#fdecef;color:#b3123f;border-radius:8px;padding:8px 10px;font-size:13px;margin-top:14px}
+.dudas{max-width:820px;margin:12px auto 0;background:#fff;border-radius:12px;padding:14px;font-size:14px}
+.dudas textarea{width:100%;min-height:80px;font:inherit;padding:10px;border:1px solid #c9d6d1;border-radius:8px;margin:8px 0}
+.error{max-width:520px;margin:60px auto;background:#fff;border-radius:14px;padding:24px;text-align:center}
+@media print{
+  body{background:#fff}
+  main{padding:0}
+  .barra,.aviso-leer,.fin,.dudas,.hecho{display:none!important}
+  @page{size:A4;margin:14mm}
+}
+</style>
+</head>
+<body>
+<main id="principal">
+  <p class="aviso-leer" id="aviso-leer">📄 Revisa el presupuesto hasta el final. El botón para aceptarlo se activa al terminar de leerlo.</p>
+  <div id="documento"></div>
+  <p class="fin" id="fin">— Fin del presupuesto —</p>
+  <div class="dudas oculto" id="caja-dudas">
+    <b>¿Qué te gustaría preguntar o cambiar?</b>
+    <textarea id="texto-dudas" maxlength="600" placeholder="Por ejemplo: ¿se puede hacer en 2 días? ¿Cuánto costaría con la puerta incluida?"></textarea>
+    <div class="botones"><button type="button" class="b-aceptar" id="enviar-dudas">Enviar</button><button type="button" class="b-dudas" id="cerrar-dudas">Cancelar</button></div>
+  </div>
+</main>
+
+<div class="barra" id="barra">
+  <div class="barra-in">
+    <p class="estado" id="estado">Baja hasta el final para poder aceptarlo ↓</p>
+    <label class="leido oculto" id="leido"><input type="checkbox" id="casilla"> <span>He leído el presupuesto y las condiciones</span></label>
+    <div class="botones">
+      <button type="button" class="b-dudas" id="b-dudas">Tengo dudas</button>
+      <button type="button" class="b-aceptar" id="b-aceptar" disabled>Aceptar presupuesto</button>
+    </div>
+  </div>
+</div>
+
+<div class="hecho oculto" id="hecho" role="dialog" aria-modal="true" aria-labelledby="hecho-t">
+  <div class="hecho-caja">
+    <div class="ok">✓</div>
+    <h2 id="hecho-t">Presupuesto aceptado</h2>
+    <p id="hecho-detalle"></p>
+    <p id="hecho-sig"></p>
+    <p class="demo" id="hecho-demo">Esto es una demostración: no se ha enviado nada. En la versión real, la empresa recibe el aviso al momento en su móvil.</p>
+  </div>
+</div>
+
+<script src="comun.js"></script>
+<script>
+(function(){
+  var P = window.Presu;
+  var params = new URLSearchParams(location.search);
+  var dato = (location.hash.match(/[#&]d=([^&]+)/) || [])[1];
+  var d = dato ? P.decodificar(dato) : null;
+
+  // Sin datos en el enlace: el ejemplo de pladur
+  if(!d){
+    var s = P.DEMO_SOLICITUD, t = {};
+    P.DEMO_TARIFA.forEach(function(x){ t[x.id] = x; });
+    d = { demo:true, n:'P-2026-0147', f:'2026-10-26', v:30, iva:21, emp:P.DEMO_EMPRESA, cli:s.cli, trabajo:s.trabajo, medidas:s.medidas, cond:P.DEMO_COND,
+      partidas: s.partidas.map(function(x){ var b = t[x.id]; return { t:b.t, d:x.d || b.d, c:x.c, u:b.u, p:b.p }; }) };
+  }
+  if(!d.partidas){ document.getElementById('principal').innerHTML = '<div class="error"><h2>No encontramos este presupuesto</h2><p>El enlace está incompleto. Pide a la empresa que te lo envíe de nuevo.</p></div>'; document.getElementById('barra').remove(); return; }
+
+  var marca = (d.emp && /^#[0-9a-f]{6}$/i.test(d.emp.color)) ? d.emp.color : '#1f6f5c';
+  document.documentElement.style.setProperty('--marca', marca);
+  document.title = 'Presupuesto ' + d.n + ' · ' + ((d.emp && d.emp.nombre) || '');
+
+  // Para el PDF: botón pulsable que lleva a esta misma página (sin el modo PDF)
+  var modoPdf = params.has('pdf');
+  var enlace = location.origin + location.pathname + location.hash;
+  document.getElementById('documento').innerHTML = P.documento(d, modoPdf ? { enlace: enlace } : {});
+  if(modoPdf){
+    document.getElementById('barra').remove(); document.getElementById('aviso-leer').remove(); document.getElementById('fin').remove();
+    if(params.has('imprimir')) setTimeout(function(){ window.print(); }, 400);
+    return;
+  }
+
+  var tot = P.totales(d);
+  var estado = document.getElementById('estado'), leido = document.getElementById('leido'), casilla = document.getElementById('casilla'), aceptar = document.getElementById('b-aceptar');
+  var llegado = false;
+  function alFinal(){
+    if(llegado) return;
+    llegado = true;
+    estado.classList.add('oculto');
+    leido.classList.remove('oculto');
+    document.getElementById('aviso-leer').textContent = '✅ Ya puedes aceptarlo cuando quieras.';
+  }
+  // El botón se desbloquea al ver el final (las condiciones)
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) alFinal(); }); }, { threshold: 1 }).observe(document.getElementById('fin'));
+  } else { alFinal(); }
+  casilla.addEventListener('change', function(){ aceptar.disabled = !casilla.checked; });
+
+  function ahora(){
+    var f = new Date();
+    return f.toLocaleDateString('es-ES') + ' a las ' + f.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' });
+  }
+  aceptar.addEventListener('click', function(){
+    if(aceptar.disabled) return;
+    document.getElementById('hecho-detalle').innerHTML = '<b>' + P.esc(d.n) + '</b> · ' + P.euros(tot.total) + ' (IVA incluido)<br>Aceptado el ' + ahora() + '.';
+    document.getElementById('hecho-sig').textContent = (d.emp && d.emp.nombre ? d.emp.nombre : 'La empresa') + ' te escribirá para quedar el día de la visita y el inicio de la obra.';
+    document.getElementById('hecho-demo').classList.toggle('oculto', !d.demo);
+    document.getElementById('hecho').classList.remove('oculto');
+    document.getElementById('barra').classList.add('oculto');
+  });
+
+  // «Tengo dudas»: en la versión real se lo pasa a Eris y al negocio
+  var caja = document.getElementById('caja-dudas');
+  document.getElementById('b-dudas').addEventListener('click', function(){ caja.classList.remove('oculto'); caja.scrollIntoView({ behavior:'smooth', block:'center' }); document.getElementById('texto-dudas').focus({ preventScroll:true }); });
+  document.getElementById('cerrar-dudas').addEventListener('click', function(){ caja.classList.add('oculto'); });
+  document.getElementById('enviar-dudas').addEventListener('click', function(){
+    var t = document.getElementById('texto-dudas').value.trim();
+    if(!t){ document.getElementById('texto-dudas').focus(); return; }
+    caja.innerHTML = '<b>¡Recibido!</b><p>Te contestamos por WhatsApp lo antes posible.' + (d.demo ? ' <i>(Demostración: no se ha enviado nada.)</i>' : '') + '</p>';
+  });
+})();
+</script>
+</body>
+</html>
