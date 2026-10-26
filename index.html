@@ -1204,6 +1204,20 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
     de:{h:'Hallo! Ich bin Eris von Euxenos 👋', p:'Mit wem spreche ich?', i:'Nachricht schreiben...', b:'Lieber sprechen?', l:'Eris anrufen', c:'Verbinde…', e:'Ich höre zu', s:'Eris spricht', f:'Anruf beendet', m:'Um mit Eris zu sprechen, erlauben Sie das Mikrofon. Sonst schreiben Sie hier.', a:'Sie sprechen mit Eris, einer KI-Assistentin. Bitte Mikrofon erlauben.', x:'Auflegen', q:'Wie möchten Sie uns kontaktieren?', o1:'Per Chat', o1d:'Schreiben Sie mir, ich antworte sofort', o2:'Per Anruf', o2d:'Sprechen Sie direkt hier mit mir, ohne eine Nummer zu wählen', n:'Der Anruf ist kostenlos und läuft im Browser: Erlauben Sie einfach das Mikrofon.', nv:'Die Sprachleitung ist gerade nicht verfügbar. Ich helfe Ihnen hier im Chat mit denselben Informationen.', sg:'Der Anruf wurde beendet. Machen wir hier weiter: Wo waren wir stehen geblieben?', pl:'Wenn Sie fortfahren, akzeptieren Sie die <a href="/privacidad.html" target="_blank">Datenschutzerklärung</a>: Wir speichern das Gespräch, um Ihnen zu helfen.', md1:'Stellen wir Ihr individuelles Paket zusammen 🧩', md2:'Wie heißen Sie und was macht Ihr Unternehmen? Ich schlage Ihnen passende Leistungen mit Preisen vor, und Sie können danach beliebig etwas entfernen oder hinzufügen.'},
     it:{h:'Ciao! Sono Eris di Euxenos 👋', p:'Con chi sto parlando?', i:'Scrivi il tuo messaggio...', b:'Preferisci parlare?', l:'Chiama Eris', c:'Connessione…', e:'Ti ascolto', s:'Eris sta parlando', f:'Chiamata terminata', m:'Per parlare con Eris, consenti il microfono. Se non puoi, scrivile qui.', a:'Stai parlando con Eris, un\'assistente con intelligenza artificiale. Consenti il microfono.', x:'Riaggancia', q:'Come preferisci contattarci?', o1:'In chat', o1d:'Scrivimi e ti rispondo subito', o2:'Con una chiamata', o2d:'Parlami a voce da qui, senza comporre nessun numero', n:'La chiamata è gratuita e dal browser: basta consentire il microfono.', nv:'Al momento la linea vocale non è disponibile. Ti rispondo in chat con le stesse informazioni.', sg:'La chiamata si è chiusa. Continuiamo qui: dove eravamo rimasti?', pl:'Continuando accetti l\'<a href="/privacidad.html" target="_blank">informativa sulla privacy</a>: conserviamo la conversazione per assisterti.', md1:'Componiamo il tuo pacchetto su misura 🧩', md2:'Come ti chiami e di cosa si occupa la tua attività? Ti propongo i servizi più adatti, con il prezzo, e poi togli o aggiungi quello che vuoi.'}
   };
+  // Saludo de recepcionista según la hora del visitante (buenos días / buenas tardes / buenas noches)
+  (function(){
+    var h = new Date().getHours();
+    var f = (h >= 6 && h < 14) ? 0 : ((h >= 14 && h < 21) ? 1 : 2);
+    var fe = (h >= 5 && h < 12) ? 0 : ((h >= 12 && h < 18) ? 1 : 2);
+    var S = {
+      es:[['¡Buenos días!','¡Buenas tardes!','¡Buenas noches!'][f] + ' Te atiende Eris, de Euxenos 😊', '¿Con quién hablo?'],
+      ca:[['Bon dia!','Bona tarda!','Bona nit!'][f] + ' T\'atén l\'Eris, d\'Euxenos 😊', 'Amb qui parlo?'],
+      va:[['Bon dia!','Bona vesprada!','Bona nit!'][f] + ' T\'atén Eris, d\'Euxenos 😊', 'Amb qui parle?'],
+      gl:[['Bos días!','Boas tardes!','Boas noites!'][f] + ' Aténdete Eris, de Euxenos 😊', 'Con quen falo?'],
+      en:[['Good morning!','Good afternoon!','Good evening!'][fe] + ' This is Eris from Euxenos 😊', 'Who am I talking to?']
+    };
+    for (var k in S) if (TEXTOS[k]) { TEXTOS[k].h = S[k][0]; TEXTOS[k].p = S[k][1]; }
+  })();
   var modulo = null, appChat = null, idioma = 'es', modoChat = 'normal';
   idioma = euxConsent.get('eris-idioma') || '';
   if(!TEXTOS[idioma]){
