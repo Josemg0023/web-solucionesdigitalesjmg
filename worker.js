@@ -76,6 +76,8 @@ function filtrar(cuerpo) {
           boton: botonWhatsApp(m),
           cuenta: (v.metadata && v.metadata.phone_number_id) || '',
           hora: Number(m.timestamp) || 0,
+          // Audios y notas de voz: n8n descarga el archivo con este id y lo transcribe
+          media: (m.type === 'audio' && m.audio && m.audio.id) || '',
         });
       }
     }
