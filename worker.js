@@ -86,6 +86,25 @@ function filtrar(cuerpo) {
       }
     }
   } else if (cuerpo.object === 'instagram') {
+    // Comentarios en publicaciones (para «comenta INFO»): n8n decide si contestar por privado
+    for (const e of entradas) for (const c of (e.changes || [])) {
+      const v = c.value || {};
+      if (c.field !== 'comments' || !v.id || !v.from || !v.from.id) continue;
+      if (e.id && v.from.id === e.id) continue; // comentarios de la propia cuenta
+      if (v.parent_id) continue; // respuestas a otros comentarios
+      salida.push({
+        canal: 'Instagram',
+        de: v.from.id,
+        nombre: v.from.username || '',
+        id: 'comentario_' + v.id,
+        tipo: 'comentario',
+        texto: String(v.text || '').slice(0, 500),
+        boton: '',
+        cuenta: e.id || '',
+        hora: Math.floor(Date.now() / 1000),
+        comentario: v.id,
+      });
+    }
     for (const e of entradas) for (const ev of (e.messaging || [])) {
       const m = ev.message;
       if (!m || m.is_echo || m.is_deleted || m.is_unsupported) continue; // ecos y avisos fuera
