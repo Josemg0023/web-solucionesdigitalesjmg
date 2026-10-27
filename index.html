@@ -45,6 +45,7 @@ window.euxConsent = (function(){
   };
 })();
 </script>
+<script src="/i18n.js"></script>
 <style>
 :root{
   --fondo:#04120E;        /* esmeralda casi negro */
@@ -643,7 +644,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
       var raton = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
       var calma = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       function v(c){ return c.querySelector('video'); }
-      function boton(c){ var b = c.querySelector('.pv-sonido'), m = v(c).muted; b.textContent = m ? '🔇 Activar sonido' : '🔊 Quitar sonido'; b.setAttribute('aria-pressed', m ? 'false' : 'true'); }
+      function boton(c){ var b = c.querySelector('.pv-sonido'), m = v(c).muted; var T = window.euxI18n ? euxI18n.t : function(s){ return s; }; b.textContent = T(m ? '🔇 Activar sonido' : '🔊 Quitar sonido'); b.setAttribute('aria-pressed', m ? 'false' : 'true'); }
       function play(c){
         cajas.forEach(function(o){ if (o !== c) parar(o); });
         var vid = v(c); if (vid.ended) vid.currentTime = 0;
@@ -1113,18 +1114,23 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
   var NOMBRES = { en:'inglés', fr:'francés' };
   function mostrar(i){
     actual = i;
-    var e = escenasActuales[i], l = e.idioma || 'es', textos = e.v[l];
+    var e = escenasActuales[i], l = e.idioma || 'es', textos = e.v[l] || e.v.es;
+    if(!e.v[l]) l = 'es';
+    var T = function(s){ return window.euxI18n ? euxI18n.t(s, idiomaPagina) : s; };
     var h = e.hora.split(':'), m = (+h[0] * 60 + (+h[1]) + 1) % 1440;
     var hora2 = ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2);
-    etiqueta.textContent = e.sector;
-    contador.textContent = 'Así atiende Eris, con el negocio abierto o cerrado';
+    etiqueta.textContent = T(e.sector);
+    contador.textContent = T('Así atiende Eris, con el negocio abierto o cerrado');
     reloj.textContent = e.hora;
-    pie.innerHTML = e.quien + ' ' + (e.verbo || 'escribe') + (l !== 'es' ? ' en ' + NOMBRES[l] : '') + ' ' + e.via + ' <span class="canal">' + e.canal + '</span>';
+    var c = idiomaPagina !== 'es' && window.euxI18n ? euxI18n.canal(e.canal, idiomaPagina) : null;
+    pie.innerHTML = c
+      ? T(e.quien) + ' ' + c[0] + ' <span class="canal">' + c[1] + '</span>'
+      : e.quien + ' ' + (e.verbo || 'escribe') + (l !== 'es' ? ' en ' + NOMBRES[l] : '') + ' ' + e.via + ' <span class="canal">' + e.canal + '</span>';
     var html = '';
     textos.forEach(function(t, k){
       html += '<div class="msg ' + (k % 2 === 0 ? 'cliente' : 'eris') + '" style="animation-delay:' + (0.3 + k * 0.9) + 's">' + t + '<small>' + (k < 2 ? e.hora : hora2) + '</small></div>';
     });
-    html += '<div class="hecho" style="animation-delay:' + (0.3 + textos.length * 0.9) + 's">' + e.hecho + (l !== 'es' ? ' · le atendió en ' + NOMBRES[l] : '') + '</div>';
+    html += '<div class="hecho" style="animation-delay:' + (0.3 + textos.length * 0.9) + 's">' + (idiomaPagina !== 'es' ? T(e.hecho) : e.hecho + (l !== 'es' ? ' · le atendió en ' + NOMBRES[l] : '')) + '</div>';
     hilo.classList.remove('animar'); void hilo.offsetWidth;
     hilo.innerHTML = html;
     if(!sinMovimiento) hilo.classList.add('animar');
@@ -1155,6 +1161,9 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
     idiomaPagina = nuevoIdioma;
     euxConsent.set('euxenos-idioma-pagina', idiomaPagina);
     document.documentElement.lang = idiomaPagina;
+    // Traducir los textos de la página y poner a Eris en el mismo idioma
+    if(window.euxI18n) euxI18n.poner(idiomaPagina);
+    if(window.erisCambiarIdioma) erisCambiarIdioma(idiomaPagina);
 
     // Actualizar botones
     document.querySelectorAll('[data-idioma-cabecera]').forEach(function(b){
@@ -1181,6 +1190,12 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
   document.querySelectorAll('[data-idioma-cabecera]').forEach(function(b){
     b.setAttribute('aria-pressed', b.getAttribute('data-idioma-cabecera') === idiomaPagina ? 'true' : 'false');
   });
+
+  // Idioma guardado de una visita anterior: traducir cuando toda la página esté cargada
+  if(idiomaPagina !== 'es' && window.euxI18n){
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ euxI18n.poner(idiomaPagina); });
+    else euxI18n.poner(idiomaPagina);
+  }
 
   mostrar(0);
   arrancar(PASO);
@@ -1268,6 +1283,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
     if(modulo) montarChat();
     textosLlamada();
   }
+  window.erisCambiarIdioma = cambiarIdioma;
   botonesIdioma.forEach(function(b){ b.addEventListener('click', function(){ cambiarIdioma(b.getAttribute('data-idioma')); }); });
   otros.addEventListener('change', function(){ if(otros.value) cambiarIdioma(otros.value); });
   marcarIdioma();
@@ -1523,7 +1539,8 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
     var intentos = 0;
     (function esperar(){
       var campo = document.querySelector('#chat-n8n textarea');
-      if(campo){ setTimeout(function(){ enviarAlChat('Quiero más información sobre el Pack ' + nombre + '.'); }, 250); return; }
+      var pide = idioma === 'en' ? 'I’d like more information about the ' + nombre + ' Pack.' : idioma === 'fr' ? 'Je voudrais plus d’informations sur le pack ' + nombre + '.' : 'Quiero más información sobre el Pack ' + nombre + '.';
+      if(campo){ setTimeout(function(){ enviarAlChat(pide); }, 250); return; }
       if(++intentos < 50) setTimeout(esperar, 200);
     })();
   }
@@ -1540,6 +1557,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
   var err = document.getElementById('contratar-error');
   var ir = document.getElementById('contratar-ir');
   var pack = null;
+  function T(s){ return window.euxI18n ? euxI18n.t(s) : s; }
   function periodo(){ var b = document.querySelector('.periodo button[aria-pressed="true"]'); return b && b.getAttribute('data-periodo') === 'mes' ? 'mes' : 'anual'; }
   document.querySelectorAll('[data-contratar]').forEach(function(b){
     b.addEventListener('click', function(){
@@ -1547,10 +1565,16 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
       var tarjeta = b.closest('.pack');
       var cuota = tarjeta.querySelector('.cifra').textContent.replace(/\s+/g,' ').trim();
       var alta = tarjeta.querySelector('.alta-v').textContent.replace(/\s+/g,' ').trim();
-      document.getElementById('contratar-titulo').textContent = 'Contratar el Pack ' + pack.nombre;
-      document.getElementById('contratar-resumen').textContent = 'Alta del servicio (pago único): ' + alta + '. Coste ' + (periodo() === 'mes' ? 'mensual' : 'anual (2 meses gratis)') + ': ' + cuota + '. IVA incluido.';
-      document.getElementById('contratar-nota').textContent = 'Es el precio base del pack; si tu negocio necesita algo más, te lo confirmamos antes de empezar. ' + 'Pagas con tarjeta en Stripe, de forma segura. Sin permanencia.';
-      err.hidden = true; ir.disabled = false; ir.textContent = 'Ir al pago';
+      var L = window.euxI18n ? euxI18n.idioma() : 'es', mes = periodo() === 'mes';
+      var nombreP = T(pack.nombre);
+      document.getElementById('contratar-titulo').textContent =
+        L === 'en' ? 'Sign up for the ' + nombreP + ' Pack' : L === 'fr' ? 'Souscrire au pack ' + nombreP : 'Contratar el Pack ' + pack.nombre;
+      document.getElementById('contratar-resumen').textContent =
+        L === 'en' ? 'Setup fee (one-off): ' + alta + '. ' + (mes ? 'Monthly' : 'Yearly (2 months free)') + ' cost: ' + cuota + '. VAT included.'
+        : L === 'fr' ? 'Mise en service (paiement unique) : ' + alta + '. Coût ' + (mes ? 'mensuel' : 'annuel (2 mois offerts)') + ' : ' + cuota + '. TVA incluse.'
+        : 'Alta del servicio (pago único): ' + alta + '. Coste ' + (mes ? 'mensual' : 'anual (2 meses gratis)') + ': ' + cuota + '. IVA incluido.';
+      document.getElementById('contratar-nota').textContent = T('Es el precio base del pack; si tu negocio necesita algo más, te lo confirmamos antes de empezar. Pagas con tarjeta en Stripe, de forma segura. Sin permanencia.');
+      err.hidden = true; ir.disabled = false; ir.textContent = T('Ir al pago');
       if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
       form.email.focus();
     });
@@ -1559,8 +1583,8 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var email = form.email.value.trim();
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent = 'Escribe un email válido.'; err.hidden = false; form.email.focus(); return; }
-    err.hidden = true; ir.disabled = true; ir.textContent = 'Preparando el pago…';
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent = T('Escribe un email válido.'); err.hidden = false; form.email.focus(); return; }
+    err.hidden = true; ir.disabled = true; ir.textContent = T('Preparando el pago…');
     fetch('https://erisproject.app.n8n.cloud/webhook/euxenos-pago', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ servicios: [pack.id], periodo: periodo(), email: email, nombre: form.nombre.value.trim(), negocio: form.negocio.value.trim(), canarias: form.canarias.checked, origen: 'Web (botón Contratar)' })
@@ -1568,8 +1592,8 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
       if(d && d.ok && d.enlace){ location.href = d.enlace; return; }
       throw new Error((d && d.motivo) || 'error');
     }).catch(function(){
-      err.textContent = 'No hemos podido preparar el pago. Inténtalo de nuevo o escríbenos a soporte@euxenos.com.';
-      err.hidden = false; ir.disabled = false; ir.textContent = 'Ir al pago';
+      err.textContent = T('No hemos podido preparar el pago. Inténtalo de nuevo o escríbenos a soporte@euxenos.com.');
+      err.hidden = false; ir.disabled = false; ir.textContent = T('Ir al pago');
     });
   });
 })();
@@ -1582,13 +1606,14 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
     ev.preventDefault();
     est.className='estado-opinion';
     var d=new FormData(f), nota=d.get('valoracion');
-    if(!nota){est.textContent='Elige una valoración de 1 a 5 estrellas.';est.classList.add('error');return;}
-    var b=f.querySelector('button[type=submit]'); b.disabled=true; est.textContent='Enviando…';
+    var T=function(s){ return window.euxI18n ? euxI18n.t(s) : s; };
+    if(!nota){est.textContent=T('Elige una valoración de 1 a 5 estrellas.');est.classList.add('error');return;}
+    var b=f.querySelector('button[type=submit]'); b.disabled=true; est.textContent=T('Enviando…');
     fetch('https://erisproject.app.n8n.cloud/webhook/eris-opinion',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({valoracion:String(nota),comentario:d.get('comentario')||'',nombre:d.get('nombre')||'',email:d.get('email')||'',web:d.get('web')||'',origen:'web'})
-    }).then(function(r){ if(!r.ok) throw 0; f.reset(); est.textContent='¡Gracias! Hemos recibido tu opinión.'; est.classList.add('ok'); })
-    .catch(function(){ est.textContent='No hemos podido enviarla. Inténtalo de nuevo o escríbenos por correo.'; est.classList.add('error'); })
+    }).then(function(r){ if(!r.ok) throw 0; f.reset(); est.textContent=T('¡Gracias! Hemos recibido tu opinión.'); est.classList.add('ok'); })
+    .catch(function(){ est.textContent=T('No hemos podido enviarla. Inténtalo de nuevo o escríbenos por correo.'); est.classList.add('error'); })
     .then(function(){ b.disabled=false; });
   });
 })();
