@@ -90,7 +90,8 @@ function filtrar(cuerpo) {
       const m = ev.message;
       if (!m || m.is_echo || m.is_deleted || m.is_unsupported) continue; // ecos y avisos fuera
       if (ev.sender && e.id && ev.sender.id === e.id) continue; // lo que envía la propia cuenta
-      const adj = Array.isArray(m.attachments) && m.attachments.length ? m.attachments[0].type : '';
+      const a0 = Array.isArray(m.attachments) && m.attachments.length ? m.attachments[0] : null;
+      const adj = a0 ? a0.type : '';
       salida.push({
         canal: 'Instagram',
         de: ev.sender && ev.sender.id,
@@ -101,6 +102,8 @@ function filtrar(cuerpo) {
         boton: (m.quick_reply && m.quick_reply.payload) || '',
         cuenta: e.id || '',
         hora: Math.floor((Number(ev.timestamp) || 0) / 1000),
+        // Notas de voz de Instagram: n8n descarga el audio desde esta dirección y lo transcribe
+        media_url: (adj === 'audio' && a0.payload && a0.payload.url) || '',
       });
     }
   }
