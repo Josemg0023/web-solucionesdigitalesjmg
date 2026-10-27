@@ -6,6 +6,7 @@
 // Secretos (los pone Tete en Cloudflare → euxenos → Ajustes → Variables y secretos):
 //   META_VERIFY_TOKEN  palabra inventada que también se escribe en Meta al configurar el webhook
 //   META_APP_SECRET    «Clave secreta de la app» de Meta (Configuración de la app → Básica)
+//   META_IG_APP_SECRET «Clave secreta de la aplicación de Instagram» (caso de uso de Instagram → Configuración de la API)
 //   N8N_KEY            clave inventada; la misma que la credencial «Clave filtro Meta» de n8n
 // El resto de la web se sirve igual que siempre.
 
@@ -34,10 +35,13 @@ async function meta(request, env, ctx, url) {
   const crudo = await request.text();
   if (crudo.length > 200000) return new Response('Too Large', { status: 413 });
 
-  // 2) Firma de Meta: sin secreto configurado o con firma mala, no pasa nada a n8n
-  if (!env.META_APP_SECRET || !(await firmaValida(crudo, request.headers.get('x-hub-signature-256'), env.META_APP_SECRET))) {
-    return new Response('Forbidden', { status: 403 });
-  }
+  // 2) Firma de Meta: sin secreto configurado o con firma mala, no pasa nada a n8n.
+  //    WhatsApp firma con META_APP_SECRET; Instagram (inicio de sesión con Instagram) con META_IG_APP_SECRET.
+  const firma = request.headers.get('x-hub-signature-256');
+  const secretos = [env.META_APP_SECRET, env.META_IG_APP_SECRET].filter(Boolean);
+  let valida = false;
+  for (const s of secretos) if (await firmaValida(crudo, firma, s)) { valida = true; break; }
+  if (!valida) return new Response('Forbidden', { status: 403 });
 
   let cuerpo;
   try { cuerpo = JSON.parse(crudo); } catch (e) { return new Response('OK'); }
