@@ -78,6 +78,8 @@ h2 .accion{margin-left:auto;font-size:.82rem;font-family:'Figtree',system-ui,san
 .aviso{margin-top:10px;font-size:.86rem;color:var(--verde-luz)}
 input,textarea,select{width:100%;min-height:46px;font:inherit;font-size:16px;color:var(--claro);background:#06170F;border:1px solid var(--linea);border-radius:12px;padding:10px 12px;color-scheme:dark}
 textarea{min-height:90px;resize:vertical}
+.fila.atrasado{border-color:rgba(245,185,66,.55)}
+.fila .hora-ev{flex:none;min-width:58px;font-family:'Sora',system-ui,sans-serif;font-weight:700;font-size:.9rem;color:var(--verde-luz)}
 /* Listas (catálogo, cierres, pendientes) */
 .fila{display:flex;align-items:center;gap:12px;background:var(--tarjeta);border:1px solid var(--linea);border-radius:14px;padding:12px 14px;margin-bottom:8px}
 .fila .txt{flex:1;min-width:0}
@@ -329,6 +331,19 @@ textarea{min-height:90px;resize:vertical}
 <button class="btn b-ok ancho" type="submit" style="margin-top:12px">Guardar cierre</button>
 </form></div>
 
+<!-- Negocio de la agenda comercial (solo Tete) -->
+<div class="velo abajo" id="veloNegocio"><form class="hoja" id="formNegocio" autocomplete="off">
+<h3><span id="negTitulo">Posible cliente</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<p class="ayuda" id="negInfo" style="margin:0 0 14px"></p>
+<label class="campo"><span>Etapa</span><select name="etapa"><option value="appointmentscheduled">Nuevo</option><option value="qualifiedtobuy">Contactado</option><option value="presentationscheduled">Reunión</option><option value="decisionmakerboughtin">Propuesta</option><option value="closedwon">Ganado</option><option value="closedlost">Perdido</option></select></label>
+<label class="campo"><span>Próximo paso</span><input name="proximo_paso" maxlength="200" placeholder="Ej.: Volver a llamar (11:00)"></label>
+<label class="campo"><span>Fecha del próximo paso</span><input name="fecha" type="date"></label>
+<div class="herr" style="margin:-4px 0 14px"><button type="button" class="btn b-otra" data-mas="1">Mañana</button><button type="button" class="btn b-otra" data-mas="3">+3 días</button><button type="button" class="btn b-otra" data-mas="lunes">Lunes</button></div>
+<label class="campo"><span>Nota (se añade arriba de las notas, con la fecha de hoy)</span><textarea name="nota" maxlength="600" rows="3" placeholder="Ej.: Le he llamado, lo quiere ver con su socio."></textarea></label>
+<p class="error" id="errorNegocio"></p>
+<button class="btn b-ok ancho" type="submit">Guardar en HubSpot</button>
+</form></div>
+
 <!-- Cambiar contraseña -->
 <div class="velo abajo" id="veloAcceso"><form class="hoja" id="formAcceso" autocomplete="on">
 <h3>Cambiar contraseña <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
@@ -346,6 +361,9 @@ textarea{min-height:90px;resize:vertical}
 (function(){
   var API = 'https://erisproject.app.n8n.cloud/webhook/eris-panel';
   var API_APP = 'https://erisproject.app.n8n.cloud/webhook/eris-app';
+  // Agenda comercial del dueño de Euxenos (Tete). El servidor solo responde a su cuenta con sesión válida.
+  var API_DUENO = 'https://erisproject.app.n8n.cloud/webhook/eux-dueno', CUENTA_DUENO = 'talleres-tete';
+  var esDueno = false, comercial = null, cargandoCom = false;
   var q = new URLSearchParams(location.search);
   var enlaceN = q.get('n'), enlaceK = q.get('k'), enlaceReset = (q.get('reset') || '').replace(/[^a-f0-9]/gi, ''), n = null, k = null;
   try { var g = JSON.parse(localStorage.getItem('eris-agenda') || 'null'); if (g) { n = g.n; k = g.k; } } catch (e) {}
@@ -361,6 +379,7 @@ textarea{min-height:90px;resize:vertical}
   if (q.get('v') === 'pedidos') vista = 'pedidos';
   var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Finalizada', caducada:'Sin confirmar · cerrada' };
   var VISTAS = {
+    comercial: { t:'Mi agenda comercial', i:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>' },
     pedidos: { t:'Pedidos', i:'<path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>' },
     hoy: { t:'Hoy', i:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><circle cx="12" cy="15" r="2"/>' },
     calendario: { t:'Calendario', i:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2"/>' },
@@ -403,7 +422,7 @@ textarea{min-height:90px;resize:vertical}
       cargando = false;
       if (!d || !d.ok) { var gb = bioGuardada(); if (gb && gb.k === k) bioBorrar(); olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu usuario o correo y tu contraseña.'); return; }
       var primera = !datos; datos = d; pintar();
-      if (primera) { comprobarAvisos(); cargarInfo(); cargarPedidos(); }
+      if (primera) { comprobarAvisos(); cargarInfo(); cargarPedidos(); cargarComercial(); }
     }).catch(function(){
       cargando = false; if (bR) bR.classList.remove('girando');
       if (!datos) app.innerHTML = '<div class="mensaje"><h1>Sin conexión</h1><p>No se ha podido cargar Euxenos. Comprueba la conexión y vuelve a intentarlo.</p><p><button class="btn b-ok" onclick="location.reload()">Reintentar</button></p></div>';
@@ -427,6 +446,102 @@ textarea{min-height:90px;resize:vertical}
   function cargarInfo(){
     return llamarApp('datos-ver').then(function(r){ if (r && r.ok) { info = r.datos; if (datos) pintar(); } }).catch(function(){});
   }
+  // ---- Agenda comercial (solo Tete) ----
+  function llamarDueno(accion, d){ return post(API_DUENO, Object.assign({ n:n, k:k, accion:accion }, d || {})); }
+  function cargarComercial(){
+    if (!n || !k || n !== CUENTA_DUENO || cargandoCom) return Promise.resolve();
+    cargandoCom = true;
+    return llamarDueno('ver').then(function(r){
+      cargandoCom = false;
+      if (!r || !r.ok) return;
+      var nuevo = !esDueno; esDueno = true; comercial = r;
+      if (nuevo && vista === 'hoy' && q.get('v') !== 'pedidos') vista = 'comercial';
+      if (datos && (nuevo || !algoAbierto())) pintar(); else if (datos) pintarMenu();
+    }).catch(function(){ cargandoCom = false; });
+  }
+  function modoTete(){ return esDueno && vista === 'comercial'; }
+  function pendientesComercial(){ var hoy = hoyISO(); return comercial ? (comercial.negocios || []).filter(function(x){ return x.fecha && x.fecha <= hoy; }).length : 0; }
+  function tarjetaNegocio(x, atrasado){
+    var det = [x.proximo, x.fecha ? corta(x.fecha) : 'sin fecha'].filter(Boolean).join(' · ');
+    return '<button class="fila tocable' + (atrasado ? ' atrasado' : '') + '" data-neg="' + esc(x.id) + '"><span class="txt"><b>' + esc(x.nombre) + '<span class="etq">' + esc(x.etapa) + '</span></b><span>' + esc(det) + '</span></span><span class="precio" aria-hidden="true">›</span></button>';
+  }
+  function vistaComercial(){
+    if (!comercial) return '<p class="vacio">Cargando tu agenda comercial…</p>';
+    var hoy = hoyISO(), d = new Date(), lim = new Date(); lim.setDate(lim.getDate() + 7); lim = iso(lim);
+    var negs = (comercial.negocios || []).slice().sort(function(a, b){ return (a.fecha || '9999').localeCompare(b.fecha || '9999'); });
+    var atr = negs.filter(function(x){ return x.fecha && x.fecha < hoy; });
+    var deHoy = negs.filter(function(x){ return x.fecha === hoy; });
+    var semana = negs.filter(function(x){ return x.fecha > hoy && x.fecha <= lim; });
+    var luego = negs.filter(function(x){ return !x.fecha || x.fecha > lim; });
+    var evs = (comercial.eventos || []).map(function(e){ return { fecha: String(e.inicio).slice(0, 10), hora: e.todoElDia ? 'Todo el día' : String(e.inicio).slice(11, 16), titulo: e.titulo, lugar: e.lugar }; }).filter(function(e){ return e.fecha >= hoy; });
+    var h = '<div class="fecha-grande">' + DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div>';
+    h += '<p class="sub">Tus posibles clientes (HubSpot) y tu agenda de Google.</p>';
+    h += '<div class="resumen"><span class="chip' + (atr.length ? ' alerta' : '') + '"><b>' + atr.length + '</b> atrasados</span><span class="chip"><b>' + deHoy.length + '</b> para hoy</span><span class="chip"><b>' + semana.length + '</b> esta semana</span><span class="chip"><b>' + negs.length + '</b> abiertos</span></div>';
+    if (comercial.errorHubspot) h += '<div class="franja cerrado"><b>HubSpot no ha respondido.</b> Lo de abajo puede estar incompleto. Prueba a actualizar en un momento.</div>';
+    h += '<div class="franja info">Pulsa <b>Eris</b> (abajo): aquí es <b>la misma Eris de tu WhatsApp</b>, con la misma memoria. Lo que cambies se ve en todas partes.</div>';
+    if (atr.length) h += '<h2>Atrasado <span class="n">' + atr.length + '</span></h2>' + atr.map(function(x){ return tarjetaNegocio(x, true); }).join('');
+    h += '<h2>Para hoy <span class="n">' + deHoy.length + '</span></h2>' + (deHoy.length ? deHoy.map(function(x){ return tarjetaNegocio(x); }).join('') : '<p class="vacio">Nada para hoy.</p>');
+    if (semana.length) h += '<h2>Próximos 7 días <span class="n">' + semana.length + '</span></h2>' + semana.map(function(x){ return tarjetaNegocio(x); }).join('');
+    if (luego.length) h += '<h2>Más adelante <span class="n">' + luego.length + '</span></h2>' + luego.map(function(x){ return tarjetaNegocio(x); }).join('');
+    if (!negs.length) h += '<p class="vacio">No hay posibles clientes abiertos. Los que recojan las Eris (web, WhatsApp, Instagram y teléfono) aparecerán aquí.</p>';
+    h += '<h2>Tu agenda <span class="n">' + evs.length + '</span></h2>';
+    if (!evs.length) h += '<p class="vacio">Sin reuniones ni recordatorios en las próximas 3 semanas. Pídeselo a Eris: «recuérdame mañana a las 10 llamar a…».</p>';
+    var diaAnt = '';
+    evs.forEach(function(e){
+      if (e.fecha !== diaAnt) { var nd = nombreDia(e.fecha); h += '<p class="sub" style="margin:12px 2px 6px">' + esc(nd.charAt(0).toUpperCase() + nd.slice(1)) + '</p>'; diaAnt = e.fecha; }
+      h += '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span></div>';
+    });
+    var av = comercial.avisos || [];
+    h += '<h2>Lo que saben todas las Eris <span class="n">' + av.length + '</span></h2>';
+    h += av.length ? av.map(function(a){
+      var det = (a.para_clientes ? 'Todas las Eris (también con clientes)' : 'Solo tu Eris') + (a.caduca ? ' · hasta el ' + corta(a.caduca) : '') + (a.caducado ? ' · ya no se usa' : '');
+      return '<div class="fila' + (a.caducado ? ' apagada' : '') + '"><span class="txt"><b>' + esc(a.texto) + '</b><span>' + esc(det) + '</span></span><button class="quitar" data-quitar-aviso="' + esc(a.id) + '" aria-label="Borrar aviso">✕</button></div>';
+    }).join('') : '<p class="vacio">Aún no hay avisos. Lo que guardes aquí (o le digas a Eris «que todas las Eris sepan que…») lo usarán al momento la Eris de la web, la de WhatsApp e Instagram y la tuya.</p>';
+    h += '<form id="formAviso" class="caja" style="margin-top:10px"><p>Nuevo aviso para las Eris. Ej.: «Esta semana el equipo no hace llamadas hasta el lunes 02/11».</p>'
+      + '<textarea name="texto" maxlength="400" rows="3" placeholder="Escribe el aviso…" aria-label="Aviso para las Eris"></textarea>'
+      + '<label class="interruptor" style="margin-top:10px"><input type="checkbox" name="clientes" checked> <span>Que lo usen también las Eris que atienden a clientes</span></label>'
+      + '<label class="campo"><span>Válido hasta (opcional)</span><input type="date" name="caduca"></label>'
+      + '<p class="ayuda" style="margin:0 0 10px">Precios y packs no van aquí: se cambian a la vez en la web, en Stripe y en todas las Eris.</p>'
+      + '<button class="btn b-ok ancho" type="submit">Guardar para todas las Eris</button></form>';
+    h += '<p class="ayuda">Toca un posible cliente para cambiar la etapa, el próximo paso o la fecha. Se guarda en HubSpot y tu Eris lo sabe al momento.</p>';
+    return h;
+  }
+  var formNeg = document.getElementById('formNegocio'), negSel = null;
+  function abrirNegocio(id){
+    var x = ((comercial && comercial.negocios) || []).filter(function(y){ return y.id === id; })[0];
+    if (!x) return;
+    negSel = x; formNeg.reset();
+    document.getElementById('negTitulo').textContent = x.nombre;
+    var PACKS = { esencial:'Pack Esencial', basico:'Pack Básico', completo:'Pack Completo', plus:'Pack Plus', a_medida:'A medida' };
+    var linea = [PACKS[x.pack] || x.pack, x.sector].filter(Boolean).join(' · ');
+    document.getElementById('negInfo').innerHTML = (linea ? '<b>' + esc(linea) + '</b><br>' : '') + esc(x.notas || x.necesidad || 'Sin notas todavía.').replace(/\n/g, '<br>');
+    if (x.codigo && formNeg.etapa.querySelector('option[value="' + x.codigo + '"]')) formNeg.etapa.value = x.codigo;
+    formNeg.proximo_paso.value = x.proximo || ''; formNeg.fecha.value = x.fecha || '';
+    document.getElementById('errorNegocio').textContent = '';
+    abrirHoja('veloNegocio');
+  }
+  formNeg.addEventListener('click', function(e){
+    var b = e.target.closest('[data-mas]'); if (!b) return;
+    var m = b.getAttribute('data-mas'), f = new Date(); f.setHours(12, 0, 0, 0);
+    if (m === 'lunes') { f.setDate(f.getDate() + ((8 - f.getDay()) % 7 || 7)); }
+    else { var dias = +m; while (dias > 0) { f.setDate(f.getDate() + 1); if (m === '1' || (f.getDay() !== 0 && f.getDay() !== 6)) dias--; } }
+    formNeg.fecha.value = iso(f);
+  });
+  formNeg.addEventListener('submit', function(e){
+    e.preventDefault(); if (!negSel) return;
+    var c = { id: negSel.id };
+    if (formNeg.etapa.value && formNeg.etapa.value !== negSel.codigo) c.etapa = formNeg.etapa.value;
+    if (formNeg.proximo_paso.value.trim() && formNeg.proximo_paso.value.trim() !== (negSel.proximo || '')) c.proximo_paso = formNeg.proximo_paso.value.trim();
+    if (formNeg.fecha.value && formNeg.fecha.value !== negSel.fecha) c.fecha = formNeg.fecha.value;
+    if (formNeg.nota.value.trim()) c.nota = formNeg.nota.value.trim();
+    if (Object.keys(c).length < 2) { document.getElementById('errorNegocio').textContent = 'No has cambiado nada.'; return; }
+    var boton = formNeg.querySelector('button[type=submit]'); boton.disabled = true;
+    llamarDueno('actualizar', c).then(function(r){
+      boton.disabled = false;
+      if (!r || !r.ok) { document.getElementById('errorNegocio').textContent = (r && r.motivo) || 'No se ha podido guardar.'; return; }
+      cerrarHojas(); toast('Guardado en HubSpot'); cargarComercial();
+    }).catch(function(){ boton.disabled = false; document.getElementById('errorNegocio').textContent = 'Sin conexión, inténtalo de nuevo.'; });
+  });
   function aplicarInfo(r, txt){
     if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido guardar'); return false; }
     info = r.datos; pintar(); if (txt) toast(txt); return true;
@@ -670,33 +785,41 @@ textarea{min-height:90px;resize:vertical}
 
   function pintarMenu(){
     var pc = porConfirmar().length, pp = pendientesAbiertos().length;
-    var orden = (pedidosOn() ? ['hoy','pedidos'] : ['hoy']).concat(['calendario','citas','catalogo','horario','pendientes','|','ajustes','cuenta']);
+    var orden = (esDueno ? ['comercial','|'] : []).concat(pedidosOn() ? ['hoy','pedidos'] : ['hoy']).concat(['calendario','citas','catalogo','horario','pendientes','|','ajustes','cuenta']);
     document.getElementById('menuNav').innerHTML = orden.map(function(v){
       if (v === '|') return '<hr>';
       var pn = (pedidos || []).filter(function(p){ return p.estado === 'nuevo'; }).length;
-      var cuenta = v === 'citas' && pc ? pc : (v === 'pendientes' && pp ? pp : (v === 'pedidos' && pn ? pn : 0));
+      var pcom = v === 'comercial' ? pendientesComercial() : 0;
+      var cuenta = pcom || (v === 'citas' && pc ? pc : (v === 'pendientes' && pp ? pp : (v === 'pedidos' && pn ? pn : 0)));
       return '<button data-ir="' + v + '"' + (vista === v ? ' aria-current="page"' : '') + '>' + svg(VISTAS[v].i) + VISTAS[v].t + (cuenta ? '<span class="cuenta-n">' + cuenta + '</span>' : '') + '</button>';
     }).join('');
     document.getElementById('menuNegocio').textContent = (datos && datos.negocio.nombre) || '';
   }
   function pintar(){
     if (!datos) return;
-    var cuerpo = { pedidos: vistaPedidos, hoy: vistaHoy, calendario: vistaCalendario, citas: vistaCitas, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
+    if (vista === 'comercial' && !esDueno) vista = 'hoy';
+    var cuerpo = { comercial: vistaComercial, pedidos: vistaPedidos, hoy: vistaHoy, calendario: vistaCalendario, citas: vistaCitas, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
     if (vista === 'pedidos' && !pedidosOn() && pedidos) vista = 'hoy';
     var y = window.scrollY, hayAviso = porConfirmar().length > 0 || (pedidos || []).some(function(p){ return p.estado === 'nuevo'; });
     app.innerHTML = '<header><div class="cab">'
       + '<button class="icono-btn" id="abrirMenu" aria-label="Abrir el menú">' + svg('<path d="M4 7h16M4 12h16M4 17h16"/>') + (hayAviso && vista !== 'hoy' && vista !== 'citas' ? '<span class="bolita"></span>' : '') + '</button>'
-      + '<div class="titulo"><small>' + esc(datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
+      + '<div class="titulo"><small>' + esc(vista === 'comercial' ? 'Euxenos · solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
       + '<button class="icono-btn" id="recargar" aria-label="Actualizar">' + svg('<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>') + '</button>'
       + '</div></header><main>' + cuerpo() + '</main>';
-    document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); });
+    document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); });
     document.getElementById('abrirMenu').addEventListener('click', abrirMenu);
     document.getElementById('nueva').classList.toggle('oculto', ['hoy','calendario','citas'].indexOf(vista) < 0);
     document.getElementById('lanzador').classList.remove('oculto');
     window.scrollTo(0, pintar.vista === vista ? y : 0); pintar.vista = vista;
     pintarMenu(); pintarAvisos(); pintarInstalar(); rellenarServicios();
   }
-  function ir(v){ if (!VISTAS[v]) return; vista = v; cerrarMenu(); pintar(); }
+  function ir(v){
+    if (!VISTAS[v]) return;
+    var antes = modoTete(); vista = v;
+    if (antes !== modoTete() && panelEris.classList.contains('abierto')) cerrarEris();
+    cerrarMenu(); pintar();
+    if (v === 'comercial') cargarComercial();
+  }
 
   // ---- Menú ----
   var veloMenu = document.getElementById('veloMenu');
@@ -733,6 +856,9 @@ textarea{min-height:90px;resize:vertical}
       hechos.reduce(function(pr, x){ return pr.then(function(){ return llamarApp('pendiente-borrar', { id: x.id }).then(function(r){ if (r && r.ok) info = r.datos; }); }); }, Promise.resolve()).then(function(){ pintar(); toast('Hechos borrados'); }).catch(sinConexion); return; }
     t = e.target.closest('[data-cuenta]');
     if (t) { if (t.getAttribute('data-cuenta') === 'acceso') abrirAcceso(); else if (t.getAttribute('data-cuenta') === 'bio') { if (bioGuardada()) { bioBorrar(); toast('Face ID o huella quitado de este móvil'); pintar(); } else activarBio((datos && datos.negocio && datos.negocio.usuario) || '', function(ok){ if (ok) toast('Listo: la próxima vez entra con Face ID o huella'); pintar(); }); } else { quitarAvisos(true); olvidar(); pantallaLogin('Has cerrado la sesión.'); } return; }
+    t = e.target.closest('[data-neg]'); if (t) { abrirNegocio(t.getAttribute('data-neg')); return; }
+    t = e.target.closest('[data-quitar-aviso]');
+    if (t) { if (!confirmar('¿Borrar este aviso? Las Eris dejarán de usarlo.')) return; t.disabled = true; llamarDueno('aviso-borrar', { id: t.getAttribute('data-quitar-aviso') }).then(function(r){ if (r && r.ok) toast('Aviso borrado'); else toast((r && r.motivo) || 'No se ha podido borrar'); cargarComercial(); }).catch(sinConexion); return; }
     var b = e.target.closest('button[data-a]'); if (!b) return;
     accionCita(b.getAttribute('data-a'), b.getAttribute('data-r'));
   });
@@ -748,6 +874,13 @@ textarea{min-height:90px;resize:vertical}
       llamarApp('pendiente-crear', { texto: texto }).then(function(r){ listo(); aplicarInfo(r, 'Apuntado'); var i = document.querySelector('#formPendiente input'); if (i) i.focus(); }).catch(function(){ listo(); sinConexion(); });
     } else if (f.id === 'formInfo') {
       llamarApp('info-guardar', { texto: f.texto.value }).then(function(r){ listo(); aplicarInfo(r, 'Guardado: Eris ya lo sabe'); }).catch(function(){ listo(); sinConexion(); });
+    } else if (f.id === 'formAviso') {
+      var aviso = f.texto.value.trim(); if (!aviso) { listo(); toast('Escribe el aviso'); return; }
+      llamarDueno('aviso-crear', { texto: aviso, para_clientes: f.clientes.checked, caduca: f.caduca.value }).then(function(r){
+        listo();
+        if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido guardar'); return; }
+        toast(f.clientes.checked ? 'Guardado: todas las Eris ya lo saben' : 'Guardado: tu Eris ya lo sabe'); cargarComercial();
+      }).catch(function(){ listo(); sinConexion(); });
     } else listo();
   });
   function sinConexion(){ toast('Sin conexión, inténtalo de nuevo'); pintar(); }
@@ -1045,16 +1178,18 @@ textarea{min-height:90px;resize:vertical}
   var caja = document.getElementById('erisMensajes'), formEris = document.getElementById('erisForm'), textoEris = document.getElementById('erisTexto');
   var conversacion = [], pensando = false;
   var SUGERENCIAS = ['¿Qué tengo hoy?', 'Apunta una cita', 'Mueve una cita', 'Añade un servicio', 'Cerramos por vacaciones', 'Apunta que falta…'];
-  function claveConv(){ return 'euxenos-eris-' + (n || ''); }
+  var SUG_TETE = ['¿Qué tengo pendiente?', 'He llamado a…', 'Recuérdame mañana…', 'Que todas las Eris sepan que…', '¿Qué me ha llegado al correo?'];
+  function claveConv(){ return modoTete() ? 'euxenos-eris-tete' : 'euxenos-eris-' + (n || ''); }
+  function conNegrita(t){ return esc(t).replace(/\*([^*\n]+)\*/g, '<b>$1</b>'); }
   function guardarConv(){ try { sessionStorage.setItem(claveConv(), JSON.stringify(conversacion.slice(-30))); } catch (e) {} }
   function leerConv(){ try { conversacion = JSON.parse(sessionStorage.getItem(claveConv()) || '[]') || []; } catch (e) { conversacion = []; } }
   function pintarConv(){
-    var saludo = '¡Hola! Soy Eris 👋 ¿En qué te ayudo?';
-    caja.innerHTML = '<div class="m eris">' + esc(saludo) + '</div>' + conversacion.map(function(m){ return '<div class="m ' + (m.rol === 'eris' ? 'eris' : 'yo') + (m.error ? ' error' : '') + '">' + (m.voz ? '<span class="voz">🎤 por voz</span>' : '') + esc(m.texto) + '</div>'; }).join('') + (pensando ? '<div class="escribiendo" aria-label="Eris está escribiendo"><i></i><i></i><i></i></div>' : '');
-    document.getElementById('erisSug').innerHTML = conversacion.length ? '' : SUGERENCIAS.map(function(s){ return '<button type="button">' + esc(s) + '</button>'; }).join('');
+    var saludo = modoTete() ? 'Hola, Tete. Soy tu Eris, la misma de WhatsApp: sé lo que hemos hablado allí. ¿Qué hago?' : '¡Hola! Soy Eris 👋 ¿En qué te ayudo?';
+    caja.innerHTML = '<div class="m eris">' + esc(saludo) + '</div>' + conversacion.map(function(m){ return '<div class="m ' + (m.rol === 'eris' ? 'eris' : 'yo') + (m.error ? ' error' : '') + '">' + (m.voz ? '<span class="voz">🎤 por voz</span>' : '') + (m.rol === 'eris' ? conNegrita(m.texto) : esc(m.texto)) + '</div>'; }).join('') + (pensando ? '<div class="escribiendo" aria-label="Eris está escribiendo"><i></i><i></i><i></i></div>' : '');
+    document.getElementById('erisSug').innerHTML = conversacion.length ? '' : (modoTete() ? SUG_TETE : SUGERENCIAS).map(function(s){ return '<button type="button">' + esc(s) + '</button>'; }).join('');
     caja.scrollTop = caja.scrollHeight;
   }
-  function abrirEris(){ leerConv(); pintarConv(); panelEris.classList.add('abierto'); lanzador.setAttribute('aria-expanded', 'true'); if (window.innerWidth <= 520) lanzador.classList.add('oculto'); setTimeout(function(){ textoEris.focus(); }, 60); }
+  function abrirEris(){ document.querySelector('#panelEris .panel-cab small').textContent = modoTete() ? 'Tu Eris · la misma que en WhatsApp' : 'Tu asistente · gestiona tu negocio hablando'; leerConv(); pintarConv(); panelEris.classList.add('abierto'); lanzador.setAttribute('aria-expanded', 'true'); if (window.innerWidth <= 520) lanzador.classList.add('oculto'); setTimeout(function(){ textoEris.focus(); }, 60); }
   function cerrarEris(){ if (typeof pararGrabacion === 'function' && grabador && grabador.state === 'recording') { cancelada = true; pararGrabacion(); } if (typeof callar === 'function') callar(); panelEris.classList.remove('abierto'); lanzador.setAttribute('aria-expanded', 'false'); if (datos) lanzador.classList.remove('oculto'); }
   lanzador.addEventListener('click', function(){ panelEris.classList.contains('abierto') ? cerrarEris() : abrirEris(); });
   document.getElementById('erisCerrar').addEventListener('click', cerrarEris);
@@ -1062,7 +1197,7 @@ textarea{min-height:90px;resize:vertical}
   document.getElementById('erisSug').addEventListener('click', function(e){
     var b = e.target.closest('button'); if (!b) return;
     var s = b.textContent;
-    if (/…$|una cita$|un servicio$|vacaciones$/.test(s)) { textoEris.value = { 'Apunta una cita':'Apunta una cita a ', 'Mueve una cita':'Mueve la cita de ', 'Añade un servicio':'Añade al catálogo el servicio ', 'Cerramos por vacaciones':'Cerramos por vacaciones del ', 'Apunta que falta…':'Apunta que falta ' }[s] || s; textoEris.focus(); }
+    if (/…$|una cita$|un servicio$|vacaciones$/.test(s)) { textoEris.value = { 'He llamado a…':'He llamado a ', 'Recuérdame mañana…':'Recuérdame mañana a las ', 'Que todas las Eris sepan que…':'Que todas las Eris sepan que ', 'Apunta una cita':'Apunta una cita a ', 'Mueve una cita':'Mueve la cita de ', 'Añade un servicio':'Añade al catálogo el servicio ', 'Cerramos por vacaciones':'Cerramos por vacaciones del ', 'Apunta que falta…':'Apunta que falta ' }[s] || s; textoEris.focus(); }
     else enviarEris(s);
   });
   textoEris.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 520) { e.preventDefault(); formEris.requestSubmit(); } });
@@ -1074,15 +1209,17 @@ textarea{min-height:90px;resize:vertical}
     var mio = audio ? { rol:'yo', texto:'…', voz:true } : { rol:'yo', texto: texto };
     conversacion.push(mio); textoEris.value = ''; textoEris.style.height = '';
     pensando = true; botonesEris(true); pintarConv(); guardarConv();
-    var cuerpo = { n:n, k:k, accion:'chat', mensaje: texto, historial: historial };
+    // En «Mi agenda comercial» habla la Eris de Tete (la misma de WhatsApp, que ya guarda su propia memoria)
+    var tete = modoTete();
+    var cuerpo = tete ? { n:n, k:k, accion:'chat', mensaje: texto } : { n:n, k:k, accion:'chat', mensaje: texto, historial: historial };
     if (audio) { cuerpo.audio = audio.datos; cuerpo.audioTipo = audio.tipo; cuerpo.voz = altavozOn(); }
-    post(API_APP, cuerpo).then(function(r){
+    post(tete ? API_DUENO : API_APP, cuerpo).then(function(r){
       pensando = false; botonesEris(false);
       if (audio) mio.texto = (r && r.transcripcion) ? r.transcripcion : '(mensaje de voz)';
       if (r && r.ok && r.respuesta) { conversacion.push({ rol:'eris', texto: String(r.respuesta) }); if (audio && altavozOn()) hablar(String(r.respuesta), r.audio); }
       else conversacion.push({ rol:'eris', texto: (r && r.motivo) || 'No he podido responder. Inténtalo de nuevo.', error: true });
       guardarConv(); pintarConv();
-      pausa = 0; cargar(); cargarInfo(); cargarPedidos();
+      pausa = 0; if (tete) cargarComercial(); else { cargar(); cargarInfo(); cargarPedidos(); }
     }).catch(function(){
       pensando = false; botonesEris(false);
       if (audio) mio.texto = '(mensaje de voz)';
@@ -1465,8 +1602,8 @@ textarea{min-height:90px;resize:vertical}
     }, { passive: true });
   });
   function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !algoAbierto() && !!datos; }
-  document.addEventListener('visibilitychange', function(){ if (!document.hidden) ultimoToque = Date.now(); if (puedeRefrescar()) { cargar(); cargarInfo(); cargarPedidos(); } });
-  setInterval(function(){ if (puedeRefrescar() && activa()) cargar(); }, 5 * 60000);
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) ultimoToque = Date.now(); if (puedeRefrescar()) { cargar(); cargarInfo(); cargarPedidos(); if (vista === 'comercial') cargarComercial(); } });
+  setInterval(function(){ if (puedeRefrescar() && activa()) { cargar(); if (vista === 'comercial') cargarComercial(); } }, 5 * 60000);
   setInterval(function(){ if (!document.hidden && datos && pedidosOn() && activa()) cargarPedidos(); }, 2 * 60000);
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { cerrarHojas(); cerrarMenu(); } });
   if (enlaceReset) pantallaNuevaClave(enlaceReset);
