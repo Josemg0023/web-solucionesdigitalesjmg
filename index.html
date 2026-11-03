@@ -258,6 +258,8 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 .vista-eleccion.activa{display:flex}
 .panel.eligiendo .barra-llamada,.panel.solo-chat .barra-llamada{display:none}
 .barra-llamada{display:none !important}
+.privacidad-chat{margin:0;padding:6px 14px;background:#0A1F18;border-bottom:1px solid rgba(52,211,153,.25);color:#9CC3B5;font:400 .74rem/1.35 'Figtree',system-ui,sans-serif}
+.privacidad-chat a{color:#7CF0C4}
 /* Notas de voz dentro del chat */
 #chat-eris .boton-micro{flex:none;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin:0 2px;border:0;border-radius:50%;cursor:pointer;background:transparent;color:#0B7A57;transition:background-color .15s,color .15s}
 #chat-eris .boton-micro:hover{background:#EAF7F1}
@@ -512,7 +514,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
         <div class="acciones">
           <a class="boton boton-luz" href="tel:+34919933642">📞 Llama y pruébala: 919 93 36 42</a>
           <a class="boton boton-borde boton-wa" href="https://wa.me/34919933642?text=Hola%20Eris%2C%20quiero%20informaci%C3%B3n%20sobre%20Euxenos" target="_blank" rel="noopener"><svg class="ico-wa" viewBox="0 0 24 24" width="20" height="20" fill="#25D366" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>Escríbele por WhatsApp</a>
-          <button class="boton boton-borde" type="button" data-abrir-eris>Escríbele o háblale desde aquí</button>
+          <button class="boton boton-borde" type="button" data-abrir-eris>Escríbele o mándale un audio</button>
         </div>
         <p class="nota">Así atendería el teléfono de tu negocio. Si te interesa, te deja tus datos y el equipo te llama.</p>
       </div>
@@ -612,10 +614,10 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
           <button class="boton boton-borde" type="button" data-probar="chat">Escribir a Eris</button>
         </article>
         <article class="prueba">
-          <span class="et">Por voz, desde aquí</span>
-          <h3>Háblale</h3>
-          <p>Una llamada desde el navegador, sin marcar ningún número. Solo tienes que permitir el micrófono.</p>
-          <button class="boton boton-borde" type="button" data-probar="voz">Hablar con Eris</button>
+          <span class="et">Nota de voz, desde aquí</span>
+          <h3>Mándale un audio</h3>
+          <p>Toca el micrófono del chat, habla y Eris te contesta con su voz y por escrito.</p>
+          <button class="boton boton-borde" type="button" data-probar="voz">Mandar un audio</button>
         </article>
       </div>
       <p class="prueba-pie">¿Prefieres hablar con una persona? <button class="boton boton-borde" type="button" data-te-llamamos>Que me llame el equipo</button></p>
@@ -893,6 +895,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
       <option value="it">Italiano</option>
     </select>
   </div>
+  <p class="privacidad-chat" id="privacidad-chat">Al continuar aceptas la <a href="/privacidad.html" target="_blank">política de privacidad</a>: guardamos la conversación para atenderte.</p>
   <div class="barra-llamada">
     <span id="texto-barra">¿Prefieres hablar?</span>
     <button type="button" id="boton-llamar-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span id="texto-boton-llamar">Llamar a Eris</span></button>
@@ -1402,9 +1405,9 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
   var URL_VOZ_NOTA = 'https://erisproject.app.n8n.cloud/webhook/eris-web-voz';
   var MAX_NOTA = 45;
   var TM = {
-    es:{m:'Mandar una nota de voz', g:'Grabando… toca el micro para enviar', c:'Cancelar', e:'Eris está escuchando tu nota…', n:'Nota de voz', p:'Para mandar notas de voz, permite el micrófono. Si no puedes, escríbele aquí.', f:'No se ha podido enviar la nota de voz. Prueba otra vez o escríbele por aquí.'},
-    en:{m:'Send a voice note', g:'Recording… tap the mic to send', c:'Cancel', e:'Eris is listening to your note…', n:'Voice note', p:'To send voice notes, please allow the microphone. If you can\'t, just type here.', f:'The voice note couldn\'t be sent. Try again or type here.'},
-    fr:{m:'Envoyer un message vocal', g:'Enregistrement… touchez le micro pour envoyer', c:'Annuler', e:'Eris écoute votre message…', n:'Message vocal', p:'Pour envoyer des messages vocaux, autorisez le micro. Sinon, écrivez ici.', f:'Le message vocal n\'a pas pu être envoyé. Réessayez ou écrivez ici.'}
+    es:{h:'Toca el micrófono 🎤, habla y vuelve a tocarlo. Eris te contesta con su voz.', m:'Mandar una nota de voz', g:'Grabando… toca el micro para enviar', c:'Cancelar', e:'Eris está escuchando tu nota…', n:'Nota de voz', p:'Para mandar notas de voz, permite el micrófono. Si no puedes, escríbele aquí.', f:'No se ha podido enviar la nota de voz. Prueba otra vez o escríbele por aquí.'},
+    en:{h:'Tap the mic 🎤, speak and tap it again. Eris will answer with her voice.', m:'Send a voice note', g:'Recording… tap the mic to send', c:'Cancel', e:'Eris is listening to your note…', n:'Voice note', p:'To send voice notes, please allow the microphone. If you can\'t, just type here.', f:'The voice note couldn\'t be sent. Try again or type here.'},
+    fr:{h:'Touchez le micro 🎤, parlez et touchez-le à nouveau. Eris vous répond avec sa voix.', m:'Envoyer un message vocal', g:'Enregistrement… touchez le micro pour envoyer', c:'Annuler', e:'Eris écoute votre message…', n:'Message vocal', p:'Pour envoyer des messages vocaux, autorisez le micro. Sinon, écrivez ici.', f:'Le message vocal n\'a pas pu être envoyé. Réessayez ou écrivez ici.'}
   };
   function tm(k){ return (TM[idioma] || TM.es)[k]; }
   var puedeGrabar = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder && (window.AudioContext || window.webkitAudioContext));
@@ -1577,6 +1580,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
     document.getElementById('eleccion-voz-d').textContent = t.o2d;
     document.getElementById('eleccion-nota').textContent = t.n;
     document.getElementById('eleccion-legal').innerHTML = t.pl;
+    document.getElementById('privacidad-chat').innerHTML = t.pl;
   }
   textosLlamada();
   function terminarVista(texto){
@@ -1649,7 +1653,8 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
   }
   var eleccion = document.getElementById('vista-eleccion');
   var yaEligio = false;
-  function mostrarEleccion(){ panel.classList.add('eligiendo'); eleccion.classList.add('activa'); document.getElementById('elegir-chat').focus(); }
+  // 03/11: sin llamada en directo. Ya no se elige entre chat y llamada: se entra directo al chat (texto o notas de voz).
+  function mostrarEleccion(){ yaEligio = true; panel.classList.remove('eligiendo'); eleccion.classList.remove('activa'); setTimeout(function(){ var c = document.querySelector('#chat-n8n textarea'); if(c) c.focus(); }, 400); }
   document.getElementById('elegir-chat').addEventListener('click', function(){
     yaEligio = true;
     eleccion.classList.remove('activa');
@@ -1790,8 +1795,16 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
   function probar(ev){
     var modo = ev.currentTarget.getAttribute('data-probar');
     abrir();
-    if(eleccion.classList.contains('activa')) document.getElementById(modo === 'voz' ? 'elegir-voz' : 'elegir-chat').click();
-    else if(modo === 'voz' && !llamando) document.getElementById('boton-llamar-panel').click();
+    if(eleccion.classList.contains('activa')) document.getElementById('elegir-chat').click();
+    // «Mandar un audio»: se abre el chat y se señala el micrófono.
+    if(modo === 'voz'){
+      var intentos = 0;
+      (function esperar(){
+        var b = document.querySelector('#chat-n8n .boton-micro');
+        if(b){ avisoMicro(tm('h'), false); b.focus(); setTimeout(function(){ if(!grab) avisoMicro(''); }, 6000); return; }
+        if(++intentos < 50) setTimeout(esperar, 200);
+      })();
+    }
   }
   document.querySelectorAll('[data-probar]').forEach(function(b){ b.addEventListener('click', probar); });
   // «Que me llame el equipo»: Eris pide el teléfono y la hora y lo guarda como posible cliente.
