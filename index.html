@@ -257,6 +257,18 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 .vista-eleccion{position:absolute;inset:0;z-index:6;display:none;flex-direction:column;justify-content:center;gap:14px;padding:26px 22px;background:radial-gradient(circle at 50% 20%,#0B3A2B,#04120E 72%);color:#EAF7F1}
 .vista-eleccion.activa{display:flex}
 .panel.eligiendo .barra-llamada,.panel.solo-chat .barra-llamada{display:none}
+.barra-llamada{display:none !important}
+/* Notas de voz dentro del chat */
+#chat-eris .boton-micro{flex:none;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin:0 2px;border:0;border-radius:50%;cursor:pointer;background:transparent;color:#0B7A57;transition:background-color .15s,color .15s}
+#chat-eris .boton-micro:hover{background:#EAF7F1}
+#chat-eris .boton-micro svg{width:22px;height:22px}
+#chat-eris .boton-micro.grabando{background:#D1104A;color:#fff;animation:latir 1s ease-in-out infinite}
+#chat-eris .boton-micro:disabled{opacity:.4;cursor:wait}
+#chat-eris .aviso-micro{position:absolute;left:12px;right:12px;bottom:74px;z-index:7;display:none;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:#0A1F18;color:#EAF7F1;font:500 .88rem/1.35 'Figtree',system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+#chat-eris .aviso-micro.visible{display:flex}
+#chat-eris .aviso-micro .punto-rec{width:10px;height:10px;border-radius:50%;background:#F0386B;flex:none;animation:latir 1s ease-in-out infinite}
+#chat-eris .aviso-micro button{margin-left:auto;font:inherit;font-weight:600;color:#9CC3B5;background:transparent;border:1px solid rgba(156,195,181,.4);border-radius:8px;padding:4px 10px;cursor:pointer}
+#chat-eris .audio-eris{display:block;width:100%;max-width:260px;height:36px;margin-top:8px}
 .vista-eleccion .saludo{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:0}
 .vista-eleccion .pregunta{margin:0 0 6px;color:#CFE9DF}
 .opcion{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font:inherit;color:#EAF7F1;background:rgba(255,255,255,.04);border:1px solid rgba(52,211,153,.35);border-radius:14px;padding:16px;cursor:pointer;transition:background-color .2s,border-color .2s,box-shadow .2s}
@@ -1372,6 +1384,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
       i18n: { en: { title: 'Eris', subtitle: '', footer: '', getStarted: 'OK', inputPlaceholder: t.i, closeButtonTooltip: 'X' } }
     });
     limitarMensaje(contenedor);
+    ponerMicro(contenedor);
   }
   // Máximo 800 caracteres por mensaje (el servidor también recorta)
   var MAX_MENSAJE = 800;
@@ -1381,6 +1394,126 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
     if(contenedor._limite) return;
     contenedor._limite = new MutationObserver(aplicar);
     contenedor._limite.observe(contenedor, { childList: true, subtree: true });
+  }
+
+  // ── Notas de voz dentro del chat ──────────────────────────────────────────
+  // Pulsas el micrófono, hablas y vuelves a pulsar: la nota se pasa a texto, la contesta la misma Eris
+  // (misma conversación) y la respuesta llega por escrito y en audio. Si escribes, contesta por escrito.
+  var URL_VOZ_NOTA = 'https://erisproject.app.n8n.cloud/webhook/eris-web-voz';
+  var MAX_NOTA = 45;
+  var TM = {
+    es:{m:'Mandar una nota de voz', g:'Grabando… toca el micro para enviar', c:'Cancelar', e:'Eris está escuchando tu nota…', n:'Nota de voz', p:'Para mandar notas de voz, permite el micrófono. Si no puedes, escríbele aquí.', f:'No se ha podido enviar la nota de voz. Prueba otra vez o escríbele por aquí.'},
+    en:{m:'Send a voice note', g:'Recording… tap the mic to send', c:'Cancel', e:'Eris is listening to your note…', n:'Voice note', p:'To send voice notes, please allow the microphone. If you can\'t, just type here.', f:'The voice note couldn\'t be sent. Try again or type here.'},
+    fr:{m:'Envoyer un message vocal', g:'Enregistrement… touchez le micro pour envoyer', c:'Annuler', e:'Eris écoute votre message…', n:'Message vocal', p:'Pour envoyer des messages vocaux, autorisez le micro. Sinon, écrivez ici.', f:'Le message vocal n\'a pas pu être envoyé. Réessayez ou écrivez ici.'}
+  };
+  function tm(k){ return (TM[idioma] || TM.es)[k]; }
+  var puedeGrabar = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder && (window.AudioContext || window.webkitAudioContext));
+  var grab = null;
+  function almacenChat(){ try { return appChat && appChat.config.globalProperties.$chat; } catch(e) { return null; } }
+  function ponerMicro(contenedor){
+    if(!puedeGrabar) return;
+    function aplicar(){
+      var ctrl = contenedor.querySelector('.chat-inputs-controls');
+      if(!ctrl || ctrl.querySelector('.boton-micro')) return;
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'boton-micro'; b.title = tm('m'); b.setAttribute('aria-label', tm('m'));
+      b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5"/></svg>';
+      b.addEventListener('click', function(){ grab ? pararGrabacion(true) : empezarGrabacion(b); });
+      ctrl.insertBefore(b, ctrl.firstChild);
+    }
+    aplicar();
+    if(contenedor._micro) return;
+    contenedor._micro = new MutationObserver(aplicar);
+    contenedor._micro.observe(contenedor, { childList: true, subtree: true });
+  }
+  function avisoMicro(texto, conCancelar){
+    var caja = document.querySelector('#chat-eris .aviso-micro');
+    if(!caja){ caja = document.createElement('div'); caja.className = 'aviso-micro'; caja.setAttribute('role', 'status'); document.getElementById('chat-eris').appendChild(caja); }
+    if(!texto){ caja.classList.remove('visible'); return; }
+    caja.innerHTML = '<span class="punto-rec"></span><span class="t"></span>' + (conCancelar ? '<button type="button"></button>' : '');
+    caja.querySelector('.t').textContent = texto;
+    if(conCancelar){ var c = caja.querySelector('button'); c.textContent = tm('c'); c.onclick = function(){ pararGrabacion(false); }; }
+    caja.classList.add('visible');
+  }
+  function empezarGrabacion(boton){
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(function(stream){
+      var trozos = [], rec = new MediaRecorder(stream);
+      grab = { rec: rec, stream: stream, boton: boton, enviar: true, inicio: Date.now(), reloj: null, tope: null };
+      rec.ondataavailable = function(e){ if(e.data && e.data.size) trozos.push(e.data); };
+      rec.onstop = function(){
+        var g = grab; grab = null;
+        stream.getTracks().forEach(function(t){ t.stop(); });
+        clearInterval(g.reloj); clearTimeout(g.tope);
+        boton.classList.remove('grabando'); avisoMicro('');
+        if(g.enviar && trozos.length && Date.now() - g.inicio > 700) enviarNota(new Blob(trozos, { type: rec.mimeType || 'audio/webm' }), boton);
+      };
+      rec.start();
+      boton.classList.add('grabando');
+      var pinta = function(){ var s = Math.floor((Date.now() - grab.inicio) / 1000); avisoMicro(tm('g') + ' · 0:' + (s < 10 ? '0' : '') + s, true); };
+      pinta(); grab.reloj = setInterval(function(){ if(grab) pinta(); }, 500);
+      grab.tope = setTimeout(function(){ pararGrabacion(true); }, MAX_NOTA * 1000);
+    }).catch(function(){ avisoMicro(tm('p'), false); setTimeout(function(){ avisoMicro(''); }, 5000); });
+  }
+  function pararGrabacion(enviar){ if(!grab) return; grab.enviar = enviar; try { grab.rec.stop(); } catch(e) {} }
+  // Cualquier formato que grabe el navegador (webm, mp4…) se pasa a WAV de 16 kHz, que Gemini entiende siempre.
+  function aWav(blob){
+    return blob.arrayBuffer().then(function(buf){
+      var AC = window.AudioContext || window.webkitAudioContext, ctx = new AC();
+      return new Promise(function(ok, mal){ ctx.decodeAudioData(buf, ok, mal); }).then(function(audio){
+        try { ctx.close(); } catch(e) {}
+        var fr = 16000, n = Math.ceil(audio.duration * fr), off = new OfflineAudioContext(1, n, fr);
+        var src = off.createBufferSource(); src.buffer = audio; src.connect(off.destination); src.start();
+        return off.startRendering();
+      });
+    }).then(function(r){
+      var d = r.getChannelData(0), v = new DataView(new ArrayBuffer(44 + d.length * 2));
+      function txt(o, s){ for(var i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); }
+      txt(0, 'RIFF'); v.setUint32(4, 36 + d.length * 2, true); txt(8, 'WAVE'); txt(12, 'fmt ');
+      v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, 16000, true);
+      v.setUint32(28, 32000, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); txt(36, 'data'); v.setUint32(40, d.length * 2, true);
+      for(var i = 0; i < d.length; i++){ var x = Math.max(-1, Math.min(1, d[i])); v.setInt16(44 + i * 2, x < 0 ? x * 0x8000 : x * 0x7FFF, true); }
+      var bytes = new Uint8Array(v.buffer), bin = '', paso = 0x8000;
+      for(var j = 0; j < bytes.length; j += paso) bin += String.fromCharCode.apply(null, bytes.subarray(j, j + paso));
+      return btoa(bin);
+    });
+  }
+  function nuevoId(){ return 'voz-' + Date.now() + '-' + Math.floor(Math.random() * 1e6); }
+  function enviarNota(blob, boton){
+    var st = almacenChat(); if(!st) return;
+    boton.disabled = true;
+    var msgUsuario = { id: nuevoId(), text: '🎤 ' + tm('n') + '…', sender: 'user' };
+    st.messages.value.push(msgUsuario);
+    var idUsuario = msgUsuario.id;
+    st.waitingForResponse.value = true;
+    avisoMicro(tm('e'), false);
+    var sesionLista = (st.currentSessionId && st.currentSessionId.value) ? Promise.resolve() : Promise.resolve(st.startNewSession && st.startNewSession());
+    Promise.all([aWav(blob), sesionLista]).then(function(r){
+      var sesion = (st.currentSessionId && st.currentSessionId.value) || '';
+      return fetch(URL_VOZ_NOTA, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sesion: sesion, audio: r[0], idioma: idioma }) });
+    }).then(function(r){ return r.json(); }).then(function(d){
+      var m = st.messages.value.find(function(x){ return x.id === idUsuario; });
+      if(!d || !d.ok){ if(m) m.text = '🎤 ' + tm('n'); st.messages.value.push({ id: nuevoId(), text: (d && d.error) || tm('f'), sender: 'bot' }); return; }
+      if(m) m.text = '🎤 ' + d.transcripcion;
+      var idBot = nuevoId();
+      st.messages.value.push({ id: idBot, text: d.respuesta, sender: 'bot' });
+      if(d.audio) setTimeout(function(){ ponerAudio(d.audio, d.mime || 'audio/mpeg'); }, 60);
+    }).catch(function(){
+      st.messages.value.push({ id: nuevoId(), text: tm('f'), sender: 'bot' });
+    }).then(function(){
+      st.waitingForResponse.value = false; boton.disabled = false; avisoMicro('');
+    });
+  }
+  function ponerAudio(b64, mime){
+    var burbujas = document.querySelectorAll('#chat-n8n .chat-message-from-bot');
+    var ultima = burbujas[burbujas.length - 1]; if(!ultima) return;
+    var bin = atob(b64), arr = new Uint8Array(bin.length);
+    for(var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    var a = document.createElement('audio');
+    a.className = 'audio-eris'; a.controls = true; a.preload = 'auto';
+    a.src = URL.createObjectURL(new Blob([arr], { type: mime }));
+    ultima.appendChild(a);
+    var p = a.play(); if(p && p.catch) p.catch(function(){});
+    ultima.scrollIntoView({ block: 'end', behavior: 'smooth' });
   }
   function cambiarIdioma(nuevo){
     if(!TEXTOS[nuevo] || nuevo === idioma) { marcarIdioma(); return; }
@@ -1634,6 +1767,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
   }
   function cerrar(){
     if(llamando) colgar();
+    pararGrabacion(false);
     panel.classList.remove('abierto');
     lanzador.setAttribute('aria-expanded','false');
     lanzador.style.display = '';
