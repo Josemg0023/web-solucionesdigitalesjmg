@@ -463,6 +463,73 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 .estado-opinion.ok{color:var(--esmeralda-luz)}
 .estado-opinion.error{color:var(--rubi-luz)}
 .form-opinion button[disabled]{opacity:.6;cursor:wait}
+/* === Estilo sobrio (03/11): claro, sin brillos ni degradados === */
+:root{
+  --fondo:#FAF7F2;--fondo-2:#F2EDE4;--superficie:#FFFFFF;
+  --claro:#1C2622;--apagado:#55625C;--linea:#E3DCD0;
+  --esmeralda-luz:#0B7A57;--rubi-luz:#B80E41;
+  --display:'Figtree',system-ui,sans-serif;
+}
+body{background:var(--fondo);color:var(--claro)}
+.cabecera{background:rgba(250,247,242,.92);backdrop-filter:none}
+.portada::before,.portada::after,.portada .resplandor,.cierre::before{display:none}
+.portada{padding:56px 0 80px}
+.portada h1,.seccion h2,.servicio h3,.equipo-flujo h3,.pasos h3,.prueba h3,.pack h3,.faq summary,.nombre-cierre{letter-spacing:-.01em}
+.portada h1{font-weight:800;line-height:1.08}
+.degradado-texto{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--rubi)}
+.portada .nota,.nota-precios,.contratar-dialogo .nota,.pie{color:#6B7570}
+.portada .gancho-precio{color:var(--apagado)}
+.portada .gancho-precio strong{color:var(--claro)}
+.boton-luz,.boton-luz:hover{box-shadow:none}
+.boton-borde{color:var(--claro);box-shadow:inset 0 0 0 1px #C9C0B2}
+.boton-borde:hover{background:#fff;box-shadow:inset 0 0 0 1px var(--claro)}
+.boton-wa{box-shadow:inset 0 0 0 1px #C9C0B2}.boton-wa:hover{background:#fff}
+/* conversación de ejemplo */
+.movil{background:#fff;backdrop-filter:none;box-shadow:0 1px 2px rgba(0,0,0,.06),0 12px 32px -18px rgba(0,0,0,.25);border:1px solid var(--linea)}
+.movil::before{display:none}
+.reloj{color:var(--claro);text-shadow:none;font-weight:700}
+.cliente{background:#F1EEE8;border-color:#E6E0D6}
+.eris{background:#0B7A57;box-shadow:none}
+.hecho::before{box-shadow:none}
+.selector .sector-actual{background:#F2EDE4;border-color:var(--linea);color:var(--claro);box-shadow:none}
+.selector .flechas button{background:#fff;color:var(--claro)}
+/* tarjetas y bloques */
+.equipo-flujo li.paso,.prueba,.pack{background:#fff;box-shadow:none}
+.equipo-flujo li.paso.eris,.prueba.principal,.pack.destacado{border-color:var(--claro);box-shadow:none}
+.equipo-flujo .et,.prueba .et{text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--apagado)}
+.equipo-cierre,.servicio .ejemplo{border-left-color:var(--linea)}
+.servicio p,.grupo p,.faq details p,.pack ul{color:var(--claro)}
+.servicios{border-image:none;border-top:1px solid var(--linea)}
+.pasos li::before{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--rubi);font-size:1.1rem;font-weight:700;margin-bottom:8px;content:"Paso " counter(paso)}
+.grupo{background:#fff}
+.grupo h3{color:var(--claro)}
+.tu-sector-linea button{box-shadow:none}
+.nombre .griego{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--claro)}
+.pr-linea,.alta-caja{background:var(--fondo);}
+.pr-t,.alta-t{text-transform:none;letter-spacing:0}
+.pack .etiqueta{text-transform:none;letter-spacing:0}
+.pack li::before{background:var(--esmeralda-luz);border-radius:50%;width:7px;height:7px;top:.65em}
+.periodo{background:#fff}.periodo button[aria-pressed="true"]{background:var(--claro);color:#fff}.periodo button[aria-pressed="true"] .ahorro{color:#fff}
+.pack-video{background:#F2EDE4}
+.contratar-dialogo{background:#fff}
+.contratar-dialogo input[type=email],.contratar-dialogo input[type=text],.form-opinion input[type=text],.form-opinion input[type=email],.form-opinion textarea{background:#fff;color:var(--claro)}
+.aviso-cookies{background:#fff;color:var(--claro);box-shadow:0 12px 40px rgba(0,0,0,.18)}
+.aviso-cookies button{background:var(--claro);color:#fff}.aviso-cookies button:hover{background:#000}
+.lista-menu{background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.15)}
+.lista-menu a:hover,.lista-menu a:focus-visible{background:var(--fondo-2)}
+.boton-menu:hover,.boton-menu[aria-expanded="true"]{border-color:var(--claro);color:var(--claro)}
+.selector-idioma-cabecera,.redes-cabecera a,.acceso-cabecera{background:#fff}
+.boton-idioma-cabecera svg{box-shadow:0 0 0 1px rgba(0,0,0,.15)}
+.boton-idioma-cabecera[aria-pressed="true"]{box-shadow:0 0 0 2px var(--claro)}
+.barra-movil{background:rgba(250,247,242,.97);backdrop-filter:none}
+.aviso-beta{background:var(--fondo-2)}
+.estrellas label{color:#D8D0C2}
+.lanzador .punto{box-shadow:none}
+.faq summary::after{color:var(--claro)}
+.equipo-flujo li.paso.eris{color:var(--claro)}
+.equipo-cierre,.contratar-dialogo .resumen{color:var(--claro)}
+.letra-clara{color:var(--apagado)}
+.pack li.no{color:#9AA39F}.pack li.no::before{border-color:#B9B2A6}
 </style>
 </head>
 <body>
@@ -511,7 +578,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
         <p class="intro">Eris coge el teléfono y contesta tu web, WhatsApp e Instagram cuando tú no llegas, a cualquier hora. Le da cita a tu cliente y a ti te deja el aviso en el móvil.</p>
         <p class="gancho-precio"><strong>Desde 39 €/mes</strong> · Precio final · Sin permanencia</p>
         <div class="acciones">
-          <a class="boton boton-luz" href="tel:+34919933642">📞 Llama y pruébala: 919 93 36 42</a>
+          <a class="boton boton-luz" href="tel:+34919933642">Llama y pruébala: 919 93 36 42</a>
           <a class="boton boton-borde boton-wa" href="https://wa.me/34919933642?text=Hola%20Eris%2C%20quiero%20informaci%C3%B3n%20sobre%20Euxenos" target="_blank" rel="noopener"><svg class="ico-wa" viewBox="0 0 24 24" width="20" height="20" fill="#25D366" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>Escríbele por WhatsApp</a>
           <button class="boton boton-borde" type="button" data-abrir-eris>Escríbele o mándale un audio</button>
         </div>
@@ -802,7 +869,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
       <h2>Cuéntanos qué te quita tiempo</h2>
       <p class="bajada">Llámanos o escríbele a Eris, como prefieras, y te atendemos al momento. Si quieres que te llame una persona del equipo, díselo y deja tu teléfono y la hora que te viene bien.</p>
       <div class="acciones">
-        <a class="boton boton-luz" href="tel:+34919933642">📞 Llamar al 919 93 36 42</a>
+        <a class="boton boton-luz" href="tel:+34919933642">Llamar al 919 93 36 42</a>
         <button class="boton boton-borde" type="button" data-abrir-eris>Escribir a Eris</button>
         <a class="boton boton-borde boton-wa" href="https://wa.me/34919933642?text=Hola%20Eris%2C%20quiero%20informaci%C3%B3n%20sobre%20Euxenos" target="_blank" rel="noopener"><svg class="ico-wa" viewBox="0 0 24 24" width="20" height="20" fill="#25D366" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a>
         <button class="boton boton-borde" type="button" data-te-llamamos>Que me llame el equipo</button>

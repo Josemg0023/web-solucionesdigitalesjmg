@@ -72,7 +72,7 @@
     'Eris coge el teléfono y contesta tu web, WhatsApp e Instagram cuando tú no llegas, a cualquier hora. Le da cita a tu cliente y a ti te deja el aviso en el móvil.': ['Eris answers your phone and replies on your website, WhatsApp and Instagram when you can’t, at any time of day. She books your customer in and sends you a notification on your phone.', 'Eris répond au téléphone et sur votre site, WhatsApp et Instagram quand vous n’êtes pas disponible, à toute heure. Elle donne rendez-vous à votre client et vous envoie une notification sur votre mobile.'],
     'Desde 39 €/mes': ['From €39/month', 'À partir de 39 €/mois'],
     '· Precio final · Sin permanencia': ['· Final price · No lock-in contract', '· Prix final · Sans engagement'],
-    '📞 Llama y pruébala: 919 93 36 42': ['📞 Call and try her: +34 919 93 36 42', '📞 Appelez pour l’essayer : +34 919 93 36 42'],
+    'Llama y pruébala: 919 93 36 42': ['Call and try her: +34 919 93 36 42', 'Appelez pour l’essayer : +34 919 93 36 42'],
     'Escríbele o mándale un audio': ['Message her or send a voice note', 'Écrivez-lui ou envoyez un vocal'],
     'Así atendería el teléfono de tu negocio. Si te interesa, te deja tus datos y el equipo te llama.': ['That’s how she would answer your business phone. If you’re interested, leave your details and the team will call you.', 'C’est ainsi qu’elle répondrait au téléphone de votre entreprise. Si cela vous intéresse, laissez vos coordonnées et l’équipe vous rappelle.'],
     'Ejemplo:': ['Example:', 'Exemple :'],
@@ -225,7 +225,7 @@
     // Contacto
     'Cuéntanos qué te quita tiempo': ['Tell us what eats up your time', 'Dites-nous ce qui vous fait perdre du temps'],
     'Llámanos o escríbele a Eris, como prefieras, y te atendemos al momento. Si quieres que te llame una persona del equipo, díselo y deja tu teléfono y la hora que te viene bien.': ['Call us or write to Eris, whichever you prefer, and we’ll help you right away. If you’d like someone from the team to call you, just say so and leave your number and a good time to call.', 'Appelez-nous ou écrivez à Eris, comme vous préférez, et nous vous répondons aussitôt. Si vous souhaitez qu’une personne de l’équipe vous rappelle, dites-le et laissez votre numéro et l’heure qui vous convient.'],
-    '📞 Llamar al 919 93 36 42': ['📞 Call +34 919 93 36 42', '📞 Appeler le +34 919 93 36 42'],
+    'Llamar al 919 93 36 42': ['Call +34 919 93 36 42', 'Appeler le +34 919 93 36 42'],
     'Escribir a Eris': ['Write to Eris', 'Écrire à Eris'],
     'Teléfono': ['Phone', 'Téléphone'],
     'Información y presupuestos': ['Information and quotes', 'Informations et devis'],
