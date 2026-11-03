@@ -96,22 +96,17 @@ h2{font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,3.2vw,2.6re
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important}html{scroll-behavior:auto}}
 
-/* === Estilo sobrio (03/11): claro, sin brillos ni degradados (igual que la portada) === */
-:root{--fondo:#FAF7F2;--fondo-2:#F2EDE4;--claro:#1C2622;--apagado:#55625C;--linea:#E3DCD0;--esmeralda-luz:#0B7A57;--rubi-luz:#B80E41;--display:'Figtree',system-ui,sans-serif}
-.cabecera{background:rgba(250,247,242,.95);backdrop-filter:none}
+/* === Estilo oscuro sobrio (03/11): colores de siempre, sin brillos ni efectos === */
+:root{--display:'Figtree',system-ui,sans-serif}
+.cabecera{backdrop-filter:none;background:rgba(4,18,14,.95)}
 .portada::after{display:none}
 h1,h2{letter-spacing:-.01em}
-.degradado-texto{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--rubi)}
+.degradado-texto{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--rubi-luz)}
 .boton-luz{box-shadow:none}
-.boton-borde,.boton-wa{color:var(--claro);box-shadow:inset 0 0 0 1px #C9C0B2}
-.boton-borde:hover,.boton-wa:hover{background:#fff;box-shadow:inset 0 0 0 1px var(--claro)}
-.nota,.pie{color:#6B7570}
-.movil{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06),0 12px 32px -18px rgba(0,0,0,.25)}
+.movil{background:var(--fondo-2);box-shadow:none}
 .movil .hora{color:var(--claro);text-shadow:none;font-weight:700}
-.cliente{background:#F1EEE8;border-color:#E6E0D6}
 .eris{background:#0B7A57}
-.ventajas li{background:#fff}
-.pack{background:#fff;border-color:var(--claro);box-shadow:none}
-.pack .et{text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--apagado)}
-.pack ul{color:var(--claro)}
-.barra-movil{background:rgba(250,247,242,.97);backdrop-filter:none}
+.ventajas li{background:var(--fondo-2)}
+.pack{background:var(--fondo-2);border-color:var(--esmeralda);box-shadow:none}
+.pack .et{text-transform:none;letter-spacing:0;font-size:.85rem}
+.barra-movil{backdrop-filter:none}
