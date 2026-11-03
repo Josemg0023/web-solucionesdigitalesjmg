@@ -67,8 +67,8 @@
 
     // Portada
     '«el que recibe bien a quien llega»': ['“the one who welcomes whoever arrives”', '« celui qui accueille bien qui arrive »'],
-    'Ningún cliente sin respuesta.': ['No customer left unanswered.', 'Aucun client sans réponse.'],
-    'Nunca.': ['Ever.', 'Jamais.'],
+    'Cuando tú no puedes coger el teléfono,': ['When you can’t pick up the phone,', 'Quand vous ne pouvez pas décrocher,'],
+    'lo coge Eris.': ['Eris does.', 'Eris répond.'],
     'Eris coge el teléfono y contesta tu web, WhatsApp e Instagram cuando tú no llegas, a cualquier hora. Le da cita a tu cliente y a ti te deja el aviso en el móvil.': ['Eris answers your phone and replies on your website, WhatsApp and Instagram when you can’t, at any time of day. She books your customer in and sends you a notification on your phone.', 'Eris répond au téléphone et sur votre site, WhatsApp et Instagram quand vous n’êtes pas disponible, à toute heure. Elle donne rendez-vous à votre client et vous envoie une notification sur votre mobile.'],
     'Desde 39 €/mes': ['From €39/month', 'À partir de 39 €/mois'],
     '· Precio final · Sin permanencia': ['· Final price · No lock-in contract', '· Prix final · Sans engagement'],
