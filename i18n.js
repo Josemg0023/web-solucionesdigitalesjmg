@@ -4,6 +4,20 @@
 // El chat de Eris (#panel-eris) y las conversaciones de ejemplo (#hilo) tienen su propio sistema de idioma.
 (function(){
   var D = {
+    // Web por secciones (04/11): atajos, volver al inicio y «Ver otro apartado»
+    '← Volver al inicio': ['← Back to home', '← Retour à l’accueil'],
+    '¿Qué quieres ver?': ['What would you like to see?', 'Que voulez-vous voir ?'],
+    'Toca un apartado y lo abrimos aquí mismo, sin tener que bajar por toda la página.': ['Tap a section and it opens right here, no need to scroll through the whole page.', 'Touchez une rubrique et elle s’ouvre ici même, sans parcourir toute la page.'],
+    'Eris, tu web y la app para tu negocio': ['Eris, your website and the app for your business', 'Eris, votre site et l’appli pour votre entreprise'],
+    'Llámala o escríbele como si fueras tu cliente': ['Call or message her as if you were your customer', 'Appelez-la ou écrivez-lui comme si vous étiez votre client'],
+    'De la primera llamada a tenerla funcionando': ['From the first call to having her up and running', 'Du premier appel à sa mise en service'],
+    'Peluquerías, clínicas, talleres, restaurantes y más': ['Salons, clinics, garages, restaurants and more', 'Salons, cliniques, garages, restaurants et plus'],
+    'Los 4 packs, sin permanencia': ['The 4 plans, no lock-in', 'Les 4 formules, sans engagement'],
+    'Lo que más nos preguntan': ['What people ask us most', 'Ce qu’on nous demande le plus'],
+    'Teléfono, WhatsApp, correo y tu opinión': ['Phone, WhatsApp, email and your feedback', 'Téléphone, WhatsApp, e-mail et votre avis'],
+    'Contacto': ['Contact', 'Contact'],
+    'Ver otro apartado': ['See another section', 'Voir une autre rubrique'],
+    'Inicio': ['Home', 'Accueil'],
     // Nuevas secciones (03/11): menú por sector, Pruébala ahora, preguntas frecuentes y barra del móvil
     'Pruébala ahora': ['Try her now', 'Essayez-la maintenant'],
     'Por sector': ['By sector', 'Par secteur'],
