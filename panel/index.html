@@ -413,6 +413,17 @@ textarea{min-height:90px;resize:vertical}
   function llamar(cuerpo){ return post(API, cuerpo); }
   function llamarApp(accion, d){ return post(API_APP, { n:n, k:k, accion:accion, datos:d || {} }); }
 
+  // ---- Recordar la sesión ----
+  // El acceso queda guardado en este dispositivo hasta que se pulse «Cerrar sesión».
+  function pantallaSinServicio(red){
+    app.innerHTML = '<div class="mensaje"><h1>' + (red ? 'Sin conexión' : 'Euxenos no responde') + '</h1><p>' + (red ? 'No se ha podido cargar Euxenos. Comprueba la conexión y vuelve a intentarlo.' : 'Ahora mismo no se puede cargar tu negocio. Tu sesión sigue guardada: vuelve a intentarlo en un momento.') + '</p><p><button class="btn b-ok" onclick="location.reload()">Reintentar</button></p></div>';
+  }
+  function pedirPersistencia(){ try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function(){}); } catch (e) {} }
+  // Face ID o huella: solo se pide si la app lleva más de 12 horas sin usarse en este móvil.
+  var BLOQUEO_TRAS = 12 * 3600000;
+  function usoAhora(){ try { localStorage.setItem('eris-ultimo-uso', String(Date.now())); } catch (e) {} }
+  function hayQueDesbloquear(){ var t = 0; try { t = +localStorage.getItem('eris-ultimo-uso') || 0; } catch (e) {} return !t || Date.now() - t > BLOQUEO_TRAS; }
+
   // ---- Carga ----
   function cargar(){
     if (!n || !k) { pantallaLogin(); return; }
@@ -420,12 +431,16 @@ textarea{min-height:90px;resize:vertical}
     var bR = document.getElementById('recargar'); if (bR) bR.classList.add('girando');
     llamar({ n:n, k:k, accion:'ver' }).then(function(d){
       cargando = false;
-      if (!d || !d.ok) { var gb = bioGuardada(); if (gb && gb.k === k) bioBorrar(); olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu usuario o correo y tu contraseña.'); return; }
+      // Solo se cierra la sesión si el servidor dice claramente que no es válida (contraseña cambiada o cuenta quitada).
+      // Un fallo pasajero (n8n caído, límite de peticiones, error) NO borra el acceso guardado.
+      if (d && d.ok === false && Object.prototype.hasOwnProperty.call(d, 'activar')) { var gb = bioGuardada(); if (gb && gb.k === k) bioBorrar(); olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu usuario o correo y tu contraseña.'); return; }
+      if (!d || !d.ok) { if (bR) bR.classList.remove('girando'); if (!datos) pantallaSinServicio(); else toast('Euxenos no responde ahora: mostrando lo último cargado'); return; }
+      usoAhora(); pedirPersistencia();
       var primera = !datos; datos = d; pintar();
       if (primera) { comprobarAvisos(); cargarInfo(); cargarPedidos(); cargarComercial(); }
     }).catch(function(){
       cargando = false; if (bR) bR.classList.remove('girando');
-      if (!datos) app.innerHTML = '<div class="mensaje"><h1>Sin conexión</h1><p>No se ha podido cargar Euxenos. Comprueba la conexión y vuelve a intentarlo.</p><p><button class="btn b-ok" onclick="location.reload()">Reintentar</button></p></div>';
+      if (!datos) pantallaSinServicio(true);
       else toast('Sin conexión: mostrando lo último cargado');
     });
   }
@@ -1597,7 +1612,7 @@ textarea{min-height:90px;resize:vertical}
   function activa(){ return Date.now() - ultimoToque < INACTIVO; }
   ['pointerdown', 'keydown', 'touchstart', 'wheel'].forEach(function(ev){
     document.addEventListener(ev, function(){
-      var dormida = !activa(); ultimoToque = Date.now();
+      var dormida = !activa(); ultimoToque = Date.now(); if (datos) usoAhora();
       if (dormida && puedeRefrescar()) { cargar(); cargarPedidos(); }
     }, { passive: true });
   });
@@ -1608,7 +1623,7 @@ textarea{min-height:90px;resize:vertical}
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { cerrarHojas(); cerrarMenu(); } });
   if (enlaceReset) pantallaNuevaClave(enlaceReset);
   else if (enlaceN && enlaceK) comprobarEnlace(enlaceN, enlaceK);
-  else if (n && k && bioGuardada() && bioGuardada().n === n && !estaDesbloqueada()) pantallaBloqueo();
+  else if (n && k && bioGuardada() && bioGuardada().n === n && !estaDesbloqueada() && hayQueDesbloquear()) pantallaBloqueo();
   else cargar();
 })();
 </script>
