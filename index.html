@@ -516,6 +516,15 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
 /* Menú solo con las tres rayas (04/11) */
 .boton-menu{padding:9px 11px;gap:0}
 @media (max-width:520px){.boton-menu{padding:8px 9px}}
+/* Quiénes somos (04/11) */
+.quienes{text-align:left;max-width:760px;width:100%;margin:0 auto 72px;padding-bottom:56px;border-bottom:1px solid var(--linea)}
+.quienes h2{margin-left:0}
+.quienes h3{font-family:var(--display);font-size:1.2rem;margin:30px 0 12px;color:var(--claro)}
+.quienes p{color:var(--apagado);margin:0 0 12px}
+.quienes .quienes-intro{font-size:1.18rem;color:var(--claro)}
+.quienes-lista{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.quienes-lista li{padding:16px 18px;border:1px solid var(--linea);border-radius:14px;background:var(--fondo-2);color:var(--apagado)}
+.quienes-lista b{display:block;color:var(--claro);margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -615,7 +624,7 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
         <a class="atajo" href="#sectores"><b>Para qué negocios</b><span>Peluquerías, clínicas, talleres, restaurantes y más</span></a>
         <a class="atajo destacado" href="#precios"><b>Precios</b><span>Los 4 packs, sin permanencia</span></a>
         <a class="atajo" href="#preguntas"><b>Preguntas frecuentes</b><span>Lo que más nos preguntan</span></a>
-        <a class="atajo" href="#por-que-euxenos"><b>Quiénes somos</b><span>Por qué Euxenos</span></a>
+        <a class="atajo" href="#por-que-euxenos"><b>Quiénes somos</b><span>La empresa y lo que hacemos</span></a>
         <a class="atajo" href="#contacto"><b>Contacto</b><span>Teléfono, WhatsApp, correo y tu opinión</span></a>
       </div>
     </div>
@@ -733,8 +742,20 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
 
   <section class="seccion nombre" id="por-que-euxenos">
     <div class="envoltura">
+      <div class="quienes">
+        <h2>Quiénes somos</h2>
+        <p class="quienes-intro">Euxenos es una empresa de Talavera de la Reina que ayuda a pequeños negocios de toda España a atender bien a sus clientes, aunque no puedan estar pendientes del teléfono todo el día.</p>
+        <h3>Qué hacemos</h3>
+        <ul class="quienes-lista">
+          <li><b>Eris, nuestra asistente con inteligencia artificial.</b> Coge el teléfono y contesta WhatsApp, Instagram y el chat de la web cuando tú no llegas. Da citas, responde dudas y te deja el aviso en el móvil.</li>
+          <li><b>La app Euxenos.</b> Tu agenda, tus citas, tus pedidos y tu catálogo en el móvil, con avisos al momento.</li>
+          <li><b>Páginas web para tu negocio.</b> Una web propia, sencilla y clara, con Eris atendiendo en el chat.</li>
+        </ul>
+        <h3>Cómo lo hacemos</h3>
+        <p>Nos cuentas cómo trabajas y lo montamos todo por ti: la asistente, tus canales y los avisos. Después lo mantenemos y lo mejoramos. Eris no sustituye a nadie: es una más de tu equipo. Sin permanencia y con precio final.</p>
+      </div>
       <p class="griego" lang="grc" aria-hidden="true"><span class="ini">ε</span>ὔξενος</p>
-      <h2>Por qué Euxenos</h2>
+      <h2>Por qué nos llamamos Euxenos</h2>
       <p class="bajada">Euxenos viene del griego y significa <strong>«el que recibe bien a quien llega»</strong>. Los antiguos griegos llamaban al Mar Negro <em>Áxeinos</em>, «el mar que no recibe», porque era peligroso navegarlo. Cuando aprendieron a hacerlo, lo rebautizaron como <em>Eúxeinos</em>: «el mar que da la bienvenida».</p>
       <p class="nombre-cierre">Eso es lo que hacemos: que tu negocio reciba bien a todo el que llega, a cualquier hora y en su idioma.</p>
     </div>

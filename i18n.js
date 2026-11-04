@@ -4,6 +4,18 @@
 // El chat de Eris (#panel-eris) y las conversaciones de ejemplo (#hilo) tienen su propio sistema de idioma.
 (function(){
   var D = {
+    // Quiénes somos (04/11)
+    'La empresa y lo que hacemos': ['The company and what we do', 'L’entreprise et ce que nous faisons'],
+    'Euxenos es una empresa de Talavera de la Reina que ayuda a pequeños negocios de toda España a atender bien a sus clientes, aunque no puedan estar pendientes del teléfono todo el día.': ['Euxenos is a company from Talavera de la Reina (Spain) that helps small businesses all over Spain look after their customers well, even when they can’t be on the phone all day.', 'Euxenos est une entreprise de Talavera de la Reina (Espagne) qui aide les petites entreprises de toute l’Espagne à bien accueillir leurs clients, même quand elles ne peuvent pas rester au téléphone toute la journée.'],
+    'Eris, nuestra asistente con inteligencia artificial.': ['Eris, our AI assistant.', 'Eris, notre assistante IA.'],
+    'Coge el teléfono y contesta WhatsApp, Instagram y el chat de la web cuando tú no llegas. Da citas, responde dudas y te deja el aviso en el móvil.': ['She answers the phone, WhatsApp, Instagram and your website chat when you can’t. She books appointments, answers questions and leaves you a notification on your phone.', 'Elle répond au téléphone, à WhatsApp, à Instagram et au chat du site quand vous ne pouvez pas. Elle prend les rendez-vous, répond aux questions et vous laisse une notification sur votre mobile.'],
+    'La app Euxenos.': ['The Euxenos app.', 'L’appli Euxenos.'],
+    'Tu agenda, tus citas, tus pedidos y tu catálogo en el móvil, con avisos al momento.': ['Your diary, appointments, orders and catalogue on your phone, with instant notifications.', 'Votre agenda, vos rendez-vous, vos commandes et votre catalogue sur votre mobile, avec des notifications instantanées.'],
+    'Páginas web para tu negocio.': ['Websites for your business.', 'Des sites web pour votre entreprise.'],
+    'Una web propia, sencilla y clara, con Eris atendiendo en el chat.': ['Your own simple, clear website, with Eris answering in the chat.', 'Votre propre site, simple et clair, avec Eris qui répond dans le chat.'],
+    'Cómo lo hacemos': ['How we do it', 'Comment nous le faisons'],
+    'Nos cuentas cómo trabajas y lo montamos todo por ti: la asistente, tus canales y los avisos. Después lo mantenemos y lo mejoramos. Eris no sustituye a nadie: es una más de tu equipo. Sin permanencia y con precio final.': ['Tell us how you work and we set everything up for you: the assistant, your channels and the notifications. Then we maintain and improve it. Eris doesn’t replace anyone: she’s one more member of your team. No lock-in and the price you see is the price you pay.', 'Vous nous expliquez comment vous travaillez et nous installons tout pour vous : l’assistante, vos canaux et les notifications. Ensuite, nous l’entretenons et l’améliorons. Eris ne remplace personne : elle fait partie de votre équipe. Sans engagement et au prix final.'],
+    'Por qué nos llamamos Euxenos': ['Why we’re called Euxenos', 'Pourquoi nous nous appelons Euxenos'],
     // Web por secciones (04/11): atajos, volver al inicio y «Ver otro apartado»
     '← Volver al inicio': ['← Back to home', '← Retour à l’accueil'],
     '¿Qué quieres ver?': ['What would you like to see?', 'Que voulez-vous voir ?'],
