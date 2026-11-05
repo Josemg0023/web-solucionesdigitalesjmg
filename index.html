@@ -605,6 +605,9 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
 .voz-eris .voz-hablar:disabled{opacity:.45;cursor:wait}
 .voz-eris .voz-cerrar{background:#E8F5EF;color:#04120E}
 @media (prefers-reduced-motion:reduce){.voz-eris .voz-bola .nube{animation:none}}
+.abre-voz{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.abre-voz:focus-visible{outline:2px solid #5FE0A8;outline-offset:4px;border-radius:50%}
+.orbe-eris.abre-voz:active .nucleo,.orbe-mini.abre-voz:active{transform:scale(.94)}
 </style>
 </head>
 <body>
@@ -1996,8 +1999,7 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
     voz.querySelector('.voz-cerrar').setAttribute('aria-label', tv('c'));
     vHablar.setAttribute('aria-label', tv('m'));
     vEstado.textContent = { quieto: tv('t'), escucha: tv('g'), piensa: tv('p'), habla: tv('h') }[modoVoz];
-    var bv = document.querySelector('#chat-n8n .boton-voz');
-    if(bv){ bv.title = tv('a'); bv.setAttribute('aria-label', tv('a')); }
+    [orbeEris, orbeMini].forEach(function(el){ if(el && el.classList.contains('abre-voz')){ el.title = tv('a'); el.setAttribute('aria-label', tv('a')); } });
   }
   function contexto(){ if(!ctxVoz){ var AC = window.AudioContext || window.webkitAudioContext; ctxVoz = new AC(); } if(ctxVoz.state === 'suspended') ctxVoz.resume(); return ctxVoz; }
   function escucharFuente(nodo, alAltavoz){
@@ -2088,7 +2090,14 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
     ctrl.insertBefore(b, ctrl.firstChild);
     textosVoz();
   }
-  new MutationObserver(ponerBotonVoz).observe(contChat, { childList:true, subtree:true });
+  // 05/11 (Tete): la pantalla de voz se abre tocando la bola (la grande del inicio y la mini de la cabecera), no con un botón en la barra.
+  function hacerBotonBola(el){
+    if(!puedeGrabar || !el) return;
+    el.removeAttribute('aria-hidden'); el.setAttribute('role', 'button'); el.setAttribute('tabindex', '0'); el.classList.add('abre-voz');
+    el.addEventListener('click', abrirVoz);
+    el.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); abrirVoz(); } });
+  }
+  hacerBotonBola(orbeEris); hacerBotonBola(orbeMini);
   botonesIdioma.forEach(function(b){ b.addEventListener('click', function(){ setTimeout(textosVoz, 0); }); });
   otros.addEventListener('change', function(){ setTimeout(textosVoz, 0); });
   textosVoz();
