@@ -244,13 +244,122 @@ textarea{min-height:90px;resize:vertical}
 .conv .m i{display:block;font-style:normal;font-size:.72rem;color:var(--apagado);margin-bottom:2px}
 .conv .espera{padding:9px 12px;font-size:.85rem;color:var(--apagado)}
 .e-nuevo{background:rgba(245,185,66,.18);color:#F7D58C}.e-cocina{background:rgba(96,165,250,.15);color:#9CC8FF}.e-listo{background:rgba(16,185,129,.18);color:var(--verde-luz)}.e-entregado{background:rgba(255,255,255,.08);color:var(--apagado)}.e-cancelado{background:rgba(209,16,74,.15);color:#FF8FB0}
+
+/* === Minimalista con Eris (05/11): menos bordes y adornos, títulos con Figtree, sin mayúsculas en etiquetas,
+   y el chat de Eris igual que el de la web (oscuro, fondo de ondas, bola de Eris y pantalla de voz).
+   Para volver a como estaba: borrar este bloque y el script «Pantalla de voz (05/11)». === */
+.titulo h1,.fecha-grande,h2,.hora,.marca b,.hoja h3,.login h1,.mes h2,.fila .precio,.total,.fila .hora-ev{font-family:'Figtree',system-ui,sans-serif}
+header{background:rgba(4,18,14,.88);border-bottom:0;padding-bottom:6px}
+.icono-btn{border:0;background:transparent;color:var(--apagado)}
+.icono-btn:active{background:rgba(255,255,255,.05)}
+.titulo small{font-size:.74rem;color:var(--tenue)}
+.titulo h1{font-size:1.02rem;font-weight:700}
+.fecha-grande{font-size:1.7rem;font-weight:700;letter-spacing:-.01em;margin:18px 0 6px}
+h2{font-size:.82rem;font-weight:600;color:var(--tenue);letter-spacing:0;margin:30px 2px 10px}
+h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;font-weight:500}
+.resumen{gap:16px;margin-top:4px}
+.chip{background:none;border:0;padding:0;font-size:.9rem;color:var(--apagado)}
+.chip b{color:var(--claro);font-weight:700}
+.chip.alerta,.chip.alerta b{color:var(--ambar)}
+.fila,.cita,.pedido,.caja{border:0;background:rgba(255,255,255,.035);border-radius:14px}
+.fila{padding:13px 14px;margin-bottom:6px}
+.fila.atrasado{background:rgba(245,185,66,.07);box-shadow:inset 3px 0 0 rgba(245,185,66,.75)}
+.cita.pendiente,.pedido.nuevo{box-shadow:inset 3px 0 0 rgba(245,185,66,.75)}
+.etq,.estado{text-transform:none;letter-spacing:0;font-weight:600}
+.quitar{border:0;background:transparent;color:var(--tenue);font-size:1rem}
+.quitar:active{color:#FF8FB0;background:rgba(209,16,74,.12)}
+.fila.neg{padding:0 6px 0 0;gap:4px}
+.neg-abrir{flex:1;min-width:0;display:flex;background:none;border:0;color:inherit;font:inherit;text-align:left;padding:13px 14px;cursor:pointer}
+.fila .flecha{flex:none;color:var(--tenue);font-size:1.2rem;padding:0 10px}
+.dia-sep{color:var(--tenue);font-size:.82rem;margin:14px 2px 6px}
+.plegable{margin-top:30px}
+.plegable summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:var(--tenue);padding:6px 2px 10px}
+.plegable summary::-webkit-details-marker{display:none}
+.plegable summary::after{content:'›';margin-left:auto;font-size:1.1rem;transition:transform .2s}
+.plegable[open] summary::after{transform:rotate(90deg)}
+.plegable summary .n{font-weight:500}
+.franja{border:0}
+.btn{border-radius:12px}
+.b-otra{border-color:rgba(255,255,255,.1)}
+.b-no{border-color:rgba(209,16,74,.3)}
+.hoja{border:0;border-top:1px solid var(--linea)}
+.cajon{background:#06170F;border-right:0}
+.marca{border-bottom:0}
+.cajon hr{border-top-color:rgba(255,255,255,.06)}
+.fab{background:#0B231C;color:var(--claro);border:1px solid rgba(232,240,236,.1);box-shadow:0 8px 24px -10px rgba(0,0,0,.8);padding:12px 18px}
+.fab span{color:var(--verde-luz)}
+.lanzador{background:#0B231C;color:var(--claro);border:1px solid rgba(232,240,236,.12);box-shadow:0 8px 24px -10px rgba(0,0,0,.8);padding:7px 18px 7px 7px;gap:10px}
+.lanzador .orbe-mini{width:32px;height:32px}
+/* Bola de Eris (como en la web) */
+.orbe-mini,.orbe-eris .nucleo{display:block;border-radius:50%;border:1.5px solid rgba(232,240,236,.18);background:radial-gradient(circle at 30% 70%,#E8F0EC 0 16%,transparent 46%),radial-gradient(circle at 74% 30%,#3DBF8C 0 18%,transparent 52%),radial-gradient(circle at 68% 76%,#D1104A 0 20%,transparent 52%),radial-gradient(circle at 28% 26%,#D1104A 0 22%,transparent 58%),#B8314F}
+.orbe-mini{width:30px;height:30px;flex:none}
+.orbe-mini.pensando,.orbe-eris.pensando .nucleo{animation:eris-piensa 1.2s ease-in-out infinite}
+@keyframes eris-respira{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+@keyframes eris-onda{0%{transform:scale(.6);opacity:.5}100%{transform:scale(1.2);opacity:0}}
+@keyframes eris-piensa{0%,100%{transform:scale(1)}50%{transform:scale(.88)}}
+/* Chat oscuro con fondo de ondas */
+.panel-eris{background-color:#04120E;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='64'%3E%3Cg fill='none' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M14 22q6-5 12 0t12 0' stroke='%231D6B50' stroke-opacity='.22'/%3E%3Cpath d='M14 28q6-5 12 0t12 0' stroke='%237A2A44' stroke-opacity='.2'/%3E%3Cpath d='M14 34q6-5 12 0t12 0' stroke='%231D6B50' stroke-opacity='.22'/%3E%3C/g%3E%3C/svg%3E");box-shadow:0 30px 80px -20px rgba(0,0,0,.85),0 0 0 1px var(--linea)}
+.panel-cab{background:rgba(4,18,14,.9);border-bottom:1px solid var(--linea);font-family:'Figtree',system-ui,sans-serif}
+.panel-cab small{color:var(--tenue)}
+.cab-eris{display:flex;align-items:center;gap:10px}
+.panel-cab button{color:var(--apagado)}
+.mensajes,.sugerencias{background:transparent}
+.m.eris{background:#0E2A21;color:#E8F1EE;border:1px solid rgba(52,211,153,.16)}
+.m.yo{background:#10B981;color:#04120E}
+.m.error{background:rgba(209,16,74,.14);color:#FFC2D3;border-color:rgba(209,16,74,.3)}
+.escribiendo{background:none;padding:2px 0}
+.escribir{background:rgba(4,18,14,.92);border-top:1px solid var(--linea);align-items:center}
+.escribir textarea{background:#0A1F18;border:1px solid rgba(52,211,153,.3);color:#E8F1EE;color-scheme:dark}
+.escribir textarea::placeholder{color:#6F9286}
+.escribir textarea:focus{outline:none;border-color:#34D399}
+.escribir button{background:transparent;color:#34D399}
+.escribir button.enviar{background:transparent;color:#34D399}
+.escribir .mic{display:none}
+.escribir .onda-btn{color:#5FE0A8;border-radius:50%}
+.escribir .onda-btn svg{width:24px;height:24px}
+.escribir.grabando .onda-btn{display:none}
+/* Pantalla de inicio del chat */
+.inicio-eris{margin:auto 0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:10px 6px}
+.orbe-eris{position:relative;width:128px;height:128px;display:grid;place-items:center;margin:0 0 16px}
+.orbe-eris .onda{position:absolute;inset:0;border-radius:50%;border:1px solid #10B981;opacity:0;animation:eris-onda 4s ease-out infinite}
+.orbe-eris .onda+.onda{animation-delay:2s}
+.orbe-eris .nucleo{width:76px;height:76px;animation:eris-respira 4s ease-in-out infinite}
+.saludo-inicio{font-size:1.3rem;font-weight:700;color:#E8F1EE;margin:0 0 4px}
+.sub-inicio{font-size:.9rem;color:#9CC3B5;margin:0 0 18px;max-width:290px;line-height:1.4}
+.inicio-eris .atajos{display:flex;flex-direction:column;gap:8px;width:100%;max-width:320px}
+.inicio-eris .atajos button{font:500 .92rem/1.3 'Figtree',system-ui,sans-serif;text-align:left;color:#E8F1EE;background:rgba(4,18,14,.6);border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:11px 14px;cursor:pointer}
+.inicio-eris .atajos button:active{background:rgba(16,185,129,.12)}
+/* Pantalla de voz */
+.voz-eris{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;color:#E8F5EF;background:radial-gradient(circle at 50% 40%,#0F4A35 0%,#08261C 45%,#04120E 100%);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.voz-eris::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='64'%3E%3Cg fill='none' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M14 22q6-5 12 0t12 0' stroke='%231D6B50' stroke-opacity='.5'/%3E%3Cpath d='M14 28q6-5 12 0t12 0' stroke='%237A2A44' stroke-opacity='.45'/%3E%3Cpath d='M14 34q6-5 12 0t12 0' stroke='%231D6B50' stroke-opacity='.5'/%3E%3C/g%3E%3C/svg%3E")}
+.voz-eris.abierta{opacity:1;visibility:visible}
+.voz-eris .voz-cab{position:relative;display:flex;justify-content:space-between;align-items:center;padding:calc(18px + env(safe-area-inset-top)) 20px 0;font:700 1rem/1 'Figtree',system-ui,sans-serif}
+.voz-eris .voz-estado{font:500 .88rem/1.3 'Figtree',system-ui,sans-serif;color:#9CC3B5;text-align:right;max-width:65%}
+.voz-eris .voz-centro{position:relative;flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+.voz-eris .voz-corona{position:absolute;width:min(300px,78vw);height:min(300px,78vw)}
+.voz-eris .voz-bola{position:relative;width:min(136px,36vw);height:min(136px,36vw);border-radius:50%;overflow:hidden;background:#B8314F;transition:transform .2s ease}
+.voz-eris .voz-bola .nube{position:absolute;border-radius:50%;filter:blur(14px)}
+.voz-eris .voz-bola .n1{width:80%;height:80%;background:#D1104A;left:-22%;top:-15%;animation:voz-n1 7s ease-in-out infinite alternate}
+.voz-eris .voz-bola .n2{width:66%;height:66%;background:#3DBF8C;right:-15%;top:-8%;animation:voz-n2 8s ease-in-out infinite alternate}
+.voz-eris .voz-bola .n3{width:66%;height:66%;background:#E8F0EC;opacity:.9;left:-8%;bottom:-15%;animation:voz-n3 9s ease-in-out infinite alternate}
+.voz-eris .voz-bola .n4{width:52%;height:52%;background:#C2244E;right:-4%;bottom:4%;animation:voz-n1 6s ease-in-out infinite alternate-reverse}
+.voz-eris .voz-bola svg{position:absolute;inset:0;width:100%;height:100%}
+@keyframes voz-n1{to{transform:translate(22%,18%)}}@keyframes voz-n2{to{transform:translate(-18%,-15%)}}@keyframes voz-n3{to{transform:translate(-22%,15%)}}
+.voz-eris .voz-pie{position:relative;display:flex;gap:10px;align-items:center;padding:0 16px calc(22px + env(safe-area-inset-bottom))}
+.voz-eris .voz-escribir{flex:1;height:48px;display:flex;align-items:center;padding:0 16px;border:0;border-radius:24px;background:#0B231C;color:#6E9485;font:400 .95rem/1 'Figtree',system-ui,sans-serif;text-align:left;cursor:pointer}
+.voz-eris .voz-redondo{flex:none;width:52px;height:52px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;background:#0B231C;color:#E8F5EF;transition:background-color .15s}
+.voz-eris .voz-redondo svg{width:24px;height:24px}
+.voz-eris .voz-hablar.grabando{background:#D1104A;color:#fff}
+.voz-eris .voz-hablar:disabled{opacity:.45;cursor:wait}
+.voz-eris .voz-cerrar{background:#E8F5EF;color:#04120E}
+@media (prefers-reduced-motion:reduce){.orbe-eris .onda,.orbe-eris .nucleo,.orbe-mini,.voz-eris .voz-bola .nube{animation:none !important}}
 </style>
 </head>
 <body>
 <div id="app"><p class="mensaje">Cargando…</p></div>
 
 <button class="fab oculto" id="nueva" type="button" aria-label="Apuntar una cita"><span>+</span> Cita</button>
-<button class="lanzador oculto" id="lanzador" type="button" aria-controls="panelEris" aria-expanded="false"><span class="punto-luz" aria-hidden="true"></span>Eris</button>
+<button class="lanzador oculto" id="lanzador" type="button" aria-controls="panelEris" aria-expanded="false"><span class="orbe-mini" aria-hidden="true"></span>Eris</button>
 
 <!-- Menú -->
 <div class="velo" id="veloMenu"><div class="cajon" role="dialog" aria-label="Menú">
@@ -260,10 +369,10 @@ textarea{min-height:90px;resize:vertical}
 
 <!-- Panel de Eris -->
 <div class="panel-eris" id="panelEris" role="dialog" aria-label="Chat con Eris">
-  <div class="panel-cab"><div>Eris<small>Tu asistente · gestiona tu negocio hablando</small></div><div class="acc"><button type="button" class="altavoz" id="erisAltavoz" aria-pressed="true" title="Eris te contesta en voz alta cuando le hablas">🔊</button><button type="button" id="erisNueva" title="Empezar de nuevo">Nueva</button><button type="button" class="x" id="erisCerrar" aria-label="Cerrar">×</button></div></div>
+  <div class="panel-cab"><div class="cab-eris"><span class="orbe-mini" id="erisOrbe" aria-hidden="true"></span><div>Eris<small>Tu asistente · gestiona tu negocio hablando</small></div></div><div class="acc"><button type="button" class="altavoz" id="erisAltavoz" aria-pressed="true" title="Eris te contesta en voz alta cuando le hablas">🔊</button><button type="button" id="erisNueva" title="Empezar de nuevo">Nueva</button><button type="button" class="x" id="erisCerrar" aria-label="Cerrar">×</button></div></div>
   <div class="mensajes" id="erisMensajes" aria-live="polite"></div>
   <div class="sugerencias" id="erisSug"></div>
-  <form class="escribir" id="erisForm"><textarea id="erisTexto" rows="1" maxlength="2000" placeholder="Escribe o pulsa el micro y habla…" aria-label="Mensaje para Eris"></textarea><div class="grabacion" aria-live="polite"><i></i><span id="erisTiempo">Te escucho… 0:00</span><button type="button" id="erisCancelar">Cancelar</button></div><button type="button" class="mic" id="erisMic" aria-label="Hablar con Eris" title="Pulsa, habla y vuelve a pulsar para enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button type="submit" class="enviar" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button></form>
+  <form class="escribir" id="erisForm"><textarea id="erisTexto" rows="1" maxlength="2000" placeholder="Escríbele a Eris…" aria-label="Mensaje para Eris"></textarea><div class="grabacion" aria-live="polite"><i></i><span id="erisTiempo">Te escucho… 0:00</span><button type="button" id="erisCancelar">Cancelar</button></div><button type="button" class="mic" id="erisMic" aria-label="Hablar con Eris" title="Pulsa, habla y vuelve a pulsar para enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button type="submit" class="enviar" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button></form>
 </div>
 
 <!-- Nueva cita -->
@@ -342,6 +451,7 @@ textarea{min-height:90px;resize:vertical}
 <label class="campo"><span>Nota (se añade arriba de las notas, con la fecha de hoy)</span><textarea name="nota" maxlength="600" rows="3" placeholder="Ej.: Le he llamado, lo quiere ver con su socio."></textarea></label>
 <p class="error" id="errorNegocio"></p>
 <button class="btn b-ok ancho" type="submit">Guardar en HubSpot</button>
+<button class="btn b-no ancho" type="button" id="borrarNegocio" style="margin-top:10px">Borrar posible cliente</button>
 </form></div>
 
 <!-- Cambiar contraseña -->
@@ -363,7 +473,7 @@ textarea{min-height:90px;resize:vertical}
   var API_APP = 'https://erisproject.app.n8n.cloud/webhook/eris-app';
   // Agenda comercial del dueño de Euxenos (Tete). El servidor solo responde a su cuenta con sesión válida.
   var API_DUENO = 'https://erisproject.app.n8n.cloud/webhook/eux-dueno', CUENTA_DUENO = 'talleres-tete';
-  var esDueno = false, comercial = null, cargandoCom = false;
+  var esDueno = false, comercial = null, cargandoCom = false, sabeAbierto = false;
   var q = new URLSearchParams(location.search);
   var enlaceN = q.get('n'), enlaceK = q.get('k'), enlaceReset = (q.get('reset') || '').replace(/[^a-f0-9]/gi, ''), n = null, k = null;
   try { var g = JSON.parse(localStorage.getItem('eris-agenda') || 'null'); if (g) { n = g.n; k = g.k; } } catch (e) {}
@@ -379,7 +489,7 @@ textarea{min-height:90px;resize:vertical}
   if (q.get('v') === 'pedidos') vista = 'pedidos';
   var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Finalizada', caducada:'Sin confirmar · cerrada' };
   var VISTAS = {
-    comercial: { t:'Mi agenda comercial', i:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>' },
+    comercial: { t:'Euxenos', m:'Mi negocio', i:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>' },
     pedidos: { t:'Pedidos', i:'<path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>' },
     hoy: { t:'Hoy', i:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><circle cx="12" cy="15" r="2"/>' },
     calendario: { t:'Calendario', i:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2"/>' },
@@ -476,12 +586,25 @@ textarea{min-height:90px;resize:vertical}
   }
   function modoTete(){ return esDueno && vista === 'comercial'; }
   function pendientesComercial(){ var hoy = hoyISO(); return comercial ? (comercial.negocios || []).filter(function(x){ return x.fecha && x.fecha <= hoy; }).length : 0; }
+  // Cada posible cliente: tocar para cambiarlo; los atrasados llevan además ✕ para borrarlos a mano (05/11).
   function tarjetaNegocio(x, atrasado){
-    var det = [x.proximo, x.fecha ? corta(x.fecha) : 'sin fecha'].filter(Boolean).join(' · ');
-    return '<button class="fila tocable' + (atrasado ? ' atrasado' : '') + '" data-neg="' + esc(x.id) + '"><span class="txt"><b>' + esc(x.nombre) + '<span class="etq">' + esc(x.etapa) + '</span></b><span>' + esc(det) + '</span></span><span class="precio" aria-hidden="true">›</span></button>';
+    var det = [x.etapa, x.proximo, x.fecha ? corta(x.fecha) : 'sin fecha'].filter(Boolean).join(' · ');
+    return '<div class="fila neg' + (atrasado ? ' atrasado' : '') + '"><button class="neg-abrir" data-neg="' + esc(x.id) + '"><span class="txt"><b>' + esc(x.nombre) + '</b><span>' + esc(det) + '</span></span></button>'
+      + (atrasado ? '<button class="quitar" data-borrar-neg="' + esc(x.id) + '" aria-label="Borrar ' + esc(x.nombre) + '">✕</button>' : '<span class="flecha" aria-hidden="true">›</span>') + '</div>';
+  }
+  function borrarNegocio(id, b){
+    var x = ((comercial && comercial.negocios) || []).filter(function(y){ return y.id === id; })[0];
+    if (!x) return;
+    if (!confirmar('¿Borrar «' + x.nombre + '» de tus posibles clientes?\n\nSe quita de HubSpot. Si te equivocas, se puede recuperar durante 90 días desde la papelera de HubSpot.')) return;
+    if (b) b.disabled = true;
+    llamarDueno('negocio-borrar', { id: id }).then(function(r){
+      if (!r || !r.ok) { if (b) b.disabled = false; toast((r && r.motivo) || 'No se ha podido borrar'); return; }
+      comercial.negocios = (comercial.negocios || []).filter(function(y){ return y.id !== id; });
+      cerrarHojas(); pintar(); toast('Borrado');
+    }).catch(function(){ if (b) b.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
   }
   function vistaComercial(){
-    if (!comercial) return '<p class="vacio">Cargando tu agenda comercial…</p>';
+    if (!comercial) return '<p class="vacio">Cargando…</p>';
     var hoy = hoyISO(), d = new Date(), lim = new Date(); lim.setDate(lim.getDate() + 7); lim = iso(lim);
     var negs = (comercial.negocios || []).slice().sort(function(a, b){ return (a.fecha || '9999').localeCompare(b.fecha || '9999'); });
     var atr = negs.filter(function(x){ return x.fecha && x.fecha < hoy; });
@@ -489,36 +612,40 @@ textarea{min-height:90px;resize:vertical}
     var semana = negs.filter(function(x){ return x.fecha > hoy && x.fecha <= lim; });
     var luego = negs.filter(function(x){ return !x.fecha || x.fecha > lim; });
     var evs = (comercial.eventos || []).map(function(e){ return { fecha: String(e.inicio).slice(0, 10), hora: e.todoElDia ? 'Todo el día' : String(e.inicio).slice(11, 16), titulo: e.titulo, lugar: e.lugar }; }).filter(function(e){ return e.fecha >= hoy; });
+    // Minimalista (05/11): una línea de resumen, listas limpias y una sola Eris.
     var h = '<div class="fecha-grande">' + DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div>';
-    h += '<p class="sub">Tus posibles clientes (HubSpot) y tu agenda de Google.</p>';
-    h += '<div class="resumen"><span class="chip' + (atr.length ? ' alerta' : '') + '"><b>' + atr.length + '</b> atrasados</span><span class="chip"><b>' + deHoy.length + '</b> para hoy</span><span class="chip"><b>' + semana.length + '</b> esta semana</span><span class="chip"><b>' + negs.length + '</b> abiertos</span></div>';
+    var res = [];
+    if (atr.length) res.push('<span class="chip alerta"><b>' + atr.length + '</b> ' + (atr.length === 1 ? 'atrasado' : 'atrasados') + '</span>');
+    res.push('<span class="chip"><b>' + deHoy.length + '</b> hoy</span>');
+    if (semana.length) res.push('<span class="chip"><b>' + semana.length + '</b> esta semana</span>');
+    res.push('<span class="chip"><b>' + negs.length + '</b> ' + (negs.length === 1 ? 'abierto' : 'abiertos') + '</span>');
+    h += '<div class="resumen">' + res.join('') + '</div>';
     if (comercial.errorHubspot) h += '<div class="franja cerrado"><b>HubSpot no ha respondido.</b> Lo de abajo puede estar incompleto. Prueba a actualizar en un momento.</div>';
-    h += '<div class="franja info">Pulsa <b>Eris</b> (abajo): aquí es <b>la misma Eris de tu WhatsApp</b>, con la misma memoria. Lo que cambies se ve en todas partes.</div>';
     if (atr.length) h += '<h2>Atrasado <span class="n">' + atr.length + '</span></h2>' + atr.map(function(x){ return tarjetaNegocio(x, true); }).join('');
-    h += '<h2>Para hoy <span class="n">' + deHoy.length + '</span></h2>' + (deHoy.length ? deHoy.map(function(x){ return tarjetaNegocio(x); }).join('') : '<p class="vacio">Nada para hoy.</p>');
+    h += '<h2>Hoy <span class="n">' + deHoy.length + '</span></h2>' + (deHoy.length ? deHoy.map(function(x){ return tarjetaNegocio(x); }).join('') : '<p class="vacio">Nada para hoy.</p>');
     if (semana.length) h += '<h2>Próximos 7 días <span class="n">' + semana.length + '</span></h2>' + semana.map(function(x){ return tarjetaNegocio(x); }).join('');
     if (luego.length) h += '<h2>Más adelante <span class="n">' + luego.length + '</span></h2>' + luego.map(function(x){ return tarjetaNegocio(x); }).join('');
-    if (!negs.length) h += '<p class="vacio">No hay posibles clientes abiertos. Los que recojan las Eris (web, WhatsApp, Instagram y teléfono) aparecerán aquí.</p>';
-    h += '<h2>Tu agenda <span class="n">' + evs.length + '</span></h2>';
+    if (!negs.length) h += '<p class="vacio">No hay posibles clientes abiertos. Los que recoja Eris (web, WhatsApp, Instagram y teléfono) aparecerán aquí.</p>';
+    h += '<h2>Agenda <span class="n">' + evs.length + '</span></h2>';
     if (!evs.length) h += '<p class="vacio">Sin reuniones ni recordatorios en las próximas 3 semanas. Pídeselo a Eris: «recuérdame mañana a las 10 llamar a…».</p>';
     var diaAnt = '';
     evs.forEach(function(e){
-      if (e.fecha !== diaAnt) { var nd = nombreDia(e.fecha); h += '<p class="sub" style="margin:12px 2px 6px">' + esc(nd.charAt(0).toUpperCase() + nd.slice(1)) + '</p>'; diaAnt = e.fecha; }
+      if (e.fecha !== diaAnt) { var nd = nombreDia(e.fecha); h += '<p class="dia-sep">' + esc(nd.charAt(0).toUpperCase() + nd.slice(1)) + '</p>'; diaAnt = e.fecha; }
       h += '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span></div>';
     });
+    // Lo que sabe Eris: la memoria común de la única Eris (plegado para no cargar la pantalla).
     var av = comercial.avisos || [];
-    h += '<h2>Lo que saben todas las Eris <span class="n">' + av.length + '</span></h2>';
+    h += '<details class="plegable"' + (sabeAbierto ? ' open' : '') + ' data-sabe><summary><span>Lo que sabe Eris</span><span class="n">' + av.length + '</span></summary>';
     h += av.length ? av.map(function(a){
-      var det = (a.para_clientes ? 'Todas las Eris (también con clientes)' : 'Solo tu Eris') + (a.caduca ? ' · hasta el ' + corta(a.caduca) : '') + (a.caducado ? ' · ya no se usa' : '');
+      var det = (a.para_clientes ? 'También con clientes' : 'Solo contigo') + (a.caduca ? ' · hasta el ' + corta(a.caduca) : '') + (a.caducado ? ' · ya no se usa' : '');
       return '<div class="fila' + (a.caducado ? ' apagada' : '') + '"><span class="txt"><b>' + esc(a.texto) + '</b><span>' + esc(det) + '</span></span><button class="quitar" data-quitar-aviso="' + esc(a.id) + '" aria-label="Borrar aviso">✕</button></div>';
-    }).join('') : '<p class="vacio">Aún no hay avisos. Lo que guardes aquí (o le digas a Eris «que todas las Eris sepan que…») lo usarán al momento la Eris de la web, la de WhatsApp e Instagram y la tuya.</p>';
-    h += '<form id="formAviso" class="caja" style="margin-top:10px"><p>Nuevo aviso para las Eris. Ej.: «Esta semana el equipo no hace llamadas hasta el lunes 02/11».</p>'
-      + '<textarea name="texto" maxlength="400" rows="3" placeholder="Escribe el aviso…" aria-label="Aviso para las Eris"></textarea>'
-      + '<label class="interruptor" style="margin-top:10px"><input type="checkbox" name="clientes" checked> <span>Que lo usen también las Eris que atienden a clientes</span></label>'
+    }).join('') : '<p class="vacio">Aún no hay nada. Lo que apuntes aquí (o le digas a Eris «recuerda que…») lo tendrá en cuenta al momento, hable por donde hable: web, WhatsApp, Instagram o contigo.</p>';
+    h += '<form id="formAviso" class="caja" style="margin-top:10px">'
+      + '<textarea name="texto" maxlength="400" rows="2" placeholder="Algo que Eris deba saber. Ej.: el viernes no hay llamadas." aria-label="Algo que Eris deba saber"></textarea>'
+      + '<label class="interruptor" style="margin-top:10px"><input type="checkbox" name="clientes" checked> <span>Que lo use también con los clientes</span></label>'
       + '<label class="campo"><span>Válido hasta (opcional)</span><input type="date" name="caduca"></label>'
-      + '<p class="ayuda" style="margin:0 0 10px">Precios y packs no van aquí: se cambian a la vez en la web, en Stripe y en todas las Eris.</p>'
-      + '<button class="btn b-ok ancho" type="submit">Guardar para todas las Eris</button></form>';
-    h += '<p class="ayuda">Toca un posible cliente para cambiar la etapa, el próximo paso o la fecha. Se guarda en HubSpot y tu Eris lo sabe al momento.</p>';
+      + '<p class="ayuda" style="margin:0 0 10px">Precios y packs no van aquí: se cambian a la vez en la web, en Stripe y en Eris.</p>'
+      + '<button class="btn b-ok ancho" type="submit">Guardar</button></form></details>';
     return h;
   }
   var formNeg = document.getElementById('formNegocio'), negSel = null;
@@ -542,6 +669,7 @@ textarea{min-height:90px;resize:vertical}
     else { var dias = +m; while (dias > 0) { f.setDate(f.getDate() + 1); if (m === '1' || (f.getDay() !== 0 && f.getDay() !== 6)) dias--; } }
     formNeg.fecha.value = iso(f);
   });
+  document.getElementById('borrarNegocio').addEventListener('click', function(){ if (negSel) borrarNegocio(negSel.id, this); });
   formNeg.addEventListener('submit', function(e){
     e.preventDefault(); if (!negSel) return;
     var c = { id: negSel.id };
@@ -613,7 +741,7 @@ textarea{min-height:90px;resize:vertical}
     }).join('');
     return '<details class="conv" data-conv="' + esc(p.ref) + '"' + (convAbiertas[p.ref] ? ' open' : '') + '><summary>' + (porTel ? '📞 Ver la llamada' : '💬 Ver la conversación') + '</summary><div class="msgs">' + msgs + '</div></details>';
   }
-  document.addEventListener('toggle', function(e){ var d = e.target; if (d && d.getAttribute && d.getAttribute('data-conv')) convAbiertas[d.getAttribute('data-conv')] = d.open; }, true);
+  document.addEventListener('toggle', function(e){ var d = e.target; if (d && d.getAttribute && d.getAttribute('data-conv')) convAbiertas[d.getAttribute('data-conv')] = d.open; if (d && d.hasAttribute && d.hasAttribute('data-sabe')) sabeAbierto = d.open; }, true);
   function tarjetaPedido(p){
     var sig = { nuevo:['cocina','👨‍🍳 Pasar a cocina'], cocina:['listo','✓ Listo'], listo:['entregado', p.tipo === 'domicilio' ? '🛵 Entregado' : '✓ Recogido'] }[p.estado];
     var acc = '';
@@ -806,7 +934,7 @@ textarea{min-height:90px;resize:vertical}
       var pn = (pedidos || []).filter(function(p){ return p.estado === 'nuevo'; }).length;
       var pcom = v === 'comercial' ? pendientesComercial() : 0;
       var cuenta = pcom || (v === 'citas' && pc ? pc : (v === 'pendientes' && pp ? pp : (v === 'pedidos' && pn ? pn : 0)));
-      return '<button data-ir="' + v + '"' + (vista === v ? ' aria-current="page"' : '') + '>' + svg(VISTAS[v].i) + VISTAS[v].t + (cuenta ? '<span class="cuenta-n">' + cuenta + '</span>' : '') + '</button>';
+      return '<button data-ir="' + v + '"' + (vista === v ? ' aria-current="page"' : '') + '>' + svg(VISTAS[v].i) + (VISTAS[v].m || VISTAS[v].t) + (cuenta ? '<span class="cuenta-n">' + cuenta + '</span>' : '') + '</button>';
     }).join('');
     document.getElementById('menuNegocio').textContent = (datos && datos.negocio.nombre) || '';
   }
@@ -818,7 +946,7 @@ textarea{min-height:90px;resize:vertical}
     var y = window.scrollY, hayAviso = porConfirmar().length > 0 || (pedidos || []).some(function(p){ return p.estado === 'nuevo'; });
     app.innerHTML = '<header><div class="cab">'
       + '<button class="icono-btn" id="abrirMenu" aria-label="Abrir el menú">' + svg('<path d="M4 7h16M4 12h16M4 17h16"/>') + (hayAviso && vista !== 'hoy' && vista !== 'citas' ? '<span class="bolita"></span>' : '') + '</button>'
-      + '<div class="titulo"><small>' + esc(vista === 'comercial' ? 'Euxenos · solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
+      + '<div class="titulo"><small>' + esc(vista === 'comercial' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
       + '<button class="icono-btn" id="recargar" aria-label="Actualizar">' + svg('<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>') + '</button>'
       + '</div></header><main>' + cuerpo() + '</main>';
     document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); });
@@ -871,9 +999,10 @@ textarea{min-height:90px;resize:vertical}
       hechos.reduce(function(pr, x){ return pr.then(function(){ return llamarApp('pendiente-borrar', { id: x.id }).then(function(r){ if (r && r.ok) info = r.datos; }); }); }, Promise.resolve()).then(function(){ pintar(); toast('Hechos borrados'); }).catch(sinConexion); return; }
     t = e.target.closest('[data-cuenta]');
     if (t) { if (t.getAttribute('data-cuenta') === 'acceso') abrirAcceso(); else if (t.getAttribute('data-cuenta') === 'bio') { if (bioGuardada()) { bioBorrar(); toast('Face ID o huella quitado de este móvil'); pintar(); } else activarBio((datos && datos.negocio && datos.negocio.usuario) || '', function(ok){ if (ok) toast('Listo: la próxima vez entra con Face ID o huella'); pintar(); }); } else { quitarAvisos(true); olvidar(); pantallaLogin('Has cerrado la sesión.'); } return; }
+    t = e.target.closest('[data-borrar-neg]'); if (t) { borrarNegocio(t.getAttribute('data-borrar-neg'), t); return; }
     t = e.target.closest('[data-neg]'); if (t) { abrirNegocio(t.getAttribute('data-neg')); return; }
     t = e.target.closest('[data-quitar-aviso]');
-    if (t) { if (!confirmar('¿Borrar este aviso? Las Eris dejarán de usarlo.')) return; t.disabled = true; llamarDueno('aviso-borrar', { id: t.getAttribute('data-quitar-aviso') }).then(function(r){ if (r && r.ok) toast('Aviso borrado'); else toast((r && r.motivo) || 'No se ha podido borrar'); cargarComercial(); }).catch(sinConexion); return; }
+    if (t) { if (!confirmar('¿Borrar esto? Eris dejará de tenerlo en cuenta.')) return; t.disabled = true; llamarDueno('aviso-borrar', { id: t.getAttribute('data-quitar-aviso') }).then(function(r){ if (r && r.ok) toast('Borrado'); else toast((r && r.motivo) || 'No se ha podido borrar'); cargarComercial(); }).catch(sinConexion); return; }
     var b = e.target.closest('button[data-a]'); if (!b) return;
     accionCita(b.getAttribute('data-a'), b.getAttribute('data-r'));
   });
@@ -894,7 +1023,7 @@ textarea{min-height:90px;resize:vertical}
       llamarDueno('aviso-crear', { texto: aviso, para_clientes: f.clientes.checked, caduca: f.caduca.value }).then(function(r){
         listo();
         if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido guardar'); return; }
-        toast(f.clientes.checked ? 'Guardado: todas las Eris ya lo saben' : 'Guardado: tu Eris ya lo sabe'); cargarComercial();
+        toast('Guardado: Eris ya lo sabe'); f.reset(); cargarComercial();
       }).catch(function(){ listo(); sinConexion(); });
     } else listo();
   });
@@ -1193,26 +1322,36 @@ textarea{min-height:90px;resize:vertical}
   var caja = document.getElementById('erisMensajes'), formEris = document.getElementById('erisForm'), textoEris = document.getElementById('erisTexto');
   var conversacion = [], pensando = false;
   var SUGERENCIAS = ['¿Qué tengo hoy?', 'Apunta una cita', 'Mueve una cita', 'Añade un servicio', 'Cerramos por vacaciones', 'Apunta que falta…'];
-  var SUG_TETE = ['¿Qué tengo pendiente?', 'He llamado a…', 'Recuérdame mañana…', 'Que todas las Eris sepan que…', '¿Qué me ha llegado al correo?'];
+  var SUG_TETE = ['¿Qué tengo pendiente?', 'He llamado a…', 'Recuérdame mañana…', 'Recuerda que…', '¿Qué me ha llegado al correo?'];
   function claveConv(){ return modoTete() ? 'euxenos-eris-tete' : 'euxenos-eris-' + (n || ''); }
   function conNegrita(t){ return esc(t).replace(/\*([^*\n]+)\*/g, '<b>$1</b>'); }
   function guardarConv(){ try { sessionStorage.setItem(claveConv(), JSON.stringify(conversacion.slice(-30))); } catch (e) {} }
   function leerConv(){ try { conversacion = JSON.parse(sessionStorage.getItem(claveConv()) || '[]') || []; } catch (e) { conversacion = []; } }
+  // Chat como en la web (05/11): pantalla de inicio con la bola de Eris y atajos; la bola late mientras piensa.
+  function saludoHora(){ var h = new Date().getHours(); return h >= 6 && h < 14 ? 'Buenos días' : (h >= 14 && h < 21 ? 'Buenas tardes' : 'Buenas noches'); }
   function pintarConv(){
-    var saludo = modoTete() ? 'Hola, Tete. Soy tu Eris, la misma de WhatsApp: sé lo que hemos hablado allí. ¿Qué hago?' : '¡Hola! Soy Eris 👋 ¿En qué te ayudo?';
-    caja.innerHTML = '<div class="m eris">' + esc(saludo) + '</div>' + conversacion.map(function(m){ return '<div class="m ' + (m.rol === 'eris' ? 'eris' : 'yo') + (m.error ? ' error' : '') + '">' + (m.voz ? '<span class="voz">🎤 por voz</span>' : '') + (m.rol === 'eris' ? conNegrita(m.texto) : esc(m.texto)) + '</div>'; }).join('') + (pensando ? '<div class="escribiendo" aria-label="Eris está escribiendo"><i></i><i></i><i></i></div>' : '');
-    document.getElementById('erisSug').innerHTML = conversacion.length ? '' : (modoTete() ? SUG_TETE : SUGERENCIAS).map(function(s){ return '<button type="button">' + esc(s) + '</button>'; }).join('');
+    var sug = modoTete() ? SUG_TETE : SUGERENCIAS;
+    if (!conversacion.length && !pensando) {
+      caja.innerHTML = '<div class="inicio-eris"><div class="orbe-eris" aria-hidden="true"><span class="onda"></span><span class="onda"></span><span class="nucleo"></span></div>'
+        + '<p class="saludo-inicio">' + saludoHora() + (modoTete() ? ', Tete' : '') + '</p>'
+        + '<p class="sub-inicio">' + (modoTete() ? 'Soy Eris, la misma de tu WhatsApp. Escríbeme o háblame.' : 'Soy Eris. Gestiono tu negocio contigo: escríbeme o háblame.') + '</p>'
+        + '<div class="atajos">' + sug.map(function(x){ return '<button type="button" data-sug>' + esc(x) + '</button>'; }).join('') + '</div></div>';
+    } else {
+      caja.innerHTML = conversacion.map(function(m){ return '<div class="m ' + (m.rol === 'eris' ? 'eris' : 'yo') + (m.error ? ' error' : '') + '">' + (m.voz ? '<span class="voz">🎤 por voz</span>' : '') + (m.rol === 'eris' ? conNegrita(m.texto) : esc(m.texto)) + '</div>'; }).join('') + (pensando ? '<div class="escribiendo" aria-label="Eris está pensando"><span class="orbe-mini pensando"></span></div>' : '');
+    }
+    document.getElementById('erisSug').innerHTML = '';
+    var om = document.getElementById('erisOrbe'); if (om) om.classList.toggle('pensando', pensando);
     caja.scrollTop = caja.scrollHeight;
   }
-  function abrirEris(){ document.querySelector('#panelEris .panel-cab small').textContent = modoTete() ? 'Tu Eris · la misma que en WhatsApp' : 'Tu asistente · gestiona tu negocio hablando'; leerConv(); pintarConv(); panelEris.classList.add('abierto'); lanzador.setAttribute('aria-expanded', 'true'); if (window.innerWidth <= 520) lanzador.classList.add('oculto'); setTimeout(function(){ textoEris.focus(); }, 60); }
-  function cerrarEris(){ if (typeof pararGrabacion === 'function' && grabador && grabador.state === 'recording') { cancelada = true; pararGrabacion(); } if (typeof callar === 'function') callar(); panelEris.classList.remove('abierto'); lanzador.setAttribute('aria-expanded', 'false'); if (datos) lanzador.classList.remove('oculto'); }
+  function abrirEris(){ document.querySelector('#panelEris .panel-cab small').textContent = modoTete() ? 'La misma Eris de tu WhatsApp' : 'Tu asistente · gestiona tu negocio hablando'; leerConv(); pintarConv(); panelEris.classList.add('abierto'); lanzador.setAttribute('aria-expanded', 'true'); if (window.innerWidth <= 520) lanzador.classList.add('oculto'); setTimeout(function(){ textoEris.focus(); }, 60); }
+  function cerrarEris(){ if (vozAbierta) cerrarVoz(); if (typeof pararGrabacion === 'function' && grabador && grabador.state === 'recording') { cancelada = true; pararGrabacion(); } if (typeof callar === 'function') callar(); panelEris.classList.remove('abierto'); lanzador.setAttribute('aria-expanded', 'false'); if (datos) lanzador.classList.remove('oculto'); }
   lanzador.addEventListener('click', function(){ panelEris.classList.contains('abierto') ? cerrarEris() : abrirEris(); });
   document.getElementById('erisCerrar').addEventListener('click', cerrarEris);
   document.getElementById('erisNueva').addEventListener('click', function(){ if (pensando) return; conversacion = []; guardarConv(); pintarConv(); textoEris.focus(); });
-  document.getElementById('erisSug').addEventListener('click', function(e){
-    var b = e.target.closest('button'); if (!b) return;
+  caja.addEventListener('click', function(e){
+    var b = e.target.closest('[data-sug]'); if (!b) return;
     var s = b.textContent;
-    if (/…$|una cita$|un servicio$|vacaciones$/.test(s)) { textoEris.value = { 'He llamado a…':'He llamado a ', 'Recuérdame mañana…':'Recuérdame mañana a las ', 'Que todas las Eris sepan que…':'Que todas las Eris sepan que ', 'Apunta una cita':'Apunta una cita a ', 'Mueve una cita':'Mueve la cita de ', 'Añade un servicio':'Añade al catálogo el servicio ', 'Cerramos por vacaciones':'Cerramos por vacaciones del ', 'Apunta que falta…':'Apunta que falta ' }[s] || s; textoEris.focus(); }
+    if (/…$|una cita$|un servicio$|vacaciones$/.test(s)) { textoEris.value = { 'He llamado a…':'He llamado a ', 'Recuérdame mañana…':'Recuérdame mañana a las ', 'Recuerda que…':'Recuerda, también cuando hables con clientes, que ', 'Apunta una cita':'Apunta una cita a ', 'Mueve una cita':'Mueve la cita de ', 'Añade un servicio':'Añade al catálogo el servicio ', 'Cerramos por vacaciones':'Cerramos por vacaciones del ', 'Apunta que falta…':'Apunta que falta ' }[s] || s; textoEris.focus(); }
     else enviarEris(s);
   });
   textoEris.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 520) { e.preventDefault(); formEris.requestSubmit(); } });
@@ -1227,18 +1366,18 @@ textarea{min-height:90px;resize:vertical}
     // En «Mi agenda comercial» habla la Eris de Tete (la misma de WhatsApp, que ya guarda su propia memoria)
     var tete = modoTete();
     var cuerpo = tete ? { n:n, k:k, accion:'chat', mensaje: texto } : { n:n, k:k, accion:'chat', mensaje: texto, historial: historial };
-    if (audio) { cuerpo.audio = audio.datos; cuerpo.audioTipo = audio.tipo; cuerpo.voz = altavozOn(); }
+    if (audio) { cuerpo.audio = audio.datos; cuerpo.audioTipo = audio.tipo; cuerpo.voz = altavozOn() || vozAbierta; }
     post(tete ? API_DUENO : API_APP, cuerpo).then(function(r){
       pensando = false; botonesEris(false);
       if (audio) mio.texto = (r && r.transcripcion) ? r.transcripcion : '(mensaje de voz)';
-      if (r && r.ok && r.respuesta) { conversacion.push({ rol:'eris', texto: String(r.respuesta) }); if (audio && altavozOn()) hablar(String(r.respuesta), r.audio); }
-      else conversacion.push({ rol:'eris', texto: (r && r.motivo) || 'No he podido responder. Inténtalo de nuevo.', error: true });
+      if (r && r.ok && r.respuesta) { conversacion.push({ rol:'eris', texto: String(r.respuesta) }); if (audio && (altavozOn() || vozAbierta)) hablar(String(r.respuesta), r.audio); else vozAviso('fin'); }
+      else { conversacion.push({ rol:'eris', texto: (r && r.motivo) || 'No he podido responder. Inténtalo de nuevo.', error: true }); vozAviso('fin'); }
       guardarConv(); pintarConv();
       pausa = 0; if (tete) cargarComercial(); else { cargar(); cargarInfo(); cargarPedidos(); }
     }).catch(function(){
       pensando = false; botonesEris(false);
       if (audio) mio.texto = '(mensaje de voz)';
-      conversacion.push({ rol:'eris', texto: 'Sin conexión. Inténtalo de nuevo.', error: true }); pintarConv();
+      conversacion.push({ rol:'eris', texto: 'Sin conexión. Inténtalo de nuevo.', error: true }); pintarConv(); vozAviso('fin');
     });
   }
   function botonesEris(off){ formEris.querySelectorAll('button').forEach(function(b){ if (b.id !== 'erisCancelar') b.disabled = off; }); }
@@ -1259,7 +1398,8 @@ textarea{min-height:90px;resize:vertical}
   function callar(){ try { if (reproductor) { reproductor.pause(); } } catch (e) {} try { window.speechSynthesis && speechSynthesis.cancel(); } catch (e) {} }
   function hablar(texto, audio){
     callar();
-    if (audio && reproductor) { reproductor.src = 'data:audio/mpeg;base64,' + audio; reproductor.play().catch(function(){ hablarNavegador(texto); }); return; }
+    if (ctxVoz && ctxVoz.state === 'suspended') { try { ctxVoz.resume(); } catch (e) {} }
+    if (audio && reproductor) { reproductor.src = 'data:audio/mpeg;base64,' + audio; vozAviso('habla', reproductor); reproductor.play().catch(function(){ hablarNavegador(texto); }); return; }
     hablarNavegador(texto);
   }
   function hablarNavegador(texto){
@@ -1267,8 +1407,9 @@ textarea{min-height:90px;resize:vertical}
       if (!window.speechSynthesis) return;
       var u = new SpeechSynthesisUtterance(String(texto).replace(/[*_#`>]/g, '')); u.lang = 'es-ES'; u.rate = 1.05;
       var v = speechSynthesis.getVoices().filter(function(x){ return /^es(-|_)ES/i.test(x.lang); })[0]; if (v) u.voice = v;
-      speechSynthesis.speak(u);
-    } catch (e) {}
+      u.onend = u.onerror = function(){ vozAviso('callada'); };
+      vozAviso('habla'); speechSynthesis.speak(u);
+    } catch (e) { vozAviso('callada'); }
   }
   function pararReloj(){ clearInterval(relojVoz); relojVoz = null; }
   var ICONO_MIC = micBtn.innerHTML, ICONO_PARAR = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
@@ -1287,22 +1428,115 @@ textarea{min-height:90px;resize:vertical}
       grabador.onstop = function(){
         var tipoFinal = (grabador && grabador.mimeType) || tipo || 'audio/webm';
         terminarGrabacion();
-        if (cancelada || !trozos.length) return;
+        if (cancelada || !trozos.length) { vozAviso('fin'); return; }
         var blob = new Blob(trozos, { type: tipoFinal });
-        if (blob.size < 1500) { toast('No te he oído. Mantén el micro un poco más.'); return; }
+        if (blob.size < 1500) { vozAviso('fin'); toast('No te he oído. Mantén el micro un poco más.'); return; }
+        vozAviso('piensa');
         var lector = new FileReader();
         lector.onloadend = function(){ var b64 = String(lector.result || '').split(',')[1] || ''; if (b64) enviarEris('', { datos: b64, tipo: tipoFinal }); };
         lector.readAsDataURL(blob);
       };
       grabador.start();
-      inicioVoz = Date.now(); micBtn.innerHTML = ICONO_PARAR; formEris.classList.add('grabando'); micBtn.setAttribute('aria-label', 'Parar y enviar');
+      inicioVoz = Date.now(); vozAviso('escucha'); micBtn.innerHTML = ICONO_PARAR; formEris.classList.add('grabando'); micBtn.setAttribute('aria-label', 'Parar y enviar');
       var t = document.getElementById('erisTiempo');
       relojVoz = setInterval(function(){ var sg = Math.floor((Date.now() - inicioVoz) / 1000); t.textContent = 'Te escucho… ' + Math.floor(sg / 60) + ':' + String(sg % 60).padStart(2, '0'); if (sg >= 90) pararGrabacion(); }, 250);
-    }).catch(function(){ toast('Necesito permiso para usar el micrófono. Actívalo en los ajustes del navegador o del móvil.'); });
+    }).catch(function(){ vozAviso('fin'); toast('Necesito permiso para usar el micrófono. Actívalo en los ajustes del navegador o del móvil.'); });
   }
   function pararGrabacion(){ if (grabador && grabador.state === 'recording') grabador.stop(); else terminarGrabacion(); }
   micBtn.addEventListener('click', function(){ if (grabador && grabador.state === 'recording') pararGrabacion(); else empezarGrabacion(); });
   document.getElementById('erisCancelar').addEventListener('click', function(){ cancelada = true; pararGrabacion(); });
+
+  // ---- Pantalla de voz (05/11): la misma que en el chat de la web. El botón de la onda abre una pantalla como el modo voz de
+  // Claude: tocas el micro, hablas, vuelves a tocar y se envía como nota de voz; la corona de barras sigue tu voz y la de Eris.
+  // Para quitarla: borrar este bloque (y el CSS «Minimalista con Eris (05/11)»). ----
+  var SVG_ONDA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 10v4"/></svg>';
+  var SVG_MICRO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5"/></svg>';
+  var ondaBtn = document.createElement('button');
+  ondaBtn.type = 'button'; ondaBtn.className = 'onda-btn'; ondaBtn.innerHTML = SVG_ONDA;
+  ondaBtn.setAttribute('aria-label', 'Hablar con Eris por voz'); ondaBtn.title = 'Hablar con Eris por voz';
+  formEris.insertBefore(ondaBtn, micBtn);
+  var vozPant = document.createElement('div');
+  vozPant.className = 'voz-eris'; vozPant.setAttribute('role', 'dialog'); vozPant.setAttribute('aria-modal', 'true'); vozPant.setAttribute('aria-label', 'Hablar con Eris por voz');
+  vozPant.innerHTML = '<div class="voz-cab"><span>Eris</span><span class="voz-estado" aria-live="polite"></span></div>'
+    + '<div class="voz-centro"><svg class="voz-corona" viewBox="-160 -160 320 320" aria-hidden="true"><defs><linearGradient id="voz-gb" gradientUnits="userSpaceOnUse" x1="-130" y1="130" x2="130" y2="-130"><stop offset="0" stop-color="#E05A7E"/><stop offset=".5" stop-color="#C9D8D0"/><stop offset="1" stop-color="#5FE0A8"/></linearGradient></defs>'
+    + '<circle r="150" fill="none" stroke="#2C5A49" stroke-width=".8" opacity=".6"/><circle r="128" fill="none" stroke="#3A3F3C" stroke-width=".8" opacity=".7"/><circle r="106" fill="none" stroke="#7A2A44" stroke-width=".8" opacity=".6"/><g class="voz-barras" stroke="url(#voz-gb)" stroke-width="3.2" stroke-linecap="round"></g></svg>'
+    + '<div class="voz-bola" aria-hidden="true"><span class="nube n1"></span><span class="nube n2"></span><span class="nube n3"></span><span class="nube n4"></span>'
+    + '<svg viewBox="0 0 132 132"><path class="w1" fill="none" stroke="#0A1A14" stroke-width="2.6" stroke-linecap="round"/><path class="w2" fill="none" stroke="#5E6B66" stroke-width="2" stroke-linecap="round" opacity=".8"/></svg></div></div>'
+    + '<div class="voz-pie"><button type="button" class="voz-escribir">Escríbele a Eris…</button><button type="button" class="voz-redondo voz-hablar" aria-label="Hablar">' + SVG_MICRO + '</button><button type="button" class="voz-redondo voz-cerrar" aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>';
+  panelEris.appendChild(vozPant);
+  var vEstado = vozPant.querySelector('.voz-estado'), vBola = vozPant.querySelector('.voz-bola'), vHablar = vozPant.querySelector('.voz-hablar');
+  var vW1 = vozPant.querySelector('.w1'), vW2 = vozPant.querySelector('.w2'), vG = vozPant.querySelector('.voz-barras');
+  var NB = 64, vBarras = [], vNiveles = [];
+  for (var ib = 0; ib < NB; ib++) { var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line'); vG.appendChild(ln); vBarras.push(ln); vNiveles.push(.25); }
+  var modoVoz = 'quieto', vozAbierta = false, vBucle = null, vTiempo = 0, analizador = null, datosAn = null, ctxVoz = null;
+  var vQuieto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var V_TXT = { quieto: 'Toca el micro y habla', escucha: 'Te escucho… toca para enviar', piensa: 'Pensando…', habla: 'Eris habla' };
+  function contextoVoz(){ try { if (!ctxVoz) { var AC = window.AudioContext || window.webkitAudioContext; ctxVoz = new AC(); } if (ctxVoz.state === 'suspended') ctxVoz.resume(); } catch (e) {} return ctxVoz; }
+  function escucharFuente(nodo, alAltavoz){
+    try { var c = contextoVoz(); analizador = c.createAnalyser(); analizador.fftSize = 128; analizador.smoothingTimeConstant = .7; datosAn = new Uint8Array(analizador.frequencyBinCount); nodo.connect(analizador); if (alAltavoz) analizador.connect(c.destination); } catch (e) { analizador = null; }
+  }
+  function ponerModo(m, audio){
+    modoVoz = m;
+    vHablar.classList.toggle('grabando', m === 'escucha');
+    vHablar.disabled = (m === 'piensa' || m === 'habla');
+    if (m === 'escucha' && flujo) { try { escucharFuente(contextoVoz().createMediaStreamSource(flujo), false); } catch (e) { analizador = null; } }
+    else if (m === 'habla' && audio) {
+      try { if (!audio._fuente) audio._fuente = contextoVoz().createMediaElementSource(audio); escucharFuente(audio._fuente, true); } catch (e) { analizador = null; }
+      var acabar = function(){ if (modoVoz === 'habla') ponerModo('quieto'); };
+      audio.addEventListener('ended', acabar, { once: true }); audio.addEventListener('pause', acabar, { once: true });
+    } else analizador = null;
+    vEstado.textContent = V_TXT[m];
+  }
+  // Avisos que mandan la grabación, el envío y la voz de Eris. Solo cuentan con la pantalla de voz abierta.
+  function vozAviso(m, audio){
+    if (!vozAbierta) return;
+    if (m === 'escucha' || m === 'piensa') ponerModo(m);
+    else if (m === 'habla') ponerModo('habla', audio);
+    else if (m === 'callada') { if (modoVoz === 'habla') ponerModo('quieto'); }
+    else if (m === 'fin' && modoVoz !== 'habla') ponerModo('quieto');
+  }
+  function vOnda(a, fase, f){ var d = 'M24 66'; for (var x = 24; x <= 108; x += 3) { var kk = Math.sin(Math.PI * (x - 24) / 84); d += ' L' + x + ' ' + (66 + Math.sin(x * f + fase) * a * kk).toFixed(1); } return d; }
+  function animarVoz(){
+    vTiempo += .05;
+    var media = 0, espectro = null;
+    if (analizador && (modoVoz === 'escucha' || modoVoz === 'habla')) { analizador.getByteFrequencyData(datosAn); espectro = datosAn; for (var j = 0; j < datosAn.length; j++) media += datosAn[j]; media = media / datosAn.length / 255; }
+    for (var i = 0; i < NB; i++) {
+      var obj;
+      if (espectro) { var v = espectro[Math.floor((i < NB / 2 ? i : NB - 1 - i) * espectro.length / (NB / 2) * .7)] / 255; obj = .12 + v * .95; }
+      else if (modoVoz === 'piensa') obj = .15 + .12 * (.5 + .5 * Math.sin(vTiempo * 2 + i * .3));
+      else if (modoVoz === 'habla') obj = .3 + .6 * Math.random();
+      else obj = .18 + .06 * Math.sin(vTiempo + i * .4);
+      vNiveles[i] += (obj - vNiveles[i]) * .25;
+      var ang = i / NB * Math.PI * 2 - Math.PI / 2, r0 = 92, r1 = r0 + 8 + vNiveles[i] * 28;
+      vBarras[i].setAttribute('x1', (Math.cos(ang) * r0).toFixed(1)); vBarras[i].setAttribute('y1', (Math.sin(ang) * r0).toFixed(1));
+      vBarras[i].setAttribute('x2', (Math.cos(ang) * r1).toFixed(1)); vBarras[i].setAttribute('y2', (Math.sin(ang) * r1).toFixed(1));
+    }
+    var amp = modoVoz === 'habla' ? 8 + media * 30 : modoVoz === 'escucha' ? 4 + media * 26 : modoVoz === 'piensa' ? 5 : 3;
+    vW1.setAttribute('d', vOnda(amp, vTiempo * 3, .12)); vW2.setAttribute('d', vOnda(amp * .7, -vTiempo * 2.4, .16));
+    var e = modoVoz === 'habla' ? 1 + .03 * Math.sin(vTiempo * 6) + media * .08 : modoVoz === 'piensa' ? 1 - .04 * (.5 + .5 * Math.sin(vTiempo * 1.5)) : 1 + .02 * Math.sin(vTiempo) + media * .06;
+    vBola.style.transform = 'scale(' + e.toFixed(3) + ')';
+    if (vozAbierta && !vQuieto) vBucle = requestAnimationFrame(animarVoz);
+  }
+  function abrirVoz(){
+    vozAbierta = true; vozPant.classList.add('abierta');
+    ponerModo(grabador && grabador.state === 'recording' ? 'escucha' : (pensando ? 'piensa' : 'quieto'));
+    cancelAnimationFrame(vBucle); animarVoz();
+    setTimeout(function(){ vHablar.focus(); }, 300);
+  }
+  function cerrarVoz(alChat){
+    if (grabador && grabador.state === 'recording') { cancelada = true; pararGrabacion(); }
+    vozAbierta = false; vozPant.classList.remove('abierta'); cancelAnimationFrame(vBucle);
+    if (alChat) setTimeout(function(){ textoEris.focus(); }, 320);
+  }
+  ondaBtn.addEventListener('click', abrirVoz);
+  vHablar.addEventListener('click', function(){
+    if (pensando) return;
+    if (grabador && grabador.state === 'recording') pararGrabacion();
+    else { contextoVoz(); empezarGrabacion(); }
+  });
+  vozPant.querySelector('.voz-escribir').addEventListener('click', function(){ cerrarVoz(true); });
+  vozPant.querySelector('.voz-cerrar').addEventListener('click', function(){ cerrarVoz(false); });
+  vozPant.addEventListener('keydown', function(e){ if (e.key === 'Escape') { e.stopPropagation(); cerrarVoz(true); } });
 
   // ---- Usuario y contraseña ----
   function derivar(usuario, clave){
