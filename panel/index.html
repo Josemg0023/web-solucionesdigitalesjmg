@@ -207,6 +207,8 @@ textarea{min-height:90px;resize:vertical}
 .escribir .grabacion button{margin-left:auto;width:auto;height:auto;padding:6px 10px;background:none;color:#8A0B30;font-weight:700;font-size:.85rem}
 .escribir.grabando .mic{background:#D1104A;color:#fff;border-color:#D1104A}
 .escribir.grabando .enviar{display:none}
+.escribir.grabando .foto{display:none}
+.escribir .foto[hidden]{display:none}
 .m .voz{display:block;font-size:.72rem;opacity:.75;margin-bottom:3px}
 .panel-cab button.altavoz{font-size:1.05rem;padding:6px 8px}
 .panel-cab button.altavoz[aria-pressed="false"]{opacity:.55}
@@ -375,7 +377,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   <div class="panel-cab"><div class="cab-eris"><span class="orbe-mini" id="erisOrbe" aria-hidden="true"></span><div>Eris<small>Tu asistente · gestiona tu negocio hablando</small></div></div><div class="acc"><button type="button" class="altavoz" id="erisAltavoz" aria-pressed="true" title="Eris te contesta en voz alta cuando le hablas">🔊</button><button type="button" id="erisNueva" title="Empezar de nuevo">Nueva</button><button type="button" class="x" id="erisCerrar" aria-label="Cerrar">×</button></div></div>
   <div class="mensajes" id="erisMensajes" aria-live="polite"></div>
   <div class="sugerencias" id="erisSug"></div>
-  <form class="escribir" id="erisForm"><textarea id="erisTexto" rows="1" maxlength="2000" placeholder="Escríbele a Eris…" aria-label="Mensaje para Eris"></textarea><div class="grabacion" aria-live="polite"><i></i><span id="erisTiempo">Te escucho… 0:00</span><button type="button" id="erisCancelar">Cancelar</button></div><button type="button" class="mic" id="erisMic" aria-label="Hablar con Eris" title="Pulsa, habla y vuelve a pulsar para enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button type="submit" class="enviar" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button></form>
+  <form class="escribir" id="erisForm"><button type="button" class="foto" id="erisFoto" aria-label="Mandar una captura a Eris" title="Manda una captura (un WhatsApp, un SMS, un email…) y Eris apunta la cita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg></button><input type="file" id="erisArchivo" accept="image/*" hidden><textarea id="erisTexto" rows="1" maxlength="2000" placeholder="Escríbele a Eris…" aria-label="Mensaje para Eris"></textarea><div class="grabacion" aria-live="polite"><i></i><span id="erisTiempo">Te escucho… 0:00</span><button type="button" id="erisCancelar">Cancelar</button></div><button type="button" class="mic" id="erisMic" aria-label="Hablar con Eris" title="Pulsa, habla y vuelve a pulsar para enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button type="submit" class="enviar" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button></form>
 </div>
 
 <!-- Nueva cita -->
@@ -1346,7 +1348,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     var om = document.getElementById('erisOrbe'); if (om) om.classList.toggle('pensando', pensando);
     caja.scrollTop = caja.scrollHeight;
   }
-  function abrirEris(){ document.querySelector('#panelEris .panel-cab small').textContent = modoTete() ? 'La misma Eris de tu WhatsApp' : 'Tu asistente · gestiona tu negocio hablando'; leerConv(); pintarConv(); panelEris.classList.add('abierto'); lanzador.setAttribute('aria-expanded', 'true'); if (window.innerWidth <= 520) lanzador.classList.add('oculto'); setTimeout(function(){ textoEris.focus(); }, 60); }
+  function abrirEris(){ document.querySelector('#panelEris .panel-cab small').textContent = modoTete() ? 'La misma Eris de tu WhatsApp' : 'Tu asistente · gestiona tu negocio hablando'; document.getElementById('erisFoto').hidden = modoTete(); leerConv(); pintarConv(); panelEris.classList.add('abierto'); lanzador.setAttribute('aria-expanded', 'true'); if (window.innerWidth <= 520) lanzador.classList.add('oculto'); setTimeout(function(){ textoEris.focus(); }, 60); }
   function cerrarEris(){ if (vozAbierta) cerrarVoz(); if (typeof pararGrabacion === 'function' && grabador && grabador.state === 'recording') { cancelada = true; pararGrabacion(); } if (typeof callar === 'function') callar(); panelEris.classList.remove('abierto'); lanzador.setAttribute('aria-expanded', 'false'); if (datos) lanzador.classList.remove('oculto'); }
   lanzador.addEventListener('click', function(){ panelEris.classList.contains('abierto') ? cerrarEris() : abrirEris(); });
   document.getElementById('erisCerrar').addEventListener('click', cerrarEris);
@@ -1360,16 +1362,25 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   textoEris.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 520) { e.preventDefault(); formEris.requestSubmit(); } });
   textoEris.addEventListener('input', function(){ textoEris.style.height = 'auto'; textoEris.style.height = Math.min(120, textoEris.scrollHeight) + 'px'; });
   formEris.addEventListener('submit', function(e){ e.preventDefault(); enviarEris(textoEris.value); });
-  function enviarEris(texto, audio){
-    texto = String(texto || '').trim(); if ((!texto && !audio) || pensando || !n) return;
+  // Captura (05/11): el dueño manda a su Eris una captura de un WhatsApp, SMS o email y Eris apunta la cita.
+  var fotoBtn = document.getElementById('erisFoto'), fotoInput = document.getElementById('erisArchivo');
+  fotoBtn.addEventListener('click', function(){ if (!pensando) fotoInput.click(); });
+  fotoInput.addEventListener('change', function(){
+    var file = fotoInput.files && fotoInput.files[0]; fotoInput.value = ''; if (!file) return;
+    if (!/^image\//i.test(file.type || '')) { toast('Manda una imagen (una captura de pantalla)'); return; }
+    reducirFoto(file).then(function(f){ enviarEris(textoEris.value, null, f); }).catch(function(){ toast('No he podido abrir la imagen'); });
+  });
+  function enviarEris(texto, audio, foto){
+    texto = String(texto || '').trim(); if ((!texto && !audio && !foto) || pensando || !n) return;
     var historial = conversacion.filter(function(m){ return !m.error; }).slice(-12).map(function(m){ return { rol: m.rol, texto: m.texto }; });
-    var mio = audio ? { rol:'yo', texto:'…', voz:true } : { rol:'yo', texto: texto };
+    var mio = audio ? { rol:'yo', texto:'…', voz:true } : { rol:'yo', texto: foto ? '📷 Captura' + (texto ? ' · ' + texto : '') : texto };
     conversacion.push(mio); textoEris.value = ''; textoEris.style.height = '';
     pensando = true; botonesEris(true); pintarConv(); guardarConv();
     // En «Mi agenda comercial» habla la Eris de Tete (la misma de WhatsApp, que ya guarda su propia memoria)
     var tete = modoTete();
     var cuerpo = tete ? { n:n, k:k, accion:'chat', mensaje: texto } : { n:n, k:k, accion:'chat', mensaje: texto, historial: historial };
     if (audio) { cuerpo.audio = audio.datos; cuerpo.audioTipo = audio.tipo; cuerpo.voz = altavozOn() || vozAbierta; }
+    if (foto) { cuerpo.archivo = foto.datos; cuerpo.archivoTipo = foto.tipo; }
     post(tete ? API_DUENO : API_APP, cuerpo).then(function(r){
       pensando = false; botonesEris(false);
       if (audio) mio.texto = (r && r.transcripcion) ? r.transcripcion : '(mensaje de voz)';
