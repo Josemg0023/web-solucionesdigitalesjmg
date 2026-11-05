@@ -318,6 +318,9 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .escribir .onda-btn{color:#5FE0A8;border-radius:50%}
 .escribir .onda-btn svg{width:24px;height:24px}
 .escribir.grabando .onda-btn{display:none}
+.abre-voz{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.abre-voz:focus-visible{outline:2px solid #5FE0A8;outline-offset:4px;border-radius:50%}
+.orbe-eris.abre-voz:active .nucleo,.orbe-mini.abre-voz:active{transform:scale(.94)}
 /* Pantalla de inicio del chat */
 .inicio-eris{margin:auto 0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:10px 6px}
 .orbe-eris{position:relative;width:128px;height:128px;display:grid;place-items:center;margin:0 0 16px}
@@ -1332,7 +1335,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   function pintarConv(){
     var sug = modoTete() ? SUG_TETE : SUGERENCIAS;
     if (!conversacion.length && !pensando) {
-      caja.innerHTML = '<div class="inicio-eris"><div class="orbe-eris" aria-hidden="true"><span class="onda"></span><span class="onda"></span><span class="nucleo"></span></div>'
+      caja.innerHTML = '<div class="inicio-eris"><div class="orbe-eris abre-voz" role="button" tabindex="0" aria-label="Hablar con Eris por voz" title="Toca la bola para hablar"><span class="onda"></span><span class="onda"></span><span class="nucleo"></span></div>'
         + '<p class="saludo-inicio">' + saludoHora() + (modoTete() ? ', Tete' : '') + '</p>'
         + '<p class="sub-inicio">' + (modoTete() ? 'Soy Eris, la misma de tu WhatsApp. Escríbeme o háblame.' : 'Soy Eris. Gestiono tu negocio contigo: escríbeme o háblame.') + '</p>'
         + '<div class="atajos">' + sug.map(function(x){ return '<button type="button" data-sug>' + esc(x) + '</button>'; }).join('') + '</div></div>';
@@ -1454,7 +1457,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   var ondaBtn = document.createElement('button');
   ondaBtn.type = 'button'; ondaBtn.className = 'onda-btn'; ondaBtn.innerHTML = SVG_ONDA;
   ondaBtn.setAttribute('aria-label', 'Hablar con Eris por voz'); ondaBtn.title = 'Hablar con Eris por voz';
-  formEris.insertBefore(ondaBtn, micBtn);
+  // 05/11 (Tete): la pantalla de voz se abre tocando la bola (inicio y cabecera), no con un botón en la barra.
   var vozPant = document.createElement('div');
   vozPant.className = 'voz-eris'; vozPant.setAttribute('role', 'dialog'); vozPant.setAttribute('aria-modal', 'true'); vozPant.setAttribute('aria-label', 'Hablar con Eris por voz');
   vozPant.innerHTML = '<div class="voz-cab"><span>Eris</span><span class="voz-estado" aria-live="polite"></span></div>'
@@ -1528,7 +1531,10 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     vozAbierta = false; vozPant.classList.remove('abierta'); cancelAnimationFrame(vBucle);
     if (alChat) setTimeout(function(){ textoEris.focus(); }, 320);
   }
-  ondaBtn.addEventListener('click', abrirVoz);
+  caja.addEventListener('click', function(e){ if (e.target.closest && e.target.closest('.orbe-eris.abre-voz')) abrirVoz(); });
+  caja.addEventListener('keydown', function(e){ if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('abre-voz')) { e.preventDefault(); abrirVoz(); } });
+  (function(){ var o = document.getElementById('erisOrbe'); if (!o) return; o.removeAttribute('aria-hidden'); o.setAttribute('role', 'button'); o.setAttribute('tabindex', '0'); o.setAttribute('aria-label', 'Hablar con Eris por voz'); o.title = 'Hablar con Eris por voz'; o.classList.add('abre-voz');
+    o.addEventListener('click', abrirVoz); o.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirVoz(); } }); })();
   vHablar.addEventListener('click', function(){
     if (pensando) return;
     if (grabador && grabador.state === 'recording') pararGrabacion();
