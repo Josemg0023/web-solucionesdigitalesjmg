@@ -12,13 +12,99 @@
 
 const N8N_URL = 'https://erisproject.app.n8n.cloud/webhook/eris-meta';
 
+import { EmailMessage } from 'cloudflare:email';
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === '/api/meta') return meta(request, env, ctx, url);
     return env.ASSETS.fetch(request);
   },
+  // Vigía externo (05/11): si se cae n8n, el Vigía de dentro de n8n no puede avisar. Esto vive fuera.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(vigilarN8n(env, new Date(event.scheduledTime || Date.now())));
+  },
 };
+
+// ── Vigía externo de n8n ────────────────────────────────────────────────────
+// Cada 10 min: n8n responde (/healthz, no gasta ejecuciones).
+// Cada 6 h (00, 06, 12 y 18 UTC): un flujo publicado contesta de verdad (avisos de la voz, sin IA; 4 ejecuciones/día).
+// Si falla dos veces seguidas, email a Tete (como mucho uno cada 3 h; si la caché no está disponible, uno cada 30 min).
+const N8N_SALUD = 'https://erisproject.app.n8n.cloud/healthz';
+const N8N_FLUJO = 'https://erisproject.app.n8n.cloud/webhook/eris-avisos-voz';
+
+// Ojo: n8n contesta 200 incluso en direcciones que no existen, así que se mira también el contenido.
+async function comprobar(url, conCuerpo) {
+  try {
+    const r = await fetch(url, { cf: { cacheTtl: 0 }, signal: AbortSignal.timeout(15000) });
+    if (!r.ok) return 'respondió ' + r.status;
+    const j = await r.json().catch(() => null);
+    if (conCuerpo) { if (!j || typeof j.avisos !== 'string') return 'respuesta rara'; }
+    else if (!j || j.status !== 'ok') return 'no dice que esté bien';
+    return '';
+  } catch (e) { return 'no responde (' + String(e && e.name || e) + ')'; }
+}
+
+async function vigilarN8n(env, ahora) {
+  const flujoTambien = ahora.getUTCHours() % 6 === 0 && ahora.getUTCMinutes() < 10;
+  let fallo = await comprobar(N8N_SALUD, false);
+  if (!fallo && flujoTambien) { const f = await comprobar(N8N_FLUJO, true); if (f) fallo = 'los flujos publicados no contestan: ' + f; }
+  if (!fallo) return;
+  // Segunda oportunidad a los 30 s (un fallo suelto de red no es una caída)
+  await new Promise(r => setTimeout(r, 30000));
+  let otra = await comprobar(N8N_SALUD, false);
+  if (!otra && fallo.startsWith('los flujos')) { const f = await comprobar(N8N_FLUJO, true); otra = f ? 'los flujos publicados no contestan: ' + f : ''; }
+  if (!otra) return;
+  if (!(await tocaAvisar(ahora))) return;
+  await avisar(env, otra, ahora);
+}
+
+async function tocaAvisar(ahora) {
+  const clave = new Request('https://euxenos.com/__vigia/ultimo-aviso');
+  try {
+    const c = caches.default;
+    if (await c.match(clave)) return false;
+    await c.put(clave, new Response('1', { headers: { 'Cache-Control': 'max-age=10800' } }));
+    return true;
+  } catch (e) {
+    return ahora.getUTCMinutes() % 30 < 10;
+  }
+}
+
+function b64(t) { const b = new TextEncoder().encode(t); let s = ''; b.forEach(x => { s += String.fromCharCode(x); }); return btoa(s); }
+
+async function avisar(env, motivo, ahora) {
+  if (!env.AVISOS) return;
+  const hora = ahora.toLocaleString('es-ES', { timeZone: 'Europe/Madrid', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  const texto = [
+    'n8n no funciona: ' + motivo + '.',
+    'Hora: ' + hora + '.',
+    '',
+    'Mientras dure, Eris no contesta en WhatsApp, Instagram ni el chat de la web, y no llegan las citas ni los pagos a HubSpot.',
+    'El teléfono (919) sigue funcionando porque va por ElevenLabs.',
+    '',
+    'Qué hacer:',
+    '1. Entra en erisproject.app.n8n.cloud y mira si la cuenta está activa (pago del plan Starter, ejecuciones del mes).',
+    '2. Mira https://status.n8n.io por si es una caída general de n8n.',
+    '3. Pásale este email a Claude en un chat.',
+    '',
+    'Mientras siga caído, te llegará como mucho un aviso cada 3 horas.',
+  ].join('\r\n');
+  const raw = [
+    'From: =?UTF-8?B?' + b64('Vigía · Euxenos') + '?= <avisos@euxenos.com>',
+    'To: soluciones.digitales.jmg@gmail.com',
+    'Subject: =?UTF-8?B?' + b64('Vigía · n8n no funciona') + '?=',
+    'Message-ID: <vigia-' + ahora.getTime() + '@euxenos.com>',
+    'Date: ' + ahora.toUTCString(),
+    'MIME-Version: 1.0',
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    b64(texto).replace(/.{76}/g, '$&\r\n'),
+  ].join('\r\n');
+  try { await env.AVISOS.send(new EmailMessage('avisos@euxenos.com', 'soluciones.digitales.jmg@gmail.com', raw)); }
+  catch (e) { console.error('Vigía: no se pudo enviar el aviso', e); }
+}
 
 async function meta(request, env, ctx, url) {
   // 1) Verificación del webhook (Meta lo hace una vez al configurarlo)

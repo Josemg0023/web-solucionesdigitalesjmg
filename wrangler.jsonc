@@ -9,5 +9,11 @@
     "binding": "ASSETS",
     "not_found_handling": "404-page",
     "run_worker_first": ["/api/*"]
-  }
+  },
+  // Vigía externo (05/11): cada 10 min comprueba que n8n responde y, si no, avisa por email a Tete.
+  "triggers": { "crons": ["*/10 * * * *"] },
+  // Email de aviso desde avisos@euxenos.com (Cloudflare Email Routing) al Gmail de la empresa.
+  "send_email": [
+    { "name": "AVISOS", "destination_address": "soluciones.digitales.jmg@gmail.com" }
+  ]
 }

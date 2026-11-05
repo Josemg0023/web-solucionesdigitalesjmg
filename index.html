@@ -1545,7 +1545,42 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
       i18n: { en: { title: 'Eris', subtitle: '', footer: '', getStarted: 'OK', inputPlaceholder: t.i, closeButtonTooltip: 'X' } }
     });
     limitarMensaje(contenedor);
+    suavizarErrores(contenedor);
     ponerMicro(contenedor);
+  }
+  // Mensaje amable si falla la IA (05/11). La librería del chat enseña los fallos en inglés
+  // («Error: Failed to receive response», «Error: …», «[No response received…]»). Se cambian por un
+  // mensaje en el idioma del visitante. Los avisos de los límites («Vas muy rápido…») se dejan, sin el «Error:».
+  var TEXTO_FALLO = {
+    es:'Perdona, ahora mismo no puedo responderte bien. Vuelve a escribirme en un momento, o escríbenos a contacto@euxenos.com o llama al 919 93 36 42 y te atendemos.',
+    en:'Sorry, I can\'t answer properly right now. Please write again in a moment, email contacto@euxenos.com or call +34 919 93 36 42 and we\'ll help you.',
+    fr:'Désolée, je ne peux pas bien vous répondre pour le moment. Réécrivez-moi dans un instant, écrivez à contacto@euxenos.com ou appelez le +34 919 93 36 42.',
+    ca:'Perdona, ara mateix no et puc respondre bé. Torna\'m a escriure d\'aquí a un moment, o escriu a contacto@euxenos.com o truca al 919 93 36 42.',
+    va:'Perdona, ara mateix no et puc respondre bé. Torna\'m a escriure d\'ací a un moment, o escriu a contacto@euxenos.com o telefona al 919 93 36 42.',
+    gl:'Perdoa, agora mesmo non podo responderche ben. Volve escribirme nun momento, ou escribe a contacto@euxenos.com ou chama ao 919 93 36 42.',
+    eu:'Barkatu, une honetan ezin dizut ondo erantzun. Idatzi berriro une batean, edo idatzi contacto@euxenos.com helbidera edo deitu 919 93 36 42 zenbakira.',
+    pt:'Desculpe, neste momento não consigo responder bem. Volte a escrever daqui a pouco, ou escreva para contacto@euxenos.com ou ligue para +34 919 93 36 42.',
+    de:'Entschuldigung, ich kann gerade nicht richtig antworten. Schreiben Sie bitte gleich noch einmal, an contacto@euxenos.com oder rufen Sie +34 919 93 36 42 an.',
+    it:'Scusa, in questo momento non riesco a risponderti bene. Riscrivimi tra un attimo, oppure scrivi a contacto@euxenos.com o chiama il +34 919 93 36 42.'
+  };
+  var AVISO_LIMITE = /vas muy r[aá]pido|m[aá]ximo de mensajes|muchas consultas/i;
+  function arreglarFallos(){
+    var st = almacenChat();
+    if(!st || !st.messages || !st.messages.value) return;
+    st.messages.value.forEach(function(m){
+      if(!m || m.sender !== 'bot' || typeof m.text !== 'string') return;
+      var t = m.text.trim();
+      if(t.indexOf('[No response received') === 0){ m.text = TEXTO_FALLO[idioma] || TEXTO_FALLO.es; return; }
+      if(!/^Error:/i.test(t)) return;
+      var resto = t.replace(/^(Error:\s*)+/i, '').trim();
+      m.text = AVISO_LIMITE.test(resto) ? resto : (TEXTO_FALLO[idioma] || TEXTO_FALLO.es);
+    });
+  }
+  function suavizarErrores(contenedor){
+    arreglarFallos();
+    if(contenedor._fallos) return;
+    contenedor._fallos = new MutationObserver(function(){ arreglarFallos(); });
+    contenedor._fallos.observe(contenedor, { childList: true, subtree: true, characterData: true });
   }
   // Máximo 800 caracteres por mensaje (el servidor también recorta)
   var MAX_MENSAJE = 800;
