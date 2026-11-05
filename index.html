@@ -572,6 +572,39 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
 @keyframes eris-piensa{0%,100%{transform:scale(1);border-color:#10B981}50%{transform:scale(.9);border-color:#F0386B}}
 @media (max-height:560px){.orbe-eris{width:100px;height:100px;margin-bottom:10px}.orbe-eris .nucleo{width:60px;height:60px;font-size:28px}}
 @media (prefers-reduced-motion:reduce){.orbe-eris .onda,.orbe-eris .nucleo,.orbe-mini,#chat-eris .chat-message-typing .chat-message-typing-body{animation:none !important}}
+/* === Pantalla de voz y fondo de ondas (05/11): el chat lleva el fondo de ondas del fondo de pantalla de Tete,
+   la ξ pasa a ser una mini bola rosa, blanca y verde, y el botón de la onda abre la pantalla de voz (corona de barras + bola).
+   Para volver a como estaba el 04/11: borrar este bloque y el script «Pantalla de voz (05/11)». === */
+#chat-eris .chat-body,.inicio-eris{background-color:#04120E;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='64'%3E%3Cg fill='none' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M14 22q6-5 12 0t12 0' stroke='%231D6B50' stroke-opacity='.22'/%3E%3Cpath d='M14 28q6-5 12 0t12 0' stroke='%237A2A44' stroke-opacity='.2'/%3E%3Cpath d='M14 34q6-5 12 0t12 0' stroke='%231D6B50' stroke-opacity='.22'/%3E%3C/g%3E%3C/svg%3E")}
+.orbe-mini,.orbe-eris .nucleo,#chat-eris .chat-message-typing .chat-message-typing-body{color:transparent !important;border-color:rgba(232,240,236,.18);background:radial-gradient(circle at 30% 70%,#E8F0EC 0 16%,transparent 46%),radial-gradient(circle at 74% 30%,#3DBF8C 0 18%,transparent 52%),radial-gradient(circle at 68% 76%,#D1104A 0 20%,transparent 52%),radial-gradient(circle at 28% 26%,#D1104A 0 22%,transparent 58%),#B8314F}
+#chat-eris .chat-message-typing .chat-message-typing-body::after{content:''}
+#chat-eris .boton-micro{display:none !important}
+#chat-eris .boton-voz{flex:none;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin:0 2px;border:0;border-radius:50%;cursor:pointer;background:transparent;color:#5FE0A8;transition:background-color .15s}
+#chat-eris .boton-voz:hover{background:rgba(16,185,129,.14)}
+#chat-eris .boton-voz svg{width:24px;height:24px}
+.voz-eris{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;color:#E8F5EF;background:radial-gradient(circle at 50% 40%,#0F4A35 0%,#08261C 45%,#04120E 100%);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.voz-eris::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='64'%3E%3Cg fill='none' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M14 22q6-5 12 0t12 0' stroke='%231D6B50' stroke-opacity='.5'/%3E%3Cpath d='M14 28q6-5 12 0t12 0' stroke='%237A2A44' stroke-opacity='.45'/%3E%3Cpath d='M14 34q6-5 12 0t12 0' stroke='%231D6B50' stroke-opacity='.5'/%3E%3C/g%3E%3C/svg%3E")}
+.voz-eris.abierta{opacity:1;visibility:visible}
+.voz-eris .voz-cab{position:relative;display:flex;justify-content:space-between;align-items:center;padding:18px 20px 0;font:700 1rem/1 var(--display)}
+.voz-eris .voz-estado{font:500 .88rem/1.3 'Figtree',system-ui,sans-serif;color:#9CC3B5;text-align:right;max-width:65%}
+.voz-eris .voz-centro{position:relative;flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+.voz-eris .voz-corona{position:absolute;width:min(300px,78vw);height:min(300px,78vw)}
+.voz-eris .voz-bola{position:relative;width:min(136px,36vw);height:min(136px,36vw);border-radius:50%;overflow:hidden;background:#B8314F;transition:transform .2s ease}
+.voz-eris .voz-bola .nube{position:absolute;border-radius:50%;filter:blur(14px)}
+.voz-eris .voz-bola .n1{width:80%;height:80%;background:#D1104A;left:-22%;top:-15%;animation:voz-n1 7s ease-in-out infinite alternate}
+.voz-eris .voz-bola .n2{width:66%;height:66%;background:#3DBF8C;right:-15%;top:-8%;animation:voz-n2 8s ease-in-out infinite alternate}
+.voz-eris .voz-bola .n3{width:66%;height:66%;background:#E8F0EC;opacity:.9;left:-8%;bottom:-15%;animation:voz-n3 9s ease-in-out infinite alternate}
+.voz-eris .voz-bola .n4{width:52%;height:52%;background:#C2244E;right:-4%;bottom:4%;animation:voz-n1 6s ease-in-out infinite alternate-reverse}
+.voz-eris .voz-bola svg{position:absolute;inset:0;width:100%;height:100%}
+@keyframes voz-n1{to{transform:translate(22%,18%)}}@keyframes voz-n2{to{transform:translate(-18%,-15%)}}@keyframes voz-n3{to{transform:translate(-22%,15%)}}
+.voz-eris .voz-pie{position:relative;display:flex;gap:10px;align-items:center;padding:0 16px 22px}
+.voz-eris .voz-escribir{flex:1;height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;border:0;border-radius:24px;background:#0B231C;color:#6E9485;font:400 .95rem/1 'Figtree',system-ui,sans-serif;text-align:left;cursor:pointer}
+.voz-eris .voz-redondo{flex:none;width:52px;height:52px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;background:#0B231C;color:#E8F5EF;transition:background-color .15s,transform .15s}
+.voz-eris .voz-redondo svg{width:24px;height:24px}
+.voz-eris .voz-hablar.grabando{background:#D1104A;color:#fff}
+.voz-eris .voz-hablar:disabled{opacity:.45;cursor:wait}
+.voz-eris .voz-cerrar{background:#E8F5EF;color:#04120E}
+@media (prefers-reduced-motion:reduce){.voz-eris .voz-bola .nube{animation:none}}
 </style>
 </head>
 <body>
@@ -1574,11 +1607,13 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
         clearInterval(g.reloj); clearTimeout(g.tope);
         boton.classList.remove('grabando'); avisoMicro('');
         if(window.erisEstado) window.erisEstado('escucha', false);
+        if(window.erisVoz) window.erisVoz(g.enviar && trozos.length && Date.now() - g.inicio > 700 ? 'piensa' : 'fin');
         if(g.enviar && trozos.length && Date.now() - g.inicio > 700) enviarNota(new Blob(trozos, { type: rec.mimeType || 'audio/webm' }), boton);
       };
       rec.start();
       boton.classList.add('grabando');
       if(window.erisEstado) window.erisEstado('escucha', true);
+      if(window.erisVoz) window.erisVoz('escucha');
       var pinta = function(){ var s = Math.floor((Date.now() - grab.inicio) / 1000); avisoMicro(tm('g') + ' · 0:' + (s < 10 ? '0' : '') + s, true); };
       pinta(); grab.reloj = setInterval(function(){ if(grab) pinta(); }, 500);
       grab.tope = setTimeout(function(){ pararGrabacion(true); }, MAX_NOTA * 1000);
@@ -1631,6 +1666,7 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
       st.messages.value.push({ id: nuevoId(), text: tm('f'), sender: 'bot' });
     }).then(function(){
       st.waitingForResponse.value = false; boton.disabled = false; avisoMicro('');
+      if(window.erisVoz) window.erisVoz('fin');
     });
   }
   function ponerAudio(b64, mime){
@@ -1642,6 +1678,7 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
     a.className = 'audio-eris'; a.controls = true; a.preload = 'auto';
     a.src = URL.createObjectURL(new Blob([arr], { type: mime }));
     ultima.appendChild(a);
+    if(window.erisVoz) window.erisVoz('habla', a);
     var p = a.play(); if(p && p.catch) p.catch(function(){});
     ultima.scrollIntoView({ block: 'end', behavior: 'smooth' });
   }
@@ -1884,6 +1921,142 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
   window.addEventListener('resize', revisarInicio);
   botonesIdioma.forEach(function(b){ b.addEventListener('click', function(){ setTimeout(textosInicio, 0); }); });
   otros.addEventListener('change', function(){ setTimeout(textosInicio, 0); });
+
+  // ---- Pantalla de voz (05/11): el botón de la onda abre una pantalla como el modo voz de Claude. Tocas el micro, hablas,
+  // vuelves a tocar y se manda como nota de voz (mismo flujo de siempre); la corona de barras sigue tu voz y la de Eris. ----
+  var TV = {
+    es:{a:'Hablar con Eris por voz', t:'Toca el micro y habla', g:'Te escucho… toca para enviar', p:'Pensando…', h:'Eris habla', e:'Escríbele a Eris…', c:'Cerrar', m:'Hablar'},
+    en:{a:'Talk to Eris by voice', t:'Tap the mic and speak', g:'Listening… tap to send', p:'Thinking…', h:'Eris is speaking', e:'Type to Eris…', c:'Close', m:'Speak'},
+    fr:{a:'Parler à Eris', t:'Touchez le micro et parlez', g:'Je vous écoute… touchez pour envoyer', p:'Je réfléchis…', h:'Eris parle', e:'Écrivez à Eris…', c:'Fermer', m:'Parler'},
+    ca:{a:'Parla amb l\'Eris per veu', t:'Toca el micro i parla', g:'T\'escolto… toca per enviar', p:'Pensant…', h:'L\'Eris parla', e:'Escriu a l\'Eris…', c:'Tancar', m:'Parlar'},
+    va:{a:'Parla amb Eris per veu', t:'Toca el micro i parla', g:'T\'escolte… toca per a enviar', p:'Pensant…', h:'Eris parla', e:'Escriu a Eris…', c:'Tancar', m:'Parlar'},
+    gl:{a:'Falar con Eris por voz', t:'Toca o micro e fala', g:'Escóitote… toca para enviar', p:'Pensando…', h:'Eris fala', e:'Escríbelle a Eris…', c:'Pechar', m:'Falar'},
+    eu:{a:'Hitz egin Erisekin ahotsez', t:'Ukitu mikroa eta hitz egin', g:'Entzuten… ukitu bidaltzeko', p:'Pentsatzen…', h:'Eris hizketan', e:'Idatzi Erisi…', c:'Itxi', m:'Hitz egin'},
+    pt:{a:'Falar com a Eris por voz', t:'Toque no micro e fale', g:'Estou a ouvir… toque para enviar', p:'A pensar…', h:'A Eris está a falar', e:'Escreva à Eris…', c:'Fechar', m:'Falar'},
+    de:{a:'Mit Eris sprechen', t:'Mikro antippen und sprechen', g:'Ich höre zu… antippen zum Senden', p:'Denke nach…', h:'Eris spricht', e:'Eris schreiben…', c:'Schließen', m:'Sprechen'},
+    it:{a:'Parla con Eris a voce', t:'Tocca il microfono e parla', g:'Ti ascolto… tocca per inviare', p:'Sto pensando…', h:'Eris sta parlando', e:'Scrivi a Eris…', c:'Chiudi', m:'Parla'}
+  };
+  function tv(k){ return (TV[idioma] || TV.es)[k]; }
+  var SVG_ONDA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 10v4M21 12h0"/></svg>';
+  var SVG_MICRO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5"/></svg>';
+  var panelEris = document.getElementById('panel-eris');
+  var voz = document.createElement('div');
+  voz.className = 'voz-eris'; voz.setAttribute('role', 'dialog'); voz.setAttribute('aria-modal', 'true');
+  voz.innerHTML = '<div class="voz-cab"><span>Eris</span><span class="voz-estado" aria-live="polite"></span></div>' +
+    '<div class="voz-centro"><svg class="voz-corona" viewBox="-160 -160 320 320" aria-hidden="true"><defs><linearGradient id="voz-gb" gradientUnits="userSpaceOnUse" x1="-130" y1="130" x2="130" y2="-130"><stop offset="0" stop-color="#E05A7E"/><stop offset=".5" stop-color="#C9D8D0"/><stop offset="1" stop-color="#5FE0A8"/></linearGradient></defs>' +
+    '<circle r="150" fill="none" stroke="#2C5A49" stroke-width=".8" opacity=".6"/><circle r="128" fill="none" stroke="#3A3F3C" stroke-width=".8" opacity=".7"/><circle r="106" fill="none" stroke="#7A2A44" stroke-width=".8" opacity=".6"/><g class="voz-barras" stroke="url(#voz-gb)" stroke-width="3.2" stroke-linecap="round"></g></svg>' +
+    '<div class="voz-bola" aria-hidden="true"><span class="nube n1"></span><span class="nube n2"></span><span class="nube n3"></span><span class="nube n4"></span>' +
+    '<svg viewBox="0 0 132 132"><path class="w1" fill="none" stroke="#0A1A14" stroke-width="2.6" stroke-linecap="round"/><path class="w2" fill="none" stroke="#5E6B66" stroke-width="2" stroke-linecap="round" opacity=".8"/></svg></div></div>' +
+    '<div class="voz-pie"><button type="button" class="voz-escribir"></button><button type="button" class="voz-redondo voz-hablar">' + SVG_MICRO + '</button><button type="button" class="voz-redondo voz-cerrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>';
+  panelEris.appendChild(voz);
+  var vEstado = voz.querySelector('.voz-estado'), vBola = voz.querySelector('.voz-bola'), vHablar = voz.querySelector('.voz-hablar');
+  var vW1 = voz.querySelector('.w1'), vW2 = voz.querySelector('.w2'), vG = voz.querySelector('.voz-barras');
+  var NB = 64, barras = [], niveles = [];
+  for(var ib = 0; ib < NB; ib++){ var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line'); vG.appendChild(ln); barras.push(ln); niveles.push(.25); }
+  var modoVoz = 'quieto', vozAbierta = false, bucle = null, tiempo = 0, analizador = null, datosAn = null, ctxVoz = null;
+  var quietoVoz = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function textosVoz(){
+    voz.setAttribute('aria-label', tv('a'));
+    voz.querySelector('.voz-escribir').textContent = tv('e');
+    voz.querySelector('.voz-cerrar').setAttribute('aria-label', tv('c'));
+    vHablar.setAttribute('aria-label', tv('m'));
+    vEstado.textContent = { quieto: tv('t'), escucha: tv('g'), piensa: tv('p'), habla: tv('h') }[modoVoz];
+    var bv = document.querySelector('#chat-n8n .boton-voz');
+    if(bv){ bv.title = tv('a'); bv.setAttribute('aria-label', tv('a')); }
+  }
+  function contexto(){ if(!ctxVoz){ var AC = window.AudioContext || window.webkitAudioContext; ctxVoz = new AC(); } if(ctxVoz.state === 'suspended') ctxVoz.resume(); return ctxVoz; }
+  function escucharFuente(nodo, alAltavoz){
+    try {
+      var c = contexto(); analizador = c.createAnalyser(); analizador.fftSize = 128; analizador.smoothingTimeConstant = .7;
+      datosAn = new Uint8Array(analizador.frequencyBinCount);
+      nodo.connect(analizador); if(alAltavoz) analizador.connect(c.destination);
+    } catch(e){ analizador = null; }
+  }
+  function ponerModo(m, audio){
+    modoVoz = m;
+    vHablar.classList.toggle('grabando', m === 'escucha');
+    vHablar.disabled = (m === 'piensa' || m === 'habla');
+    if(m === 'escucha' && grab && grab.stream){ try { escucharFuente(contexto().createMediaStreamSource(grab.stream), false); } catch(e){} }
+    else if(m === 'habla' && audio){
+      try { if(!audio._fuente){ audio._fuente = contexto().createMediaElementSource(audio); } escucharFuente(audio._fuente, true); } catch(e){ analizador = null; }
+      audio.addEventListener('ended', function(){ if(modoVoz === 'habla') ponerModo('quieto'); }, { once:true });
+      audio.addEventListener('pause', function(){ if(modoVoz === 'habla') ponerModo('quieto'); }, { once:true });
+    } else analizador = null;
+    textosVoz();
+  }
+  function onda(a, fase, f){
+    var d = 'M24 66';
+    for(var x = 24; x <= 108; x += 3){ var k = Math.sin(Math.PI * (x - 24) / 84); d += ' L' + x + ' ' + (66 + Math.sin(x * f + fase) * a * k).toFixed(1); }
+    return d;
+  }
+  function pintar(){
+    tiempo += .05;
+    var media = 0, espectro = null;
+    if(analizador && (modoVoz === 'escucha' || modoVoz === 'habla')){
+      analizador.getByteFrequencyData(datosAn); espectro = datosAn;
+      for(var j = 0; j < datosAn.length; j++) media += datosAn[j];
+      media = media / datosAn.length / 255;
+    }
+    for(var i = 0; i < NB; i++){
+      var obj;
+      if(espectro){ var v = espectro[Math.floor((i < NB / 2 ? i : NB - 1 - i) * espectro.length / (NB / 2) * .7)] / 255; obj = .12 + v * .95; }
+      else if(modoVoz === 'piensa') obj = .15 + .12 * (.5 + .5 * Math.sin(tiempo * 2 + i * .3));
+      else if(modoVoz === 'habla') obj = .3 + .6 * Math.random();
+      else obj = .18 + .06 * Math.sin(tiempo + i * .4);
+      niveles[i] += (obj - niveles[i]) * .25;
+      var ang = i / NB * Math.PI * 2 - Math.PI / 2, r0 = 92, r1 = r0 + 8 + niveles[i] * 28;
+      barras[i].setAttribute('x1', (Math.cos(ang) * r0).toFixed(1)); barras[i].setAttribute('y1', (Math.sin(ang) * r0).toFixed(1));
+      barras[i].setAttribute('x2', (Math.cos(ang) * r1).toFixed(1)); barras[i].setAttribute('y2', (Math.sin(ang) * r1).toFixed(1));
+    }
+    var amp = modoVoz === 'habla' ? 8 + media * 30 : modoVoz === 'escucha' ? 4 + media * 26 : modoVoz === 'piensa' ? 5 : 3;
+    vW1.setAttribute('d', onda(amp, tiempo * 3, .12)); vW2.setAttribute('d', onda(amp * .7, -tiempo * 2.4, .16));
+    var esc = modoVoz === 'habla' ? 1 + .03 * Math.sin(tiempo * 6) + media * .08 : modoVoz === 'piensa' ? 1 - .04 * (.5 + .5 * Math.sin(tiempo * 1.5)) : 1 + .02 * Math.sin(tiempo) + media * .06;
+    vBola.style.transform = 'scale(' + esc.toFixed(3) + ')';
+    if(vozAbierta && !quietoVoz) bucle = requestAnimationFrame(pintar);
+  }
+  function abrirVoz(){
+    vozAbierta = true; voz.classList.add('abierta');
+    if(!grab && modoVoz === 'escucha') modoVoz = 'quieto';
+    textosVoz(); cancelAnimationFrame(bucle); pintar();
+    setTimeout(function(){ vHablar.focus(); }, 300);
+  }
+  function cerrarVoz(alChat){
+    if(grab) pararGrabacion(false);
+    vozAbierta = false; voz.classList.remove('abierta'); cancelAnimationFrame(bucle);
+    if(alChat) setTimeout(function(){ var c = document.querySelector('#chat-n8n textarea'); if(c) c.focus(); }, 320);
+  }
+  vHablar.addEventListener('click', function(){
+    var bm = document.querySelector('#chat-n8n .boton-micro');
+    if(!bm) return;
+    if(grab){ pararGrabacion(true); ponerModo('piensa'); }
+    else { contexto(); empezarGrabacion(bm); }
+  });
+  voz.querySelector('.voz-escribir').addEventListener('click', function(){ cerrarVoz(true); });
+  voz.querySelector('.voz-cerrar').addEventListener('click', function(){ cerrarVoz(false); });
+  voz.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ e.stopPropagation(); cerrarVoz(true); } });
+  // Avisos que mandan las notas de voz: empieza a escuchar, se envía, contesta Eris o termina.
+  window.erisCerrarVoz = function(){ if(vozAbierta) cerrarVoz(false); };
+  window.erisVoz = function(m, audio){
+    if(m === 'escucha') ponerModo('escucha');
+    else if(m === 'piensa') ponerModo('piensa');
+    else if(m === 'habla') ponerModo('habla', audio);
+    else if(m === 'fin' && modoVoz === 'escucha') ponerModo('quieto');
+    else if(m === 'fin') setTimeout(function(){ if(modoVoz === 'piensa') ponerModo('quieto'); }, 300);
+  };
+  function ponerBotonVoz(){
+    if(!puedeGrabar) return;
+    var ctrl = contChat.querySelector('.chat-inputs-controls');
+    if(!ctrl || ctrl.querySelector('.boton-voz')) return;
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'boton-voz'; b.innerHTML = SVG_ONDA;
+    b.addEventListener('click', abrirVoz);
+    ctrl.insertBefore(b, ctrl.firstChild);
+    textosVoz();
+  }
+  new MutationObserver(ponerBotonVoz).observe(contChat, { childList:true, subtree:true });
+  botonesIdioma.forEach(function(b){ b.addEventListener('click', function(){ setTimeout(textosVoz, 0); }); });
+  otros.addEventListener('change', function(){ setTimeout(textosVoz, 0); });
+  textosVoz();
   function nombreServicio(li){
     var copia = li.cloneNode(true);
     copia.querySelectorAll('.ajuste').forEach(function(b){ b.remove(); });
@@ -1950,6 +2123,7 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
   }
   function cerrar(){
     if(llamando) colgar();
+    if(window.erisCerrarVoz) window.erisCerrarVoz();
     pararGrabacion(false);
     panel.classList.remove('abierto');
     lanzador.setAttribute('aria-expanded','false');
