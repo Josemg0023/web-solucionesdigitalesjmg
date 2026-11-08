@@ -358,6 +358,18 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .voz-eris .voz-hablar:disabled{opacity:.45;cursor:wait}
 .voz-eris .voz-cerrar{background:#E8F5EF;color:#04120E}
 @media (prefers-reduced-motion:reduce){.orbe-eris .onda,.orbe-eris .nucleo,.orbe-mini,.voz-eris .voz-bola .nube{animation:none !important}}
+/* === Números (08/11): calculadora de beneficio en la pantalla de Tete. Para quitarla: borrar este bloque y el de «Números (08/11)» del script. */
+.num-res{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 0 14px}
+.num-big{font-size:2.1rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;color:var(--verde-luz)}
+.num-big.neg{color:var(--rubi-luz)}
+.num-big+span{color:var(--apagado);font-size:.88rem}
+.num-ctl{display:grid;gap:4px;margin-bottom:14px}
+.num-ctl div{display:flex;justify-content:space-between;align-items:baseline;font-size:.92rem}
+.num-ctl output{font-weight:700;font-size:1.1rem;color:var(--claro);font-variant-numeric:tabular-nums}
+.num-ctl input[type=range]{width:100%;min-height:0;accent-color:var(--verde)}
+.num-tabla{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:.88rem;color:var(--apagado);font-variant-numeric:tabular-nums;margin-top:6px}
+.num-tabla b{color:var(--claro);text-align:right;font-weight:600}
+.num-tabla .t{color:var(--claro);font-weight:700}
 </style>
 </head>
 <body>
@@ -638,6 +650,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
       if (e.fecha !== diaAnt) { var nd = nombreDia(e.fecha); h += '<p class="dia-sep">' + esc(nd.charAt(0).toUpperCase() + nd.slice(1)) + '</p>'; diaAnt = e.fecha; }
       h += '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span></div>';
     });
+    h += vistaNumeros();
     // Lo que sabe Eris: la memoria común de la única Eris (plegado para no cargar la pantalla).
     var av = comercial.avisos || [];
     h += '<details class="plegable"' + (sabeAbierto ? ' open' : '') + ' data-sabe><summary><span>Lo que sabe Eris</span><span class="n">' + av.length + '</span></summary>';
@@ -653,6 +666,43 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
       + '<button class="btn b-ok ancho" type="submit">Guardar</button></form></details>';
     return h;
   }
+  // === Números (08/11): cuánto le queda a Tete al mes según sus clientes. Datos de la bóveda (packs 04/11, gastos 05/11).
+  // Voz si gastan todos los minutos; Stripe aprox. 1,5 % + 0,25 €; autónomo = tarifa plana con MEI (88,64 €) e IVA 21 % dentro del precio.
+  var NUM = { b: 3, c: 0, aut: false, abierto: false };
+  var NUM_FIJOS = 18 + 22 + 6 + 1.75 + 1, NUM_AUTON = 88.64;
+  var NUM_PACKS = { b: { mes: 49, voz: 15 }, c: { mes: 79, voz: 30 } };
+  function numQueda(p, aut){ return (aut ? p.mes / 1.21 : p.mes) - p.voz - (p.mes * 0.015 + 0.25); }
+  function numEur(x){ var v = Math.round(x); return (v === 0 ? 0 : v).toLocaleString('es-ES') + ' €'; }
+  function numCalc(){
+    var qb = numQueda(NUM_PACKS.b, NUM.aut), qc = numQueda(NUM_PACKS.c, NUM.aut);
+    var fijos = NUM_FIJOS + (NUM.aut ? NUM_AUTON : 0);
+    return { qb: qb, qc: qc, fijos: fijos, cobras: NUM.b * 49 + NUM.c * 79, gana: NUM.b * qb + NUM.c * qc - fijos, minimo: Math.ceil(fijos / qb) };
+  }
+  function numDentro(){
+    var r = numCalc();
+    return '<div class="num-res"><span class="num-big' + (r.gana < 0 ? ' neg' : '') + '">' + numEur(r.gana) + '</span><span>te quedan al mes</span></div>'
+      + '<div class="num-tabla"><span>Cobras de cuotas</span><b>' + numEur(r.cobras) + '</b>'
+      + '<span>Cada Básico te deja</span><b>' + numEur(r.qb) + '</b>'
+      + '<span>Cada Completo te deja</span><b>' + numEur(r.qc) + '</b>'
+      + '<span>Gastos fijos' + (NUM.aut ? ' (con autónomos)' : '') + '</span><b>' + numEur(-r.fijos) + '</b>'
+      + '<span class="t">Para no perder dinero</span><b>' + r.minimo + ' Básicos</b></div>';
+  }
+  function vistaNumeros(){
+    return '<details class="plegable"' + (NUM.abierto ? ' open' : '') + ' data-numeros><summary><span>Números</span><span class="n">' + numEur(numCalc().gana) + '/mes</span></summary>'
+      + '<div class="num-ctl"><div><label for="numB">Clientes en el Básico (49 €)</label><output data-num-o="b">' + NUM.b + '</output></div><input type="range" id="numB" data-num="b" min="0" max="40" value="' + NUM.b + '"></div>'
+      + '<div class="num-ctl"><div><label for="numC">Clientes en el Completo (79 €)</label><output data-num-o="c">' + NUM.c + '</output></div><input type="range" id="numC" data-num="c" min="0" max="40" value="' + NUM.c + '"></div>'
+      + '<label class="interruptor"><input type="checkbox" id="numAut" data-num="aut"' + (NUM.aut ? ' checked' : '') + '> <span>Ya soy autónomo (cuota e IVA)</span></label>'
+      + '<div data-num-dentro>' + numDentro() + '</div>'
+      + '<p class="ayuda" style="margin:12px 0 0">Cuenta que gastan todos sus minutos de voz. No incluye IRPF, minutos extra ni las altas (pago único).</p></details>';
+  }
+  document.addEventListener('input', function(e){
+    var el = e.target, c = el && el.getAttribute && el.getAttribute('data-num'); if (!c) return;
+    if (c === 'aut') NUM.aut = el.checked; else NUM[c] = +el.value;
+    var o = document.querySelector('[data-num-o="' + c + '"]'); if (o) o.textContent = el.value;
+    var d = document.querySelector('[data-num-dentro]'); if (d) d.innerHTML = numDentro();
+    var s = document.querySelector('[data-numeros] summary .n'); if (s) s.textContent = numEur(numCalc().gana) + '/mes';
+  });
+  document.addEventListener('toggle', function(e){ var d = e.target; if (d && d.hasAttribute && d.hasAttribute('data-numeros')) NUM.abierto = d.open; }, true);
   var formNeg = document.getElementById('formNegocio'), negSel = null;
   function abrirNegocio(id){
     var x = ((comercial && comercial.negocios) || []).filter(function(y){ return y.id === id; })[0];
