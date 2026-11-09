@@ -624,7 +624,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
       if (datos && (nuevo || !algoAbierto())) pintar(); else if (datos) pintarMenu();
     }).catch(function(){ cargandoCom = false; });
   }
-  function modoTete(){ return esDueno && vista === 'comercial'; }
+  // 09/11 (Tete: «o montamos una para mí aparte o arregla eso»): en la cuenta de Tete el botón Eris es SIEMPRE su Eris (la de WhatsApp), en todas las pantallas.
+  function modoTete(){ return esDueno; }
   function pendientesComercial(){ var hoy = hoyISO(); return comercial ? (comercial.negocios || []).filter(function(x){ return x.fecha && x.fecha <= hoy; }).length : 0; }
   // Cada posible cliente: tocar para cambiarlo; los atrasados llevan además ✕ para borrarlos a mano (05/11).
   function tarjetaNegocio(x, atrasado){
