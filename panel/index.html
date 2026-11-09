@@ -520,7 +520,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   var API = 'https://erisproject.app.n8n.cloud/webhook/eris-panel';
   var API_APP = 'https://erisproject.app.n8n.cloud/webhook/eris-app';
   // Agenda comercial del dueño de Euxenos (Tete). El servidor solo responde a su cuenta con sesión válida.
-  var API_DUENO = 'https://erisproject.app.n8n.cloud/webhook/eux-dueno', CUENTA_DUENO = 'talleres-tete';
+  var API_DUENO = 'https://erisproject.app.n8n.cloud/webhook/eux-dueno', CUENTA_DUENO = 'euxenos'; // 09/11: cuenta propia de Tete (antes talleres-tete, borrada)
   var esDueno = false, comercial = null, cargandoCom = false, sabeAbierto = false;
   var q = new URLSearchParams(location.search);
   var enlaceN = q.get('n'), enlaceK = q.get('k'), enlaceReset = (q.get('reset') || '').replace(/[^a-f0-9]/gi, ''), n = null, k = null;
