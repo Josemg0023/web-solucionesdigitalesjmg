@@ -370,6 +370,15 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .num-tabla{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:.88rem;color:var(--apagado);font-variant-numeric:tabular-nums;margin-top:6px}
 .num-tabla b{color:var(--claro);text-align:right;font-weight:600}
 .num-tabla .t{color:var(--claro);font-weight:700}
+/* === Hoy de Tete (09/11): pantalla de inicio de la cuenta de Tete (Euxenos). Para quitarla: borrar este bloque y el de script «Hoy de Tete (09/11)». */
+.semaforo{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.035);border-radius:14px;padding:13px 14px;margin:6px 0 4px}
+.semaforo i{flex:none;width:12px;height:12px;border-radius:50%;margin-top:5px;background:#4F6B60}
+.semaforo.s-verde i{background:var(--verde-luz);box-shadow:0 0 0 4px rgba(52,211,153,.18)}
+.semaforo.s-ambar i{background:var(--ambar);box-shadow:0 0 0 4px rgba(245,185,66,.18)}
+.semaforo.s-rojo i{background:var(--rubi-luz);box-shadow:0 0 0 4px rgba(240,56,107,.2)}
+.semaforo b{display:block;font-weight:700}
+.semaforo span{display:block;color:var(--apagado);font-size:.85rem;margin-top:2px}
+.ver-mas{display:block;width:100%;margin-top:4px}
 /* === Clientes (09/11): apartado Clientes en lugar de Catálogo. Para quitarlo: borrar este bloque, la hoja «Cliente (09/11)» y el bloque de script «Clientes (09/11)». */
 .buscador{width:100%;margin:14px 0 4px}
 .cli-ini{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.95rem;background:rgba(16,185,129,.14);color:var(--verde-luz)}
@@ -620,12 +629,14 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
       cargandoCom = false;
       if (!r || !r.ok) return;
       var nuevo = !esDueno; esDueno = true; comercial = r;
-      if (nuevo && vista === 'hoy' && q.get('v') !== 'pedidos') vista = 'comercial';
       if (datos && (nuevo || !algoAbierto())) pintar(); else if (datos) pintarMenu();
     }).catch(function(){ cargandoCom = false; });
   }
   // 09/11 (Tete: «o montamos una para mí aparte o arregla eso»): en la cuenta de Tete el botón Eris es SIEMPRE su Eris (la de WhatsApp), en todas las pantallas.
   function modoTete(){ return esDueno; }
+  // Hoy de Tete (09/11): la cuenta de Tete es solo para Euxenos; las pantallas del taller de demo no se enseñan.
+  function esTete(){ return esDueno || n === CUENTA_DUENO; }
+  var SOLO_DEMO = ['calendario','citas','clientes','catalogo','horario','pedidos'];
   function pendientesComercial(){ var hoy = hoyISO(); return comercial ? (comercial.negocios || []).filter(function(x){ return x.fecha && x.fecha <= hoy; }).length : 0; }
   // Cada posible cliente: tocar para cambiarlo; los atrasados llevan además ✕ para borrarlos a mano (05/11).
   function tarjetaNegocio(x, atrasado){
@@ -643,6 +654,51 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
       comercial.negocios = (comercial.negocios || []).filter(function(y){ return y.id !== id; });
       cerrarHojas(); pintar(); toast('Borrado');
     }).catch(function(){ if (b) b.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
+  }
+  // === Hoy de Tete (09/11): lo que tiene que mirar cada mañana. Datos de «ver» de eux-dueno (HubSpot, Google, Vigía, ElevenLabs).
+  function vistaHoyTete(){
+    var d = new Date(), hoy = hoyISO(), man = new Date(); man.setDate(man.getDate() + 1); man = iso(man);
+    var h = '<div class="fecha-grande">' + DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div>';
+    if (!comercial) return h + '<p class="vacio">Cargando…</p>';
+    var v = comercial.vigia || { color: 'gris' }, mot = [];
+    if (v.errores) mot.push(v.errores + (v.errores === 1 ? ' fallo' : ' fallos') + ' en las últimas 24 h' + ((v.flujos || []).length ? ' (' + v.flujos.join(', ') + ')' : ''));
+    if (v.pruebasMal) mot.push(v.pruebasMal + ' de ' + v.pruebas + ' pruebas de Eris han salido mal');
+    else if (v.pruebas) mot.push('Pruebas de Eris: ' + v.pruebas + ' de ' + v.pruebas + ' bien');
+    else if (v.color !== 'gris') mot.push('Esta noche no se hicieron las pruebas de Eris');
+    if (v.minutos != null) mot.push('Quedan ' + v.minutos + ' min de voz' + (v.renueva ? ' (se renuevan el ' + corta(v.renueva) + ')' : ''));
+    if (v.diasInstagram != null && v.diasInstagram <= 15) mot.push(v.diasInstagram > 0 ? 'El token de Instagram caduca en ' + v.diasInstagram + ' días' : 'El token de Instagram ha caducado');
+    var tit = { verde: 'Eris va bien', ambar: 'Ojo: hay algo que revisar', rojo: 'Hay que mirar algo', gris: 'Sin datos del Vigía' }[v.color] || 'Sin datos del Vigía';
+    h += '<div class="semaforo s-' + esc(v.color || 'gris') + '"><i aria-hidden="true"></i><div><b>' + tit + '</b><span>' + esc(mot.join(' · ')) + '</span></div></div>';
+    if (comercial.errorHubspot) h += '<div class="franja cerrado"><b>HubSpot no ha respondido.</b> Lo de abajo puede estar incompleto.</div>';
+    var negs = (comercial.negocios || []).slice().sort(function(a, b){ return (a.fecha || '9999').localeCompare(b.fecha || '9999'); });
+    var llamar = negs.filter(function(x){ return x.fecha && x.fecha <= hoy; });
+    h += '<h2>Llamar hoy <span class="n">' + llamar.length + '</span></h2>' + (llamar.length ? llamar.map(function(x){ return tarjetaNegocio(x, x.fecha < hoy); }).join('') : '<p class="vacio">Nadie a quien llamar hoy.</p>');
+    var evs = (comercial.eventos || []).map(function(e){ return { fecha: String(e.inicio).slice(0, 10), hora: e.todoElDia ? 'Todo el día' : String(e.inicio).slice(11, 16), titulo: e.titulo, lugar: e.lugar }; }).filter(function(e){ return e.fecha === hoy || e.fecha === man; });
+    h += '<h2>Agenda <span class="n">' + evs.length + '</span></h2>';
+    if (!evs.length) h += '<p class="vacio">Nada hoy ni mañana en tu agenda de Google.</p>';
+    var diaAnt = '';
+    evs.forEach(function(e){
+      if (e.fecha !== diaAnt) { h += '<p class="dia-sep">' + (e.fecha === hoy ? 'Hoy' : 'Mañana') + '</p>'; diaAnt = e.fecha; }
+      h += '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span></div>';
+    });
+    var abiertos = {}; negs.forEach(function(x){ abiertos[x.id] = true; });
+    var nuevos = comercial.nuevos || [];
+    h += '<h2>Nuevos con Eris <span class="n">' + nuevos.length + '</span></h2>';
+    h += nuevos.length ? nuevos.map(function(x){
+      var det = [x.origen ? 'vía ' + x.origen : '', x.etapa, x.creado ? hace(x.creado) : ''].filter(Boolean).join(' · ');
+      var dentro = '<span class="txt"><b>' + esc(x.nombre) + '</b><span>' + esc(det) + '</span></span>';
+      return abiertos[x.id] ? '<div class="fila neg"><button class="neg-abrir" data-neg="' + esc(x.id) + '">' + dentro + '</button><span class="flecha" aria-hidden="true">›</span></div>' : '<div class="fila">' + dentro + '</div>';
+    }).join('') : '<p class="vacio">Nadie nuevo en los últimos 3 días. Cuando alguien deje sus datos a Eris (web, WhatsApp, Instagram o teléfono), saldrá aquí.</p>';
+    var ventas = comercial.ventas || [];
+    h += '<h2>Ventas <span class="n">' + ventas.length + '</span></h2>';
+    h += ventas.length ? ventas.map(function(x){
+      var det = [x.pack ? 'Pack ' + ({ basico: 'Básico', 'básico': 'Básico', completo: 'Completo' }[String(x.pack).toLowerCase()] || x.pack) : '', x.cerrado ? corta(String(x.cerrado).slice(0, 10)) : ''].filter(Boolean).join(' · ');
+      return '<div class="fila"><span class="txt"><b>' + esc(x.nombre) + '</b><span>' + esc(det) + '</span></span>' + (x.importe ? '<span class="precio">' + esc(x.importe) + ' €</span>' : '') + '</div>';
+    }).join('') : '<p class="vacio">Sin ventas en los últimos 30 días. Cuando alguien pague en Stripe, saldrá aquí.</p>';
+    var pa = pendientesAbiertos();
+    if (pa.length) h += '<h2>Pendientes <span class="n">' + pa.length + '</span><button class="accion" data-ir="pendientes">Ver todos</button></h2>' + pa.slice(0, 3).map(filaPendiente).join('');
+    h += '<button class="btn b-otra ver-mas" data-ir="comercial" style="margin-top:18px">Todos tus posibles clientes, Números y Lo que sabe Eris</button>';
+    return h;
   }
   function vistaComercial(){
     if (!comercial) return '<p class="vacio">Cargando…</p>';
@@ -970,7 +1026,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   function ignorar(c){ try { var l = ignorados(); l.push(claveCli(c)); localStorage.setItem('eris-cli-borrados-' + n, JSON.stringify(l.slice(-500))); } catch (e) {} }
   function citasDe(c){ return citas().filter(function(x){ return x.estado !== 'cancelada' && mismo(c, x); }).sort(orden); }
   function sincronizarClientes(){
-    if (!info || !datos || !Array.isArray(info.clientes)) return;
+    if (!info || !datos || !Array.isArray(info.clientes) || esTete()) return;
     var guard = clientesG(), nuevos = [], ign = ignorados();
     citas().forEach(function(x){
       if (!x.cliente || x.estado === 'cancelada' || /prueba/i.test(x.cliente)) return;
@@ -1079,6 +1135,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   }
   function vistaAjustes(){
     var h = '<h2>Avisos en este dispositivo</h2><div class="caja" id="avisosAjustes"></div>';
+    if (esTete()) return h + '<p class="ayuda" style="margin-top:14px">Lo que sabe Eris, tus posibles clientes y la calculadora están en «Mi negocio».</p><div class="instalar-app"></div>';
     var nCat = info ? (info.catalogo || []).length : 0;
     h += '<h2>Servicios y precios</h2><div class="caja"><p style="margin:0 0 10px">' + (info ? (nCat ? nCat + (nCat === 1 ? ' elemento' : ' elementos') + ' en tu lista.' : 'Aún no has puesto tus servicios.') : 'Cargando…') + ' Eris los usa para decir a tus clientes qué haces, cuánto cuesta y cuánto dura.</p><button class="btn b-otra ancho" data-ir="catalogo">Ver y cambiar servicios y precios</button></div>';
     h += '<h2>Lo que Eris debe saber</h2><form id="formInfo" class="caja"><p>Cuéntale a Eris lo que tus clientes deben saber y no está en el catálogo ni en el horario: cómo llegar, aparcamiento, formas de pago, normas, avisos de estos días…</p>'
@@ -1107,7 +1164,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 
   function pintarMenu(){
     var pc = porConfirmar().length, pp = pendientesAbiertos().length;
-    var orden = (esDueno ? ['comercial','|'] : []).concat(pedidosOn() ? ['hoy','pedidos'] : ['hoy']).concat(['calendario','citas','clientes','horario','pendientes','|','ajustes','cuenta']);
+    var orden = esTete() ? ['hoy','comercial','pendientes','|','ajustes','cuenta'] : (pedidosOn() ? ['hoy','pedidos'] : ['hoy']).concat(['calendario','citas','clientes','horario','pendientes','|','ajustes','cuenta']);
     document.getElementById('menuNav').innerHTML = orden.map(function(v){
       if (v === '|') return '<hr>';
       var pn = (pedidos || []).filter(function(p){ return p.estado === 'nuevo'; }).length;
@@ -1120,7 +1177,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   function pintar(){
     if (!datos) return;
     if (vista === 'comercial' && !esDueno) vista = 'hoy';
-    var cuerpo = { comercial: vistaComercial, pedidos: vistaPedidos, hoy: vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
+    if (esTete() && SOLO_DEMO.indexOf(vista) >= 0) vista = 'hoy';
+    var cuerpo = { comercial: vistaComercial, pedidos: vistaPedidos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
     if (vista === 'pedidos' && !pedidosOn() && pedidos) vista = 'hoy';
     var y = window.scrollY, hayAviso = porConfirmar().length > 0 || (pedidos || []).some(function(p){ return p.estado === 'nuevo'; });
     app.innerHTML = '<header><div class="cab">'
@@ -1130,7 +1188,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
       + '</div></header><main>' + cuerpo() + '</main>';
     document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); });
     document.getElementById('abrirMenu').addEventListener('click', abrirMenu);
-    document.getElementById('nueva').classList.toggle('oculto', ['hoy','calendario','citas'].indexOf(vista) < 0);
+    document.getElementById('nueva').classList.toggle('oculto', esTete() || ['hoy','calendario','citas'].indexOf(vista) < 0);
     document.getElementById('lanzador').classList.remove('oculto');
     window.scrollTo(0, pintar.vista === vista ? y : 0); pintar.vista = vista;
     pintarMenu(); pintarAvisos(); pintarInstalar(); rellenarServicios();
@@ -2043,8 +2101,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     }, { passive: true });
   });
   function puedeRefrescar(){ return !document.hidden && Date.now() > pausa && !algoAbierto() && !!datos; }
-  document.addEventListener('visibilitychange', function(){ if (!document.hidden) ultimoToque = Date.now(); if (puedeRefrescar()) { cargar(); cargarInfo(); cargarPedidos(); if (vista === 'comercial') cargarComercial(); } });
-  setInterval(function(){ if (puedeRefrescar() && activa()) { cargar(); if (vista === 'comercial') cargarComercial(); } }, 5 * 60000);
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) ultimoToque = Date.now(); if (puedeRefrescar()) { cargar(); cargarInfo(); cargarPedidos(); if (esTete()) cargarComercial(); } });
+  setInterval(function(){ if (puedeRefrescar() && activa()) { cargar(); if (esTete()) cargarComercial(); } }, 5 * 60000);
   setInterval(function(){ if (!document.hidden && datos && pedidosOn() && activa()) cargarPedidos(); }, 2 * 60000);
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { cerrarHojas(); cerrarMenu(); } });
   if (enlaceReset) pantallaNuevaClave(enlaceReset);
