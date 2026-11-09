@@ -370,6 +370,14 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .num-tabla{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:.88rem;color:var(--apagado);font-variant-numeric:tabular-nums;margin-top:6px}
 .num-tabla b{color:var(--claro);text-align:right;font-weight:600}
 .num-tabla .t{color:var(--claro);font-weight:700}
+/* === Clientes (09/11): apartado Clientes en lugar de Catálogo. Para quitarlo: borrar este bloque, la hoja «Cliente (09/11)» y el bloque de script «Clientes (09/11)». */
+.buscador{width:100%;margin:14px 0 4px}
+.cli-ini{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.95rem;background:rgba(16,185,129,.14);color:var(--verde-luz)}
+.cli-prox{flex:none;font-size:.78rem;font-weight:600;color:var(--verde-luz);text-align:right;max-width:38%}
+.cli-citas .cita{margin-bottom:8px}
+.cli-acc{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.cli-acc .btn{flex:1 1 30%;font-size:.88rem}
+.hoja h4{margin:18px 0 8px;font-size:.95rem;color:var(--apagado);font-weight:600}
 </style>
 </head>
 <body>
@@ -457,6 +465,20 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 <button class="btn b-ok ancho" type="submit" style="margin-top:12px">Guardar cierre</button>
 </form></div>
 
+<!-- Cliente (09/11) -->
+<div class="velo abajo" id="veloCliente"><form class="hoja" id="formCliente" autocomplete="off">
+<h3><span id="cliTitulo">Nuevo cliente</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<input type="hidden" name="id">
+<div class="cli-acc oculto" id="cliAcc"></div>
+<label class="campo"><span>Nombre *</span><input name="nombre" required maxlength="120" placeholder="Nombre y apellidos"></label>
+<div class="dos"><label class="campo"><span>Teléfono</span><input name="telefono" type="tel" inputmode="tel" maxlength="40" placeholder="Opcional"></label>
+<label class="campo"><span>Email</span><input name="email" type="email" inputmode="email" maxlength="120" placeholder="Opcional" autocapitalize="none"></label></div>
+<label class="campo"><span>Notas</span><textarea name="notas" maxlength="600" rows="3" placeholder="Ej.: tinte 7.1, alérgica al amoniaco, prefiere por la tarde…"></textarea></label>
+<button class="btn b-ok ancho" type="submit">Guardar</button>
+<div id="cliCitas" class="cli-citas"></div>
+<button class="btn b-no ancho oculto" type="button" id="borrarCliente" style="margin-top:14px">Borrar cliente</button>
+</form></div>
+
 <!-- Negocio de la agenda comercial (solo Tete) -->
 <div class="velo abajo" id="veloNegocio"><form class="hoja" id="formNegocio" autocomplete="off">
 <h3><span id="negTitulo">Posible cliente</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
@@ -511,7 +533,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     hoy: { t:'Hoy', i:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><circle cx="12" cy="15" r="2"/>' },
     calendario: { t:'Calendario', i:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2"/>' },
     citas: { t:'Citas', i:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/>' },
-    catalogo: { t:'Catálogo', i:'<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="8" cy="8" r="1.5"/>' },
+    clientes: { t:'Clientes', i:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/>' },
+    catalogo: { t:'Servicios y precios', i:'<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="8" cy="8" r="1.5"/>' },
     horario: { t:'Horario y cierres', i:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
     pendientes: { t:'Pendientes', i:'<path d="M9 11l3 3 8-8"/><path d="M20 12v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h9"/>' },
     ajustes: { t:'Ajustes', i:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>' },
@@ -563,7 +586,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
       if (d && d.ok === false && Object.prototype.hasOwnProperty.call(d, 'activar')) { var gb = bioGuardada(); if (gb && gb.k === k) bioBorrar(); olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu usuario o correo y tu contraseña.'); return; }
       if (!d || !d.ok) { if (bR) bR.classList.remove('girando'); if (!datos) pantallaSinServicio(); else toast('Euxenos no responde ahora: mostrando lo último cargado'); return; }
       usoAhora(); pedirPersistencia();
-      var primera = !datos; datos = d; pintar();
+      var primera = !datos; datos = d; pintar(); sincronizarClientes();
       if (primera) { comprobarAvisos(); cargarInfo(); cargarPedidos(); cargarComercial(); }
     }).catch(function(){
       cargando = false; if (bR) bR.classList.remove('girando');
@@ -586,7 +609,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   }
   function pitido(){ try { var c = new (window.AudioContext || window.webkitAudioContext)(); [0, .18].forEach(function(t){ var o = c.createOscillator(), g = c.createGain(); o.frequency.value = 880; o.connect(g); g.connect(c.destination); g.gain.setValueAtTime(.25, c.currentTime + t); g.gain.exponentialRampToValueAtTime(.001, c.currentTime + t + .15); o.start(c.currentTime + t); o.stop(c.currentTime + t + .16); }); } catch (e) {} }
   function cargarInfo(){
-    return llamarApp('datos-ver').then(function(r){ if (r && r.ok) { info = r.datos; if (datos) pintar(); } }).catch(function(){});
+    return llamarApp('datos-ver').then(function(r){ if (r && r.ok) { info = r.datos; if (datos) pintar(); sincronizarClientes(); } }).catch(function(){});
   }
   // ---- Agenda comercial (solo Tete) ----
   function llamarDueno(accion, d){ return post(API_DUENO, Object.assign({ n:n, k:k, accion:accion }, d || {})); }
@@ -917,7 +940,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   }
   function vistaCatalogo(){
     var lista = info ? (info.catalogo || []).filter(function(x){ return x.tipo === tabCat; }) : null;
-    var h = '<div class="pestanas"><button data-tab="servicio" aria-pressed="' + (tabCat === 'servicio') + '">Servicios</button><button data-tab="producto" aria-pressed="' + (tabCat === 'producto') + '">Productos</button></div>';
+    var h = '<p class="ayuda" style="margin:14px 0 0">Eris saca de aquí los servicios, precios y duraciones que da a tus clientes. <button class="accion" data-ir="ajustes" style="margin-left:4px">← Ajustes</button></p>';
+    h += '<div class="pestanas"><button data-tab="servicio" aria-pressed="' + (tabCat === 'servicio') + '">Servicios</button><button data-tab="producto" aria-pressed="' + (tabCat === 'producto') + '">Productos</button></div>';
     h += '<h2>' + (tabCat === 'servicio' ? 'Servicios' : 'Productos') + ' <span class="n">' + (lista ? lista.length : '…') + '</span><button class="accion" data-item="nuevo">+ Añadir</button></h2>';
     if (!lista) return h + '<p class="vacio">Cargando…</p>';
     h += '<div class="herr" style="margin:0 0 12px"><button class="btn b-otra" data-importar>📷 Foto o PDF</button>' + (tabCat === 'producto' ? '<button class="btn b-otra" data-escanear>▦ Escanear</button>' : '') + '</div>';
@@ -932,6 +956,103 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     h += '<p class="ayuda">Toca un elemento para cambiarlo. También puedes pedírselo a Eris: «sube el corte a 14 €», «quedan 3 champús».' + (tabCat === 'producto' ? ' Con <b>▦ Escanear</b> das de alta un producto o sumas y restas stock con la cámara.' : '') + '</p>';
     return h;
   }
+  // === Clientes (09/11): lista de clientes del negocio (guardada en n8n, columna «clientes» de «Eris datos negocio»).
+  // Los que piden o tienen cita se añaden solos (clientes-varios). Para quitarlo: borrar este bloque, la hoja «Cliente (09/11)»,
+  // el CSS «Clientes (09/11)» y volver a poner 'catalogo' en lugar de 'clientes' en el menú.
+  var cliSel = null, cliSync = '';
+  function telN(v){ return String(v || '').replace(/\D/g, '').replace(/^(0034|34)(?=\d{9}$)/, ''); }
+  function normN(v){ return String(v || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim(); }
+  function mismo(a, b){ var ta = telN(a.telefono), tb = telN(b.telefono); if (ta && tb) return ta === tb; return !!normN(a.nombre || a.cliente) && normN(a.nombre || a.cliente) === normN(b.nombre || b.cliente); }
+  function clientesG(){ return (info && info.clientes) || []; }
+  function claveCli(c){ return telN(c.telefono) || normN(c.nombre || c.cliente); }
+  function ignorados(){ try { return JSON.parse(localStorage.getItem('eris-cli-borrados-' + n) || '[]'); } catch (e) { return []; } }
+  function ignorar(c){ try { var l = ignorados(); l.push(claveCli(c)); localStorage.setItem('eris-cli-borrados-' + n, JSON.stringify(l.slice(-500))); } catch (e) {} }
+  function citasDe(c){ return citas().filter(function(x){ return x.estado !== 'cancelada' && mismo(c, x); }).sort(orden); }
+  function sincronizarClientes(){
+    if (!info || !datos || !Array.isArray(info.clientes)) return;
+    var guard = clientesG(), nuevos = [], ign = ignorados();
+    citas().forEach(function(x){
+      if (!x.cliente || x.estado === 'cancelada' || /prueba/i.test(x.cliente)) return;
+      var c = { nombre: String(x.cliente).trim(), telefono: x.telefono || '', email: x.email || '' };
+      if (ign.indexOf(claveCli(c)) >= 0 || guard.some(function(g){ return mismo(g, c); }) || nuevos.some(function(g){ return mismo(g, c); })) return;
+      nuevos.push(c);
+    });
+    if (!nuevos.length) return;
+    var firma = nuevos.map(claveCli).join('|');
+    if (firma === cliSync) return; cliSync = firma;
+    llamarApp('clientes-varios', { items: nuevos.slice(0, 300) }).then(function(r){ if (r && r.ok && r.datos) { info = r.datos; if (!algoAbierto()) pintar(); } }).catch(function(){ cliSync = ''; });
+  }
+  function inicial(s){ var p = String(s || '?').trim().split(/\s+/); return ((p[0] || '?').charAt(0) + (p[1] ? p[1].charAt(0) : '')).toUpperCase(); }
+  function vistaClientes(){
+    if (!info) return '<p class="vacio">Cargando…</p>';
+    var hoy = hoyISO();
+    var lista = clientesG().slice().sort(function(a, b){ return normN(a.nombre).localeCompare(normN(b.nombre)); });
+    var h = '<input type="search" id="buscaClientes" class="buscador" placeholder="Buscar por nombre, teléfono o nota" aria-label="Buscar clientes" autocomplete="off">';
+    h += '<h2>Tus clientes <span class="n" id="cliN">' + lista.length + '</span><button class="accion" data-cliente="nuevo">+ Añadir</button></h2>';
+    if (!lista.length) return h + '<p class="vacio">Aún no hay clientes. Los que pidan cita (por Eris o apuntados a mano) aparecerán aquí solos. También puedes añadirlos con «+ Añadir» o decírselo a Eris: «apunta a María López, 600 11 22 33».</p>';
+    h += lista.map(function(c){
+      var cs = citasDe(c), prox = cs.filter(function(x){ return x.fecha >= hoy && (x.estado === 'confirmada' || x.estado === 'pendiente' || x.estado === 'propuesta'); })[0];
+      var det = [c.telefono, c.notas].filter(Boolean).join(' · ');
+      var busca = normN([c.nombre, c.telefono, telN(c.telefono), c.email, c.notas].join(' '));
+      return '<button class="fila tocable" data-cliente="' + esc(c.id) + '" data-busca="' + esc(busca) + '"><span class="cli-ini" aria-hidden="true">' + esc(inicial(c.nombre)) + '</span><span class="txt"><b>' + esc(c.nombre) + '</b>' + (det ? '<span>' + esc(det) + '</span>' : '') + '</span>' + (prox ? '<span class="cli-prox">' + esc(corta(prox.fecha)) + (prox.hora ? ' · ' + esc(prox.hora) : '') + '</span>' : '') + '</button>';
+    }).join('');
+    h += '<p class="vacio oculto" id="cliNada">Nadie coincide con esa búsqueda.</p>';
+    h += '<p class="ayuda">Toca un cliente para ver sus citas, llamarle o darle cita. También puedes preguntarle a Eris: «¿qué teléfono tiene María?».</p>';
+    return h;
+  }
+  app.addEventListener('input', function(e){
+    if (e.target.id !== 'buscaClientes') return;
+    var qv = normN(e.target.value), qt = telN(e.target.value), vis = 0;
+    app.querySelectorAll('[data-busca]').forEach(function(f){ var ok = !qv || f.getAttribute('data-busca').indexOf(qv) >= 0 || (qt.length >= 3 && f.getAttribute('data-busca').indexOf(qt) >= 0); f.classList.toggle('oculto', !ok); if (ok) vis++; });
+    var nd = document.getElementById('cliNada'); if (nd) nd.classList.toggle('oculto', vis > 0);
+    var cn = document.getElementById('cliN'); if (cn) cn.textContent = vis;
+  });
+  var formCli = document.getElementById('formCliente');
+  function abrirCliente(id){
+    if (!info) return;
+    var c = id === 'nuevo' ? null : clientesG().filter(function(x){ return x.id === id; })[0];
+    cliSel = c || null; formCli.reset();
+    formCli.id.value = c ? c.id : '';
+    formCli.nombre.value = c ? c.nombre : ''; formCli.telefono.value = c ? c.telefono || '' : ''; formCli.email.value = c ? c.email || '' : ''; formCli.notas.value = c ? c.notas || '' : '';
+    document.getElementById('cliTitulo').textContent = c ? c.nombre : 'Nuevo cliente';
+    document.getElementById('borrarCliente').classList.toggle('oculto', !c);
+    var acc = document.getElementById('cliAcc'), tel = c ? telN(c.telefono) : '';
+    acc.innerHTML = c ? '<button type="button" class="btn b-ok" data-cli-cita>+ Nueva cita</button>'
+      + (tel ? '<a class="btn b-otra" href="tel:' + esc(String(c.telefono).replace(/\s/g, '')) + '">📞 Llamar</a><a class="btn b-wa" href="https://wa.me/' + (tel.length === 9 ? '34' + tel : tel) + '" target="_blank" rel="noopener">WhatsApp</a>' : '') : '';
+    acc.classList.toggle('oculto', !c);
+    var cc = document.getElementById('cliCitas');
+    if (c) {
+      var hoy = hoyISO(), cs = citasDe(c);
+      var prox = cs.filter(function(x){ return x.fecha >= hoy && FIN.indexOf(x.estado) < 0; });
+      var pas = cs.filter(function(x){ return !(x.fecha >= hoy && FIN.indexOf(x.estado) < 0); }).reverse();
+      var fila = function(x){ return '<div class="fila"><span class="txt"><b>' + esc(nombreDia(x.fecha)) + (x.hora ? ' · ' + esc(x.hora) : '') + '</b><span>' + esc([x.servicio, ETIQUETAS[x.estado] || x.estado].filter(Boolean).join(' · ')) + '</span></span></div>'; };
+      cc.innerHTML = '<h4>Próximas citas</h4>' + (prox.length ? prox.map(fila).join('') : '<p class="ayuda" style="margin:0">No tiene citas próximas.</p>')
+        + (pas.length ? '<h4>Citas anteriores</h4>' + pas.slice(0, 10).map(fila).join('') : '')
+        + ((info.ajustes && info.ajustes.autoborrar === false) ? '' : '<p class="ayuda" style="margin-top:10px">Las citas pasadas se borran solas a las 24 h (Ajustes). El cliente y sus notas se quedan siempre.</p>');
+    } else cc.innerHTML = '';
+    abrirHoja('veloCliente'); if (!c) setTimeout(function(){ formCli.nombre.focus(); }, 50);
+  }
+  formCli.addEventListener('click', function(e){
+    if (!e.target.closest('[data-cli-cita]') || !cliSel) return;
+    cerrarHojas();
+    document.getElementById('nueva').click();
+    formCita.cliente.value = cliSel.nombre || ''; formCita.telefono.value = cliSel.telefono || '';
+    setTimeout(function(){ formCita.fecha.focus(); }, 60);
+  });
+  formCli.addEventListener('submit', function(e){
+    e.preventDefault();
+    var d = { nombre: formCli.nombre.value.trim(), telefono: formCli.telefono.value.trim(), email: formCli.email.value.trim(), notas: formCli.notas.value.trim() };
+    if (!d.nombre) { toast('Escribe el nombre'); return; }
+    if (formCli.id.value) d.id = formCli.id.value;
+    else if (clientesG().some(function(x){ return mismo(x, d); }) && !confirmar('Ya tienes un cliente con ese ' + (telN(d.telefono) ? 'teléfono' : 'nombre') + '. ¿Actualizarlo con estos datos?')) return;
+    var boton = formCli.querySelector('button[type=submit]'); boton.disabled = true;
+    llamarApp('cliente-guardar', d).then(function(r){ boton.disabled = false; if (aplicarInfo(r, 'Cliente guardado')) cerrarHojas(); }).catch(function(){ boton.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
+  });
+  document.getElementById('borrarCliente').addEventListener('click', function(){
+    if (!cliSel || !confirmar('¿Borrar a ' + cliSel.nombre + ' de tus clientes? Sus citas no se borran.')) return;
+    var id = cliSel.id; ignorar(cliSel);
+    llamarApp('cliente-borrar', { id: id }).then(function(r){ if (aplicarInfo(r, 'Cliente borrado')) { cliSync = 'x'; cerrarHojas(); } }).catch(function(){ toast('Sin conexión, inténtalo de nuevo'); });
+  });
   function vistaHorario(){
     if (!info) return '<p class="vacio">Cargando…</p>';
     var hor = info.horario || {}, hoy = hoyISO();
@@ -957,6 +1078,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   }
   function vistaAjustes(){
     var h = '<h2>Avisos en este dispositivo</h2><div class="caja" id="avisosAjustes"></div>';
+    var nCat = info ? (info.catalogo || []).length : 0;
+    h += '<h2>Servicios y precios</h2><div class="caja"><p style="margin:0 0 10px">' + (info ? (nCat ? nCat + (nCat === 1 ? ' elemento' : ' elementos') + ' en tu lista.' : 'Aún no has puesto tus servicios.') : 'Cargando…') + ' Eris los usa para decir a tus clientes qué haces, cuánto cuesta y cuánto dura.</p><button class="btn b-otra ancho" data-ir="catalogo">Ver y cambiar servicios y precios</button></div>';
     h += '<h2>Lo que Eris debe saber</h2><form id="formInfo" class="caja"><p>Cuéntale a Eris lo que tus clientes deben saber y no está en el catálogo ni en el horario: cómo llegar, aparcamiento, formas de pago, normas, avisos de estos días…</p>'
       + '<textarea name="texto" maxlength="3000" rows="5" placeholder="Ej.: Aparcamiento gratuito en la calle de atrás. Aceptamos Bizum y tarjeta. Esta semana no hacemos mechas.">' + esc(info ? info.info : '') + '</textarea>'
       + '<button class="btn b-ok ancho" type="submit" style="margin-top:10px"' + (info ? '' : ' disabled') + '>Guardar</button></form>';
@@ -983,7 +1106,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 
   function pintarMenu(){
     var pc = porConfirmar().length, pp = pendientesAbiertos().length;
-    var orden = (esDueno ? ['comercial','|'] : []).concat(pedidosOn() ? ['hoy','pedidos'] : ['hoy']).concat(['calendario','citas','catalogo','horario','pendientes','|','ajustes','cuenta']);
+    var orden = (esDueno ? ['comercial','|'] : []).concat(pedidosOn() ? ['hoy','pedidos'] : ['hoy']).concat(['calendario','citas','clientes','horario','pendientes','|','ajustes','cuenta']);
     document.getElementById('menuNav').innerHTML = orden.map(function(v){
       if (v === '|') return '<hr>';
       var pn = (pedidos || []).filter(function(p){ return p.estado === 'nuevo'; }).length;
@@ -996,7 +1119,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   function pintar(){
     if (!datos) return;
     if (vista === 'comercial' && !esDueno) vista = 'hoy';
-    var cuerpo = { comercial: vistaComercial, pedidos: vistaPedidos, hoy: vistaHoy, calendario: vistaCalendario, citas: vistaCitas, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
+    var cuerpo = { comercial: vistaComercial, pedidos: vistaPedidos, hoy: vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
     if (vista === 'pedidos' && !pedidosOn() && pedidos) vista = 'hoy';
     var y = window.scrollY, hayAviso = porConfirmar().length > 0 || (pedidos || []).some(function(p){ return p.estado === 'nuevo'; });
     app.innerHTML = '<header><div class="cab">'
@@ -1040,6 +1163,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     if (t) { var on = t.checked; t.disabled = true; llamarApp('ajustes-guardar', { autoborrar: on }).then(function(r){ aplicarInfo(r, on ? 'Se borrarán solas 24 h después' : 'Ya no se borrarán solas'); }).catch(sinConexion); return; }
     t = e.target.closest('[data-tab]'); if (t) { tabCat = t.getAttribute('data-tab'); pintar(); return; }
     t = e.target.closest('[data-item]'); if (t) { abrirItem(t.getAttribute('data-item')); return; }
+    t = e.target.closest('[data-cliente]'); if (t) { abrirCliente(t.getAttribute('data-cliente')); return; }
     t = e.target.closest('[data-importar]'); if (t) { archivoCat.value = ''; archivoCat.click(); return; }
     t = e.target.closest('[data-escanear]'); if (t) { abrirEscaner('stock'); return; }
     t = e.target.closest('[data-plantilla]'); if (t) { usarPlantilla(t.getAttribute('data-plantilla')); return; }
