@@ -317,8 +317,10 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .escribir button{background:transparent;color:#34D399}
 .escribir button.enviar{background:transparent;color:#34D399}
 .escribir .mic{display:none}
-.escribir .onda-btn{color:#5FE0A8;border-radius:50%}
-.escribir .onda-btn svg{width:24px;height:24px}
+.escribir .onda-btn{color:#04120E;background:#34D399;border-radius:50%;flex:0 0 auto;width:40px;height:40px;display:grid;place-items:center;padding:0}
+.escribir button.onda-btn{background:#34D399;color:#04120E}
+.escribir .onda-btn:active{transform:scale(.94)}
+.escribir .onda-btn svg{width:22px;height:22px}
 .escribir.grabando .onda-btn{display:none}
 .abre-voz{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .abre-voz:focus-visible{outline:2px solid #5FE0A8;outline-offset:4px;border-radius:50%}
@@ -1701,7 +1703,10 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   var ondaBtn = document.createElement('button');
   ondaBtn.type = 'button'; ondaBtn.className = 'onda-btn'; ondaBtn.innerHTML = SVG_ONDA;
   ondaBtn.setAttribute('aria-label', 'Hablar con Eris por voz'); ondaBtn.title = 'Hablar con Eris por voz';
-  // 05/11 (Tete): la pantalla de voz se abre tocando la bola (inicio y cabecera), no con un botón en la barra.
+  // 05/11 (Tete): la pantalla de voz se abre tocando la bola (inicio y cabecera).
+  // 10/11 (Tete: «no es de intuición pulsar la bola»): además, botón de micro visible en la barra de escribir, junto a enviar.
+  ondaBtn.innerHTML = SVG_MICRO; ondaBtn.addEventListener('click', function(){ abrirVoz(); });
+  (function(){ var f = document.getElementById('erisForm'), env = f && f.querySelector('.enviar'); if (f && env) f.insertBefore(ondaBtn, env); })();
   var vozPant = document.createElement('div');
   vozPant.className = 'voz-eris'; vozPant.setAttribute('role', 'dialog'); vozPant.setAttribute('aria-modal', 'true'); vozPant.setAttribute('aria-label', 'Hablar con Eris por voz');
   vozPant.innerHTML = '<div class="voz-cab"><span>Eris</span><span class="voz-estado" aria-live="polite"></span></div>'
