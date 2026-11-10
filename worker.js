@@ -209,6 +209,8 @@ function filtrar(cuerpo) {
         hora: Math.floor((Number(ev.timestamp) || 0) / 1000),
         // Notas de voz de Instagram: n8n descarga el audio desde esta dirección y lo transcribe
         media_url: (adj === 'audio' && a0.payload && a0.payload.url) || '',
+        // Respuesta a una historia de @euxenos.ai: n8n se lo dice a Eris para que sepa de qué le hablan
+        historia: !!(m.reply_to && m.reply_to.story),
       });
     }
   }
