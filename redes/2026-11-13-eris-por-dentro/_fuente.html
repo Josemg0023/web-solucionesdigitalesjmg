@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#04120E;--bg2:#071C16;--sup:#0B231C;--esm:#10B981;--esm2:#34D399;--rubi:#D1104A;--rubi2:#F0386B;--txt:#E9FBF4;--apag:#9CC3B5;--linea:#1a4a3a}
+*{box-sizing:border-box;margin:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg);font-family:Figtree,sans-serif;color:var(--txt)}
+#lienzo{position:absolute;inset:0;width:1080px;height:1920px;overflow:hidden;
+  background:radial-gradient(1px 1px at 1px 1px,#0f3328 1px,transparent 1.5px) 0 0/48px 48px,var(--bg)}
+.franja{position:absolute;left:0;right:0;bottom:0;height:14px;background:linear-gradient(90deg,#D1104A,#B5175E,#10B981)}
+.r{color:var(--rubi2)} .g{color:var(--esm2)}
+#cab{position:absolute;top:96px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:22px}
+#cab img{height:58px}
+.kicker{font-size:30px;font-weight:800;letter-spacing:.22em;color:var(--esm2)}
+#tit{position:absolute;top:270px;left:60px;right:60px;height:250px;text-align:center}
+#tit .t{position:absolute;left:0;right:0;top:0}
+#tit h1{font-size:80px;font-weight:900;line-height:1.05;letter-spacing:-.01em}
+#tit p{font-size:42px;font-weight:600;color:var(--apag);margin-top:20px}
+/* esquema */
+#esq{position:absolute;top:560px;left:0;width:1080px;height:740px}
+.movil{position:absolute;left:350px;top:0;width:380px;height:740px;border:5px solid #1f5a45;border-radius:60px;background:var(--bg2);overflow:hidden}
+.movil .notch{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:110px;height:26px;border-radius:20px;background:#04120E}
+.pant{position:absolute;inset:60px 22px 30px;opacity:0;display:flex;flex-direction:column;gap:16px}
+.pcab{font-size:22px;font-weight:700;color:var(--apag);padding-bottom:12px;border-bottom:2px solid var(--linea);display:flex;justify-content:space-between}
+.b{border-radius:22px;padding:16px 18px;font-size:23px;line-height:1.3;font-weight:600;max-width:300px}
+.b small{display:block;font-size:16px;font-weight:700;margin-bottom:5px}
+.bc{background:var(--esm);color:#04120E;align-self:flex-end}.bc small{color:#064e36}
+.be{background:var(--sup);border:2px solid var(--linea);align-self:flex-start}.be small{color:var(--esm2)}
+.card{background:var(--sup);border:2px solid var(--linea);border-radius:22px;padding:18px}
+.fila{display:flex;justify-content:space-between;font-size:22px;font-weight:600;padding:10px 0;border-bottom:1px solid var(--linea)}
+.fila:last-child{border-bottom:0}
+.fila b{color:var(--esm2);font-weight:800}
+.boton{border-radius:999px;text-align:center;font-weight:800;font-size:22px;padding:12px}
+.nota{font-size:15px;color:var(--apag);text-align:center}
+/* piezas */
+.pz{position:absolute;width:92px;height:92px;border-radius:50%;border:4px solid var(--txt);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:900;opacity:0}
+.pzl{position:absolute;font-size:26px;font-weight:800;opacity:0;width:230px}
+.ln{position:absolute;height:3px;background:var(--txt);opacity:0;transform-origin:left center}
+/* tabla */
+#tabla{position:absolute;top:1340px;left:70px;width:940px}
+#tabla .th,#tabla .tr{display:grid;grid-template-columns:90px 260px 1fr 70px;align-items:center}
+#tabla .th{font-size:24px;font-weight:800;color:var(--apag);padding:0 22px 14px;border-bottom:2px solid var(--linea)}
+#tabla .tr{font-size:30px;font-weight:700;height:68px;padding:0 22px;border-radius:14px;opacity:0}
+#tabla .tr .cl{font-family:ui-monospace,Menlo,monospace;font-weight:700;color:var(--esm2);letter-spacing:.04em}
+#tabla .tr .ck{width:40px;height:40px;border-radius:10px;background:var(--esm);color:#04120E;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;opacity:0}
+/* cierre */
+#cierre{position:absolute;inset:0;background:var(--bg);opacity:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:56px;padding:0 80px}
+#cierre img{height:110px}
+#cierre .grande{font-size:96px;font-weight:900;text-align:center;line-height:1.05}
+.pill{display:inline-block;background:var(--rubi);color:#fff;border-radius:28px;padding:10px 46px;font-size:150px;font-weight:900;letter-spacing:.04em}
+#cierre .sub{font-size:46px;font-weight:600;color:var(--apag);text-align:center;line-height:1.3}
+#cierre .datos{display:flex;flex-direction:column;align-items:center;gap:16px;font-size:44px;font-weight:800}
+.ondas{display:flex;gap:8px;align-items:center;height:70px;justify-content:center}
+.ondas i{display:block;width:10px;border-radius:6px;background:var(--esm2)}
+</style>
+</head>
+<body>
+<div id="lienzo">
+  <div id="cab"><img src="logo.svg" alt="Euxenos"><div class="kicker">ERIS POR DENTRO</div></div>
+  <div id="tit"></div>
+
+  <div id="esq">
+    <div class="movil" id="movil"><div class="notch"></div>
+      <!-- 0 intro -->
+      <div class="pant" id="p0" style="align-items:center;justify-content:center;gap:30px">
+        <img src="xi.svg" style="width:150px">
+        <div style="font-size:44px;font-weight:900">Eris</div>
+        <div class="nota" style="font-size:22px">Una más del equipo</div>
+      </div>
+      <!-- 1 teléfono -->
+      <div class="pant" id="p1" style="align-items:center;justify-content:center;gap:26px">
+        <div style="font-size:22px;color:var(--apag);font-weight:700" id="p1a">Llamada entrante</div>
+        <div style="font-size:40px;font-weight:900">Cliente</div>
+        <div class="ondas" id="p1o"></div>
+        <div style="font-size:22px;color:var(--esm2);font-weight:800" id="p1b">Eris al teléfono · 00:00</div>
+        <div class="boton" style="background:var(--esm);color:#04120E;width:200px;margin-top:20px">● En llamada</div>
+      </div>
+      <!-- 2 chat -->
+      <div class="pant" id="p2">
+        <div class="pcab"><span>Cliente · WhatsApp</span><span class="g">23:04</span></div>
+        <div class="b bc" id="p2a"><small>Cliente · 23:04</small>¿Tenéis hueco mañana por la tarde?</div>
+        <div class="b be" id="p2b"><small>Eris · 23:04</small>¡Hola! Mañana a las 17:00 o a las 18:30. ¿Cuál te va mejor?</div>
+      </div>
+      <!-- 3 sabe -->
+      <div class="pant" id="p3">
+        <div class="pcab"><span>Lo que sabe Eris</span><span class="g">✓</span></div>
+        <div class="card">
+          <div class="fila" data-i="0"><span>Corte</span><b>15 € · 30 min</b></div>
+          <div class="fila" data-i="1"><span>Tinte</span><b>35 € · 90 min</b></div>
+          <div class="fila" data-i="2"><span>Lun – Sáb</span><b>9:30–20:30</b></div>
+          <div class="fila" data-i="3"><span>Domingo</span><b class="r">Cerrado</b></div>
+        </div>
+        <div class="nota">Datos de ejemplo</div>
+      </div>
+      <!-- 4 citas -->
+      <div class="pant" id="p4">
+        <div class="pcab"><span>Agenda · Jueves</span><span class="g">App Euxenos</span></div>
+        <div class="card" id="p4c" style="display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:16px;font-weight:800;color:var(--rubi2)" id="p4e">POR CONFIRMAR</div>
+          <div style="font-size:32px;font-weight:900">17:00 · María</div>
+          <div style="font-size:22px;color:var(--apag);font-weight:600">Corte · pedida por WhatsApp</div>
+          <div class="boton" id="p4b" style="background:var(--esm);color:#04120E;margin-top:8px">Confirmar</div>
+        </div>
+        <div class="card" style="opacity:.55"><div style="font-size:22px;font-weight:800">18:30 · Pablo</div><div style="font-size:18px;color:var(--apag)">Tinte</div></div>
+      </div>
+      <!-- 5 clientes -->
+      <div class="pant" id="p5">
+        <div class="pcab"><span>Clientes</span><span class="g">Ficha</span></div>
+        <div class="card" style="display:flex;flex-direction:column;gap:8px">
+          <div style="width:70px;height:70px;border-radius:50%;background:var(--esm);color:#04120E;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900">M</div>
+          <div style="font-size:30px;font-weight:900">María López</div>
+          <div class="fila"><span>Visitas</span><b>3</b></div>
+          <div class="fila"><span>Última</span><b>Corte</b></div>
+          <div class="fila"><span>Nota</span><b>Prefiere tardes</b></div>
+        </div>
+        <div style="display:flex;gap:10px"><div class="boton" style="flex:1;background:var(--sup);border:2px solid var(--linea)">Llamar</div><div class="boton" style="flex:1;background:var(--esm);color:#04120E">WhatsApp</div></div>
+      </div>
+      <!-- 6 tu eris -->
+      <div class="pant" id="p6">
+        <div class="pcab"><span>Tu Eris</span><span class="g">Solo para ti</span></div>
+        <div class="b bc" id="p6a"><small>Tú</small>¿Qué tengo mañana?</div>
+        <div class="b be" id="p6b"><small>Eris</small>4 citas: 10:00 Ana, 12:30 Luis, 17:00 María y 18:30 Pablo.</div>
+      </div>
+      <!-- 7 resumen -->
+      <div class="pant" id="p7" style="align-items:center;justify-content:center;gap:20px">
+        <div style="font-size:150px;font-weight:900;line-height:1">6<span class="g">/6</span></div>
+        <div style="font-size:30px;font-weight:800;color:var(--esm2)">piezas montadas</div>
+      </div>
+    </div>
+    <div id="piezas"></div>
+  </div>
+
+  <div id="tabla">
+    <div class="th"><span>Nº</span><span>Clave</span><span>Qué hace</span><span></span></div>
+    <div id="filas"></div>
+  </div>
+
+  <div id="cierre">
+    <img src="logo.svg" alt="Euxenos">
+    <div class="grande">Comenta</div>
+    <div class="pill">ERIS</div>
+    <div class="sub">y te mando el <span class="g">checklist de 6 puntos</span><br>para revisar tu negocio</div>
+    <div class="datos">
+      <div>Desde <span class="g">49 €/mes</span></div>
+      <div>Llama y pruébala: <span class="g">919 93 36 42</span></div>
+      <div class="g">euxenos.com</div>
+    </div>
+  </div>
+  <div class="franja"></div>
+</div>
+
+<script>
+const O=0.3; // retraso de la voz
+const P=[ // inicio de cada pieza (s de la voz)
+ {n:1,t:2.41,c:'ERIS-TEL',d:'Teléfono',lado:'d',y:40},
+ {n:2,t:7.64,c:'ERIS-CHAT',d:'WhatsApp e Instagram',lado:'i',y:150},
+ {n:3,t:14.17,c:'ERIS-SABE',d:'Lo que sabe',lado:'d',y:260},
+ {n:4,t:21.09,c:'ERIS-CITA',d:'Citas',lado:'i',y:370},
+ {n:5,t:27.35,c:'ERIS-CLI',d:'Clientes',lado:'d',y:480},
+ {n:6,t:31.70,c:'ERIS-TÚ',d:'Tu Eris personal',lado:'i',y:590},
+];
+const TIT=[
+ [0,'Así está montada Eris <span class="r">por dentro</span>',''],
+ [2.41,'Pieza 1: <span class="r">el teléfono</span>','Si no puedes cogerlo, lo coge ella'],
+ [7.64,'Pieza 2: <span class="r">WhatsApp e Instagram</span>','Al momento. También a las 23:00'],
+ [14.17,'Pieza 3: <span class="r">lo que sabe</span>','Tus precios, horario y servicios. Sin inventar'],
+ [21.09,'Pieza 4: <span class="r">las citas</span>','Te llegan a la app y tú confirmas'],
+ [27.35,'Pieza 5: <span class="r">tus clientes</span>','Cada uno con su ficha'],
+ [31.70,'Pieza 6: <span class="r">tu Eris personal</span>','«¿Qué tengo mañana?»'],
+ [38.36,'6 piezas. ¿Cuántas tiene <span class="r">tu negocio</span>?',''],
+];
+const CIERRE=41.2;
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const ease=x=>{x=cl(x);return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2};
+const fin=(t,a,d=.35)=>ease((t-a)/d);
+
+// construir títulos
+const tit=document.getElementById('tit');
+TIT.forEach((x,i)=>{const d=document.createElement('div');d.className='t';d.id='t'+i;d.innerHTML=`<h1>${x[1]}</h1>${x[2]?`<p>${x[2]}</p>`:''}`;tit.appendChild(d)});
+// piezas
+const pzs=document.getElementById('piezas'),filas=document.getElementById('filas');
+P.forEach(p=>{
+  const cx=p.lado==='d'?880:108, cy=p.y+20;
+  pzs.insertAdjacentHTML('beforeend',`<div class="ln" id="ln${p.n}" style="top:${cy+46}px;left:${p.lado==='d'?730:200}px;width:150px"></div>
+   <div class="pz" id="pz${p.n}" style="left:${cx}px;top:${cy}px">${p.n}</div>
+   <div class="pzl" id="pzl${p.n}" style="top:${cy+104}px;left:${p.lado==='d'?820:40}px;text-align:${p.lado==='d'?'left':'left'}">${p.d}</div>`);
+  filas.insertAdjacentHTML('beforeend',`<div class="tr" id="tr${p.n}"><span>${p.n}</span><span class="cl">${p.c}</span><span>${p.d}</span><span class="ck" id="ck${p.n}">✓</span></div>`);
+});
+const ondas=document.getElementById('p1o');
+for(let i=0;i<14;i++){ondas.insertAdjacentHTML('beforeend','<i></i>')}
+const $=id=>document.getElementById(id);
+
+window.render=function(T){
+  const t=T-O;
+  // títulos
+  TIT.forEach((x,i)=>{
+    const s=x[0], e=i+1<TIT.length?TIT[i+1][0]:CIERRE;
+    const a=Math.min(fin(t,s-0.05,.3), 1-fin(t,e-0.15,.25));
+    const el=$('t'+i); el.style.opacity= i===0? Math.min(1-fin(t,e-0.15,.25), fin(T,0,.4)) : a;
+    el.style.transform=`translateY(${(1-fin(t,s-0.05,.35))*30}px)`;
+  });
+  // pantallas del móvil
+  const ps=[0,2.41,7.64,14.17,21.09,27.35,31.70,38.36,99];
+  for(let i=0;i<8;i++){
+    const a=Math.min(i===0?1:fin(t,ps[i]-0.1,.3),1-fin(t,ps[i+1]-0.1,.3));
+    $('p'+i).style.opacity=a;
+    $('p'+i).style.transform=`translateY(${(1-(i===0?1:fin(t,ps[i]-0.1,.35)))*24}px)`;
+  }
+  // detalles pantalla 1
+  const llam=t>=4.94; $('p1a').textContent=llam?'Atendida por Eris':'Llamada entrante';
+  const seg=Math.max(0,Math.floor(t-4.94)); $('p1b').textContent='Eris al teléfono · 00:'+String(seg).padStart(2,'0');
+  $('p1b').style.opacity=llam?1:0;
+  [...ondas.children].forEach((b,k)=>{const h=llam?18+44*Math.abs(Math.sin(t*6+k*.7)):10;b.style.height=h+'px'});
+  // pantalla 2
+  $('p2a').style.opacity=fin(t,8.6);$('p2b').style.opacity=fin(t,10.5);
+  $('p2b').style.transform=`translateY(${(1-fin(t,10.5))*20}px)`;
+  // pantalla 3
+  document.querySelectorAll('#p3 .fila').forEach(f=>{const i=+f.dataset.i;f.style.opacity=fin(t,16.8+i*.75)});
+  // pantalla 4
+  const conf=t>=25.2; $('p4e').textContent=conf?'CONFIRMADA':'POR CONFIRMAR'; $('p4e').style.color=conf?'var(--esm2)':'var(--rubi2)';
+  $('p4b').textContent=conf?'✓ Confirmada':'Confirmar'; $('p4b').style.transform=`scale(${1+0.08*Math.max(0,1-Math.abs(t-25.0)*4)})`;
+  // pantalla 6
+  $('p6a').style.opacity=fin(t,35.9);$('p6b').style.opacity=fin(t,37.2);
+  // piezas y tabla
+  let act=0; P.forEach(p=>{if(t>=p.t-0.1)act=p.n});
+  P.forEach(p=>{
+    const v=fin(t,p.t-0.1,.35);
+    const z=$('pz'+p.n); z.style.opacity=v; z.style.transform=`scale(${0.6+0.4*v})`;
+    const on=p.n===act && t<38.36;
+    z.style.borderColor=on?'var(--rubi2)':(v>0?'var(--esm2)':'var(--txt)');
+    z.style.color=on?'var(--rubi2)':'var(--txt)';
+    z.style.background=on?'#2a0a16':'var(--bg)';
+    $('pzl'+p.n).style.opacity=v; $('pzl'+p.n).style.color=on?'var(--rubi2)':'var(--txt)';
+    const l=$('ln'+p.n); l.style.opacity=v; l.style.background=on?'var(--rubi2)':'#2e6b55';
+    l.style.transform=`scaleX(${v})`; if(p.lado==='i'){l.style.transformOrigin='right center'}
+    const r=$('tr'+p.n); r.style.opacity=fin(t,p.t,.35);
+    r.style.background=on?'rgba(209,16,74,.18)':'transparent';
+    r.style.boxShadow=on?'inset 0 0 0 2px #D1104A':'none';
+    $('ck'+p.n).style.opacity=fin(t,p.t+1.2,.25);
+  });
+  // cierre
+  const c=fin(t,CIERRE,.45); $('cierre').style.opacity=c;
+  $('cierre').style.transform=`scale(${0.97+0.03*c})`;
+  const pill=document.querySelector('.pill'); pill.style.transform=`scale(${1+0.05*Math.sin(Math.max(0,t-CIERRE)*4)})`;
+};
+render(0);
+</script>
+</body>
+</html>
