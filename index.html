@@ -502,7 +502,7 @@ a.boton{text-decoration:none;display:inline-flex;align-items:center}
 .atajo.destacado b::after{color:var(--rubi-luz)}
 @media (max-width:900px){.atajos-grid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:420px){.atajos-grid{gap:10px}.atajo{padding:16px 14px;min-height:0}.atajo b{font-size:1rem}.atajo span{font-size:.88rem}}
-html.secciones:not(.en-seccion) main > section:not(.portada):not(#equipo):not(#explora){display:none}
+html.secciones:not(.en-seccion) main > section:not(.portada):not(#equipo):not(#agente):not(#explora){display:none}
 html.secciones.en-seccion main > section:not(.activa){display:none}
 html.secciones.en-seccion .volver-inicio{display:block;padding:18px 0 0}
 html.secciones.en-seccion .nav-secciones{display:block;padding:8px 0 56px}
@@ -617,6 +617,13 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
 .letra-clara{font-size:1rem;gap:12px}
 .letra-clara li:first-child{background:rgba(52,211,153,.07);border:1px solid var(--linea);border-radius:14px;padding:14px 16px;color:#C9DDD5;line-height:1.55}
 .letra-clara li:first-child strong{display:block;font-size:1.08rem;color:var(--claro);margin-bottom:4px}
+/* === Agente, no chatbot (10/11). Idea de Tete. Para quitarlo: borrar este bloque, la sección #agente y su «:not(#agente)». === */
+#equipo{padding-bottom:40px}
+#agente{padding-top:40px}
+.agente-hace{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.agente-hace li{border:1px solid var(--linea);border-radius:16px;padding:18px 18px 16px;background:rgba(52,211,153,.05);border-left:3px solid var(--esmeralda-luz)}
+.agente-hace h3{font-family:var(--display);font-weight:700;font-size:1.08rem;line-height:1.3;margin:0 0 6px;color:var(--claro)}
+.agente-hace p{margin:0;color:var(--apagado);font-size:.97rem;line-height:1.5}
 </style>
 </head>
 <body>
@@ -702,6 +709,20 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
         <li class="paso eris"><span class="et">¿Tienes las manos ocupadas?</span><h3>Contesta Eris por ti</h3><p>Atiende a quien llama, le da cita si la quiere y te deja el aviso en el móvil.</p></li>
       </ol>
       <p class="equipo-cierre">Con los mensajes de la web, WhatsApp o Instagram pasa igual: respondes tú cuando puedes y Eris cubre el resto, también de noche y en festivos.</p>
+    </div>
+  </section>
+
+  <section class="seccion" id="agente">
+    <div class="envoltura">
+      <h2>No es un chatbot. Es una agente que resuelve.</h2>
+      <p class="bajada">Un chatbot contesta lo que le preguntas. Eris, además, hace el trabajo.</p>
+      <ul class="agente-hace">
+        <li><h3>Coge la llamada que tú no puedes</h3><p>Entiende qué quiere tu cliente y te deja su petición de cita en la app, lista para confirmar con un toque.</p></li>
+        <li><h3>Contesta con los datos reales de tu negocio</h3><p>Tu horario, tus precios, tus días de cierre. No con frases de manual.</p></li>
+        <li><h3>¿Te escriben una cita por WhatsApp?</h3><p>Mándale la captura a tu Eris y ella la apunta en tu agenda.</p></li>
+        <li><h3>Le hablas como a una compañera</h3><p>«¿Qué tengo mañana?», «apúntame a María el domingo a las cinco». Y lo hace.</p></li>
+        <li><h3>Si alguien quiere hablar contigo</h3><p>Recoge sus datos y te avisa al momento.</p></li>
+      </ul>
     </div>
   </section>
 
