@@ -389,6 +389,10 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .cli-acc{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .cli-acc .btn{flex:1 1 30%;font-size:.88rem}
 .hoja h4{margin:18px 0 8px;font-size:.95rem;color:var(--apagado);font-weight:600}
+/* === Etapa del cliente (11/11): la pone el dueño o Eris. Para quitarla: borrar estas líneas, los campos «etapa» y «etiquetas» de la hoja del cliente y las líneas «11/11» del script de Clientes. */
+.cli-etapa{display:inline-block;margin-left:6px;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;vertical-align:middle;background:rgba(255,255,255,.08);color:var(--apagado)}
+.cli-etapa.e1{background:rgba(245,185,66,.16);color:#F7D58C}.cli-etapa.e2{background:rgba(240,56,107,.16);color:#F7A3BC}.cli-etapa.e3{background:rgba(16,185,129,.18);color:var(--verde-luz)}
+.fila .pausa{display:block;font-size:.78rem;color:var(--apagado);margin-top:2px}
 </style>
 </head>
 <body>
@@ -485,6 +489,9 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 <div class="dos"><label class="campo"><span>Teléfono</span><input name="telefono" type="tel" inputmode="tel" maxlength="40" placeholder="Opcional"></label>
 <label class="campo"><span>Email</span><input name="email" type="email" inputmode="email" maxlength="120" placeholder="Opcional" autocapitalize="none"></label></div>
 <label class="campo"><span>Notas</span><textarea name="notas" maxlength="600" rows="3" placeholder="Ej.: tinte 7.1, alérgica al amoniaco, prefiere por la tarde…"></textarea></label>
+<div class="dos"><label class="campo"><span>Etapa</span><select name="etapa"><option value="">Sin etapa</option><option>Nuevo</option><option>Preguntó precio</option><option>Pidió cita o encargo</option><option>Cliente</option><option>No siguió</option></select></label>
+<label class="campo"><span>Le interesa</span><input name="etiquetas" maxlength="200" placeholder="Ej.: taladro, mechas"></label></div>
+<p class="ayuda" style="margin:-6px 0 12px">Eris la va poniendo sola cuando habla con el cliente; tú puedes cambiarla.</p>
 <button class="btn b-ok ancho" type="submit">Guardar</button>
 <div id="cliCitas" class="cli-citas"></div>
 <button class="btn b-no ancho oculto" type="button" id="borrarCliente" style="margin-top:14px">Borrar cliente</button>
@@ -1051,9 +1058,11 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     if (!lista.length) return h + '<p class="vacio">Aún no hay clientes. Los que pidan cita (por Eris o apuntados a mano) aparecerán aquí solos. También puedes añadirlos con «+ Añadir» o decírselo a Eris: «apunta a María López, 600 11 22 33».</p>';
     h += lista.map(function(c){
       var cs = citasDe(c), prox = cs.filter(function(x){ return x.fecha >= hoy && (x.estado === 'confirmada' || x.estado === 'pendiente' || x.estado === 'propuesta'); })[0];
-      var det = [c.telefono, c.notas].filter(Boolean).join(' · ');
-      var busca = normN([c.nombre, c.telefono, telN(c.telefono), c.email, c.notas].join(' '));
-      return '<button class="fila tocable" data-cliente="' + esc(c.id) + '" data-busca="' + esc(busca) + '"><span class="cli-ini" aria-hidden="true">' + esc(inicial(c.nombre)) + '</span><span class="txt"><b>' + esc(c.nombre) + '</b>' + (det ? '<span>' + esc(det) + '</span>' : '') + '</span>' + (prox ? '<span class="cli-prox">' + esc(corta(prox.fecha)) + (prox.hora ? ' · ' + esc(prox.hora) : '') + '</span>' : '') + '</button>';
+      var etq = (c.etiquetas || []).join(', '); // 11/11
+      var det = [c.telefono, etq, c.notas].filter(Boolean).join(' · ');
+      var busca = normN([c.nombre, c.telefono, telN(c.telefono), c.email, c.notas, c.etapa, etq].join(' '));
+      var nE = { 'Preguntó precio': 1, 'Pidió cita o encargo': 2, 'Cliente': 3 }[c.etapa] || 0;
+      return '<button class="fila tocable" data-cliente="' + esc(c.id) + '" data-busca="' + esc(busca) + '"><span class="cli-ini" aria-hidden="true">' + esc(inicial(c.nombre)) + '</span><span class="txt"><b>' + esc(c.nombre) + (c.etapa ? '<span class="cli-etapa e' + nE + '">' + esc(c.etapa) + '</span>' : '') + '</b>' + (det ? '<span>' + esc(det) + '</span>' : '') + '</span>' + (prox ? '<span class="cli-prox">' + esc(corta(prox.fecha)) + (prox.hora ? ' · ' + esc(prox.hora) : '') + '</span>' : '') + '</button>';
     }).join('');
     h += '<p class="vacio oculto" id="cliNada">Nadie coincide con esa búsqueda.</p>';
     h += '<p class="ayuda">Toca un cliente para ver sus citas, llamarle o darle cita. También puedes preguntarle a Eris: «¿qué teléfono tiene María?».</p>';
@@ -1073,6 +1082,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     cliSel = c || null; formCli.reset();
     formCli.id.value = c ? c.id : '';
     formCli.nombre.value = c ? c.nombre : ''; formCli.telefono.value = c ? c.telefono || '' : ''; formCli.email.value = c ? c.email || '' : ''; formCli.notas.value = c ? c.notas || '' : '';
+    formCli.etapa.value = c ? c.etapa || '' : ''; formCli.etiquetas.value = c ? (c.etiquetas || []).join(', ') : ''; // 11/11
     document.getElementById('cliTitulo').textContent = c ? c.nombre : 'Nuevo cliente';
     document.getElementById('borrarCliente').classList.toggle('oculto', !c);
     var acc = document.getElementById('cliAcc'), tel = c ? telN(c.telefono) : '';
@@ -1100,7 +1110,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   });
   formCli.addEventListener('submit', function(e){
     e.preventDefault();
-    var d = { nombre: formCli.nombre.value.trim(), telefono: formCli.telefono.value.trim(), email: formCli.email.value.trim(), notas: formCli.notas.value.trim() };
+    var d = { nombre: formCli.nombre.value.trim(), telefono: formCli.telefono.value.trim(), email: formCli.email.value.trim(), notas: formCli.notas.value.trim(),
+      etapa: formCli.etapa.value, etiquetas: formCli.etiquetas.value.split(',').map(function(x){ return x.trim(); }).filter(Boolean) }; // 11/11: etapa y etiquetas
     if (!d.nombre) { toast('Escribe el nombre'); return; }
     if (formCli.id.value) d.id = formCli.id.value;
     else if (clientesG().some(function(x){ return mismo(x, d); }) && !confirmar('Ya tienes un cliente con ese ' + (telN(d.telefono) ? 'teléfono' : 'nombre') + '. ¿Actualizarlo con estos datos?')) return;
@@ -1125,7 +1136,10 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     return h;
   }
   function filaPendiente(p){
-    return '<div class="fila' + (p.hecho ? ' hecho' : '') + '"><button class="check' + (p.hecho ? ' si' : '') + '" data-hecho="' + esc(p.id) + '" aria-label="' + (p.hecho ? 'Marcar como no hecho' : 'Marcar como hecho') + '">' + (p.hecho ? '✓' : '') + '</button><span class="txt"><b>' + esc(p.texto) + '</b></span><button class="quitar" data-quitar-p="' + esc(p.id) + '" aria-label="Borrar">✕</button></div>';
+    // 11/11: si Eris pasó una conversación a una persona, se ve hasta cuándo está callada y se puede devolver a Eris.
+    var pausa = p.sesion && !p.hecho && p.hasta > Date.now();
+    var hasta = pausa ? new Date(p.hasta).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
+    return '<div class="fila' + (p.hecho ? ' hecho' : '') + '"><button class="check' + (p.hecho ? ' si' : '') + '" data-hecho="' + esc(p.id) + '" aria-label="' + (p.hecho ? 'Marcar como no hecho' : 'Marcar como hecho') + '">' + (p.hecho ? '✓' : '') + '</button><span class="txt"><b>' + esc(p.texto) + '</b>' + (pausa ? '<span class="pausa">Eris no contesta en esa conversación hasta las ' + esc(hasta) + (p.canal ? ' · ' + esc(p.canal) : '') + '</span>' : '') + '</span>' + (pausa ? '<button class="accion" data-devolver="' + esc(p.id) + '">Devolver a Eris</button>' : '') + '<button class="quitar" data-quitar-p="' + esc(p.id) + '" aria-label="Borrar">✕</button></div>';
   }
   function vistaPendientes(){
     if (!info) return '<p class="vacio">Cargando…</p>';
@@ -1233,6 +1247,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     if (t) { if (!confirmar('¿Quitar este cierre?')) return; t.disabled = true; llamarApp('cierre-borrar', { id: t.getAttribute('data-quitar-cierre') }).then(function(r){ aplicarInfo(r, 'Cierre quitado'); }).catch(sinConexion); return; }
     t = e.target.closest('[data-hecho]');
     if (t) { var id = t.getAttribute('data-hecho'), pe = (info.pendientes || []).filter(function(x){ return x.id === id; })[0]; t.disabled = true; llamarApp('pendiente-hecho', { id: id, hecho: !(pe && pe.hecho) }).then(function(r){ aplicarInfo(r); }).catch(sinConexion); return; }
+    t = e.target.closest('[data-devolver]');
+    if (t) { var pd = (info.pendientes || []).filter(function(x){ return x.id === t.getAttribute('data-devolver'); })[0]; t.disabled = true; llamarApp('pausa-quitar', { id: pd ? pd.id : '', sesion: pd ? pd.sesion : '' }).then(function(r){ aplicarInfo(r, 'Eris vuelve a atender esa conversación'); }).catch(sinConexion); return; }
     t = e.target.closest('[data-quitar-p]'); if (t) { t.disabled = true; llamarApp('pendiente-borrar', { id: t.getAttribute('data-quitar-p') }).then(function(r){ aplicarInfo(r, 'Borrado'); }).catch(sinConexion); return; }
     t = e.target.closest('[data-limpiar]');
     if (t) { var hechos = (info.pendientes || []).filter(function(x){ return x.hecho; }); t.disabled = true;

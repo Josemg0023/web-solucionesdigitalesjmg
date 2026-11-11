@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#04120E">
+<title>Ferretería El Yunque · Demo de Eris</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/vendor/fuentes/fuentes.css">
+<!-- Demo (11/11): chat con la Eris de los negocios para enseñar a ferreterías. Negocio ficticio «demo-ferreteria». Sin enlazar desde la web ni indexar. -->
+<style>
+:root{--bg:#04120E;--bg2:#071C16;--sup:#0B231C;--linea:#16392D;--esm:#10B981;--esm2:#34D399;--rubi:#D1104A;--rubi2:#F0386B;--txt:#E9FBF4;--apag:#9CC3B5}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:Figtree,system-ui,sans-serif}
+body{display:flex;flex-direction:column;max-width:720px;margin:0 auto;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{padding:16px 18px 12px;border-bottom:1px solid var(--linea);display:flex;gap:12px;align-items:center}
+.logo{width:44px;height:44px;border-radius:12px;background:var(--sup);display:grid;place-items:center;font-size:24px;flex:none}
+header h1{font-size:1.08rem;font-weight:700}
+header p{font-size:.82rem;color:var(--apag);margin-top:2px}
+.punto{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--esm2);margin-right:5px}
+.aviso{margin:12px 16px 0;padding:10px 12px;border-radius:12px;background:rgba(209,16,74,.12);border:1px solid rgba(240,56,107,.35);font-size:.82rem;color:#F7C3D2;line-height:1.4}
+#chat{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.b{max-width:84%;padding:11px 14px;border-radius:18px;line-height:1.42;font-size:.97rem;white-space:pre-wrap;word-wrap:break-word}
+.yo{align-self:flex-end;background:var(--esm);color:#04120E;border-bottom-right-radius:6px}
+.eris{align-self:flex-start;background:var(--sup);border:1px solid var(--linea);border-bottom-left-radius:6px}
+.eris small{display:block;font-size:.72rem;font-weight:700;color:var(--esm2);margin-bottom:3px}
+.yo img{display:block;max-width:220px;border-radius:12px;margin-bottom:6px}
+.nota{align-self:center;font-size:.8rem;color:var(--apag);text-align:center;max-width:90%}
+.puntos span{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:var(--apag);animation:p 1s infinite}
+.puntos span:nth-child(2){animation-delay:.15s}.puntos span:nth-child(3){animation-delay:.3s}
+@keyframes p{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none}
+.chips button{flex:none;background:none;border:1px solid var(--linea);color:var(--txt);border-radius:999px;padding:8px 12px;font:inherit;font-size:.85rem;cursor:pointer}
+form{display:flex;gap:8px;align-items:center;padding:10px 12px 14px;border-top:1px solid var(--linea);background:var(--bg2)}
+form input[type=text]{flex:1;min-width:0;background:var(--sup);border:1px solid var(--linea);color:var(--txt);border-radius:999px;padding:12px 16px;font:inherit;font-size:1rem}
+.redondo{flex:none;width:46px;height:46px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;font-size:20px}
+.foto{background:var(--sup);border:1px solid var(--linea);color:var(--txt)}
+.enviar{background:var(--rubi);color:#fff}
+.redondo:disabled{opacity:.5}
+#vista{display:none;margin:0 12px 8px;padding:8px;border-radius:12px;background:var(--sup);align-items:center;gap:10px;font-size:.85rem;color:var(--apag)}
+#vista img{width:54px;height:54px;object-fit:cover;border-radius:8px}
+#vista button{margin-left:auto;background:none;border:0;color:var(--apag);font-size:1.2rem;cursor:pointer}
+footer{text-align:center;font-size:.75rem;color:var(--apag);padding:0 0 10px}
+footer a{color:var(--esm2);text-decoration:none}
+.franja{height:4px;background:linear-gradient(90deg,#D1104A,#B5175E,#10B981)}
+</style>
+</head>
+<body>
+<div class="franja"></div>
+<header>
+  <div class="logo" aria-hidden="true">🔧</div>
+  <div><h1>Ferretería El Yunque</h1><p><span class="punto"></span>Te atiende Eris · contesta al momento</p></div>
+</header>
+<div class="aviso"><b>Demo de Euxenos.</b> La tienda es ficticia y los precios y existencias son de ejemplo. Prueba a preguntar, encargar algo o mandar una foto de una pieza.</div>
+<div id="chat" aria-live="polite"></div>
+<div class="chips" id="chips">
+  <button type="button">¿Tenéis taladros?</button>
+  <button type="button">¿A qué hora abrís el sábado?</button>
+  <button type="button">Necesito 4 bisagras de cazoleta de 35 mm</button>
+  <button type="button">Soy fontanero, ¿me hacéis precio por cantidad?</button>
+</div>
+<div id="vista"><img alt=""><span>Foto lista para enviar</span><button type="button" id="quitarFoto" aria-label="Quitar foto">×</button></div>
+<form id="f" autocomplete="off">
+  <input type="file" id="archivo" accept="image/*" hidden>
+  <button type="button" class="redondo foto" id="botonFoto" aria-label="Mandar una foto">📷</button>
+  <input type="text" id="texto" placeholder="Escribe tu mensaje…" maxlength="800" aria-label="Mensaje">
+  <button type="submit" class="redondo enviar" id="botonEnviar" aria-label="Enviar">➤</button>
+</form>
+<footer>Atiende <b>Eris</b>, la agente de <a href="https://euxenos.com" target="_blank" rel="noopener">Euxenos</a></footer>
+<script>
+(function(){
+  var URL = 'https://erisproject.app.n8n.cloud/webhook/eris-negocio';
+  var NEGOCIO = 'demo-ferreteria';
+  var sesion;
+  try { sesion = localStorage.getItem('eux-demo-ferreteria'); } catch (e) {}
+  if (!sesion) { sesion = 'web-' + Math.random().toString(36).slice(2, 12); try { localStorage.setItem('eux-demo-ferreteria', sesion); } catch (e) {} }
+  var chat = document.getElementById('chat'), f = document.getElementById('f'), texto = document.getElementById('texto');
+  var archivo = document.getElementById('archivo'), vista = document.getElementById('vista'), enviar = document.getElementById('botonEnviar');
+  var foto = null; // { data, tipo, url }
+  function burbuja(cls, txt, img){
+    var d = document.createElement('div'); d.className = 'b ' + cls;
+    if (cls === 'eris') { var s = document.createElement('small'); s.textContent = 'Eris'; d.appendChild(s); }
+    if (img) { var i = document.createElement('img'); i.src = img; i.alt = 'Foto enviada'; d.appendChild(i); }
+    if (txt) d.appendChild(document.createTextNode(txt));
+    chat.appendChild(d); chat.scrollTop = chat.scrollHeight; return d;
+  }
+  function nota(txt){ var d = document.createElement('div'); d.className = 'nota'; d.textContent = txt; chat.appendChild(d); chat.scrollTop = chat.scrollHeight; }
+  function limpiar(t){ return String(t || '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/^\s*[-*]\s+/gm, '• ').trim(); }
+  burbuja('eris', '¡Hola! 👋 Soy Eris, de Ferretería El Yunque. ¿Qué necesitas? Si no sabes cómo se llama la pieza, mándame una foto 📷');
+  function mandar(msg){
+    if (enviar.disabled) return;
+    msg = String(msg || '').trim();
+    if (!msg && !foto) return;
+    var cuerpo = { negocio: NEGOCIO, sesion: sesion, mensaje: msg, canal: 'web' };
+    burbuja('yo', msg, foto && foto.url);
+    if (foto) { cuerpo.imagen = foto.data; cuerpo.imagenTipo = foto.tipo; }
+    quitarFoto(); texto.value = ''; enviar.disabled = true;
+    var esp = burbuja('eris', ''); esp.innerHTML = '<small>Eris</small><span class="puntos"><span></span><span></span><span></span></span>';
+    fetch(URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        esp.remove();
+        if (j && j.ok && j.respuesta) burbuja('eris', limpiar(j.respuesta));
+        else if (j && j.pausada) nota('Esta conversación la lleva ahora una persona de la tienda. ' + (j.motivo || ''));
+        else nota((j && j.motivo) || 'No se ha podido enviar. Prueba otra vez.');
+      })
+      .catch(function(){ esp.remove(); nota('Sin conexión. Prueba otra vez en un momento.'); })
+      .then(function(){ enviar.disabled = false; texto.focus(); });
+  }
+  f.addEventListener('submit', function(e){ e.preventDefault(); mandar(texto.value); });
+  document.getElementById('chips').addEventListener('click', function(e){ var b = e.target.closest('button'); if (b) mandar(b.textContent); });
+  document.getElementById('botonFoto').addEventListener('click', function(){ archivo.value = ''; archivo.click(); });
+  function quitarFoto(){ foto = null; vista.style.display = 'none'; }
+  document.getElementById('quitarFoto').addEventListener('click', quitarFoto);
+  archivo.addEventListener('change', function(){
+    var a = archivo.files && archivo.files[0]; if (!a || !/^image\//.test(a.type)) return;
+    var img = new Image(), url = URL_ && URL_.createObjectURL ? URL_.createObjectURL(a) : '';
+    img.onload = function(){
+      var max = 1024, w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h));
+      var c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(h * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      var dataUrl = c.toDataURL('image/jpeg', 0.8);
+      foto = { data: dataUrl.split(',')[1], tipo: 'image/jpeg', url: dataUrl };
+      vista.querySelector('img').src = dataUrl; vista.style.display = 'flex'; texto.focus();
+      if (url) URL_.revokeObjectURL(url);
+    };
+    img.onerror = function(){ nota('No se ha podido abrir esa foto.'); };
+    img.src = url;
+  });
+  var URL_ = window.URL || window.webkitURL;
+})();
+</script>
+</body>
+</html>
