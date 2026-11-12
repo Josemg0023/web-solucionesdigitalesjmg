@@ -985,7 +985,18 @@ body.tete .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
       h += '<h2>Pendientes <span class="n">' + pa.length + '</span><button class="accion" data-ir="pendientes">Ver todos</button></h2>';
       h += pa.slice(0, 3).map(filaPendiente).join('');
     }
-    return h;
+    return h + erisSemana();
+  }
+  // 12/11: lo que Eris ha hecho en los últimos 7 días (se ve si hay algo; si no, no se muestra nada).
+  function erisSemana(){
+    if (!info || esTete()) return '';
+    var lim = new Date(); lim.setDate(lim.getDate() - 7); var limIso = iso(lim), limMs = lim.getTime();
+    var personas = clientesG().filter(function(c){ return c.ultimo && c.ultimo >= limIso; }).length;
+    var citasN = citas().filter(function(x){ var t = Date.parse(x.creada); return x.estado !== 'cancelada' && x.canal && x.canal !== 'manual' && t >= limMs; }).length; // las que apunta el dueño a mano (canal «manual») no cuentan
+    var aPersona = (info.pendientes || []).filter(function(p){ return p.sesion && String(p.creada || '') >= limIso; }).length;
+    if (!personas && !citasN && !aPersona) return '';
+    var fila = function(n, txt){ return n ? '<div class="fila"><span class="precio">' + n + '</span><span class="txt"><b>' + txt + '</b></span></div>' : ''; };
+    return '<h2>Eris esta semana</h2>' + fila(personas, personas === 1 ? 'persona atendida por Eris' : 'personas atendidas por Eris') + fila(citasN, citasN === 1 ? 'cita pedida a Eris' : 'citas pedidas a Eris') + fila(aPersona, aPersona === 1 ? 'conversación que te ha pasado a ti' : 'conversaciones que te ha pasado a ti');
   }
   function vistaCitas(){
     var hoy = hoyISO(), c = citas();
@@ -1069,6 +1080,10 @@ body.tete .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
   function ignorados(){ try { return JSON.parse(localStorage.getItem('eris-cli-borrados-' + n) || '[]'); } catch (e) { return []; } }
   function ignorar(c){ try { var l = ignorados(); l.push(claveCli(c)); localStorage.setItem('eris-cli-borrados-' + n, JSON.stringify(l.slice(-500))); } catch (e) {} }
   function citasDe(c){ return citas().filter(function(x){ return x.estado !== 'cancelada' && mismo(c, x); }).sort(orden); }
+  // 12/11: última visita = la cita más reciente ya pasada o finalizada (guardada en el cliente: no se pierde al borrarse las citas viejas).
+  function visitaDeCitas(c){ var hoy = hoyISO(), v = ''; citasDe(c).forEach(function(x){ if ((x.estado === 'hecha' || (x.estado === 'confirmada' && x.fecha < hoy)) && x.fecha > v) v = x.fecha; }); return v; }
+  function ultimaVisita(c){ var a = visitaDeCitas(c), b = c.visita || ''; return a > b ? a : b; }
+  function textoVisita(c){ var v = ultimaVisita(c); return v ? 'Vino el ' + corta(v) : ''; }
   function sincronizarClientes(){
     if (!info || !datos || !Array.isArray(info.clientes) || esTete()) return;
     var guard = clientesG(), nuevos = [], ign = ignorados();
@@ -1078,8 +1093,10 @@ body.tete .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
       if (ign.indexOf(claveCli(c)) >= 0 || guard.some(function(g){ return mismo(g, c); }) || nuevos.some(function(g){ return mismo(g, c); })) return;
       nuevos.push(c);
     });
+    nuevos.forEach(function(c){ var v = visitaDeCitas(c); if (v) c.visita = v; });
+    guard.forEach(function(g){ var v = visitaDeCitas(g); if (v && v > (g.visita || '')) nuevos.push({ nombre: g.nombre, telefono: g.telefono || '', visita: v }); });
     if (!nuevos.length) return;
-    var firma = nuevos.map(claveCli).join('|');
+    var firma = nuevos.map(function(c){ return claveCli(c) + (c.visita || ''); }).join('|');
     if (firma === cliSync) return; cliSync = firma;
     llamarApp('clientes-varios', { items: nuevos.slice(0, 300) }).then(function(r){ if (r && r.ok && r.datos) { info = r.datos; if (!algoAbierto()) pintar(); } }).catch(function(){ cliSync = ''; });
   }
@@ -1094,7 +1111,7 @@ body.tete .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     h += lista.map(function(c){
       var cs = citasDe(c), prox = cs.filter(function(x){ return x.fecha >= hoy && (x.estado === 'confirmada' || x.estado === 'pendiente' || x.estado === 'propuesta'); })[0];
       var etq = (c.etiquetas || []).join(', '); // 11/11
-      var det = [c.telefono, etq, c.notas].filter(Boolean).join(' · ');
+      var det = [c.telefono, etq, textoVisita(c), c.notas].filter(Boolean).join(' · '); // 12/11: y cuándo vino la última vez
       var busca = normN([c.nombre, c.telefono, telN(c.telefono), c.email, c.notas, c.etapa, etq].join(' '));
       var nE = { 'Preguntó precio': 1, 'Pidió cita o encargo': 2, 'Cliente': 3 }[c.etapa] || 0;
       return '<button class="fila tocable" data-cliente="' + esc(c.id) + '" data-busca="' + esc(busca) + '"><span class="cli-ini" aria-hidden="true">' + esc(inicial(c.nombre)) + '</span><span class="txt"><b>' + esc(c.nombre) + (c.etapa ? '<span class="cli-etapa e' + nE + '">' + esc(c.etapa) + '</span>' : '') + '</b>' + (det ? '<span>' + esc(det) + '</span>' : '') + '</span>' + (prox ? '<span class="cli-prox">' + esc(corta(prox.fecha)) + (prox.hora ? ' · ' + esc(prox.hora) : '') + '</span>' : '') + '</button>';
@@ -1130,7 +1147,7 @@ body.tete .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
       var prox = cs.filter(function(x){ return x.fecha >= hoy && FIN.indexOf(x.estado) < 0; });
       var pas = cs.filter(function(x){ return !(x.fecha >= hoy && FIN.indexOf(x.estado) < 0); }).reverse();
       var fila = function(x){ return '<div class="fila"><span class="txt"><b>' + esc(nombreDia(x.fecha)) + (x.hora ? ' · ' + esc(x.hora) : '') + '</b><span>' + esc([x.servicio, ETIQUETAS[x.estado] || x.estado].filter(Boolean).join(' · ')) + '</span></span></div>'; };
-      cc.innerHTML = '<h4>Próximas citas</h4>' + (prox.length ? prox.map(fila).join('') : '<p class="ayuda" style="margin:0">No tiene citas próximas.</p>')
+      cc.innerHTML = (textoVisita(c) ? '<p class="ayuda" style="margin:0 0 4px"><b>Última visita:</b> ' + esc(corta(ultimaVisita(c))) + '</p>' : '') + '<h4>Próximas citas</h4>' + (prox.length ? prox.map(fila).join('') : '<p class="ayuda" style="margin:0">No tiene citas próximas.</p>')
         + (pas.length ? '<h4>Citas anteriores</h4>' + pas.slice(0, 10).map(fila).join('') : '')
         + ((info.ajustes && info.ajustes.autoborrar === false) ? '' : '<p class="ayuda" style="margin-top:10px">Las citas pasadas se borran solas a las 24 h (Ajustes). El cliente y sus notas se quedan siempre.</p>');
     } else cc.innerHTML = '';
