@@ -1205,23 +1205,29 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     return '<div class="fila' + (p.hecho ? ' hecho' : '') + '"><button class="check' + (p.hecho ? ' si' : '') + '" data-hecho="' + esc(p.id) + '" aria-label="' + (p.hecho ? 'Marcar como no hecho' : 'Marcar como hecho') + '">' + (p.hecho ? '✓' : '') + '</button><span class="txt"><b>' + esc(p.texto) + '</b>' + (pausa ? '<span class="pausa">Eris no contesta en esa conversación hasta las ' + esc(hasta) + (p.canal ? ' · ' + esc(p.canal) : '') + '</span>' : '') + '</span>' + (pausa ? '<button class="accion" data-devolver="' + esc(p.id) + '">Devolver a Eris</button>' : '') + '<button class="quitar" data-quitar-p="' + esc(p.id) + '" aria-label="Borrar">✕</button></div>';
   }
   // 12/11 (Tete): sus recordatorios y reuniones (Google Calendar, los apunta Eris) se ven en Tareas, ya no en Ventas.
+  // 12/11 (Tete: «Si»): Tareas usa los mismos recordatorios que «recuérdame…» de Eris (aviso al móvil a esa hora).
+  // Su Google Calendar sale aparte como «Reuniones», solo para ver.
   function bloqueRecordatorios(){
     if (!comercial) return '<h2>Recordatorios</h2><p class="vacio">Cargando…</p>';
-    var hoy = hoyISO(), h = '';
-    var evs = (comercial.eventos || []).map(function(e){ return { id: e.id, fecha: String(e.inicio).slice(0, 10), hora: e.todoElDia ? 'Todo el día' : String(e.inicio).slice(11, 16), titulo: e.titulo, lugar: e.lugar }; }).filter(function(e){ return e.fecha >= hoy; });
-    // 12/11 (Tete: «Si»): crear y borrar recordatorios desde aquí (n8n eux-dueno: recordatorio-crear / recordatorio-borrar en su Google Calendar).
-    h += '<form id="formRecordatorio" class="caja" style="margin-top:18px"><p style="margin:0 0 8px"><b>Nuevo recordatorio</b></p>'
+    var hoy = hoyISO(), h = '', diaAnt = '';
+    var recs = (comercial.recordatorios || []).map(function(r){ return { id: r.id, fecha: String(r.cuando).slice(0, 10), hora: String(r.cuando).slice(11, 16), titulo: r.texto }; });
+    var evs = (comercial.eventos || []).map(function(e){ return { fecha: String(e.inicio).slice(0, 10), hora: e.todoElDia ? 'Todo el día' : String(e.inicio).slice(11, 16), titulo: e.titulo, lugar: e.lugar }; }).filter(function(e){ return e.fecha >= hoy; });
+    function dia(f){ if (f === diaAnt) return ''; diaAnt = f; var nd = nombreDia(f); return '<p class="dia-sep">' + esc(nd.charAt(0).toUpperCase() + nd.slice(1)) + '</p>'; }
+    h += '<h2>Recordatorios <span class="n">' + recs.length + '</span></h2>';
+    h += '<form id="formRecordatorio" class="caja">'
       + '<input name="texto" maxlength="200" placeholder="Ej.: llamar a Cristian" aria-label="Qué te recuerdo">'
       + '<div style="display:flex;gap:8px;margin-top:8px"><input type="date" name="fecha" value="' + hoy + '" min="' + hoy + '" aria-label="Día" style="flex:1"><input type="time" name="hora" aria-label="Hora (opcional)" style="flex:1"></div>'
-      + '<p class="ayuda" style="margin:6px 0 10px">Sin hora, queda para todo el día. Se apunta en tu calendario de Google y te avisa como tus otros eventos.</p>'
+      + '<p class="ayuda" style="margin:6px 0 10px">Te llega un aviso al móvil a esa hora. Sin hora, a las 10:00. También puedes decírselo a Eris: «recuérdame mañana a las 10…».</p>'
       + '<button class="btn b-ok ancho" type="submit">Apuntar recordatorio</button></form>';
-    h += '<h2>Recordatorios y reuniones <span class="n">' + evs.length + '</span></h2>';
-    if (!evs.length) h += '<p class="vacio">Sin reuniones ni recordatorios en las próximas 3 semanas. Pídeselo a Eris: «recuérdame mañana a las 10 llamar a…».</p>';
-    var diaAnt = '';
-    evs.forEach(function(e){
-      if (e.fecha !== diaAnt) { var nd = nombreDia(e.fecha); h += '<p class="dia-sep">' + esc(nd.charAt(0).toUpperCase() + nd.slice(1)) + '</p>'; diaAnt = e.fecha; }
-      h += '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span>' + (e.id ? '<button class="quitar" data-quitar-rec="' + esc(e.id) + '" aria-label="Borrar recordatorio">✕</button>' : '') + '</div>';
+    if (!recs.length) h += '<p class="vacio">No tienes recordatorios pendientes.</p>';
+    recs.forEach(function(r){
+      h += dia(r.fecha) + '<div class="fila"><span class="hora-ev">' + esc(r.hora) + '</span><span class="txt"><b>' + esc(r.titulo) + '</b></span><button class="quitar" data-quitar-rec="' + esc(r.id) + '" aria-label="Borrar recordatorio">✕</button></div>';
     });
+    if (evs.length) {
+      diaAnt = '';
+      h += '<h2>Reuniones <span class="n">' + evs.length + '</span></h2>';
+      evs.forEach(function(e){ h += dia(e.fecha) + '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span></div>'; });
+    }
     return h;
   }
   function vistaPendientes(){
@@ -1378,7 +1384,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     t = e.target.closest('[data-borrar-neg]'); if (t) { borrarNegocio(t.getAttribute('data-borrar-neg'), t); return; }
     t = e.target.closest('[data-neg]'); if (t) { abrirNegocio(t.getAttribute('data-neg')); return; }
     t = e.target.closest('[data-quitar-rec]');
-    if (t) { if (!confirmar('¿Borrar esto de tu calendario?')) return; t.disabled = true; llamarDueno('recordatorio-borrar', { evento: t.getAttribute('data-quitar-rec') }).then(function(r){ if (r && r.ok) toast('Borrado del calendario'); else toast((r && r.motivo) || 'No se ha podido borrar'); cargarComercial(); }).catch(sinConexion); return; }
+    if (t) { if (!confirmar('¿Borrar este recordatorio? Ya no te avisará.')) return; t.disabled = true; llamarDueno('recordatorio-borrar', { evento: t.getAttribute('data-quitar-rec') }).then(function(r){ if (r && r.ok) toast('Recordatorio borrado'); else toast((r && r.motivo) || 'No se ha podido borrar'); cargarComercial(); }).catch(sinConexion); return; }
     t = e.target.closest('[data-quitar-aviso]');
     if (t) { if (!confirmar('¿Borrar esto? Eris dejará de tenerlo en cuenta.')) return; t.disabled = true; llamarDueno('aviso-borrar', { id: t.getAttribute('data-quitar-aviso') }).then(function(r){ if (r && r.ok) toast('Borrado'); else toast((r && r.motivo) || 'No se ha podido borrar'); cargarComercial(); }).catch(sinConexion); return; }
     var b = e.target.closest('button[data-a]'); if (!b) return;
@@ -1409,7 +1415,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
       llamarDueno('recordatorio-crear', { texto: rec, fecha: f.fecha.value, hora: f.hora.value }).then(function(r){
         listo();
         if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido apuntar'); return; }
-        toast('Apuntado en tu calendario'); f.texto.value = ''; f.hora.value = ''; cargarComercial();
+        toast('Apuntado: te aviso a esa hora'); f.texto.value = ''; f.hora.value = ''; cargarComercial();
       }).catch(function(){ listo(); sinConexion(); });
     } else listo();
   });
