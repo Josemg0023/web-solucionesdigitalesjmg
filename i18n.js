@@ -14,6 +14,17 @@
     '49 €/mes': ['€49/month', '49 €/mois'],
     '490 €/año': ['€490/year', '490 €/an'],
     // Quiénes somos (04/11)
+    // Por qué existe y promesas (12/11)
+    'Por qué existe Euxenos': ['Why Euxenos exists', 'Pourquoi Euxenos existe'],
+    'En cualquier negocio pequeño pasa lo mismo: el teléfono suena mientras atiendes, los mensajes esperan hasta la hora de cerrar y el cliente que quería una cita acaba en otro sitio. No es por falta de ganas: es que no hay manos para todo.': ['Every small business knows the feeling: the phone rings while you’re serving someone, messages wait until closing time, and the customer who wanted an appointment ends up somewhere else. It isn’t for lack of effort: there just aren’t enough hands.', 'Dans tout petit commerce, c’est la même chose : le téléphone sonne pendant que vous servez, les messages attendent l’heure de la fermeture et le client qui voulait un rendez-vous finit ailleurs. Ce n’est pas un manque de volonté : il n’y a simplement pas assez de mains.'],
+    'Por eso hacemos herramientas que facilitan la vida a los dos lados: al negocio, que deja de estar pendiente del móvil, y a sus clientes, que reciben una respuesta clara al momento sin esperar a que el dueño conteste o confirme.': ['That’s why we build tools that make life easier on both sides: for the business, which no longer has to keep an eye on the phone, and for its customers, who get a clear answer straight away without waiting for the owner to reply or confirm.', 'C’est pourquoi nous créons des outils qui simplifient la vie des deux côtés : celle de l’entreprise, qui n’a plus à surveiller son téléphone, et celle de ses clients, qui reçoivent une réponse claire tout de suite sans attendre que le patron réponde ou confirme.'],
+    'Lo que te prometemos': ['What we promise you', 'Ce que nous vous promettons'],
+    'Nada de vender por vender.': ['No selling for the sake of it.', 'Pas de vente forcée.'],
+    'Si después de probarla no te ayuda, nos lo dices y no insistimos.': ['If it doesn’t help you after trying it, just tell us and we won’t push.', 'Si après l’avoir essayée elle ne vous aide pas, dites-le-nous et nous n’insisterons pas.'],
+    'Sin permanencia.': ['No lock-in.', 'Sans engagement.'],
+    'Te vas cuando quieras, sin explicaciones.': ['Leave whenever you like, no explanations needed.', 'Vous partez quand vous voulez, sans explication.'],
+    'Una persona cuando la necesites.': ['A person when you need one.', 'Une personne quand vous en avez besoin.'],
+    'Si tú o tus clientes queréis hablar con alguien del equipo, os llamamos.': ['If you or your customers want to talk to someone on the team, we’ll call you.', 'Si vous ou vos clients souhaitez parler à quelqu’un de l’équipe, nous vous rappelons.'],
     'La empresa y lo que hacemos': ['The company and what we do', 'L’entreprise et ce que nous faisons'],
     'Euxenos es una empresa española que ayuda a pequeños negocios a atender bien a sus clientes, aunque no puedan estar pendientes del teléfono todo el día.': ['Euxenos is a Spanish company that helps small businesses look after their customers well, even when they can’t be on the phone all day.', 'Euxenos est une entreprise espagnole qui aide les petites entreprises à bien accueillir leurs clients, même quand elles ne peuvent pas rester au téléphone toute la journée.'],
     'Eris, nuestra agente de inteligencia artificial.': ['Eris, our artificial intelligence agent.', 'Eris, notre agente d’intelligence artificielle.'],
