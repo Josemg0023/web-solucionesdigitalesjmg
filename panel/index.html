@@ -164,6 +164,7 @@ textarea{min-height:90px;resize:vertical}
 .hoja h3{font-family:'Sora',system-ui,sans-serif;margin:0 0 14px;font-size:1.15rem;display:flex;justify-content:space-between;align-items:center}
 .hoja h3 button{background:none;border:0;color:var(--apagado);font-size:1.6rem;cursor:pointer;padding:0 4px}
 .campo{display:block;margin-bottom:12px}
+.campo[hidden]{display:none}
 .campo>span{display:block;font-size:.82rem;color:var(--apagado);margin-bottom:5px}
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .interruptor{display:flex;align-items:center;gap:10px;margin:4px 0 14px;font-size:.92rem}
@@ -549,12 +550,12 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
 
 <!-- Cambiar contraseña -->
 <div class="velo abajo" id="veloAcceso"><form class="hoja" id="formAcceso" autocomplete="on">
-<h3>Cambiar contraseña <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
-<p class="sub" style="margin:-4px 0 14px">Al cambiarla, se cerrará la sesión en los demás dispositivos.</p>
-<label class="campo"><span>Usuario</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false"></label>
-<label class="campo"><span>Correo electrónico</span><input name="correo" type="email" inputmode="email" autocomplete="email" required autocapitalize="none"></label>
-<label class="campo"><span>Contraseña nueva (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>
-<label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>
+<h3><span id="tituloAcceso">Cambiar contraseña</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<p class="sub" style="margin:-4px 0 14px" id="subAcceso">Al cambiarla, se cerrará la sesión en los demás dispositivos.</p>
+<label class="campo" id="campoUsuario"><span>Usuario</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false"></label>
+<label class="campo" id="campoCorreo"><span>Correo electrónico</span><input name="correo" type="email" inputmode="email" autocomplete="email" required autocapitalize="none"></label>
+<label class="campo"><span id="txtClave1">Contraseña nueva (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>
+<label class="campo"><span id="txtClave2">Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>
 <p class="error" id="errorAcceso"></p>
 <button class="btn b-ok ancho" type="submit">Guardar</button>
 </form></div>
@@ -593,6 +594,8 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     horario: { t:'Horario y cierres', i:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
     pendientes: { t:'Pendientes', i:'<path d="M9 11l3 3 8-8"/><path d="M20 12v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h9"/>' },
     ajustes: { t:'Ajustes', i:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>' },
+    empresa: { t:'Mi empresa', i:'<path d="M3 21h18M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5M9 11h.01M15 11h.01"/>' },
+    memoria: { t:'Memoria de Eris', i:'<path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3z"/><path d="M10 22h4"/>' },
     cuenta: { t:'Cuenta', i:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>' }
   };
 
@@ -682,7 +685,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
   function modoTete(){ return esDueno; }
   // Hoy de Tete (09/11): la cuenta de Tete es solo para Euxenos; las pantallas del taller de demo no se enseñan.
   function esTete(){ return esDueno || n === CUENTA_DUENO; }
-  var SOLO_DEMO = ['calendario','citas','clientes','catalogo','horario','pedidos'];
+  var SOLO_DEMO = ['calendario','citas','clientes','catalogo','horario','pedidos','empresa'];
   function pendientesComercial(){ var hoy = hoyISO(); return comercial ? (comercial.negocios || []).filter(function(x){ return x.fecha && x.fecha <= hoy; }).length : 0; }
   // Cada posible cliente: tocar para cambiarlo; los atrasados llevan además ✕ para borrarlos a mano (05/11).
   // 12/11: interés de compra que Eris apunta (HubSpot: prioridad alta / media / baja). Si el dato no llega, no se pinta nada.
@@ -780,9 +783,13 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
       if (e.fecha !== diaAnt) { var nd = nombreDia(e.fecha); h += '<p class="dia-sep">' + esc(nd.charAt(0).toUpperCase() + nd.slice(1)) + '</p>'; diaAnt = e.fecha; }
       h += '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span></div>';
     });
-    // Lo que sabe Eris: la memoria común de la única Eris (plegado para no cargar la pantalla).
-    var av = comercial.avisos || [];
-    h += '<details class="plegable"' + (sabeAbierto ? ' open' : '') + ' data-sabe><summary><span>Lo que sabe Eris</span><span class="n">' + av.length + '</span></summary>';
+    return h;
+  }
+  // 12/11 (Tete: «Lo que sabe Eris» sonaba raro): «Memoria de Eris», pantalla propia en el menú ☰ (antes plegada en Ventas).
+  function vistaMemoria(){
+    if (!comercial) return '<p class="vacio">Cargando…</p>';
+    var av = comercial.avisos || [], h = '<p class="ayuda" style="margin:14px 0 6px">Lo que apuntes aquí (o le digas a Eris «recuerda que…») lo tiene en cuenta al momento, hable por donde hable.</p>';
+    h += '<h2>Lo que recuerda <span class="n">' + av.length + '</span></h2>';
     h += av.length ? av.map(function(a){
       var det = (a.para_clientes ? 'También con clientes' : 'Solo contigo') + (a.caduca ? ' · hasta el ' + corta(a.caduca) : '') + (a.caducado ? ' · ya no se usa' : '');
       return '<div class="fila' + (a.caducado ? ' apagada' : '') + '"><span class="txt"><b>' + esc(a.texto) + '</b><span>' + esc(det) + '</span></span><button class="quitar" data-quitar-aviso="' + esc(a.id) + '" aria-label="Borrar aviso">✕</button></div>';
@@ -792,7 +799,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
       + '<label class="interruptor" style="margin-top:10px"><input type="checkbox" name="clientes" checked> <span>Que lo use también con los clientes</span></label>'
       + '<label class="campo"><span>Válido hasta (opcional)</span><input type="date" name="caduca"></label>'
       + '<p class="ayuda" style="margin:0 0 10px">Precios y packs no van aquí: se cambian a la vez en la web, en Stripe y en Eris.</p>'
-      + '<button class="btn b-ok ancho" type="submit">Guardar</button></form></details>';
+      + '<button class="btn b-ok ancho" type="submit">Guardar</button></form>';
     return h;
   }
   // === Números (08/11): cuánto le queda a Tete al mes según sus clientes. Datos de la bóveda (packs 04/11, gastos 05/11).
@@ -1057,7 +1064,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
   }
   function vistaCatalogo(){
     var lista = info ? (info.catalogo || []).filter(function(x){ return x.tipo === tabCat; }) : null;
-    var h = '<p class="ayuda" style="margin:14px 0 0">Eris saca de aquí los servicios, precios y duraciones que da a tus clientes. <button class="accion" data-ir="ajustes" style="margin-left:4px">← Ajustes</button></p>';
+    var h = '<p class="ayuda" style="margin:14px 0 0">Eris saca de aquí los servicios, precios y duraciones que da a tus clientes. <button class="accion" data-ir="empresa" style="margin-left:4px">← Mi empresa</button></p>';
     h += '<div class="pestanas"><button data-tab="servicio" aria-pressed="' + (tabCat === 'servicio') + '">Servicios</button><button data-tab="producto" aria-pressed="' + (tabCat === 'producto') + '">Productos</button></div>';
     h += '<h2>' + (tabCat === 'servicio' ? 'Servicios' : 'Productos') + ' <span class="n">' + (lista ? lista.length : '…') + '</span><button class="accion" data-item="nuevo">+ Añadir</button></h2>';
     if (!lista) return h + '<p class="vacio">Cargando…</p>';
@@ -1183,7 +1190,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
   function vistaHorario(){
     if (!info) return '<p class="vacio">Cargando…</p>';
     var hor = info.horario || {}, hoy = hoyISO();
-    var h = '<h2>Horario semanal</h2><form id="formHorario" class="dias">';
+    var h = '<p class="ayuda" style="margin:14px 0 0"><button class="accion" data-ir="empresa">← Mi empresa</button></p><h2>Horario semanal</h2><form id="formHorario" class="dias">';
     SEMANA.forEach(function(s){ h += '<div class="dia-h"><label for="h-' + s[0] + '">' + s[1] + '</label><input id="h-' + s[0] + '" name="' + s[0] + '" maxlength="80" placeholder="9:00-14:00, 16:00-20:00 o cerrado" value="' + esc(hor[s[0]] || '') + '"></div>'; });
     h += '<button class="btn b-ok ancho" type="submit" style="margin-top:6px">Guardar horario</button></form>';
     var futuros = (info.cierres || []).filter(function(c){ return c.hasta >= hoy; });
@@ -1206,19 +1213,32 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     if (hechos.length) h += '<h2>Hechos <span class="n">' + hechos.length + '</span><button class="accion" data-limpiar>Borrar hechos</button></h2>' + hechos.map(filaPendiente).join('');
     return h;
   }
+  // 12/11 (Tete): acceso con tres botones (contraseña, correo, usuario). Servicios, horario y memoria de Eris pasan a «Mi empresa».
+  function bloqueAcceso(){
+    var neg = (datos && datos.negocio) || {};
+    return '<h2>Acceso</h2><div class="caja"><p style="margin:0 0 10px">Usuario: <b>' + esc(neg.usuario || '') + '</b>' + ((neg.correo || neg.email) ? '<br>Correo: <b>' + esc(neg.correo || neg.email) + '</b>' : '') + '</p>'
+      + '<div class="columna"><button class="btn b-otra" data-cuenta="acceso" data-modo="clave">Cambiar contraseña</button><button class="btn b-otra" data-cuenta="acceso" data-modo="correo">Cambiar correo</button><button class="btn b-otra" data-cuenta="acceso" data-modo="usuario">Cambiar usuario</button></div></div>';
+  }
   function vistaAjustes(){
-    var h = '<h2>Avisos en este dispositivo</h2><div class="caja" id="avisosAjustes"></div>';
-    if (esTete()) return h + '<p class="ayuda" style="margin-top:14px">Lo que sabe Eris, tus posibles clientes y la calculadora están en «Mi negocio».</p><div class="instalar-app"></div>';
-    var nCat = info ? (info.catalogo || []).length : 0;
-    h += '<h2>Servicios y precios</h2><div class="caja"><p style="margin:0 0 10px">' + (info ? (nCat ? nCat + (nCat === 1 ? ' elemento' : ' elementos') + ' en tu lista.' : 'Aún no has puesto tus servicios.') : 'Cargando…') + ' Eris los usa para decir a tus clientes qué haces, cuánto cuesta y cuánto dura.</p><button class="btn b-otra ancho" data-ir="catalogo">Ver y cambiar servicios y precios</button></div>';
-    h += '<h2>Lo que Eris debe saber</h2><form id="formInfo" class="caja"><p>Cuéntale a Eris lo que tus clientes deben saber y no está en el catálogo ni en el horario: cómo llegar, aparcamiento, formas de pago, normas, avisos de estos días…</p>'
-      + '<textarea name="texto" maxlength="3000" rows="5" placeholder="Ej.: Aparcamiento gratuito en la calle de atrás. Aceptamos Bizum y tarjeta. Esta semana no hacemos mechas.">' + esc(info ? info.info : '') + '</textarea>'
-      + '<button class="btn b-ok ancho" type="submit" style="margin-top:10px"' + (info ? '' : ' disabled') + '>Guardar</button></form>';
+    var h = '<h2>Avisos en este dispositivo</h2><div class="caja" id="avisosAjustes"></div>' + bloqueAcceso();
+    if (esTete()) return h + '<div class="instalar-app"></div>';
     var auto = !(info && info.ajustes && info.ajustes.autoborrar === false);
     h += '<h2>Citas pasadas</h2><div class="caja"><label class="interruptor" style="margin:0 0 6px"><input type="checkbox" data-autoborrar' + (auto ? ' checked' : '') + (info ? '' : ' disabled') + '> <span>Borrar automáticamente las citas finalizadas, canceladas o que se cerraron solas, 24 horas después de su hora</span></label>'
       + '<p class="ayuda" style="margin:0 0 10px">Así la agenda se queda limpia y no guardas datos de clientes que ya no necesitas. Las citas confirmadas que aún no han pasado nunca se borran.</p>'
       + '<button class="btn b-no ancho" data-borrar-pasadas>🗑 Borrar ahora las citas pasadas</button></div>';
     h += '<div class="instalar-app"></div>';
+    return h;
+  }
+  // 12/11 (Tete): «Mi empresa» para los clientes. El nombre no se cambia desde la app: se pide a soporte.
+  function vistaEmpresa(){
+    var neg = (datos && datos.negocio) || {}, nCat = info ? (info.catalogo || []).length : 0;
+    var hor = (info && info.horario) || {}, diasAbre = SEMANA.filter(function(x){ var v = String(hor[x[0]] || '').trim(); return v && !/cerrad/i.test(v); }).length;
+    var h = '<h2>Tu negocio</h2><div class="caja"><p style="margin:0"><b>' + esc(neg.nombre || '') + '</b></p><p class="ayuda" style="margin:6px 0 0">¿Quieres cambiar el nombre? <a href="mailto:soporte@euxenos.com?subject=' + encodeURIComponent('Cambiar el nombre de mi negocio · ' + (neg.nombre || '')) + '" style="color:var(--verde-luz)">Escribe a soporte</a>.</p></div>';
+    h += '<h2>Horario y cierres</h2><div class="caja"><p style="margin:0 0 10px">' + (info ? (diasAbre ? 'Abres ' + diasAbre + (diasAbre === 1 ? ' día' : ' días') + ' a la semana.' : 'Aún no has puesto tu horario.') : 'Cargando…') + ' Eris no da citas fuera de tu horario ni en tus cierres.</p><button class="btn b-otra ancho" data-ir="horario">Ver y cambiar horario y cierres</button></div>';
+    h += '<h2>Servicios y precios</h2><div class="caja"><p style="margin:0 0 10px">' + (info ? (nCat ? nCat + (nCat === 1 ? ' elemento' : ' elementos') + ' en tu lista.' : 'Aún no has puesto tus servicios.') : 'Cargando…') + ' Eris los usa para decir a tus clientes qué haces, cuánto cuesta y cuánto dura.</p><button class="btn b-otra ancho" data-ir="catalogo">Ver y cambiar servicios y precios</button></div>';
+    h += '<h2>Memoria de Eris</h2><form id="formInfo" class="caja"><p>Cuéntale a Eris lo que tus clientes deben saber y no está en los servicios ni en el horario: dirección y cómo llegar, teléfono, aparcamiento, formas de pago, normas, avisos de estos días…</p>'
+      + '<textarea name="texto" maxlength="3000" rows="5" placeholder="Ej.: Estamos en la calle Mayor 12. Aparcamiento gratuito en la calle de atrás. Aceptamos Bizum y tarjeta.">' + esc(info ? info.info : '') + '</textarea>'
+      + '<button class="btn b-ok ancho" type="submit" style="margin-top:10px"' + (info ? '' : ' disabled') + '>Guardar</button></form>';
     return h;
   }
   function vistaCuenta(){
@@ -1229,7 +1249,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     return '<div class="caja" style="margin-top:16px"><p><b>' + esc(neg.nombre || '') + '</b><br>' + (neg.usuario ? 'Entras con el usuario <b>' + esc(neg.usuario) + '</b>' + (neg.correo && neg.correo !== neg.usuario ? ' o con el correo <b>' + esc(neg.correo) + '</b>' : '') : '') + '</p></div>'
       + '<h2>Tu plan</h2><div class="caja"><p>Cambia tu plan a uno mayor o menor, y añade o quita servicios (minutos de voz, otro canal, web…) desde la web, con pago seguro. Sin permanencia.</p>'
       + '<div class="columna"><a class="btn b-ok" href="/#precios" target="_blank" rel="noopener">Cambiar de plan</a><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + asuntoBaja + '">Darme de baja</a></div></div>'
-      + '<h2>Acceso</h2><div class="columna">' + (bioPosible ? '<button class="btn b-otra" data-cuenta="bio">' + (bioGuardada() ? 'Quitar Face ID o huella en este móvil' : 'Entrar con Face ID o huella en este móvil') + '</button>' : '') + '<button class="btn b-otra" data-cuenta="acceso">Cambiar contraseña</button><button class="btn b-no ancho" data-cuenta="salir">Cerrar sesión</button></div>'
+      + '<h2>Acceso</h2><div class="columna">' + (bioPosible ? '<button class="btn b-otra" data-cuenta="bio">' + (bioGuardada() ? 'Quitar Face ID o huella en este móvil' : 'Entrar con Face ID o huella en este móvil') + '</button>' : '') + '<button class="btn b-no ancho" data-cuenta="salir">Cerrar sesión</button></div>'
       + '<h2>Ayuda y privacidad</h2><div class="columna"><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + encodeURIComponent('Ayuda con Euxenos') + '">Escribir a soporte</a><a class="btn b-otra" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>'
       + '<a class="btn b-no ancho" href="mailto:soporte@euxenos.com?subject=' + asuntoBorrar + '&body=' + cuerpoBorrar + '">Pedir que borren mi cuenta</a></div>'
       + '<p class="version">Euxenos · soporte@euxenos.com</p>';
@@ -1237,7 +1257,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
 
   function pintarMenu(){
     var pc = porConfirmar().length, pp = pendientesAbiertos().length;
-    var orden = esTete() ? ['hoy','comercial','numeros','pendientes','|','ajustes','cuenta'] : (pedidosOn() ? ['hoy','pedidos'] : ['hoy']).concat(['calendario','citas','clientes','horario','pendientes','|','ajustes','cuenta']);
+    var orden = esTete() ? ['hoy','comercial','numeros','pendientes','memoria','|','ajustes','cuenta'] : ['hoy','empresa','calendario','citas'].concat(pedidosOn() ? ['pedidos'] : []).concat(['clientes','pendientes','|','ajustes','cuenta']);
     // 12/11 (Tete: «hay cosas que se repiten»): el menú ☰ solo enseña lo que no está ya en la barra de abajo.
     var enBarra = itemsTabbar().map(function(i){ return i[0]; });
     orden = orden.filter(function(v){ return enBarra.indexOf(v) < 0; });
@@ -1255,13 +1275,13 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     if (!datos) return;
     if (vista === 'comercial' && !esDueno) vista = 'hoy';
     if (esTete() && SOLO_DEMO.indexOf(vista) >= 0) vista = 'hoy';
-    if (vista === 'numeros' && !esTete()) vista = 'hoy';
-    var cuerpo = { comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
+    if ((vista === 'numeros' || vista === 'memoria') && !esTete()) vista = 'hoy';
+    var cuerpo = { empresa: vistaEmpresa, memoria: vistaMemoria, comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
     if (vista === 'pedidos' && !pedidosOn() && pedidos) vista = 'hoy';
     var y = window.scrollY, hayAviso = porConfirmar().length > 0 || (pedidos || []).some(function(p){ return p.estado === 'nuevo'; });
     app.innerHTML = '<header><div class="cab">'
       + '<button class="icono-btn" id="abrirMenu" aria-label="Abrir el menú">' + svg('<path d="M4 7h16M4 12h16M4 17h16"/>') + (hayAviso && vista !== 'hoy' && vista !== 'citas' ? '<span class="bolita"></span>' : '') + '</button>'
-      + '<div class="titulo"><small>' + esc(vista === 'comercial' || vista === 'numeros' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
+      + '<div class="titulo"><small>' + esc(vista === 'comercial' || vista === 'numeros' || vista === 'memoria' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
       + '<button class="icono-btn" id="recargar" aria-label="Actualizar">' + svg('<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>') + '</button>'
       + '</div></header><main>' + cuerpo() + '</main>';
     document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); });
@@ -1292,7 +1312,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     var antes = modoTete(); vista = v;
     if (antes !== modoTete() && panelEris.classList.contains('abierto')) cerrarEris();
     cerrarMenu(); pintar();
-    if (v === 'comercial') cargarComercial();
+    if (v === 'comercial' || v === 'memoria') cargarComercial();
   }
 
   // ---- Menú ----
@@ -1332,7 +1352,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     if (t) { var hechos = (info.pendientes || []).filter(function(x){ return x.hecho; }); t.disabled = true;
       hechos.reduce(function(pr, x){ return pr.then(function(){ return llamarApp('pendiente-borrar', { id: x.id }).then(function(r){ if (r && r.ok) info = r.datos; }); }); }, Promise.resolve()).then(function(){ pintar(); toast('Hechos borrados'); }).catch(sinConexion); return; }
     t = e.target.closest('[data-cuenta]');
-    if (t) { if (t.getAttribute('data-cuenta') === 'acceso') abrirAcceso(); else if (t.getAttribute('data-cuenta') === 'bio') { if (bioGuardada()) { bioBorrar(); toast('Face ID o huella quitado de este móvil'); pintar(); } else activarBio((datos && datos.negocio && datos.negocio.usuario) || '', function(ok){ if (ok) toast('Listo: la próxima vez entra con Face ID o huella'); pintar(); }); } else { quitarAvisos(true); olvidar(); pantallaLogin('Has cerrado la sesión.'); } return; }
+    if (t) { if (t.getAttribute('data-cuenta') === 'acceso') abrirAcceso(t.getAttribute('data-modo')); else if (t.getAttribute('data-cuenta') === 'bio') { if (bioGuardada()) { bioBorrar(); toast('Face ID o huella quitado de este móvil'); pintar(); } else activarBio((datos && datos.negocio && datos.negocio.usuario) || '', function(ok){ if (ok) toast('Listo: la próxima vez entra con Face ID o huella'); pintar(); }); } else { quitarAvisos(true); olvidar(); pantallaLogin('Has cerrado la sesión.'); } return; }
     t = e.target.closest('[data-borrar-neg]'); if (t) { borrarNegocio(t.getAttribute('data-borrar-neg'), t); return; }
     t = e.target.closest('[data-neg]'); if (t) { abrirNegocio(t.getAttribute('data-neg')); return; }
     t = e.target.closest('[data-quitar-aviso]');
@@ -2060,7 +2080,19 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     }).catch(function(){ pantallaLogin('Sin conexión, inténtalo de nuevo.'); });
   }
   var formA = document.getElementById('formAcceso');
-  function abrirAcceso(){ formA.reset(); document.getElementById('errorAcceso').textContent = ''; if (datos && datos.negocio.usuario) formA.usuario.value = datos.negocio.usuario; if (datos && (datos.negocio.correo || datos.negocio.email)) formA.correo.value = datos.negocio.correo || datos.negocio.email; abrirHoja('veloAcceso'); }
+  var modoAcceso = 'clave';
+  function abrirAcceso(modo){
+    modoAcceso = modo === 'correo' || modo === 'usuario' ? modo : 'clave';
+    var T = { clave: ['Cambiar contraseña', 'Al cambiarla, se cerrará la sesión en los demás dispositivos.', 'Contraseña nueva (mínimo 8 caracteres)', 'Repite la contraseña nueva'],
+      correo: ['Cambiar correo', 'Escribe el correo nuevo. Por seguridad, pon también tu contraseña (puede ser la de siempre).', 'Tu contraseña (mínimo 8 caracteres)', 'Repite la contraseña'],
+      usuario: ['Cambiar usuario', 'Escribe el usuario nuevo. Por seguridad, pon también tu contraseña (puede ser la de siempre).', 'Tu contraseña (mínimo 8 caracteres)', 'Repite la contraseña'] }[modoAcceso];
+    document.getElementById('tituloAcceso').textContent = T[0]; document.getElementById('subAcceso').textContent = T[1];
+    document.getElementById('txtClave1').textContent = T[2]; document.getElementById('txtClave2').textContent = T[3];
+    document.getElementById('campoUsuario').hidden = modoAcceso === 'correo'; document.getElementById('campoCorreo').hidden = modoAcceso === 'usuario';
+    abrirAcceso0();
+    setTimeout(function(){ var f = modoAcceso === 'correo' ? formA.correo : modoAcceso === 'usuario' ? formA.usuario : formA.clave1; try { f.focus(); if (f.select) f.select(); } catch (e) {} }, 80);
+  }
+  function abrirAcceso0(){ formA.reset(); document.getElementById('errorAcceso').textContent = ''; if (datos && datos.negocio.usuario) formA.usuario.value = datos.negocio.usuario; if (datos && (datos.negocio.correo || datos.negocio.email)) formA.correo.value = datos.negocio.correo || datos.negocio.email; abrirHoja('veloAcceso'); }
   formA.addEventListener('submit', function(e){
     e.preventDefault();
     var err = document.getElementById('errorAcceso'), u = formA.usuario.value.trim().toLowerCase(), c = formA.correo.value.trim().toLowerCase();
@@ -2069,7 +2101,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     dosHashes(u, c, formA.clave1.value).then(function(h){ return llamar({ n:n, k:k, accion:'acceso', usuario:u, hash:h[0], correo:c, hash_correo:h[1] }); }).then(function(r){
       boton.disabled = false;
       if (!r || !r.ok) { err.textContent = (r && r.motivo) || 'No se ha podido guardar.'; return; }
-      guardarAcceso(r.n, r.k); bioActualizar(); datos.negocio.usuario = r.usuario; datos.negocio.correo = r.correo; cerrarHojas(); pintar(); toast('Contraseña cambiada');
+      guardarAcceso(r.n, r.k); bioActualizar(); datos.negocio.usuario = r.usuario; datos.negocio.correo = r.correo; cerrarHojas(); pintar(); toast(modoAcceso === 'correo' ? 'Correo cambiado' : modoAcceso === 'usuario' ? 'Usuario cambiado' : 'Contraseña cambiada');
     }).catch(function(){ boton.disabled = false; err.textContent = 'Sin conexión, inténtalo de nuevo.'; });
   });
 
