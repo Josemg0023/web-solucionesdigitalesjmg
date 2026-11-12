@@ -1238,6 +1238,10 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
   function pintarMenu(){
     var pc = porConfirmar().length, pp = pendientesAbiertos().length;
     var orden = esTete() ? ['hoy','comercial','numeros','pendientes','|','ajustes','cuenta'] : (pedidosOn() ? ['hoy','pedidos'] : ['hoy']).concat(['calendario','citas','clientes','horario','pendientes','|','ajustes','cuenta']);
+    // 12/11 (Tete: «hay cosas que se repiten»): el menú ☰ solo enseña lo que no está ya en la barra de abajo.
+    var enBarra = itemsTabbar().map(function(i){ return i[0]; });
+    orden = orden.filter(function(v){ return enBarra.indexOf(v) < 0; });
+    while (orden[0] === '|') orden.shift(); while (orden[orden.length - 1] === '|') orden.pop();
     document.getElementById('menuNav').innerHTML = orden.map(function(v){
       if (v === '|') return '<hr>';
       var pn = (pedidos || []).filter(function(p){ return p.estado === 'nuevo'; }).length;
@@ -1267,14 +1271,17 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     window.scrollTo(0, pintar.vista === vista ? y : 0); pintar.vista = vista;
     pintarMenu(); pintarAvisos(); pintarInstalar(); rellenarServicios(); pintarTabbar();
   }
+  function itemsTabbar(){
+    if (esTete()) return [['hoy', 'Inicio', 0], ['comercial', 'Ventas', pendientesComercial()], ['pendientes', 'Tareas', pendientesAbiertos().length], ['numeros', 'Números', 0], ['cuenta', 'Cuenta', 0]];
+    return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['pendientes', 'Pendientes', pendientesAbiertos().length], ['cuenta', 'Cuenta', 0]];
+  }
   // 12/11: barra de abajo y píldora «Habla con Eris», solo en la cuenta de Tete.
   function pintarTabbar(){
     var t = esTete(), nav = document.getElementById('tabbar'), tx = lanzador.lastChild, items;
     document.body.classList.toggle('tete', t); document.body.classList.toggle('cli', !t);
     nav.classList.remove('oculto');
     if (tx && tx.nodeType === 3) tx.nodeValue = t ? 'Habla con Eris' : 'Habla con tu Eris';
-    if (t) items = [['hoy', 'Inicio', 0], ['comercial', 'Ventas', pendientesComercial()], ['pendientes', 'Tareas', pendientesAbiertos().length], ['numeros', 'Números', 0], ['cuenta', 'Cuenta', 0]];
-    else items = [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['pendientes', 'Pendientes', pendientesAbiertos().length], ['cuenta', 'Cuenta', 0]];
+    items = itemsTabbar();
     nav.innerHTML = items.map(function(i){
       return '<button type="button" data-ir="' + i[0] + '"' + (vista === i[0] ? ' aria-current="page"' : '') + '>' + svg(VISTAS[i[0]].i) + i[1] + (i[2] ? '<span class="cuenta-n">' + i[2] + '</span>' : '') + '</button>';
     }).join('');
@@ -1856,10 +1863,12 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     vBola.style.transform = 'scale(' + e.toFixed(3) + ')';
     if (vozAbierta && !vQuieto) vBucle = requestAnimationFrame(animarVoz);
   }
+  // 12/11 (Tete): al tocar la bola o el micro verde, Eris ya escucha (sin tener que tocar otra vez el micro).
   function abrirVoz(){
     vozAbierta = true; vozPant.classList.add('abierta');
     ponerModo(grabador && grabador.state === 'recording' ? 'escucha' : (pensando ? 'piensa' : 'quieto'));
     cancelAnimationFrame(vBucle); animarVoz();
+    if (!pensando && !(grabador && grabador.state === 'recording')) { contextoVoz(); empezarGrabacion(); }
     setTimeout(function(){ vHablar.focus(); }, 300);
   }
   function cerrarVoz(alChat){
