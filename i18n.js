@@ -135,6 +135,7 @@
     'Lo coges tú, como siempre': ['You answer, as always', 'Vous répondez, comme toujours'],
     'Nada cambia en tu forma de atender. Eris no interviene.': ['Nothing changes in how you work. Eris stays out of it.', 'Rien ne change dans votre façon de travailler. Eris n’intervient pas.'],
     'o': ['or', 'ou'],
+    '¿Prefieres escribir?': ['Rather write?', 'Vous préférez écrire ?'],
     '¿Tienes las manos ocupadas?': ['Hands full?', 'Vous avez les mains prises ?'],
     'Contesta Eris por ti': ['Eris answers for you', 'Eris répond à votre place'],
     'Atiende a quien llama, le da cita si la quiere y te deja el aviso en el móvil.': ['She takes the call, books an appointment if they want one and sends you a notification on your phone.', 'Elle prend l’appel, donne un rendez-vous si on le souhaite et vous envoie une notification sur votre mobile.'],
