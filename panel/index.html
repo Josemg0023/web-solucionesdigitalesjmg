@@ -430,6 +430,35 @@ body.cli .fab,body.cli .lanzador{bottom:calc(74px + env(safe-area-inset-bottom))
 body.cli .lanzador{padding:7px 18px 7px 7px}
 body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
 /* Fondo bloqueado (12/11) */ html.fondo-bloqueado,html.fondo-bloqueado body{overflow:hidden;overscroll-behavior:none}
+/* Bandeja de WhatsApp e Instagram (12/11, solo Tete). Para quitarla: borrar este bloque, la hoja «Bandeja (12/11)» y el script «Bandeja (12/11)». */
+.ban-lista{margin-top:12px}
+button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;font:inherit}
+.ban-fila .txt>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ban-fila.nuevo .txt b{color:#fff}.ban-fila.nuevo .txt>span{color:var(--claro)}
+.ban-canal{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;font-weight:800;letter-spacing:.02em}
+.ban-canal.wa{background:rgba(37,211,102,.16);color:#5BE38E}.ban-canal.ig{background:rgba(240,56,107,.16);color:var(--rubi-luz)}
+.ban-hora{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:.75rem;color:var(--tenue)}
+.ban-punto{width:10px;height:10px;border-radius:50%;background:var(--rubi-luz)}
+.ban-tu{display:inline-block;margin-left:8px;font-size:.68rem;font-weight:700;color:var(--ambar);border:1px solid rgba(245,185,66,.45);border-radius:999px;padding:1px 7px;vertical-align:2px}
+.ban-hoja{display:flex;flex-direction:column;height:92vh;height:92dvh;overflow:hidden}
+.ban-hoja h3{margin-bottom:2px}
+.ban-sub{margin:0 0 10px;color:var(--apagado);font-size:.85rem}
+.ban-estado .franja{margin:0 0 10px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 12px}
+.ban-estado .btn{flex:0 0 auto;min-height:36px;padding:6px 12px;font-size:.84rem;margin-left:auto}
+.franja.ban-pausa{background:rgba(245,185,66,.1);border:1px solid rgba(245,185,66,.45);color:#F7E1B0}
+.ban-msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column;gap:6px;padding:4px 2px 8px}
+.ban-msg{max-width:84%;border-radius:14px;padding:8px 11px 6px;font-size:.92rem;line-height:1.4}
+.ban-msg p{margin:0;white-space:pre-wrap;word-wrap:break-word}
+.ban-msg small{display:block;font-size:.7rem;font-weight:700;opacity:.8;margin-bottom:2px}
+.ban-msg time{display:block;text-align:right;font-size:.68rem;opacity:.6;margin-top:3px}
+.ban-msg.cliente{align-self:flex-start;background:#123026;border-bottom-left-radius:4px}
+.ban-msg.eris{align-self:flex-end;background:#0E3B2C;border:1px solid rgba(52,211,153,.25);border-bottom-right-radius:4px}
+.ban-msg.tete{align-self:flex-end;background:var(--verde);color:#04120E;border-bottom-right-radius:4px}
+.ban-escribir{display:flex;gap:8px;align-items:flex-end;border-top:1px solid var(--linea);padding-top:10px}
+.ban-escribir textarea{flex:1;resize:none;min-height:44px;max-height:140px;border-radius:12px;border:1px solid var(--linea);background:#04120E;color:var(--claro);font:inherit;font-size:16px;padding:10px 12px}
+.ban-escribir textarea:disabled{opacity:.5}
+.ban-escribir .btn{flex:0 0 auto}
+#chatAyuda{margin:6px 0 0}#chatAyuda.error{color:#FFB3C6}
 </style>
 </head>
 <body>
@@ -561,6 +590,16 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
 <button class="btn b-ok ancho" type="submit">Guardar</button>
 </form></div>
 
+<!-- Bandeja (12/11): una conversación de WhatsApp o Instagram (solo Tete) -->
+<div class="velo abajo" id="veloChat"><div class="hoja ban-hoja">
+<h3><span id="chatTitulo">Conversación</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<p class="ban-sub" id="chatSub"></p>
+<div class="ban-estado" id="chatEstado"></div>
+<div class="ban-msgs" id="chatMsgs"></div>
+<form class="ban-escribir" id="formChat" autocomplete="off"><textarea name="texto" rows="1" maxlength="1500" placeholder="Escribe tu mensaje…" aria-label="Tu mensaje"></textarea><button class="btn b-ok" type="submit">Enviar</button></form>
+<p class="ayuda" id="chatAyuda"></p>
+</div></div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (function(){
@@ -585,6 +624,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
   var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Finalizada', caducada:'Sin confirmar · cerrada' };
   var VISTAS = {
     comercial: { t:'Ventas', m:'Ventas', i:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>' },
+    bandeja: { t:'Mensajes', i:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.1A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/>' },
     numeros: { t:'Números', i:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>' },
     pedidos: { t:'Pedidos', i:'<path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>' },
     hoy: { t:'Hoy', i:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><circle cx="12" cy="15" r="2"/>' },
@@ -679,9 +719,124 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
       cargandoCom = false;
       if (!r || !r.ok) return;
       var nuevo = !esDueno; esDueno = true; comercial = r;
+      cargarBandeja(); // 12/11: contador de mensajes sin leer
       if (datos && (nuevo || !algoAbierto())) pintar(); else if (datos) pintarMenu();
     }).catch(function(){ cargandoCom = false; });
   }
+  // ---- Bandeja (12/11, solo Tete): WhatsApp del 919 e Instagram de @euxenos.ai. Flujo n8n «Euxenos – Bandeja de WhatsApp e Instagram (app)» (0MZKup5Smmj6J00l).
+  // Si Tete contesta a mano, Eris se calla en ese chat hasta que pulse «Que conteste Eris». Para quitarla: borrar este bloque, el CSS y la hoja «Bandeja (12/11)».
+  var API_BANDEJA = 'https://erisproject.app.n8n.cloud/webhook/eux-bandeja';
+  var bandeja = null, cargandoBan = false, chatAbierto = null, chatDatos = null, chatToque = 0, chatTimer = null;
+  function llamarBandeja(accion, d){ return post(API_BANDEJA, Object.assign({ n:n, k:k, accion:accion }, d || {})); }
+  function sinLeerBandeja(){ return bandeja ? bandeja.filter(function(c){ return c.sin_leer; }).length : 0; }
+  function cargarBandeja(){
+    if (!n || !k || n !== CUENTA_DUENO || cargandoBan) return Promise.resolve();
+    cargandoBan = true;
+    return llamarBandeja('lista').then(function(r){
+      cargandoBan = false; if (!r || !r.ok) return;
+      bandeja = r.chats || [];
+      if (datos && vista === 'bandeja' && !algoAbierto()) pintar(); else if (datos) { pintarMenu(); pintarTabbar(); }
+    }).catch(function(){ cargandoBan = false; });
+  }
+  function horaCorta(ms){
+    if (!ms) return '';
+    var d = new Date(ms), h = new Date(), ay = new Date(); ay.setDate(h.getDate() - 1);
+    var hh = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    if (d.toDateString() === h.toDateString()) return hh;
+    if (d.toDateString() === ay.toDateString()) return 'Ayer ' + hh;
+    return d.getDate() + ' ' + MESES[d.getMonth()].slice(0, 3) + ' ' + hh;
+  }
+  function nombreChat(c){ return c.nombre || (c.canal === 'WhatsApp' ? '+' + c.de : 'Cliente de Instagram'); }
+  function iconoCanal(canal){ return '<span class="ban-canal ' + (canal === 'WhatsApp' ? 'wa' : 'ig') + '" aria-label="' + esc(canal) + '">' + (canal === 'WhatsApp' ? 'WA' : 'IG') + '</span>'; }
+  function vistaBandeja(){
+    if (!bandeja) { cargarBandeja(); return '<p class="vacio" style="margin-top:18px">Cargando conversaciones…</p>'; }
+    var h = '<p class="sub" style="margin-top:12px">WhatsApp del 919 e Instagram de @euxenos.ai. Si contestas tú, Eris se calla en ese chat hasta que se lo devuelvas.</p>';
+    if (!bandeja.length) return h + '<p class="vacio" style="margin-top:14px">Aún no hay conversaciones. Saldrán aquí en cuanto alguien escriba.</p>';
+    return h + '<div class="ban-lista">' + bandeja.map(function(c){
+      var quien = c.ultimo_quien === 'eris' ? 'Eris: ' : (c.ultimo_quien === 'tete' ? 'Tú: ' : '');
+      return '<button type="button" class="fila ban-fila' + (c.sin_leer ? ' nuevo' : '') + '" data-chat="' + esc(c.sesion) + '">' + iconoCanal(c.canal)
+        + '<span class="txt"><b>' + esc(nombreChat(c)) + (c.pausada ? '<span class="ban-tu">Contestas tú</span>' : '') + '</b><span>' + esc(quien + String(c.ultimo_texto || '').replace(/\s+/g, ' ')) + '</span></span>'
+        + '<span class="ban-hora">' + esc(horaCorta(c.ultimo)) + (c.sin_leer ? '<i class="ban-punto" aria-label="Sin leer"></i>' : '') + '</span></button>';
+    }).join('') + '</div>';
+  }
+  var veloChat = document.getElementById('veloChat'), formChat = document.getElementById('formChat');
+  function ayudaChat(t, error){ var a = document.getElementById('chatAyuda'); a.textContent = t; a.classList.toggle('error', !!error); }
+  function abrirChat(sesion){
+    chatAbierto = sesion; chatDatos = null; chatToque = Date.now();
+    var c = (bandeja || []).filter(function(x){ return x.sesion === sesion; })[0];
+    document.getElementById('chatTitulo').textContent = c ? nombreChat(c) : 'Conversación';
+    document.getElementById('chatSub').textContent = '';
+    document.getElementById('chatEstado').innerHTML = '';
+    document.getElementById('chatMsgs').innerHTML = '<p class="vacio">Cargando…</p>';
+    ayudaChat(''); formChat.texto.value = ''; ajustarAlto();
+    abrirHoja('veloChat'); cargarChat(true);
+    clearInterval(chatTimer);
+    // Mientras el chat está abierto se mira si hay mensajes nuevos cada 20 s (solo los 3 primeros minutos sin tocar nada, para no gastar ejecuciones).
+    chatTimer = setInterval(function(){
+      if (!veloChat.classList.contains('abierto')) { clearInterval(chatTimer); chatAbierto = null; cargarBandeja(); return; }
+      if (!document.hidden && Date.now() - chatToque < 3 * 60000) cargarChat(false);
+    }, 20000);
+  }
+  function cargarChat(abajo){
+    var s = chatAbierto; if (!s) return;
+    llamarBandeja('chat', { sesion: s }).then(function(r){
+      if (s !== chatAbierto) return;
+      if (!r || !r.ok) { if (!chatDatos) document.getElementById('chatMsgs').innerHTML = '<p class="vacio">' + esc((r && r.motivo) || 'No se ha podido cargar.') + '</p>'; return; }
+      var antes = chatDatos ? chatDatos.mensajes.length : -1;
+      chatDatos = r; pintarChat(abajo || r.mensajes.length !== antes);
+      if (bandeja) bandeja.forEach(function(x){ if (x.sesion === s) x.sin_leer = false; });
+      pintarTabbar();
+    }).catch(function(){ if (s === chatAbierto && !chatDatos) document.getElementById('chatMsgs').innerHTML = '<p class="vacio">Sin conexión. Prueba otra vez.</p>'; });
+  }
+  function pintarChat(abajo){
+    var c = chatDatos.chat, m = chatDatos.mensajes || [], box = document.getElementById('chatMsgs');
+    var cerca = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+    document.getElementById('chatTitulo').textContent = nombreChat(c);
+    document.getElementById('chatSub').textContent = c.canal + (c.canal === 'WhatsApp' ? ' · +' + c.de : ' · @euxenos.ai');
+    document.getElementById('chatEstado').innerHTML = c.pausada
+      ? '<div class="franja ban-pausa"><span><b>Contestas tú.</b> Eris no responde en este chat.</span><button type="button" class="btn b-ok" data-ban-eris="1">Que conteste Eris</button></div>'
+      : '<div class="franja info"><span><b>Contesta Eris.</b> Si escribes tú, se calla en este chat.</span><button type="button" class="btn b-otra" data-ban-eris="0">Contesto yo</button></div>';
+    box.innerHTML = m.length ? m.map(function(x){
+      var et = x.quien === 'eris' ? '<small>Eris</small>' : (x.quien === 'tete' ? '<small>Tú</small>' : '');
+      return '<div class="ban-msg ' + esc(x.quien) + '">' + et + '<p>' + esc(x.texto) + '</p><time>' + esc(horaCorta(x.hora)) + '</time></div>';
+    }).join('') : '<p class="vacio">Sin mensajes guardados todavía.</p>';
+    var min = Number(c.minutos_ventana) || 0, puede = min > 0;
+    formChat.texto.disabled = !puede; formChat.querySelector('button').disabled = !puede;
+    formChat.texto.placeholder = puede ? 'Escribe tu mensaje…' : 'Ahora no se le puede escribir';
+    if (!document.getElementById('chatAyuda').classList.contains('error')) ayudaChat(puede
+      ? 'Puedes escribirle ' + (min >= 60 ? 'durante ' + Math.floor(min / 60) + ' h más' : 'durante ' + min + ' min más') + ' (' + c.canal + ' solo deja contestar en las 24 h siguientes a su último mensaje).'
+      : 'Han pasado más de 24 h desde su último mensaje: ' + c.canal + ' no deja escribirle hasta que vuelva a escribir.' + (c.canal === 'WhatsApp' ? ' Si corre prisa, pídele a tu Eris que le escriba con la plantilla.' : ''));
+    if (abajo || cerca) box.scrollTop = box.scrollHeight;
+  }
+  function ajustarAlto(){ var a = formChat.texto; a.style.height = 'auto'; a.style.height = Math.min(a.scrollHeight, 140) + 'px'; }
+  formChat.texto.addEventListener('input', function(){ chatToque = Date.now(); ajustarAlto(); });
+  veloChat.addEventListener('click', function(e){
+    chatToque = Date.now();
+    var b = e.target.closest('[data-ban-eris]'); if (!b || !chatDatos) return;
+    var activar = b.getAttribute('data-ban-eris') === '1', s = chatAbierto; b.disabled = true;
+    llamarBandeja('eris', { sesion: s, activar: activar }).then(function(r){
+      if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido cambiar'); b.disabled = false; return; }
+      if (s !== chatAbierto) return;
+      chatDatos.chat.pausada = r.pausada; pintarChat(false);
+      if (bandeja) bandeja.forEach(function(x){ if (x.sesion === s) x.pausada = r.pausada; });
+      toast(r.pausada ? 'Contestas tú: Eris se calla en este chat' : 'Listo: Eris vuelve a contestar');
+    }).catch(function(){ toast('Sin conexión, inténtalo de nuevo'); b.disabled = false; });
+  });
+  formChat.addEventListener('submit', function(e){
+    e.preventDefault(); chatToque = Date.now();
+    var t = formChat.texto.value.trim(), s = chatAbierto; if (!t || !s) return;
+    var b = formChat.querySelector('button'); b.disabled = true; b.textContent = 'Enviando…'; ayudaChat('');
+    llamarBandeja('enviar', { sesion: s, texto: t }).then(function(r){
+      b.disabled = false; b.textContent = 'Enviar';
+      if (!r || !r.ok) { ayudaChat((r && r.motivo) || 'No se ha enviado. Prueba otra vez.', true); return; }
+      if (s !== chatAbierto) return;
+      formChat.texto.value = ''; ajustarAlto();
+      chatDatos.mensajes.push(r.mensaje); chatDatos.chat.pausada = true; pintarChat(true);
+      if (bandeja) bandeja.forEach(function(x){ if (x.sesion === s) { x.pausada = true; x.ultimo = r.mensaje.hora; x.ultimo_texto = t; x.ultimo_quien = 'tete'; } });
+    }).catch(function(){ b.disabled = false; b.textContent = 'Enviar'; ayudaChat('Sin conexión. Tu mensaje no se ha enviado.', true); });
+  });
+  formChat.texto.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 520) { e.preventDefault(); formChat.requestSubmit(); } });
+  app.addEventListener('click', function(e){ var b = e.target.closest('[data-chat]'); if (b) abrirChat(b.getAttribute('data-chat')); });
   // 09/11 (Tete: «o montamos una para mí aparte o arregla eso»): en la cuenta de Tete el botón Eris es SIEMPRE su Eris (la de WhatsApp), en todas las pantallas.
   function modoTete(){ return esDueno; }
   // Hoy de Tete (09/11): la cuenta de Tete es solo para Euxenos; las pantallas del taller de demo no se enseñan.
@@ -1286,7 +1441,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
 
   function pintarMenu(){
     var pc = porConfirmar().length, pp = pendientesAbiertos().length;
-    var orden = esTete() ? ['hoy','comercial','numeros','pendientes','memoria','|','ajustes','cuenta'] : ['hoy','empresa','calendario','citas'].concat(pedidosOn() ? ['pedidos'] : []).concat(['clientes','pendientes','|','ajustes','cuenta']);
+    var orden = esTete() ? ['hoy','comercial','bandeja','numeros','pendientes','memoria','|','ajustes','cuenta'] : ['hoy','empresa','calendario','citas'].concat(pedidosOn() ? ['pedidos'] : []).concat(['clientes','pendientes','|','ajustes','cuenta']);
     // 12/11 (Tete: «hay cosas que se repiten»): el menú ☰ solo enseña lo que no está ya en la barra de abajo.
     var enBarra = itemsTabbar().map(function(i){ return i[0]; });
     orden = orden.filter(function(v){ return enBarra.indexOf(v) < 0; });
@@ -1304,16 +1459,16 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     if (!datos) return;
     if (vista === 'comercial' && !esDueno) vista = 'hoy';
     if (esTete() && SOLO_DEMO.indexOf(vista) >= 0) vista = 'hoy';
-    if ((vista === 'numeros' || vista === 'memoria') && !esTete()) vista = 'hoy';
-    var cuerpo = { empresa: vistaEmpresa, memoria: vistaMemoria, comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
+    if ((vista === 'numeros' || vista === 'memoria' || vista === 'bandeja') && !esTete()) vista = 'hoy';
+    var cuerpo = { bandeja: vistaBandeja, empresa: vistaEmpresa, memoria: vistaMemoria, comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
     if (vista === 'pedidos' && !pedidosOn() && pedidos) vista = 'hoy';
     var y = window.scrollY, hayAviso = porConfirmar().length > 0 || (pedidos || []).some(function(p){ return p.estado === 'nuevo'; });
     app.innerHTML = '<header><div class="cab">'
       + '<button class="icono-btn" id="abrirMenu" aria-label="Abrir el menú">' + svg('<path d="M4 7h16M4 12h16M4 17h16"/>') + (hayAviso && vista !== 'hoy' && vista !== 'citas' ? '<span class="bolita"></span>' : '') + '</button>'
-      + '<div class="titulo"><small>' + esc(vista === 'comercial' || vista === 'numeros' || vista === 'memoria' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
+      + '<div class="titulo"><small>' + esc(vista === 'comercial' || vista === 'numeros' || vista === 'memoria' || vista === 'bandeja' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
       + '<button class="icono-btn" id="recargar" aria-label="Actualizar">' + svg('<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>') + '</button>'
       + '</div></header><main>' + cuerpo() + '</main>';
-    document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); });
+    document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); if (vista === 'bandeja') cargarBandeja(); });
     document.getElementById('abrirMenu').addEventListener('click', abrirMenu);
     document.getElementById('nueva').classList.toggle('oculto', esTete() || ['hoy','calendario','citas'].indexOf(vista) < 0);
     document.getElementById('lanzador').classList.remove('oculto');
@@ -1321,7 +1476,8 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     pintarMenu(); pintarAvisos(); pintarInstalar(); rellenarServicios(); pintarTabbar();
   }
   function itemsTabbar(){
-    if (esTete()) return [['hoy', 'Inicio', 0], ['comercial', 'Ventas', pendientesComercial()], ['pendientes', 'Tareas', pendientesAbiertos().length], ['numeros', 'Números', 0], ['cuenta', 'Cuenta', 0]];
+    // 12/11: «Mensajes» (bandeja) entra en la barra en lugar de «Números», que pasa al menú ☰.
+    if (esTete()) return [['hoy', 'Inicio', 0], ['comercial', 'Ventas', pendientesComercial()], ['bandeja', 'Mensajes', sinLeerBandeja()], ['pendientes', 'Tareas', pendientesAbiertos().length], ['cuenta', 'Cuenta', 0]];
     return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['pendientes', 'Pendientes', pendientesAbiertos().length], ['cuenta', 'Cuenta', 0]];
   }
   // 12/11: barra de abajo y píldora «Habla con Eris», solo en la cuenta de Tete.
@@ -1342,6 +1498,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     if (antes !== modoTete() && panelEris.classList.contains('abierto')) cerrarEris();
     cerrarMenu(); pintar();
     if (v === 'comercial' || v === 'memoria' || (v === 'pendientes' && esTete())) cargarComercial();
+    if (v === 'bandeja') cargarBandeja();
   }
 
   // ---- Menú ----
