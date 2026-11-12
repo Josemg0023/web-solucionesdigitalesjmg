@@ -168,6 +168,8 @@ function filtrar(cuerpo) {
           hora: Number(m.timestamp) || 0,
           // Audios y notas de voz: n8n descarga el archivo con este id y lo transcribe
           media: (m.type === 'audio' && m.audio && m.audio.id) || '',
+          // Fotos (12/11): n8n descarga la imagen con este id y Gemini describe lo que se ve
+          imagen: (m.type === 'image' && m.image && m.image.id) || '',
         });
       }
     }
@@ -209,6 +211,8 @@ function filtrar(cuerpo) {
         hora: Math.floor((Number(ev.timestamp) || 0) / 1000),
         // Notas de voz de Instagram: n8n descarga el audio desde esta dirección y lo transcribe
         media_url: (adj === 'audio' && a0.payload && a0.payload.url) || '',
+        // Fotos de Instagram (12/11): n8n descarga la imagen desde esta dirección y Gemini describe lo que se ve
+        imagen_url: (adj === 'image' && a0.payload && a0.payload.url) || '',
         // Respuesta a una historia de @euxenos.ai: n8n se lo dice a Eris para que sepa de qué le hablan
         historia: !!(m.reply_to && m.reply_to.story),
       });
