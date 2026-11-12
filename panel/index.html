@@ -393,12 +393,43 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .cli-etapa{display:inline-block;margin-left:6px;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;vertical-align:middle;background:rgba(255,255,255,.08);color:var(--apagado)}
 .cli-etapa.e1{background:rgba(245,185,66,.16);color:#F7D58C}.cli-etapa.e2{background:rgba(240,56,107,.16);color:#F7A3BC}.cli-etapa.e3{background:rgba(16,185,129,.18);color:var(--verde-luz)}
 .fila .pausa{display:block;font-size:.78rem;color:var(--apagado);margin-top:2px}
+/* === Inicio de Tete (12/11): saludo, tarjetas, píldora «Habla con Eris» y barra de abajo, solo en la cuenta de Tete (body.tete). Para quitarlo: borrar este bloque, <nav id="tabbar">, la función pintarTabbar() y las líneas «12/11» de pintar(); y devolver vistaHoyTete() a su versión del 09/11 (git). */
+.t-saludo{margin:22px 2px 18px}
+.t-saludo h1{font-family:'Figtree',system-ui,sans-serif;font-size:1.85rem;line-height:1.15;letter-spacing:-.02em;margin:0}
+.t-saludo p{margin:6px 0 0;font-size:1.05rem;color:var(--apagado)}
+.t-saludo small{display:block;margin-top:10px;font-size:.82rem;color:var(--tenue)}
+.tcard{background:#0A1F18;border-radius:26px;padding:16px 16px 8px;margin:0 0 14px}
+.tcab{display:flex;align-items:center;gap:8px;margin:0 2px 4px}
+.tcab b{font-size:1.05rem;font-weight:700}
+.tcab .n{font-size:.82rem;color:var(--tenue);font-weight:500}
+.tcab .accion{margin-left:auto;font-size:.82rem;color:var(--verde-luz);background:none;border:0;cursor:pointer;padding:4px;font:inherit;font-size:.82rem}
+.tcard .fila{background:none;border:0;border-radius:0;padding:0;margin:0;border-top:1px solid rgba(255,255,255,.06)}
+.tcard .fila:first-of-type{border-top:0}
+.tcard .fila .txt{padding:12px 0}
+.tcard .neg-abrir{padding:0}
+.tcard .fila.atrasado{box-shadow:none}
+.tcard .fila.atrasado .txt{border-left:3px solid var(--ambar);padding-left:10px;margin-left:-2px}
+.tcard .vacio{margin:6px 2px 12px}
+.tcard .dia-sep{margin:10px 2px 2px}
+.tcard .semaforo{background:none;padding:6px 2px 12px;margin:0}
+.interes{display:inline-block;margin-left:8px;font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:999px;vertical-align:middle;background:rgba(255,255,255,.08);color:var(--apagado)}
+.interes.i-caliente{background:rgba(240,56,107,.18);color:#F7A3BC}.interes.i-tibio{background:rgba(245,185,66,.16);color:#F7D58C}.interes.i-frio{background:rgba(120,170,255,.16);color:#B7D0FF}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:7;display:flex;justify-content:space-around;background:rgba(4,18,14,.96);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,.06);padding:8px 6px calc(8px + env(safe-area-inset-bottom))}
+.tabbar.oculto{display:none}
+.tabbar button{position:relative;flex:1;max-width:120px;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;color:var(--tenue);font:600 .7rem/1 'Figtree',system-ui,sans-serif;padding:6px 2px;cursor:pointer}
+.tabbar button svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button[aria-current=page]{color:var(--verde-luz)}
+.tabbar .cuenta-n{position:absolute;top:0;left:calc(50% + 6px);min-width:16px;height:16px;border-radius:8px;background:var(--rubi-luz);color:#fff;font-size:.65rem;display:grid;place-items:center;padding:0 4px}
+body.tete main{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+body.tete .lanzador{right:50%;transform:translateX(50%);bottom:calc(74px + env(safe-area-inset-bottom));padding:7px 22px 7px 7px;box-shadow:0 10px 28px -8px rgba(0,0,0,.85),0 0 0 1px rgba(52,211,153,.25)}
+body.tete .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
 </style>
 </head>
 <body>
 <div id="app"><p class="mensaje">Cargando…</p></div>
 
 <button class="fab oculto" id="nueva" type="button" aria-label="Apuntar una cita"><span>+</span> Cita</button>
+<nav class="tabbar oculto" id="tabbar" aria-label="Secciones"></nav>
 <button class="lanzador oculto" id="lanzador" type="button" aria-controls="panelEris" aria-expanded="false"><span class="orbe-mini" aria-hidden="true"></span>Eris</button>
 
 <!-- Menú -->
@@ -546,7 +577,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   if (q.get('v') === 'pedidos') vista = 'pedidos';
   var ETIQUETAS = { pendiente:'Por confirmar', confirmada:'Confirmada', propuesta:'Otra hora propuesta', cancelada:'Cancelada', hecha:'Finalizada', caducada:'Sin confirmar · cerrada' };
   var VISTAS = {
-    comercial: { t:'Euxenos', m:'Mi negocio', i:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>' },
+    comercial: { t:'Ventas', m:'Ventas', i:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>' },
+    numeros: { t:'Números', i:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>' },
     pedidos: { t:'Pedidos', i:'<path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>' },
     hoy: { t:'Hoy', i:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><circle cx="12" cy="15" r="2"/>' },
     calendario: { t:'Calendario', i:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2"/>' },
@@ -648,9 +680,11 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
   var SOLO_DEMO = ['calendario','citas','clientes','catalogo','horario','pedidos'];
   function pendientesComercial(){ var hoy = hoyISO(); return comercial ? (comercial.negocios || []).filter(function(x){ return x.fecha && x.fecha <= hoy; }).length : 0; }
   // Cada posible cliente: tocar para cambiarlo; los atrasados llevan además ✕ para borrarlos a mano (05/11).
+  // 12/11: interés de compra que Eris apunta (HubSpot: prioridad alta / media / baja). Si el dato no llega, no se pinta nada.
+  function etiquetaInteres(x){ var m = { high: ['caliente', 'Caliente'], medium: ['tibio', 'Tibio'], low: ['frio', 'Frío'] }[String(x && x.prioridad || '').toLowerCase()]; return m ? '<span class="interes i-' + m[0] + '">' + m[1] + '</span>' : ''; }
   function tarjetaNegocio(x, atrasado){
     var det = [x.etapa, x.proximo, x.fecha ? corta(x.fecha) : 'sin fecha'].filter(Boolean).join(' · ');
-    return '<div class="fila neg' + (atrasado ? ' atrasado' : '') + '"><button class="neg-abrir" data-neg="' + esc(x.id) + '"><span class="txt"><b>' + esc(x.nombre) + '</b><span>' + esc(det) + '</span></span></button>'
+    return '<div class="fila neg' + (atrasado ? ' atrasado' : '') + '"><button class="neg-abrir" data-neg="' + esc(x.id) + '"><span class="txt"><b>' + esc(x.nombre) + etiquetaInteres(x) + '</b><span>' + esc(det) + '</span></span></button>'
       + (atrasado ? '<button class="quitar" data-borrar-neg="' + esc(x.id) + '" aria-label="Borrar ' + esc(x.nombre) + '">✕</button>' : '<span class="flecha" aria-hidden="true">›</span>') + '</div>';
   }
   function borrarNegocio(id, b){
@@ -664,11 +698,12 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
       cerrarHojas(); pintar(); toast('Borrado');
     }).catch(function(){ if (b) b.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
   }
-  // === Hoy de Tete (09/11): lo que tiene que mirar cada mañana. Datos de «ver» de eux-dueno (HubSpot, Google, Vigía, ElevenLabs).
+  // === Hoy de Tete (09/11, rediseñado 12/11): saludo y tarjetas con lo que toca hoy. Datos de «ver» de eux-dueno (HubSpot, Google, Vigía, ElevenLabs).
   function vistaHoyTete(){
     var d = new Date(), hoy = hoyISO(), man = new Date(); man.setDate(man.getDate() + 1); man = iso(man);
-    var h = '<div class="fecha-grande">' + DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div>';
+    var h = '<div class="t-saludo"><h1>' + saludoHora() + ', Tete.</h1><p>Esto es lo que toca hoy.</p><small>' + DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</small></div>';
     if (!comercial) return h + '<p class="vacio">Cargando…</p>';
+    function tarjeta(titulo, n, cuerpo, extra){ return '<section class="tcard"><div class="tcab"><b>' + titulo + '</b>' + (n != null ? '<span class="n">' + n + '</span>' : '') + (extra || '') + '</div>' + cuerpo + '</section>'; }
     var v = comercial.vigia || { color: 'gris' }, mot = [];
     if (v.errores) mot.push(v.errores + (v.errores === 1 ? ' fallo' : ' fallos') + ' en las últimas 24 h' + ((v.flujos || []).length ? ' (' + v.flujos.join(', ') + ')' : ''));
     if (v.pruebasMal) mot.push(v.pruebasMal + ' de ' + v.pruebas + ' pruebas de Eris han salido mal');
@@ -677,38 +712,39 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     if (v.minutos != null) mot.push('Quedan ' + v.minutos + ' min de voz' + (v.renueva ? ' (se renuevan el ' + corta(v.renueva) + ')' : ''));
     if (v.diasInstagram != null && v.diasInstagram <= 15) mot.push(v.diasInstagram > 0 ? 'El token de Instagram caduca en ' + v.diasInstagram + ' días' : 'El token de Instagram ha caducado');
     var tit = { verde: 'Eris va bien', ambar: 'Ojo: hay algo que revisar', rojo: 'Hay que mirar algo', gris: 'Sin datos del Vigía' }[v.color] || 'Sin datos del Vigía';
-    h += '<div class="semaforo s-' + esc(v.color || 'gris') + '"><i aria-hidden="true"></i><div><b>' + tit + '</b><span>' + esc(mot.join(' · ')) + '</span></div></div>';
+    var estado = tarjeta('Estado de Eris', null, '<div class="semaforo s-' + esc(v.color || 'gris') + '"><i aria-hidden="true"></i><div><b>' + tit + '</b><span>' + esc(mot.join(' · ')) + '</span></div></div>');
+    // Si algo va mal, el estado va arriba; si todo va bien, abajo.
+    if (v.color === 'ambar' || v.color === 'rojo') h += estado;
     if (comercial.errorHubspot) h += '<div class="franja cerrado"><b>HubSpot no ha respondido.</b> Lo de abajo puede estar incompleto.</div>';
     var negs = (comercial.negocios || []).slice().sort(function(a, b){ return (a.fecha || '9999').localeCompare(b.fecha || '9999'); });
     var llamar = negs.filter(function(x){ return x.fecha && x.fecha <= hoy; });
-    h += '<h2>Llamar hoy <span class="n">' + llamar.length + '</span></h2>' + (llamar.length ? llamar.map(function(x){ return tarjetaNegocio(x, x.fecha < hoy); }).join('') : '<p class="vacio">Nadie a quien llamar hoy.</p>');
+    h += tarjeta('Llamar hoy', llamar.length, llamar.length ? llamar.map(function(x){ return tarjetaNegocio(x, x.fecha < hoy); }).join('') : '<p class="vacio">Nadie a quien llamar hoy.</p>');
     var evs = (comercial.eventos || []).map(function(e){ return { fecha: String(e.inicio).slice(0, 10), hora: e.todoElDia ? 'Todo el día' : String(e.inicio).slice(11, 16), titulo: e.titulo, lugar: e.lugar }; }).filter(function(e){ return e.fecha === hoy || e.fecha === man; });
-    h += '<h2>Agenda <span class="n">' + evs.length + '</span></h2>';
-    if (!evs.length) h += '<p class="vacio">Nada hoy ni mañana en tu agenda de Google.</p>';
-    var diaAnt = '';
+    var ag = evs.length ? '' : '<p class="vacio">Nada hoy ni mañana en tu agenda de Google.</p>', diaAnt = '';
     evs.forEach(function(e){
-      if (e.fecha !== diaAnt) { h += '<p class="dia-sep">' + (e.fecha === hoy ? 'Hoy' : 'Mañana') + '</p>'; diaAnt = e.fecha; }
-      h += '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span></div>';
+      if (e.fecha !== diaAnt) { ag += '<p class="dia-sep">' + (e.fecha === hoy ? 'Hoy' : 'Mañana') + '</p>'; diaAnt = e.fecha; }
+      ag += '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span></div>';
     });
+    h += tarjeta('Preparar las reuniones', evs.length, ag);
     var abiertos = {}; negs.forEach(function(x){ abiertos[x.id] = true; });
     var nuevos = comercial.nuevos || [];
-    h += '<h2>Nuevos con Eris <span class="n">' + nuevos.length + '</span></h2>';
-    h += nuevos.length ? nuevos.map(function(x){
+    h += tarjeta('Nuevos con Eris', nuevos.length, nuevos.length ? nuevos.map(function(x){
       var det = [x.origen ? 'vía ' + x.origen : '', x.etapa, x.creado ? hace(x.creado) : ''].filter(Boolean).join(' · ');
-      var dentro = '<span class="txt"><b>' + esc(x.nombre) + '</b><span>' + esc(det) + '</span></span>';
+      var dentro = '<span class="txt"><b>' + esc(x.nombre) + etiquetaInteres(x) + '</b><span>' + esc(det) + '</span></span>';
       return abiertos[x.id] ? '<div class="fila neg"><button class="neg-abrir" data-neg="' + esc(x.id) + '">' + dentro + '</button><span class="flecha" aria-hidden="true">›</span></div>' : '<div class="fila">' + dentro + '</div>';
-    }).join('') : '<p class="vacio">Nadie nuevo en los últimos 3 días. Cuando alguien deje sus datos a Eris (web, WhatsApp, Instagram o teléfono), saldrá aquí.</p>';
+    }).join('') : '<p class="vacio">Nadie nuevo en los últimos 3 días. Cuando alguien deje sus datos a Eris (web, WhatsApp, Instagram o teléfono), saldrá aquí.</p>');
     var ventas = comercial.ventas || [];
-    h += '<h2>Ventas <span class="n">' + ventas.length + '</span></h2>';
-    h += ventas.length ? ventas.map(function(x){
+    h += tarjeta('Ventas', ventas.length, ventas.length ? ventas.map(function(x){
       var det = [x.pack ? 'Pack ' + ({ basico: 'Básico', 'básico': 'Básico', completo: 'Completo' }[String(x.pack).toLowerCase()] || x.pack) : '', x.cerrado ? corta(String(x.cerrado).slice(0, 10)) : ''].filter(Boolean).join(' · ');
       return '<div class="fila"><span class="txt"><b>' + esc(x.nombre) + '</b><span>' + esc(det) + '</span></span>' + (x.importe ? '<span class="precio">' + esc(x.importe) + ' €</span>' : '') + '</div>';
-    }).join('') : '<p class="vacio">Sin ventas en los últimos 30 días. Cuando alguien pague en Stripe, saldrá aquí.</p>';
+    }).join('') : '<p class="vacio">Sin ventas en los últimos 30 días. Cuando alguien pague en Stripe, saldrá aquí.</p>');
     var pa = pendientesAbiertos();
-    if (pa.length) h += '<h2>Pendientes <span class="n">' + pa.length + '</span><button class="accion" data-ir="pendientes">Ver todos</button></h2>' + pa.slice(0, 3).map(filaPendiente).join('');
-    h += '<button class="btn b-otra ver-mas" data-ir="comercial" style="margin-top:18px">Todos tus posibles clientes, Números y Lo que sabe Eris</button>';
+    if (pa.length) h += tarjeta('Pendientes', pa.length, pa.slice(0, 3).map(filaPendiente).join(''), '<button class="accion" data-ir="pendientes">Ver todos</button>');
+    if (!(v.color === 'ambar' || v.color === 'rojo')) h += estado;
     return h;
   }
+  // 12/11: «Números» tiene su propia pestaña (antes iba plegado dentro de Mi negocio).
+  function vistaNumerosPantalla(){ return '<div class="t-saludo"><h1>Números</h1><p>Cuánto te queda al mes según tus clientes.</p></div>' + vistaNumeros(true); }
   function vistaComercial(){
     if (!comercial) return '<p class="vacio">Cargando…</p>';
     var hoy = hoyISO(), d = new Date(), lim = new Date(); lim.setDate(lim.getDate() + 7); lim = iso(lim);
@@ -739,7 +775,6 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
       if (e.fecha !== diaAnt) { var nd = nombreDia(e.fecha); h += '<p class="dia-sep">' + esc(nd.charAt(0).toUpperCase() + nd.slice(1)) + '</p>'; diaAnt = e.fecha; }
       h += '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span></div>';
     });
-    h += vistaNumeros();
     // Lo que sabe Eris: la memoria común de la única Eris (plegado para no cargar la pantalla).
     var av = comercial.avisos || [];
     h += '<details class="plegable"' + (sabeAbierto ? ' open' : '') + ' data-sabe><summary><span>Lo que sabe Eris</span><span class="n">' + av.length + '</span></summary>';
@@ -776,8 +811,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
       + '<span>Gastos fijos' + (NUM.aut ? ' (con autónomos)' : '') + '</span><b>' + numEur(-r.fijos) + '</b>'
       + '<span class="t">Para no perder dinero</span><b>' + r.minimo + ' Básicos</b></div>';
   }
-  function vistaNumeros(){
-    return '<details class="plegable"' + (NUM.abierto ? ' open' : '') + ' data-numeros><summary><span>Números</span><span class="n">' + numEur(numCalc().gana) + '/mes</span></summary>'
+  function vistaNumeros(abierto){
+    return '<details class="plegable"' + (abierto || NUM.abierto ? ' open' : '') + ' data-numeros><summary><span>Números</span><span class="n">' + numEur(numCalc().gana) + '/mes</span></summary>'
       + '<div class="num-ctl"><div><label for="numB">Clientes en el Básico (49 €)</label><output data-num-o="b">' + NUM.b + '</output></div><input type="range" id="numB" data-num="b" min="0" max="40" value="' + NUM.b + '"></div>'
       + '<div class="num-ctl"><div><label for="numC">Clientes en el Completo (79 €)</label><output data-num-o="c">' + NUM.c + '</output></div><input type="range" id="numC" data-num="c" min="0" max="40" value="' + NUM.c + '"></div>'
       + '<label class="interruptor"><input type="checkbox" id="numAut" data-num="aut"' + (NUM.aut ? ' checked' : '') + '> <span>Ya soy autónomo (cuota e IVA)</span></label>'
@@ -1180,7 +1215,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 
   function pintarMenu(){
     var pc = porConfirmar().length, pp = pendientesAbiertos().length;
-    var orden = esTete() ? ['hoy','comercial','pendientes','|','ajustes','cuenta'] : (pedidosOn() ? ['hoy','pedidos'] : ['hoy']).concat(['calendario','citas','clientes','horario','pendientes','|','ajustes','cuenta']);
+    var orden = esTete() ? ['hoy','comercial','numeros','pendientes','|','ajustes','cuenta'] : (pedidosOn() ? ['hoy','pedidos'] : ['hoy']).concat(['calendario','citas','clientes','horario','pendientes','|','ajustes','cuenta']);
     document.getElementById('menuNav').innerHTML = orden.map(function(v){
       if (v === '|') return '<hr>';
       var pn = (pedidos || []).filter(function(p){ return p.estado === 'nuevo'; }).length;
@@ -1194,12 +1229,13 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     if (!datos) return;
     if (vista === 'comercial' && !esDueno) vista = 'hoy';
     if (esTete() && SOLO_DEMO.indexOf(vista) >= 0) vista = 'hoy';
-    var cuerpo = { comercial: vistaComercial, pedidos: vistaPedidos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
+    if (vista === 'numeros' && !esTete()) vista = 'hoy';
+    var cuerpo = { comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
     if (vista === 'pedidos' && !pedidosOn() && pedidos) vista = 'hoy';
     var y = window.scrollY, hayAviso = porConfirmar().length > 0 || (pedidos || []).some(function(p){ return p.estado === 'nuevo'; });
     app.innerHTML = '<header><div class="cab">'
       + '<button class="icono-btn" id="abrirMenu" aria-label="Abrir el menú">' + svg('<path d="M4 7h16M4 12h16M4 17h16"/>') + (hayAviso && vista !== 'hoy' && vista !== 'citas' ? '<span class="bolita"></span>' : '') + '</button>'
-      + '<div class="titulo"><small>' + esc(vista === 'comercial' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
+      + '<div class="titulo"><small>' + esc(vista === 'comercial' || vista === 'numeros' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
       + '<button class="icono-btn" id="recargar" aria-label="Actualizar">' + svg('<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>') + '</button>'
       + '</div></header><main>' + cuerpo() + '</main>';
     document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); });
@@ -1207,8 +1243,22 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
     document.getElementById('nueva').classList.toggle('oculto', esTete() || ['hoy','calendario','citas'].indexOf(vista) < 0);
     document.getElementById('lanzador').classList.remove('oculto');
     window.scrollTo(0, pintar.vista === vista ? y : 0); pintar.vista = vista;
-    pintarMenu(); pintarAvisos(); pintarInstalar(); rellenarServicios();
+    pintarMenu(); pintarAvisos(); pintarInstalar(); rellenarServicios(); pintarTabbar();
   }
+  // 12/11: barra de abajo y píldora «Habla con Eris», solo en la cuenta de Tete.
+  function pintarTabbar(){
+    var t = esTete(), nav = document.getElementById('tabbar'), tx = lanzador.lastChild;
+    document.body.classList.toggle('tete', t);
+    nav.classList.toggle('oculto', !t);
+    if (tx && tx.nodeType === 3) tx.nodeValue = t ? 'Habla con Eris' : 'Eris';
+    if (!t) return;
+    var pc = pendientesComercial(), pp = pendientesAbiertos().length;
+    var items = [['hoy', 'Inicio', 0], ['comercial', 'Ventas', pc], ['pendientes', 'Tareas', pp], ['numeros', 'Números', 0], ['cuenta', 'Cuenta', 0]];
+    nav.innerHTML = items.map(function(i){
+      return '<button type="button" data-ir="' + i[0] + '"' + (vista === i[0] ? ' aria-current="page"' : '') + '>' + svg(VISTAS[i[0]].i) + i[1] + (i[2] ? '<span class="cuenta-n">' + i[2] + '</span>' : '') + '</button>';
+    }).join('');
+  }
+  document.getElementById('tabbar').addEventListener('click', function(e){ var b = e.target.closest('[data-ir]'); if (b) ir(b.getAttribute('data-ir')); });
   function ir(v){
     if (!VISTAS[v]) return;
     var antes = modoTete(); vista = v;
