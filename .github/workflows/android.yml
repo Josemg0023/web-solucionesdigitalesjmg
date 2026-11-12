@@ -1,11 +1,5 @@
 # Compila la app Euxenos para Android a partir de android/twa-manifest.json.
-# Sin secretos: sale un .aab y un .apk SIN firmar en la rama android-salida (como antes).
-# Con los secretos (12/11) se firman con la clave de subida y el .apk se publica en euxenos.com/descargar/euxenos.apk:
-#   ANDROID_KEYSTORE_BASE64  = el archivo eris-agenda-subida.jks pasado a base64
-#   ANDROID_KEYSTORE_PASSWORD = contraseña del almacén
-#   ANDROID_KEY_PASSWORD      = contraseña de la clave (si es la misma, se puede dejar vacía)
-#   ANDROID_KEY_ALIAS         = alias (si no se pone, «eris-agenda»)
-# Los pega Tete en GitHub → Settings → Secrets and variables → Actions. Nunca en el repo.
+# Sale un .aab SIN firmar en la rama android-salida; se firma fuera con la clave de subida (no está en GitHub).
 name: Euxenos Android
 on:
   push:
@@ -16,8 +10,6 @@ permissions:
 jobs:
   compilar:
     runs-on: ubuntu-latest
-    env:
-      TIENE_CLAVE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v5
@@ -41,38 +33,12 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon bundleRelease assembleRelease 2>&1 | tee ../compilacion.log
           exit ${PIPESTATUS[0]}
-      - name: Firmar con la clave de subida y publicar el .apk en la web
-        if: env.TIENE_CLAVE == 'true'
-        env:
-          KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-        run: |
-          set -e
-          echo "$KS" | base64 -d > /tmp/subida.jks
-          ALIAS="${ALIAS:-eris-agenda}"; KEY_PASS="${KEY_PASS:-$KS_PASS}"
-          BT="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
-          APK=$(ls android/app/build/outputs/apk/release/*.apk | head -1)
-          "$BT/zipalign" -p -f 4 "$APK" /tmp/alineado.apk
-          "$BT/apksigner" sign --ks /tmp/subida.jks --ks-key-alias "$ALIAS" --ks-pass env:KS_PASS --key-pass env:KEY_PASS --out /tmp/Euxenos.apk /tmp/alineado.apk
-          "$BT/apksigner" verify --print-certs /tmp/Euxenos.apk | grep -i "SHA-256" || true
-          AAB=$(ls android/app/build/outputs/bundle/release/*.aab | head -1)
-          jarsigner -keystore /tmp/subida.jks -storepass:env KS_PASS -keypass:env KEY_PASS -sigalg SHA256withRSA -digestalg SHA-256 "$AAB" "$ALIAS"
-          rm -f /tmp/subida.jks
-          # Publicar el .apk en la web (euxenos.com/descargar/euxenos.apk)
-          git config user.name "github-actions"; git config user.email "actions@github.com"
-          git fetch -q origin main && git checkout -q -B publicar origin/main
-          mkdir -p descargar && cp /tmp/Euxenos.apk descargar/euxenos.apk
-          git add descargar/euxenos.apk
-          git diff --cached --quiet || { git commit -q -m "App Android firmada (${GITHUB_SHA::7})"; git push -q origin publicar:main; }
       - name: Guardar el resultado en la rama android-salida
         if: always()
         run: |
           mkdir -p /tmp/salida
           cp android/app/build/outputs/bundle/release/*.aab /tmp/salida/ 2>/dev/null || true
           cp android/app/build/outputs/apk/release/*.apk /tmp/salida/ 2>/dev/null || true
-          cp /tmp/Euxenos.apk /tmp/salida/ 2>/dev/null || true
           cp *.log /tmp/salida/ 2>/dev/null || true
           cd /tmp/salida
           git init -q -b android-salida

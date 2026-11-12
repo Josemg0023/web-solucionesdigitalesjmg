@@ -87,9 +87,8 @@ footer{color:var(--tenue);font-size:.85rem;text-align:center;margin-top:22px;lin
   <!-- ===== ANDROID ===== -->
   <div id="android">
     <section class="tarjeta">
-      <span class="etiqueta">Recomendado</span>
       <h2>Instalar desde Chrome</h2>
-      <p>Queda como una app normal, con su icono y sin avisos de seguridad.</p>
+      <p>Se crea el icono en tu pantalla de inicio y se abre como una app normal.</p>
 
       <div id="aDentroApp" class="aviso oculto">Estás dentro de otra app (Instagram, Facebook…). Ábrela primero en Chrome:</div>
       <a id="aAbrirChrome" class="btn btn-borde oculto" href="#" style="margin-bottom:12px">Abrir en Chrome</a>
@@ -107,23 +106,6 @@ footer{color:var(--tenue);font-size:.85rem;text-align:center;margin-top:22px;lin
       </ol>
     </section>
 
-    <section id="aApk" class="tarjeta oculto">
-      <h2>Otra opción: descargar el archivo</h2>
-      <p>Si lo prefieres, descarga la app como archivo (.apk). Android te pedirá un permiso extra.</p>
-      <a class="btn btn-borde" href="/descargar/euxenos.apk" download="Euxenos.apk">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
-        Descargar Euxenos (.apk)
-      </a>
-      <details>
-        <summary>Cómo instalar el archivo</summary>
-        <ol class="pasos">
-          <li><span>Cuando termine la descarga, toca <b>«Abrir»</b> (o búscalo en <b>Descargas</b>).</span></li>
-          <li><span>Si te sale <b>«Por tu seguridad, tu teléfono no puede instalar apps desconocidas»</b>, toca <b>«Ajustes»</b> y activa <b>«Permitir de esta fuente»</b>.</span></li>
-          <li><span>Vuelve atrás y toca <b>«Instalar»</b>. Si Google Play Protect pregunta, toca <b>«Instalar de todas formas»</b>.</span></li>
-          <li><span>Abre <b>Euxenos</b> desde el icono.</span></li>
-        </ol>
-      </details>
-    </section>
   </div>
 
   <!-- ===== IPHONE ===== -->
@@ -191,11 +173,6 @@ footer{color:var(--tenue);font-size:.85rem;text-align:center;margin-top:22px;lin
   });
   window.addEventListener('appinstalled', function(){ ver('aInstalar', false); ver('aPasos', false); ver('yaInstalada', true); });
 
-  // El archivo .apk solo se enseña si ya está publicado
-  fetch('/descargar/euxenos.apk', { method:'HEAD', cache:'no-store' }).then(function(r){
-    var tipo = r.headers.get('content-type') || '';
-    if (r.ok && !/text\/html/.test(tipo)) ver('aApk', true);
-  }).catch(function(){});
 
   // iPhone fuera de Safari: copiar el enlace
   if (esIOS && !esSafari) {
