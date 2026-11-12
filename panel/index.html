@@ -423,6 +423,11 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 body.tete main{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 body.tete .lanzador{right:50%;transform:translateX(50%);bottom:calc(74px + env(safe-area-inset-bottom));padding:7px 22px 7px 7px;box-shadow:0 10px 28px -8px rgba(0,0,0,.85),0 0 0 1px rgba(52,211,153,.25)}
 body.tete .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
+/* Inicio de los negocios (12/11): barra de abajo y píldora «Habla con tu Eris» también en las cuentas de clientes (body.cli). Mismo bloque de «Inicio de Tete»: para quitarlo, mismas líneas. */
+body.cli main{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+body.cli .fab,body.cli .lanzador{bottom:calc(74px + env(safe-area-inset-bottom))}
+body.cli .lanzador{padding:7px 18px 7px 7px}
+body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
 </style>
 </head>
 <body>
@@ -970,7 +975,7 @@ body.tete .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     var hoyL = c.filter(function(x){ return x.fecha === hoy && (x.estado === 'confirmada' || x.estado === 'hecha'); }).sort(orden);
     var prox = c.filter(function(x){ return x.fecha > hoy && x.estado === 'confirmada'; });
     var cie = cierreDe(hoy), hor = horarioDe(hoy);
-    var h = '<div class="fecha-grande">' + DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div>';
+    var h = '<div class="t-saludo"><h1>' + saludoHora() + '.</h1><p>Esto es lo que toca hoy.</p><small>' + DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</small></div>'; // 12/11
     if (cie) h += '<div class="franja cerrado"><b>Hoy está cerrado</b>' + (cie.motivo ? ': ' + esc(cie.motivo) : '') + ' (hasta el ' + esc(corta(cie.hasta)) + ').</div>';
     else if (hor) h += '<p class="sub">' + (/cerrad/i.test(hor) ? 'Hoy no abres según tu horario.' : 'Horario de hoy: ' + esc(hor)) + '</p>';
     h += '<div class="resumen"><span class="chip"><b>' + hoyL.length + '</b> hoy</span><span class="chip' + (pend.length ? ' alerta' : '') + '"><b>' + pend.length + '</b> por confirmar</span><span class="chip"><b>' + prox.length + '</b> próximas</span></div>';
@@ -1264,13 +1269,12 @@ body.tete .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
   }
   // 12/11: barra de abajo y píldora «Habla con Eris», solo en la cuenta de Tete.
   function pintarTabbar(){
-    var t = esTete(), nav = document.getElementById('tabbar'), tx = lanzador.lastChild;
-    document.body.classList.toggle('tete', t);
-    nav.classList.toggle('oculto', !t);
-    if (tx && tx.nodeType === 3) tx.nodeValue = t ? 'Habla con Eris' : 'Eris';
-    if (!t) return;
-    var pc = pendientesComercial(), pp = pendientesAbiertos().length;
-    var items = [['hoy', 'Inicio', 0], ['comercial', 'Ventas', pc], ['pendientes', 'Tareas', pp], ['numeros', 'Números', 0], ['cuenta', 'Cuenta', 0]];
+    var t = esTete(), nav = document.getElementById('tabbar'), tx = lanzador.lastChild, items;
+    document.body.classList.toggle('tete', t); document.body.classList.toggle('cli', !t);
+    nav.classList.remove('oculto');
+    if (tx && tx.nodeType === 3) tx.nodeValue = t ? 'Habla con Eris' : 'Habla con tu Eris';
+    if (t) items = [['hoy', 'Inicio', 0], ['comercial', 'Ventas', pendientesComercial()], ['pendientes', 'Tareas', pendientesAbiertos().length], ['numeros', 'Números', 0], ['cuenta', 'Cuenta', 0]];
+    else items = [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['pendientes', 'Pendientes', pendientesAbiertos().length], ['cuenta', 'Cuenta', 0]];
     nav.innerHTML = items.map(function(i){
       return '<button type="button" data-ir="' + i[0] + '"' + (vista === i[0] ? ' aria-current="page"' : '') + '>' + svg(VISTAS[i[0]].i) + i[1] + (i[2] ? '<span class="cuenta-n">' + i[2] + '</span>' : '') + '</button>';
     }).join('');
@@ -1942,7 +1946,7 @@ body.tete .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
   function guardarAcceso(nn, kk){ n = nn; k = kk; try { localStorage.setItem('eris-agenda', JSON.stringify({ n:n, k:k })); } catch (e) {} }
   function olvidarPedidos(){ pedidos = null; pedidosVistos = null; }
   function olvidar(){ olvidarPedidos(); try { sessionStorage.removeItem(claveConv()); } catch (e) {} n = null; k = null; datos = null; info = null; conversacion = []; try { localStorage.removeItem('eris-agenda'); } catch (e) {} }
-  function ocultarFlotantes(){ document.getElementById('nueva').classList.add('oculto'); lanzador.classList.add('oculto'); cerrarEris(); lanzador.classList.add('oculto'); }
+  function ocultarFlotantes(){ document.getElementById('tabbar').classList.add('oculto'); document.body.classList.remove('tete', 'cli'); document.getElementById('nueva').classList.add('oculto'); lanzador.classList.add('oculto'); cerrarEris(); lanzador.classList.add('oculto'); }
   function pantallaLogin(aviso){
     ocultarFlotantes();
     app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Euxenos</h1><p class="sub">Entra con tu usuario o tu correo para gestionar tu negocio</p>'
