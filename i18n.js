@@ -15,7 +15,7 @@
     '490 €/año': ['€490/year', '490 €/an'],
     // Quiénes somos (04/11)
     'La empresa y lo que hacemos': ['The company and what we do', 'L’entreprise et ce que nous faisons'],
-    'Euxenos es una empresa de Talavera de la Reina que ayuda a pequeños negocios de toda España a atender bien a sus clientes, aunque no puedan estar pendientes del teléfono todo el día.': ['Euxenos is a company from Talavera de la Reina (Spain) that helps small businesses all over Spain look after their customers well, even when they can’t be on the phone all day.', 'Euxenos est une entreprise de Talavera de la Reina (Espagne) qui aide les petites entreprises de toute l’Espagne à bien accueillir leurs clients, même quand elles ne peuvent pas rester au téléphone toute la journée.'],
+    'Euxenos es una empresa española que ayuda a pequeños negocios a atender bien a sus clientes, aunque no puedan estar pendientes del teléfono todo el día.': ['Euxenos is a Spanish company that helps small businesses look after their customers well, even when they can’t be on the phone all day.', 'Euxenos est une entreprise espagnole qui aide les petites entreprises à bien accueillir leurs clients, même quand elles ne peuvent pas rester au téléphone toute la journée.'],
     'Eris, nuestra agente de inteligencia artificial.': ['Eris, our artificial intelligence agent.', 'Eris, notre agente d’intelligence artificielle.'],
     'Coge el teléfono y contesta WhatsApp, Instagram y el chat de la web cuando tú no llegas. Da citas, responde dudas y te deja el aviso en el móvil.': ['She answers the phone, WhatsApp, Instagram and your website chat when you can’t. She books appointments, answers questions and leaves you a notification on your phone.', 'Elle répond au téléphone, à WhatsApp, à Instagram et au chat du site quand vous ne pouvez pas. Elle prend les rendez-vous, répond aux questions et vous laisse une notification sur votre mobile.'],
     'La app Euxenos.': ['The Euxenos app.', 'L’appli Euxenos.'],
@@ -58,8 +58,8 @@
     'Peluquerías y barberías': ['Hair salons and barbershops', 'Salons de coiffure et barbiers'],
     'Clínicas': ['Clinics', 'Cliniques'],
     'Preguntas frecuentes': ['FAQ', 'Questions fréquentes'],
-    'Pruébala ahora, como si fueras tu cliente': ['Try her now, as if you were your customer', 'Essayez-la maintenant, comme si vous étiez votre client'],
-    'Treinta segundos bastan para ver cómo atendería a tus clientes. Pregúntale lo que quieras: precios, citas o cómo funciona.': ['Thirty seconds is enough to see how she would look after your customers. Ask her anything: prices, appointments or how it works.', 'Trente secondes suffisent pour voir comment elle s’occuperait de vos clients. Demandez-lui ce que vous voulez : prix, rendez-vous ou fonctionnement.'],
+    'Pruébala como si fueras tu cliente': ['Try her as if you were your customer', 'Essayez-la comme si vous étiez votre client'],
+    'Pregúntale lo que te preguntaría un cliente: precios, horarios o una cita. Es solo una demostración: tus datos solo se guardan si tú decides dejarlos.': ['Ask her what a customer would ask you: prices, opening hours or an appointment. It’s just a demo: your details are only saved if you choose to leave them.', 'Demandez-lui ce qu’un client vous demanderait : prix, horaires ou un rendez-vous. Ce n’est qu’une démonstration : vos coordonnées ne sont enregistrées que si vous décidez de les laisser.'],
     'Por teléfono': ['By phone', 'Par téléphone'],
     'Llámala': ['Call her', 'Appelez-la'],
     'Marca el 919 93 36 42 y te atenderá Eris, igual que atendería el teléfono de tu negocio.': ['Dial +34 919 93 36 42 and Eris will answer, just as she would answer your business phone.', 'Composez le +34 919 93 36 42 et Eris vous répondra, comme elle répondrait au téléphone de votre entreprise.'],
@@ -120,9 +120,9 @@
     'Eris coge el teléfono y contesta tu web, WhatsApp e Instagram cuando tú no llegas, a cualquier hora. Le da cita a tu cliente y a ti te deja el aviso en el móvil.': ['Eris answers your phone and replies on your website, WhatsApp and Instagram when you can’t, at any time of day. She books your customer in and sends you a notification on your phone.', 'Eris répond au téléphone et sur votre site, WhatsApp et Instagram quand vous n’êtes pas disponible, à toute heure. Elle donne rendez-vous à votre client et vous envoie une notification sur votre mobile.'],
     'Desde 49 €/mes': ['From €49/month', 'À partir de 49 €/mois'],
     '· Precio final · Sin permanencia': ['· Final price · No lock-in contract', '· Prix final · Sans engagement'],
-    'Llama y pruébala: 919 93 36 42': ['Call and try her: +34 919 93 36 42', 'Appelez pour l’essayer : +34 919 93 36 42'],
+    'Escucha cómo suena: 919 93 36 42': ['Hear how she sounds: +34 919 93 36 42', 'Écoutez-la : +34 919 93 36 42'],
     'Escríbele o mándale un audio': ['Message her or send a voice note', 'Écrivez-lui ou envoyez un vocal'],
-    'Así atendería el teléfono de tu negocio. Si te interesa, te deja tus datos y el equipo te llama.': ['That’s how she would answer your business phone. If you’re interested, leave your details and the team will call you.', 'C’est ainsi qu’elle répondrait au téléphone de votre entreprise. Si cela vous intéresse, laissez vos coordonnées et l’équipe vous rappelle.'],
+    'Es la misma Eris que atendería tu negocio. Llama sin compromiso: nadie te va a insistir después.': ['It’s the same Eris that would look after your business. Call with no strings attached: nobody will chase you afterwards.', 'C’est la même Eris qui s’occuperait de votre entreprise. Appelez sans engagement : personne ne vous relancera ensuite.'],
     'Ejemplo:': ['Example:', 'Exemple :'],
 
     // Equipo
