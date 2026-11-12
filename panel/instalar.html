@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Instala Euxenos en tu móvil</title>
+<meta name="description" content="Instala la app Euxenos en tu móvil Android o iPhone en un minuto.">
+<meta name="theme-color" content="#04120E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Euxenos">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-192.png">
+<link href="../vendor/fuentes/fuentes.css" rel="stylesheet">
+<!-- Página de instalación (12/11, Tete). euxenos.com/descargar lleva aquí. Está dentro de /panel/ para que Chrome ofrezca «Instalar». -->
+<style>
+:root{--fondo:#04120E;--tarjeta:#0A1F18;--claro:#E9FBF4;--apagado:#9CC3B5;--tenue:#6F9888;--linea:rgba(52,211,153,.18);--verde:#10B981;--verde-luz:#34D399;--rubi:#D1104A;--rubi-luz:#F0386B}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--fondo);color:var(--claro);font-family:'Figtree',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;padding:calc(20px + env(safe-area-inset-top)) 18px calc(32px + env(safe-area-inset-bottom))}
+main{max-width:520px;margin:0 auto}
+a{color:var(--verde-luz)}
+.marca{display:flex;align-items:center;gap:12px;margin:4px 0 22px}
+.marca img{width:52px;height:52px;border-radius:14px;background:var(--tarjeta);padding:6px}
+.marca b{display:block;font-size:1.3rem}
+.marca span{color:var(--apagado);font-size:.95rem}
+h1{font-size:1.55rem;line-height:1.2;margin:0 0 8px}
+.sub{color:var(--apagado);margin:0 0 22px;line-height:1.5}
+.pestanas{display:flex;gap:6px;background:var(--tarjeta);border-radius:14px;padding:5px;margin:0 0 18px}
+.pestanas button{flex:1;border:0;border-radius:10px;padding:10px;background:transparent;color:var(--apagado);font-weight:600;cursor:pointer}
+.pestanas button[aria-pressed="true"]{background:#123227;color:var(--claro)}
+.tarjeta{background:var(--tarjeta);border-radius:18px;padding:18px;margin:0 0 14px}
+.tarjeta h2{font-size:1.08rem;margin:0 0 6px}
+.etiqueta{display:inline-block;font-size:.78rem;font-weight:700;color:#04120E;background:var(--verde-luz);border-radius:999px;padding:3px 10px;margin:0 0 10px}
+.tarjeta p{margin:0 0 12px;color:var(--apagado);line-height:1.5}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0;border-radius:14px;padding:15px 18px;font-weight:700;font-size:1.05rem;cursor:pointer;text-decoration:none}
+.btn-verde{background:var(--verde);color:#04120E}
+.btn-borde{background:transparent;color:var(--claro);border:1px solid var(--linea)}
+.btn svg{width:22px;height:22px;flex:none}
+ol.pasos{list-style:none;margin:6px 0 0;padding:0;counter-reset:p}
+ol.pasos li{counter-increment:p;display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(255,255,255,.05);line-height:1.45}
+ol.pasos li:first-child{border-top:0}
+ol.pasos li::before{content:counter(p);flex:none;width:28px;height:28px;border-radius:50%;background:#123227;color:var(--verde-luz);font-weight:700;display:grid;place-items:center;font-size:.9rem}
+.ico{display:inline-grid;place-items:center;vertical-align:-6px;width:26px;height:26px;border-radius:7px;background:#123227;margin:0 2px}
+.ico svg{width:17px;height:17px}
+.nota{font-size:.88rem;color:var(--tenue);line-height:1.5;margin:10px 0 0}
+.aviso{background:#2A1A06;color:#F5D9A8;border-radius:12px;padding:12px 14px;font-size:.92rem;line-height:1.45;margin:0 0 12px}
+.qr{display:flex;gap:16px;align-items:center}
+.qr img{width:132px;height:132px;background:#fff;border-radius:12px;padding:8px;flex:none}
+.oculto{display:none !important}
+details{margin-top:4px}
+summary{cursor:pointer;color:var(--apagado);font-weight:600;padding:6px 0}
+footer{color:var(--tenue);font-size:.85rem;text-align:center;margin-top:22px;line-height:1.6}
+</style>
+</head>
+<body>
+<main>
+  <div class="marca">
+    <img src="icono-192.png" alt="">
+    <div><b>Euxenos</b><span>Tu negocio con Eris, en el móvil</span></div>
+  </div>
+
+  <h1>Instala la app en tu móvil</h1>
+  <p class="sub">Es gratis, tarda un minuto y no necesitas tienda de apps. Se actualiza sola.</p>
+
+  <!-- Ya instalada -->
+  <section id="yaInstalada" class="tarjeta oculto">
+    <h2>✅ Ya tienes Euxenos instalada</h2>
+    <p>Búscala en tu pantalla de inicio con el icono de Euxenos.</p>
+    <a class="btn btn-verde" href="/panel/">Abrir Euxenos</a>
+  </section>
+
+  <!-- Ordenador: QR -->
+  <section id="ordenador" class="tarjeta oculto">
+    <div class="qr">
+      <img src="/descargar/qr.svg" alt="Código QR para abrir esta página en el móvil">
+      <div><h2>Ábrela en tu móvil</h2><p style="margin:0">Escanea este código con la cámara del móvil, o entra en <b>euxenos.com/descargar</b>.</p></div>
+    </div>
+  </section>
+
+  <div class="pestanas" role="group" aria-label="Tipo de móvil">
+    <button type="button" data-ver="android" aria-pressed="true">Android</button>
+    <button type="button" data-ver="iphone" aria-pressed="false">iPhone</button>
+  </div>
+
+  <!-- ===== ANDROID ===== -->
+  <div id="android">
+    <section class="tarjeta">
+      <span class="etiqueta">Recomendado</span>
+      <h2>Instalar desde Chrome</h2>
+      <p>Queda como una app normal, con su icono y sin avisos de seguridad.</p>
+
+      <div id="aDentroApp" class="aviso oculto">Estás dentro de otra app (Instagram, Facebook…). Ábrela primero en Chrome:</div>
+      <a id="aAbrirChrome" class="btn btn-borde oculto" href="#" style="margin-bottom:12px">Abrir en Chrome</a>
+
+      <button id="aInstalar" class="btn btn-verde oculto" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+        Instalar Euxenos
+      </button>
+
+      <ol id="aPasos" class="pasos">
+        <li><span>Abre esta página en <b>Chrome</b>.</span></li>
+        <li><span>Toca el menú <span class="ico"><svg viewBox="0 0 24 24" fill="#E9FBF4"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></span> arriba a la derecha.</span></li>
+        <li><span>Toca <b>«Instalar aplicación»</b> (o «Añadir a pantalla de inicio») y luego <b>«Instalar»</b>.</span></li>
+        <li><span>Abre <b>Euxenos</b> desde el icono de tu pantalla de inicio.</span></li>
+      </ol>
+    </section>
+
+    <section id="aApk" class="tarjeta oculto">
+      <h2>Otra opción: descargar el archivo</h2>
+      <p>Si lo prefieres, descarga la app como archivo (.apk). Android te pedirá un permiso extra.</p>
+      <a class="btn btn-borde" href="/descargar/euxenos.apk" download="Euxenos.apk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+        Descargar Euxenos (.apk)
+      </a>
+      <details>
+        <summary>Cómo instalar el archivo</summary>
+        <ol class="pasos">
+          <li><span>Cuando termine la descarga, toca <b>«Abrir»</b> (o búscalo en <b>Descargas</b>).</span></li>
+          <li><span>Si te sale <b>«Por tu seguridad, tu teléfono no puede instalar apps desconocidas»</b>, toca <b>«Ajustes»</b> y activa <b>«Permitir de esta fuente»</b>.</span></li>
+          <li><span>Vuelve atrás y toca <b>«Instalar»</b>. Si Google Play Protect pregunta, toca <b>«Instalar de todas formas»</b>.</span></li>
+          <li><span>Abre <b>Euxenos</b> desde el icono.</span></li>
+        </ol>
+      </details>
+    </section>
+  </div>
+
+  <!-- ===== IPHONE ===== -->
+  <div id="iphone" class="oculto">
+    <section class="tarjeta">
+      <h2>Instalar en iPhone o iPad</h2>
+      <p>Se hace desde <b>Safari</b> y queda como una app, con su icono.</p>
+
+      <div id="iNoSafari" class="aviso oculto">Para instalarla tienes que estar en <b>Safari</b>. Copia el enlace y pégalo en Safari:</div>
+      <button id="iCopiar" class="btn btn-borde oculto" type="button" style="margin-bottom:12px">Copiar enlace</button>
+
+      <ol class="pasos">
+        <li><span>Abre <b>euxenos.com/descargar</b> en <b>Safari</b> <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z" fill="#34D399"/></svg></span>.</span></li>
+        <li><span>Toca el botón <b>Compartir</b> <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg></span> (abajo en el iPhone, arriba en el iPad). Si no lo ves, toca primero <b>«···»</b>.</span></li>
+        <li><span>Baja y toca <b>«Añadir a pantalla de inicio»</b> <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></span>.</span></li>
+        <li><span>Deja activado <b>«Abrir como app web»</b> si aparece, y toca <b>«Añadir»</b> arriba a la derecha.</span></li>
+        <li><span>Abre <b>Euxenos</b> desde el icono de tu pantalla de inicio.</span></li>
+      </ol>
+      <p class="nota">En iPhone no hace falta App Store. Es la misma app que en Android y se actualiza sola.</p>
+    </section>
+  </div>
+
+  <footer>¿Algún problema? Escríbenos a <a href="mailto:contacto@euxenos.com">contacto@euxenos.com</a><br>o llama al <a href="tel:+34919933642">919 93 36 42</a>.</footer>
+</main>
+
+<script>
+(function(){
+  var ua = navigator.userAgent || '';
+  var esIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var esAndroid = /Android/i.test(ua);
+  var dentroDeApp = /Instagram|FBAN|FBAV|FB_IAB|Line\/|TikTok|musical_ly|Snapchat|Twitter/i.test(ua) || (esAndroid && /; wv\)/.test(ua));
+  var esSafari = esIOS && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA\//.test(ua) && !dentroDeApp;
+  var instalada = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  var $ = function(id){ return document.getElementById(id); };
+  function ver(id, si){ $(id).classList.toggle('oculto', !si); }
+
+  // Pestañas Android / iPhone
+  function elegir(cual){
+    ver('android', cual === 'android'); ver('iphone', cual === 'iphone');
+    document.querySelectorAll('[data-ver]').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-ver') === cual ? 'true' : 'false'); });
+  }
+  document.querySelectorAll('[data-ver]').forEach(function(b){ b.addEventListener('click', function(){ elegir(b.getAttribute('data-ver')); }); });
+  elegir(esIOS ? 'iphone' : 'android');
+
+  if (instalada) ver('yaInstalada', true);
+  if (!esIOS && !esAndroid) ver('ordenador', true);
+
+  // Android dentro de Instagram, Facebook…: abrir en Chrome
+  if (esAndroid && dentroDeApp) {
+    ver('aDentroApp', true); ver('aAbrirChrome', true);
+    $('aAbrirChrome').href = 'intent://' + location.host + location.pathname + '#Intent;scheme=https;package=com.android.chrome;end';
+  }
+
+  // Botón «Instalar» de Chrome
+  var aviso = null;
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault(); aviso = e;
+    ver('aInstalar', true); ver('aPasos', false);
+  });
+  $('aInstalar').addEventListener('click', function(){
+    if (!aviso) return;
+    var a = aviso; aviso = null;
+    a.prompt();
+    a.userChoice.then(function(r){ if (r.outcome !== 'accepted') { aviso = null; ver('aInstalar', false); ver('aPasos', true); } });
+  });
+  window.addEventListener('appinstalled', function(){ ver('aInstalar', false); ver('aPasos', false); ver('yaInstalada', true); });
+
+  // El archivo .apk solo se enseña si ya está publicado
+  fetch('/descargar/euxenos.apk', { method:'HEAD', cache:'no-store' }).then(function(r){
+    var tipo = r.headers.get('content-type') || '';
+    if (r.ok && !/text\/html/.test(tipo)) ver('aApk', true);
+  }).catch(function(){});
+
+  // iPhone fuera de Safari: copiar el enlace
+  if (esIOS && !esSafari) {
+    ver('iNoSafari', true); ver('iCopiar', true);
+    $('iCopiar').addEventListener('click', function(){
+      var url = 'https://euxenos.com/descargar';
+      function hecho(){ $('iCopiar').textContent = 'Enlace copiado ✓ Pégalo en Safari'; }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(hecho, function(){ prompt('Copia este enlace:', url); });
+      else prompt('Copia este enlace:', url);
+    });
+  }
+})();
+</script>
+</body>
+</html>
