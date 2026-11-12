@@ -761,7 +761,6 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     var deHoy = negs.filter(function(x){ return x.fecha === hoy; });
     var semana = negs.filter(function(x){ return x.fecha > hoy && x.fecha <= lim; });
     var luego = negs.filter(function(x){ return !x.fecha || x.fecha > lim; });
-    var evs = (comercial.eventos || []).map(function(e){ return { fecha: String(e.inicio).slice(0, 10), hora: e.todoElDia ? 'Todo el día' : String(e.inicio).slice(11, 16), titulo: e.titulo, lugar: e.lugar }; }).filter(function(e){ return e.fecha >= hoy; });
     // Minimalista (05/11): una línea de resumen, listas limpias y una sola Eris.
     var h = '<div class="fecha-grande">' + DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</div>';
     var res = [];
@@ -776,13 +775,6 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     if (semana.length) h += '<h2>Próximos 7 días <span class="n">' + semana.length + '</span></h2>' + semana.map(function(x){ return tarjetaNegocio(x); }).join('');
     if (luego.length) h += '<h2>Más adelante <span class="n">' + luego.length + '</span></h2>' + luego.map(function(x){ return tarjetaNegocio(x); }).join('');
     if (!negs.length) h += '<p class="vacio">No hay posibles clientes abiertos. Los que recoja Eris (web, WhatsApp, Instagram y teléfono) aparecerán aquí.</p>';
-    h += '<h2>Agenda <span class="n">' + evs.length + '</span></h2>';
-    if (!evs.length) h += '<p class="vacio">Sin reuniones ni recordatorios en las próximas 3 semanas. Pídeselo a Eris: «recuérdame mañana a las 10 llamar a…».</p>';
-    var diaAnt = '';
-    evs.forEach(function(e){
-      if (e.fecha !== diaAnt) { var nd = nombreDia(e.fecha); h += '<p class="dia-sep">' + esc(nd.charAt(0).toUpperCase() + nd.slice(1)) + '</p>'; diaAnt = e.fecha; }
-      h += '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span></div>';
-    });
     return h;
   }
   // 12/11 (Tete: «Lo que sabe Eris» sonaba raro): «Memoria de Eris», pantalla propia en el menú ☰ (antes plegada en Ventas).
@@ -806,13 +798,16 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
   // Voz si gastan todos los minutos; Stripe aprox. 1,5 % + 0,25 €; autónomo = tarifa plana con MEI (88,64 €) e IVA 21 % dentro del precio.
   var NUM = { b: 3, c: 0, aut: false, abierto: false };
   var NUM_FIJOS = 18 + 22 + 6 + 1.75 + 1, NUM_AUTON = 88.64;
-  var NUM_PACKS = { b: { mes: 49, voz: 15 }, c: { mes: 79, voz: 30 } };
+  var NUM_PACKS = { b: { mes: 49, voz: 15, alta: 199 }, c: { mes: 79, voz: 30, alta: 499 } };
+  // 12/11 (Tete): las altas (pago único, Packs y precios 09/11) se cuentan aparte: lo que dejan una vez, sin gastos de voz.
+  function numAlta(p, aut){ return (aut ? p.alta / 1.21 : p.alta) - (p.alta * 0.015 + 0.25); }
   function numQueda(p, aut){ return (aut ? p.mes / 1.21 : p.mes) - p.voz - (p.mes * 0.015 + 0.25); }
   function numEur(x){ var v = Math.round(x); return (v === 0 ? 0 : v).toLocaleString('es-ES') + ' €'; }
   function numCalc(){
     var qb = numQueda(NUM_PACKS.b, NUM.aut), qc = numQueda(NUM_PACKS.c, NUM.aut);
     var fijos = NUM_FIJOS + (NUM.aut ? NUM_AUTON : 0);
-    return { qb: qb, qc: qc, fijos: fijos, cobras: NUM.b * 49 + NUM.c * 79, gana: NUM.b * qb + NUM.c * qc - fijos, minimo: Math.ceil(fijos / qb) };
+    var ab = numAlta(NUM_PACKS.b, NUM.aut), ac = numAlta(NUM_PACKS.c, NUM.aut), altas = NUM.b * ab + NUM.c * ac;
+    return { ab: ab, ac: ac, altas: altas, qb: qb, qc: qc, fijos: fijos, cobras: NUM.b * 49 + NUM.c * 79, gana: NUM.b * qb + NUM.c * qc - fijos, minimo: Math.ceil(fijos / qb) };
   }
   function numDentro(){
     var r = numCalc();
@@ -821,7 +816,11 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
       + '<span>Cada Básico te deja</span><b>' + numEur(r.qb) + '</b>'
       + '<span>Cada Completo te deja</span><b>' + numEur(r.qc) + '</b>'
       + '<span>Gastos fijos' + (NUM.aut ? ' (con autónomos)' : '') + '</span><b>' + numEur(-r.fijos) + '</b>'
-      + '<span class="t">Para no perder dinero</span><b>' + r.minimo + ' Básicos</b></div>';
+      + '<span class="t">Para no perder dinero</span><b>' + r.minimo + ' Básicos</b></div>'
+      + '<h2 style="margin-top:18px">Altas (una sola vez)</h2><div class="num-tabla"><span>Cada alta Básico (199 €) te deja</span><b>' + numEur(r.ab) + '</b>'
+      + '<span>Cada alta Completo (499 €) te deja</span><b>' + numEur(r.ac) + '</b>'
+      + '<span>Altas de estos clientes</span><b>' + numEur(r.altas) + '</b>'
+      + '<span class="t">El primer mes te quedan</span><b>' + numEur(r.gana + r.altas) + '</b></div>';
   }
   function vistaNumeros(abierto){
     return '<details class="plegable"' + (abierto || NUM.abierto ? ' open' : '') + ' data-numeros><summary><span>Números</span><span class="n">' + numEur(numCalc().gana) + '/mes</span></summary>'
@@ -829,7 +828,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
       + '<div class="num-ctl"><div><label for="numC">Clientes en el Completo (79 €)</label><output data-num-o="c">' + NUM.c + '</output></div><input type="range" id="numC" data-num="c" min="0" max="40" value="' + NUM.c + '"></div>'
       + '<label class="interruptor"><input type="checkbox" id="numAut" data-num="aut"' + (NUM.aut ? ' checked' : '') + '> <span>Ya soy autónomo (cuota e IVA)</span></label>'
       + '<div data-num-dentro>' + numDentro() + '</div>'
-      + '<p class="ayuda" style="margin:12px 0 0">Cuenta que gastan todos sus minutos de voz. No incluye IRPF, minutos extra ni las altas (pago único).</p></details>';
+      + '<p class="ayuda" style="margin:12px 0 0">Cuenta que gastan todos sus minutos de voz. Las altas se cobran una vez, al contratar. No incluye IRPF ni minutos extra.</p></details>';
   }
   document.addEventListener('input', function(e){
     var el = e.target, c = el && el.getAttribute && el.getAttribute('data-num'); if (!c) return;
@@ -1205,11 +1204,26 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     var hasta = pausa ? new Date(p.hasta).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
     return '<div class="fila' + (p.hecho ? ' hecho' : '') + '"><button class="check' + (p.hecho ? ' si' : '') + '" data-hecho="' + esc(p.id) + '" aria-label="' + (p.hecho ? 'Marcar como no hecho' : 'Marcar como hecho') + '">' + (p.hecho ? '✓' : '') + '</button><span class="txt"><b>' + esc(p.texto) + '</b>' + (pausa ? '<span class="pausa">Eris no contesta en esa conversación hasta las ' + esc(hasta) + (p.canal ? ' · ' + esc(p.canal) : '') + '</span>' : '') + '</span>' + (pausa ? '<button class="accion" data-devolver="' + esc(p.id) + '">Devolver a Eris</button>' : '') + '<button class="quitar" data-quitar-p="' + esc(p.id) + '" aria-label="Borrar">✕</button></div>';
   }
+  // 12/11 (Tete): sus recordatorios y reuniones (Google Calendar, los apunta Eris) se ven en Tareas, ya no en Ventas.
+  function bloqueRecordatorios(){
+    if (!comercial) return '<h2>Recordatorios</h2><p class="vacio">Cargando…</p>';
+    var hoy = hoyISO(), h = '';
+    var evs = (comercial.eventos || []).map(function(e){ return { fecha: String(e.inicio).slice(0, 10), hora: e.todoElDia ? 'Todo el día' : String(e.inicio).slice(11, 16), titulo: e.titulo, lugar: e.lugar }; }).filter(function(e){ return e.fecha >= hoy; });
+    h += '<h2>Recordatorios y reuniones <span class="n">' + evs.length + '</span></h2>';
+    if (!evs.length) h += '<p class="vacio">Sin reuniones ni recordatorios en las próximas 3 semanas. Pídeselo a Eris: «recuérdame mañana a las 10 llamar a…».</p>';
+    var diaAnt = '';
+    evs.forEach(function(e){
+      if (e.fecha !== diaAnt) { var nd = nombreDia(e.fecha); h += '<p class="dia-sep">' + esc(nd.charAt(0).toUpperCase() + nd.slice(1)) + '</p>'; diaAnt = e.fecha; }
+      h += '<div class="fila"><span class="hora-ev">' + esc(e.hora) + '</span><span class="txt"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<span>' + esc(e.lugar) + '</span>' : '') + '</span></div>';
+    });
+    return h;
+  }
   function vistaPendientes(){
     if (!info) return '<p class="vacio">Cargando…</p>';
     var abiertos = pendientesAbiertos(), hechos = (info.pendientes || []).filter(function(p){ return p.hecho; });
     var h = '<form class="nuevo-p" id="formPendiente"><input name="texto" maxlength="200" placeholder="Ej.: falta tinte rubio, llamar al proveedor…" aria-label="Nuevo pendiente"><button class="btn b-ok" type="submit">Añadir</button></form>';
     h += '<h2>Por hacer <span class="n">' + abiertos.length + '</span></h2>' + (abiertos.length ? abiertos.map(filaPendiente).join('') : '<p class="vacio">Nada pendiente. Apunta aquí lo que falta o hay que hacer, o díselo a Eris.</p>');
+    if (esTete()) h += bloqueRecordatorios();
     if (hechos.length) h += '<h2>Hechos <span class="n">' + hechos.length + '</span><button class="accion" data-limpiar>Borrar hechos</button></h2>' + hechos.map(filaPendiente).join('');
     return h;
   }
@@ -1246,12 +1260,14 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     var asuntoBaja = encodeURIComponent('Darme de baja · ' + (neg.nombre || ''));
     var asuntoBorrar = encodeURIComponent('Borrar mi cuenta de Euxenos');
     var cuerpoBorrar = encodeURIComponent('Quiero que borréis mi cuenta de Euxenos y sus datos.\n\nNegocio: ' + (neg.nombre || '') + '\nUsuario de acceso: ' + (neg.usuario || ''));
+    var t = esTete(); // 12/11 (Tete): en su cuenta no salen plan, baja, soporte ni borrar cuenta (son cosas de cliente).
     return '<div class="caja" style="margin-top:16px"><p><b>' + esc(neg.nombre || '') + '</b><br>' + (neg.usuario ? 'Entras con el usuario <b>' + esc(neg.usuario) + '</b>' + (neg.correo && neg.correo !== neg.usuario ? ' o con el correo <b>' + esc(neg.correo) + '</b>' : '') : '') + '</p></div>'
-      + '<h2>Tu plan</h2><div class="caja"><p>Cambia tu plan a uno mayor o menor, y añade o quita servicios (minutos de voz, otro canal, web…) desde la web, con pago seguro. Sin permanencia.</p>'
-      + '<div class="columna"><a class="btn b-ok" href="/#precios" target="_blank" rel="noopener">Cambiar de plan</a><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + asuntoBaja + '">Darme de baja</a></div></div>'
+      + (t ? '' : '<h2>Tu plan</h2><div class="caja"><p>Cambia tu plan a uno mayor o menor, y añade o quita servicios (minutos de voz, otro canal, web…) desde la web, con pago seguro. Sin permanencia.</p>'
+      + '<div class="columna"><a class="btn b-ok" href="/#precios" target="_blank" rel="noopener">Cambiar de plan</a><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + asuntoBaja + '">Darme de baja</a></div></div>')
       + '<h2>Acceso</h2><div class="columna">' + (bioPosible ? '<button class="btn b-otra" data-cuenta="bio">' + (bioGuardada() ? 'Quitar Face ID o huella en este móvil' : 'Entrar con Face ID o huella en este móvil') + '</button>' : '') + '<button class="btn b-no ancho" data-cuenta="salir">Cerrar sesión</button></div>'
-      + '<h2>Ayuda y privacidad</h2><div class="columna"><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + encodeURIComponent('Ayuda con Euxenos') + '">Escribir a soporte</a><a class="btn b-otra" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>'
-      + '<a class="btn b-no ancho" href="mailto:soporte@euxenos.com?subject=' + asuntoBorrar + '&body=' + cuerpoBorrar + '">Pedir que borren mi cuenta</a></div>'
+      + (t ? '<h2>Privacidad</h2><div class="columna"><a class="btn b-otra" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a></div>'
+        : '<h2>Ayuda y privacidad</h2><div class="columna"><a class="btn b-otra" href="mailto:soporte@euxenos.com?subject=' + encodeURIComponent('Ayuda con Euxenos') + '">Escribir a soporte</a><a class="btn b-otra" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>'
+      + '<a class="btn b-no ancho" href="mailto:soporte@euxenos.com?subject=' + asuntoBorrar + '&body=' + cuerpoBorrar + '">Pedir que borren mi cuenta</a></div>')
       + '<p class="version">Euxenos · soporte@euxenos.com</p>';
   }
 
@@ -1312,7 +1328,7 @@ body.cli .toast{bottom:calc(140px + env(safe-area-inset-bottom))}
     var antes = modoTete(); vista = v;
     if (antes !== modoTete() && panelEris.classList.contains('abierto')) cerrarEris();
     cerrarMenu(); pintar();
-    if (v === 'comercial' || v === 'memoria') cargarComercial();
+    if (v === 'comercial' || v === 'memoria' || (v === 'pendientes' && esTete())) cargarComercial();
   }
 
   // ---- Menú ----
