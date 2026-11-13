@@ -9,7 +9,7 @@
 <title>Taller Los Pinos · Demostración de Euxenos</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/vendor/fuentes/fuentes.css">
-<!-- Demostración (13/11): negocio inventado para enseñar cómo queda la web del Pack Completo. El chat usa un guion, no la Eris real. Generada con gen_demos.py. -->
+<!-- Demostración (13/11): negocio inventado para enseñar cómo queda la web del Pack Completo. El chat es la Eris real (negocio demo-taller). Generada con gen_demos.py. -->
 <style>
 /* Diseño: banda de transparencia de Euxenos arriba; debajo, la web del negocio con el chat de Eris junto al titular. */
 :root{
@@ -104,10 +104,10 @@ footer a{color:var(--muted)}
 <body>
 <div class="aviso-demo" role="note">
   <div class="in">
-    <p><b>Demostración de Euxenos.</b> Este negocio no existe: el nombre, el teléfono, la dirección y los precios son inventados. El chat responde con un guion de ejemplo para enseñarte cómo trabaja Eris; no es una conversación real y no se envía nada a nadie.</p>
+    <p><b>Demostración de Euxenos.</b> Este negocio no existe: el nombre, el teléfono y la dirección son inventados. Eris, en cambio, es la real: contesta con los datos de este negocio de ejemplo. Si pides una cita o un pedido, queda como prueba en una agenda de demostración y no llega a ningún negocio de verdad.</p>
     <nav aria-label="Euxenos">
       <a href="/#demostraciones">← Todas las demostraciones</a>
-      <a href="/?eris=chat">Hablar con la Eris real</a>
+      
     </nav>
   </div>
 </div>
@@ -148,7 +148,7 @@ footer a{color:var(--muted)}
           <input id="msg" type="text" placeholder="Escríbele a Eris…" aria-label="Escribe tu mensaje">
           <button type="submit">Enviar</button>
         </form>
-        <p class="chat-note">Eris es una agente de inteligencia artificial. Esta conversación es un ejemplo con guion: no se envía nada.</p>
+        <p class="chat-note">Eris es una agente de inteligencia artificial y contesta de verdad. Es un negocio de ejemplo: lo que pidas queda como prueba.</p>
       </div>
     </div>
   </section>
@@ -156,7 +156,7 @@ footer a{color:var(--muted)}
   <section class="sec" id="servicios">
     <div class="in">
       <h2>Servicios</h2>
-      <p class="sub">Precios de ejemplo. El presupuesto final lo da el mecánico cuando ve el coche.</p>
+      <p class="sub">Precios y duraciones tal como los tiene Eris. El presupuesto final lo da el mecánico cuando ve el coche.</p>
       <ul class="list" id="serv-list"></ul>
     </div>
   </section>
@@ -206,7 +206,7 @@ footer a{color:var(--muted)}
 
 <script>
 (function(){
-  var D = {"services": [["Revisión general", "49 €"], ["Cambio de aceite y filtro", "59 €"], ["Pastillas de freno (eje delantero)", "89 €"], ["Diagnosis con máquina", "35 €"], ["Preparación para la ITV", "45 €"]], "services_intro": "Estos son los precios (de ejemplo; el presupuesto final lo da el mecánico):", "hours": [{"label": "Lunes a viernes", "value": "8:30 a 14:00 y 16:00 a 19:30", "days": [1, 2, 3, 4, 5]}, {"label": "Sábado y domingo", "value": "Cerrado", "days": [0, 6]}], "steps": [["Escribes o llamas", "Da igual la hora: Eris contesta."], ["Le cuentas qué le pasa al coche", "Marca, modelo y qué quieres que miremos."], ["La petición queda ordenada", "El taller la ve en su agenda y te confirma el día."]], "greeting": "¡Hola! Soy Eris, la agente de inteligencia artificial de Taller Los Pinos. ¿Con quién hablo?", "main": ["Quiero pedir cita", "¿Cuánto cuesta cambiar el aceite?", "¿Hacéis la ITV?", "¿Qué horario tenéis?"], "flows": [{"re": "cita|reserv|hueco", "intro": "Vale{name}.", "steps": [["¿Qué marca y modelo es tu coche?", ["Seat León", "Renault Clio"]], ["¿Qué le pasa o qué quieres que le hagamos?", ["Revisión general", "Cambio de aceite", "Hace un ruido raro", "Preparar la ITV"]], ["¿Qué día te viene mejor?", ["Esta semana por la mañana", "El lunes por la tarde"]]], "done": "Listo{name}. Te dejo la petición anotada: {0}, {1}, {2}. Queda en la agenda del taller y el equipo te confirma el día y la hora. ¿Necesitas algo más?"}], "intents": [{"re": "cuest|precio|cuánto|cuanto|tarifa|aceite", "reply": "@servicios\nEl presupuesto final lo da el mecánico al ver el coche. ¿Quieres pedir cita?", "chips": ["Quiero pedir cita", "¿Qué horario tenéis?"]}, {"re": "itv", "reply": "Aquí preparamos el coche para la ITV (luces, frenos, emisiones y neumáticos), pero la ITV en sí la pasas tú en la estación. ¿Quieres pedir cita para la preparación?", "chips": ["Quiero pedir cita", "¿Cuánto cuesta cambiar el aceite?"]}, {"re": "horario|hora|abr|cerr", "reply": "@horario\n¿Te apunto una cita?", "chips": ["Quiero pedir cita", "¿Hacéis la ITV?"]}], "real": false, "negocio": ""};
+  var D = {"services": [["Revisión general", "49 €", "60 min"], ["Cambio de aceite y filtro", "59 €", "45 min"], ["Pastillas de freno (eje delantero)", "89 €", "90 min"], ["Diagnosis con máquina", "35 €", "30 min"], ["Preparación para la ITV", "45 €", "60 min · luces, frenos, emisiones y neumáticos"]], "services_intro": "", "hours": [{"label": "Lunes a viernes", "value": "8:30 a 14:00 y 16:00 a 19:30", "days": [1, 2, 3, 4, 5]}, {"label": "Sábado y domingo", "value": "Cerrado", "days": [0, 6]}], "steps": [["Escribes o llamas", "Da igual la hora: Eris contesta."], ["Le cuentas qué le pasa al coche", "Marca, modelo y qué quieres que miremos."], ["La petición queda ordenada", "El taller la ve en su agenda y te confirma el día."]], "greeting": "", "main": ["¿Cuánto cuesta cambiar el aceite?", "Quiero pedir cita", "¿Hacéis la ITV?", "Quiero hablar con una persona"], "flows": [], "intents": [], "real": true, "negocio": "demo-taller"};
 
   function li(a, b, sub){
     var el = document.createElement('li');

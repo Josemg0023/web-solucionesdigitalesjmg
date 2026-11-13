@@ -9,7 +9,7 @@
 <title>Cuervo Negro Tattoo · Demostración de Euxenos</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/vendor/fuentes/fuentes.css">
-<!-- Demostración (13/11): negocio inventado para enseñar cómo queda la web del Pack Completo. El chat usa un guion, no la Eris real. Generada con gen_demos.py. -->
+<!-- Demostración (13/11): negocio inventado para enseñar cómo queda la web del Pack Completo. El chat es la Eris real (negocio demo-tatuajes). Generada con gen_demos.py. -->
 <style>
 /* Diseño: banda de transparencia de Euxenos arriba; debajo, la web del negocio con el chat de Eris junto al titular. */
 :root{
@@ -104,10 +104,10 @@ footer a{color:var(--muted)}
 <body>
 <div class="aviso-demo" role="note">
   <div class="in">
-    <p><b>Demostración de Euxenos.</b> Este negocio no existe: el nombre, el teléfono, la dirección y los precios son inventados. El chat responde con un guion de ejemplo para enseñarte cómo trabaja Eris; no es una conversación real y no se envía nada a nadie.</p>
+    <p><b>Demostración de Euxenos.</b> Este negocio no existe: el nombre, el teléfono y la dirección son inventados. Eris, en cambio, es la real: contesta con los datos de este negocio de ejemplo. Si pides una cita o un pedido, queda como prueba en una agenda de demostración y no llega a ningún negocio de verdad.</p>
     <nav aria-label="Euxenos">
       <a href="/#demostraciones">← Todas las demostraciones</a>
-      <a href="/?eris=chat">Hablar con la Eris real</a>
+      
     </nav>
   </div>
 </div>
@@ -148,7 +148,7 @@ footer a{color:var(--muted)}
           <input id="msg" type="text" placeholder="Escríbele a Eris…" aria-label="Escribe tu mensaje">
           <button type="submit">Enviar</button>
         </form>
-        <p class="chat-note">Eris es una agente de inteligencia artificial. Esta conversación es un ejemplo con guion: no se envía nada.</p>
+        <p class="chat-note">Eris es una agente de inteligencia artificial y contesta de verdad. Es un negocio de ejemplo: lo que pidas queda como prueba.</p>
       </div>
     </div>
   </section>
@@ -156,7 +156,7 @@ footer a{color:var(--muted)}
   <section class="sec" id="servicios">
     <div class="in">
       <h2>Trabajos</h2>
-      <p class="sub">El precio depende del diseño, la zona y el tamaño, así que lo da el tatuador. Las duraciones son orientativas y de ejemplo.</p>
+      <p class="sub">El precio depende del diseño, la zona y el tamaño, así que lo da el tatuador, no Eris. Las duraciones son orientativas.</p>
       <ul class="list" id="serv-list"></ul>
     </div>
   </section>
@@ -206,7 +206,7 @@ footer a{color:var(--muted)}
 
 <script>
 (function(){
-  var D = {"services": [["Pieza pequeña", "1 h aprox."], ["Pieza mediana", "2 a 4 h aprox."], ["Sesión de día entero", "6 h aprox."], ["Cover-up", "Según el diseño"], ["Retoque", "Se valora en persona"]], "services_intro": "Estos son los trabajos que hacemos (duraciones de ejemplo). El precio lo da el tatuador según tu idea:", "hours": [{"label": "Martes a sábado", "value": "16:00 a 21:00, con cita", "days": [2, 3, 4, 5, 6]}, {"label": "Domingo y lunes", "value": "Cerrado", "days": [0, 1]}], "steps": [["Le cuentas tu idea a Eris", "Con una frase vale. Si tienes una foto de referencia, puedes mandarla."], ["Eris recoge lo que hace falta", "Zona del cuerpo, tamaño aproximado y días que te vienen bien."], ["El tatuador te contesta", "Con presupuesto y fecha. El precio lo da él, no Eris."]], "greeting": "¡Hola! Soy Eris, la agente de inteligencia artificial de Cuervo Negro Tattoo. ¿Con quién hablo?", "main": ["Quiero hacerme un tatuaje", "¿Cuánto cuesta un tatuaje?", "¿Qué horario tenéis?"], "flows": [{"re": "quiero hacerme|empezar|cita|consulta", "intro": "Genial{name}.", "steps": [["Cuéntame tu idea en una frase.", ["Una luna con flores", "Un nombre en caligrafía"]], ["¿En qué zona del cuerpo?", ["Antebrazo", "Hombro", "Tobillo"]], ["¿De qué tamaño más o menos?", ["Pequeño, unos 5 cm", "Mediano, unos 15 cm"]], ["¿Qué días te vendrían bien para ir al estudio?", ["Entre semana por la tarde", "Sábados"]]], "done": "Anotado{name}: {0}, en {1}, tamaño {2}, disponibilidad: {3}. Se lo paso al tatuador y te responde con presupuesto y fecha. Si tienes una foto de referencia, mándamela por aquí. ¿Necesitas algo más?"}], "intents": [{"re": "cuest|precio|cuánto|cuanto|tarifa", "reply": "Depende del diseño, la zona y el tamaño, así que no te doy un precio sin que el tatuador lo vea. Si me cuentas tu idea, le paso lo que necesita para presupuestarte. ¿Empezamos?", "chips": ["Quiero hacerme un tatuaje", "¿Qué horario tenéis?"]}, {"re": "dolor|duele|cuidado|cicatri|alerg|piel", "reply": "Eso lo explica mejor el tatuador en persona antes de empezar. Si quieres, te apunto una consulta con él. ¿Te parece bien?", "chips": ["Quiero hacerme un tatuaje", "¿Qué horario tenéis?"]}, {"re": "horario|hora|abr|cerr", "reply": "@horario\n¿Te ayudo a preparar tu tatuaje?", "chips": ["Quiero hacerme un tatuaje", "¿Cuánto cuesta un tatuaje?"]}], "real": false, "negocio": ""};
+  var D = {"services": [["Pieza pequeña", "1 h aprox.", "Unos 5 cm"], ["Pieza mediana", "2 a 4 h aprox."], ["Sesión de día entero", "6 h aprox."], ["Cover-up", "Según el diseño", "Tapar un tatuaje antiguo"], ["Retoque", "Se valora en persona"], ["Consulta de diseño", "30 min", "Hablas tu idea con el tatuador y te da presupuesto"]], "services_intro": "", "hours": [{"label": "Martes a sábado", "value": "16:00 a 21:00, con cita", "days": [2, 3, 4, 5, 6]}, {"label": "Domingo y lunes", "value": "Cerrado", "days": [0, 1]}], "steps": [["Le cuentas tu idea a Eris", "Con una frase vale. Si tienes una foto de referencia, puedes mandarla."], ["Eris recoge lo que hace falta", "Zona del cuerpo, tamaño aproximado y días que te vienen bien."], ["El tatuador te contesta", "Con presupuesto y fecha. El precio lo da él, no Eris."]], "greeting": "", "main": ["Quiero hacerme un tatuaje", "¿Cuánto cuesta un tatuaje?", "¿Qué horario tenéis?", "Quiero hablar con una persona"], "flows": [], "intents": [], "real": true, "negocio": "demo-tatuajes"};
 
   function li(a, b, sub){
     var el = document.createElement('li');
