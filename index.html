@@ -659,6 +659,7 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
           <li><a href="#pruebala">Pruébala ahora</a></li>
           <li><a href="#como-trabajamos">Cómo trabajamos</a></li>
           <li><a href="#sectores">Para qué negocios</a></li>
+          <li><a href="#demostraciones">Demostraciones</a></li>
           <li><a href="#precios">Precios</a></li>
           <li><a href="#preguntas">Preguntas frecuentes</a></li>
           <li><a href="#por-que-euxenos">Quiénes somos</a></li>
@@ -742,6 +743,7 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
         <a class="atajo" href="#pruebala"><b>Pruébala ahora</b><span>Llámala o escríbele como si fueras tu cliente</span></a>
         <a class="atajo" href="#como-trabajamos"><b>Cómo trabajamos</b><span>De la primera llamada a tenerla funcionando</span></a>
         <a class="atajo" href="#sectores"><b>Para qué negocios</b><span>Peluquerías, clínicas, talleres, restaurantes y más</span></a>
+        <a class="atajo" href="#demostraciones"><b>Demostraciones</b><span>Webs de ejemplo con Eris: peluquería, taller, restaurante y tatuajes</span></a>
         <a class="atajo" href="#precios"><b>Precios</b><span>Los 2 packs, sin permanencia</span></a>
         <a class="atajo" href="#preguntas"><b>Preguntas frecuentes</b><span>Lo que más nos preguntan</span></a>
         <a class="atajo" href="#por-que-euxenos"><b>Quiénes somos</b><span>La empresa y lo que hacemos</span></a>
@@ -847,6 +849,25 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
         <div class="grupo"><h3>Educación, deporte y ocio</h3><p>Guarderías, academias, autoescuelas, gimnasios, escuelas de baile y música</p></div>
       </div>
       <p class="tu-sector-linea">¿Tu negocio no aparece? También funciona. <button type="button" data-abrir-eris>Cuéntanos qué haces</button></p>
+    </div>
+  </section>
+
+  <section class="seccion" id="demostraciones">
+    <div class="envoltura">
+      <h2>Demostraciones</h2>
+      <p class="bajada">Cuatro webs de ejemplo, como las que recibe un negocio con el Pack Completo. Entra en la que más se parezca a tu negocio y prueba el chat.</p>
+      <div class="atajos-grid">
+        <a class="atajo" href="/demostraciones/peluqueria/"><b>Peluquería</b><span>Lúa Estudio: citas por chat a cualquier hora</span></a>
+        <a class="atajo" href="/demostraciones/taller/"><b>Taller</b><span>Taller Los Pinos: la cita pedida mientras trabajan</span></a>
+        <a class="atajo" href="/demostraciones/restaurante/"><b>Restaurante</b><span>La Brasa: pedidos y reservas de mesa</span></a>
+        <a class="atajo" href="/demostraciones/tatuajes/"><b>Estudio de tatuajes</b><span>Cuervo Negro Tattoo: la idea recogida para el tatuador</span></a>
+      </div>
+      <div class="grupos" style="margin-top:28px">
+        <div class="grupo"><h3>Qué es de ejemplo</h3><p>Los negocios no existen: sus nombres, teléfonos, direcciones y precios son inventados. Las conversaciones del chat siguen un guion para enseñarte cómo trabaja Eris. No son reales y no se envía nada.</p></div>
+        <div class="grupo"><h3>Qué es real</h3><p>La estructura de la web que recibe un negocio con el Pack Completo, el aviso de que Eris es una agente de inteligencia artificial y las funciones que ya tenemos en marcha: citas, pedidos, reservas y avisos al dueño en la app.</p></div>
+        <div class="grupo"><h3>Qué no enseñamos</h3><p>Lo que todavía no está listo no sale en las demostraciones.</p></div>
+      </div>
+      <p class="tu-sector-linea">¿Quieres hablar con la Eris real? <button type="button" data-abrir-eris>Abre el chat</button></p>
     </div>
   </section>
 
@@ -1038,6 +1059,7 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
         <li><a href="#pruebala">Pruébala ahora</a></li>
         <li><a href="#como-trabajamos">Cómo trabajamos</a></li>
         <li><a href="#sectores">Para qué negocios</a></li>
+        <li><a href="#demostraciones">Demostraciones</a></li>
         <li><a href="#precios">Precios</a></li>
         <li><a href="#preguntas">Preguntas frecuentes</a></li>
         <li><a href="#por-que-euxenos">Quiénes somos</a></li>
@@ -2357,7 +2379,7 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
 /* Web por secciones (04/11): cada apartado del menú se abre en su propia vista. */
 (function(){
   var raiz = document.documentElement;
-  var GRUPOS = { 'servicios':['servicios'], 'pruebala':['pruebala'], 'como-trabajamos':['como-trabajamos'], 'sectores':['sectores'],
+  var GRUPOS = { 'servicios':['servicios'], 'pruebala':['pruebala'], 'como-trabajamos':['como-trabajamos'], 'sectores':['sectores'], 'demostraciones':['demostraciones'],
     'por-que-euxenos':['por-que-euxenos'], 'precios':['precios'], 'preguntas':['preguntas'], 'contacto':['contacto','opinion'], 'opinion':['contacto','opinion'] };
   var secciones = Array.prototype.slice.call(document.querySelectorAll('main > section'));
   var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-secciones a'));

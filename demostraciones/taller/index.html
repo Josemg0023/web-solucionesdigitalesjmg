@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#04120E">
+<title>Taller Los Pinos · Demostración de Euxenos</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/vendor/fuentes/fuentes.css">
+<!-- Demostración (13/11): negocio inventado para enseñar cómo queda la web del Pack Completo. El chat usa un guion, no la Eris real. -->
+<style>
+/* Diseño: banda de transparencia de Euxenos arriba; debajo, la web del negocio con el chat de Eris junto al titular. */
+:root{
+  --bg:#ECEEEF;--surface:#FFFFFF;--fg:#14181B;--muted:#515B63;--line:#D3D8DB;--accent:#B5440E;--accent-fg:#FFFFFF;--mark:#3B4651;
+  --x-bg:#04120E;--x-fg:#CFE8DD;--x-line:#2B5A4A;--x-pink:#F0386B;--x-green:#34D399;
+  --c-bg:#04120E;--c-bot:#0F2A22;--c-fg:#E6F4EE;--c-user:#10B981;--c-user-fg:#04120E;--c-line:#17382D;--c-muted:#8DB5A5;
+  --display:'Sora',system-ui,sans-serif;--body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{--bg:#121516;--surface:#1A1E20;--fg:#ECEFF0;--muted:#A2ACB2;--line:#2B3236;--accent:#FB923C;--accent-fg:#121516;--mark:#FB923C}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:var(--display);line-height:1.12;margin:0;text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.in{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+.aviso-demo{background:var(--x-bg);color:var(--x-fg);font-size:14px;border-bottom:3px solid var(--x-pink)}
+.aviso-demo .in{padding-block:12px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center}
+.aviso-demo p{flex:1 1 420px;min-width:0}
+.aviso-demo b{color:#fff}
+.aviso-demo nav{display:flex;flex-wrap:wrap;gap:6px 16px;font-weight:600}
+.aviso-demo a{color:var(--x-green);text-decoration:none}
+.aviso-demo a:hover{text-decoration:underline}
+
+.top .in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;padding-block:18px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:20px;text-decoration:none}
+.mono{width:34px;height:34px;border-radius:9px;background:var(--mark);color:var(--accent-fg);display:grid;place-items:center;font-size:18px;flex:none}
+nav.menu{display:flex;flex-wrap:wrap;gap:4px 20px;font-size:15px;font-weight:500}
+nav.menu a{text-decoration:none;color:var(--muted);padding:4px 0}
+nav.menu a:hover{color:var(--fg)}
+
+.hero .in{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:start;padding-block:28px 56px}
+.hero .in>div{min-width:0}
+.kicker{font-size:14px;color:var(--muted);margin-bottom:14px}
+.hero h1{font-size:clamp(32px,5vw,52px);font-weight:700;letter-spacing:-.02em}
+.lead{margin-top:18px;font-size:18px;color:var(--muted);max-width:46ch}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn{font:inherit;font-weight:600;font-size:16px;border-radius:10px;padding:12px 20px;cursor:pointer;text-decoration:none;display:inline-block;border:1.5px solid var(--accent)}
+.btn.main{background:var(--accent);color:var(--accent-fg)}
+.btn.alt{background:transparent;color:var(--fg);border-color:var(--line)}
+.btn.alt:hover{border-color:var(--accent)}
+.small{margin-top:14px;font-size:14px;color:var(--muted)}
+
+.chat{background:var(--c-bg);color:var(--c-fg);border-radius:16px;border:1px solid var(--c-line);overflow:hidden;display:flex;flex-direction:column;height:540px;max-height:85vh;min-width:0}
+.chat-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--c-line)}
+.ball{width:34px;height:34px;border-radius:50%;flex:none;background:conic-gradient(from 200deg,#F0386B,#fff,#10B981,#F0386B);position:relative}
+.ball::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--c-bg);opacity:.55}
+.ball.think{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(.86)}}
+.chat-head strong{display:block;font-family:var(--display);font-size:16px}
+.chat-head span{font-size:12.5px;color:var(--c-muted)}
+.log{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:10px 14px;border-radius:14px;font-size:15px;line-height:1.45;overflow-wrap:anywhere;white-space:pre-line}
+.msg.bot{background:var(--c-bot);align-self:flex-start;border-bottom-left-radius:4px}
+.msg.me{background:var(--c-user);color:var(--c-user-fg);align-self:flex-end;border-bottom-right-radius:4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 12px}
+.chip{font:inherit;font-size:14px;color:var(--c-fg);background:transparent;border:1px solid var(--x-line);border-radius:99px;padding:6px 13px;cursor:pointer}
+.chip:hover{border-color:var(--c-user)}
+.send{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--c-line)}
+.send input{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--c-fg);background:var(--c-bot);border:1px solid var(--c-line);border-radius:10px;padding:10px 12px}
+.send input::placeholder{color:var(--c-muted)}
+.send button{font:inherit;font-weight:600;background:var(--c-user);color:var(--c-user-fg);border:0;border-radius:10px;padding:0 16px;cursor:pointer}
+.chat-note{font-size:12.5px;color:var(--c-muted);padding:0 16px 12px;line-height:1.4}
+
+section.sec{border-top:1px solid var(--line)}
+section.sec .in{padding-block:52px}
+.sec h2{font-size:clamp(24px,3.4vw,34px);margin-bottom:8px}
+.sub{color:var(--muted);margin-bottom:26px;max-width:60ch}
+.list{list-style:none;padding:0;margin:0;max-width:600px}
+.list li{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.list li>span:first-child{min-width:0}
+.list li>span:last-child{font-weight:600;text-align:right;flex:none}
+.list small{display:block;color:var(--muted);font-weight:400;font-size:13.5px}
+.list li.today{color:var(--accent)}
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:18px;max-width:620px}
+.steps li{display:grid;grid-template-columns:64px 1fr;gap:14px}
+.steps .n{font-weight:600;color:var(--accent)}
+.steps b{display:block;font-weight:600}
+.steps span{color:var(--muted)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.cols>*{min-width:0}
+.contact{display:grid;gap:4px;font-size:17px}
+.contact .lab{font-size:13px;color:var(--muted);margin-top:12px}
+footer .in{padding-block:28px 40px;font-size:13.5px;color:var(--muted);display:grid;gap:6px}
+footer a{color:var(--muted)}
+@media (max-width:860px){.hero .in{grid-template-columns:1fr;gap:28px}.cols{grid-template-columns:1fr;gap:36px}.chat{height:520px}}
+@media (prefers-reduced-motion:reduce){.ball.think{animation:none}}
+</style>
+</head>
+<body>
+<div class="aviso-demo" role="note">
+  <div class="in">
+    <p><b>Demostración de Euxenos.</b> Este negocio no existe: el nombre, el teléfono, la dirección y los precios son inventados. El chat responde con un guion de ejemplo para enseñarte cómo trabaja Eris; no es una conversación real y no se envía nada a nadie.</p>
+    <nav aria-label="Euxenos">
+      <a href="/#demostraciones">← Todas las demostraciones</a>
+      <a href="/?eris=chat">Hablar con la Eris real</a>
+    </nav>
+  </div>
+</div>
+
+<header class="top">
+  <div class="in">
+    <a class="logo" href="#inicio"><span class="mono" aria-hidden="true">P</span>Taller Los Pinos</a>
+    <nav class="menu" aria-label="Secciones">
+      <a href="#servicios">Servicios</a>
+      <a href="#horario">Horario</a>
+      <a href="#como">Cómo pedir cita</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="inicio">
+    <div class="in">
+      <div>
+        <p class="kicker">Taller mecánico</p>
+        <h1>Si estás debajo de un coche, contesta Eris.</h1>
+        <p class="lead">Eris atiende llamadas y mensajes mientras trabajáis. Pide la marca, el modelo y lo que le pasa al coche, y deja la cita pedida.</p>
+        <div class="cta">
+          <button class="btn main" type="button" id="open-chat">Hablar con Eris</button>
+          <a class="btn alt" href="#servicios">Ver servicios</a>
+        </div>
+        <p class="small">Teléfono de ejemplo: 600 000 002</p>
+      </div>
+      <div class="chat" role="region" aria-label="Chat con Eris">
+        <div class="chat-head">
+          <div class="ball" id="ball" aria-hidden="true"></div>
+          <div><strong>Eris</strong><span>Agente de inteligencia artificial de Taller Los Pinos</span></div>
+        </div>
+        <div class="log" id="log" aria-live="polite"></div>
+        <div class="chips" id="chips"></div>
+        <form class="send" id="form" autocomplete="off">
+          <input id="msg" type="text" placeholder="Escríbele a Eris…" aria-label="Escribe tu mensaje">
+          <button type="submit">Enviar</button>
+        </form>
+        <p class="chat-note">Eris es una agente de inteligencia artificial. Esta conversación es un ejemplo con guion: no se envía nada.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="servicios">
+    <div class="in">
+      <h2>Servicios</h2>
+      <p class="sub">Precios de ejemplo. El presupuesto final lo da el mecánico cuando ve el coche.</p>
+      <ul class="list" id="serv-list"></ul>
+    </div>
+  </section>
+
+  <section class="sec" id="horario">
+    <div class="in">
+      <h2>Horario</h2>
+      <p class="sub">Fuera de horario Eris sigue contestando y deja tu petición ordenada para la mañana siguiente.</p>
+      <ul class="list" id="hours"></ul>
+    </div>
+  </section>
+
+  <section class="sec" id="como">
+    <div class="in">
+      <h2>Cómo pedir cita</h2>
+      <p class="sub">Da igual por dónde llegues: el chat de la web, WhatsApp o el teléfono.</p>
+      <ol class="steps" id="steps"></ol>
+    </div>
+  </section>
+
+  <section class="sec" id="contacto">
+    <div class="in">
+      <div class="cols">
+        <div>
+          <h2>Contacto</h2>
+          <div class="contact">
+            <span class="lab">Teléfono (ejemplo)</span><span>600 000 002</span>
+            <span class="lab">Dirección (ejemplo)</span><span>Polígono de Ejemplo, nave 4 · 45600 Talavera de la Reina</span>
+          </div>
+        </div>
+        <div>
+          <h2>¿Prefieres hablar con una persona?</h2>
+          <p class="sub" style="margin-top:8px">Díselo a Eris en cualquier momento: avisa al equipo y te atiende una persona.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="in">
+    <span>Taller Los Pinos es un negocio inventado para esta demostración de Euxenos. Nada de lo que ves aquí es real.</span>
+    <span>El chat lo atiende Eris, una agente de inteligencia artificial.</span>
+    <span><a href="/aviso-legal.html">Aviso legal</a> · <a href="/privacidad.html">Privacidad</a> · <a href="/cookies.html">Cookies</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var D = {"services": [["Revisión general", "49 €"], ["Cambio de aceite y filtro", "59 €"], ["Pastillas de freno (eje delantero)", "89 €"], ["Diagnosis con máquina", "35 €"], ["Preparación para la ITV", "45 €"]], "services_intro": "Estos son los precios (de ejemplo; el presupuesto final lo da el mecánico):", "hours": [{"label": "Lunes a viernes", "value": "8:30 a 14:00 y 16:00 a 19:30", "days": [1, 2, 3, 4, 5]}, {"label": "Sábado y domingo", "value": "Cerrado", "days": [0, 6]}], "steps": [["Escribes o llamas", "Da igual la hora: Eris contesta."], ["Le cuentas qué le pasa al coche", "Marca, modelo y qué quieres que miremos."], ["La petición queda ordenada", "El taller la ve en su agenda y te confirma el día."]], "greeting": "¡Hola! Soy Eris, la agente de inteligencia artificial de Taller Los Pinos. ¿Con quién hablo?", "main": ["Quiero pedir cita", "¿Cuánto cuesta cambiar el aceite?", "¿Hacéis la ITV?", "¿Qué horario tenéis?"], "flows": [{"re": "cita|reserv|hueco", "intro": "Vale{name}.", "steps": [["¿Qué marca y modelo es tu coche?", ["Seat León", "Renault Clio"]], ["¿Qué le pasa o qué quieres que le hagamos?", ["Revisión general", "Cambio de aceite", "Hace un ruido raro", "Preparar la ITV"]], ["¿Qué día te viene mejor?", ["Esta semana por la mañana", "El lunes por la tarde"]]], "done": "Listo{name}. Te dejo la petición anotada: {0}, {1}, {2}. Queda en la agenda del taller y el equipo te confirma el día y la hora. ¿Necesitas algo más?"}], "intents": [{"re": "cuest|precio|cuánto|cuanto|tarifa|aceite", "reply": "@servicios\nEl presupuesto final lo da el mecánico al ver el coche. ¿Quieres pedir cita?", "chips": ["Quiero pedir cita", "¿Qué horario tenéis?"]}, {"re": "itv", "reply": "Aquí preparamos el coche para la ITV (luces, frenos, emisiones y neumáticos), pero la ITV en sí la pasas tú en la estación. ¿Quieres pedir cita para la preparación?", "chips": ["Quiero pedir cita", "¿Cuánto cuesta cambiar el aceite?"]}, {"re": "horario|hora|abr|cerr", "reply": "@horario\n¿Te apunto una cita?", "chips": ["Quiero pedir cita", "¿Hacéis la ITV?"]}]};
+
+  function li(a, b, sub){
+    var el = document.createElement('li');
+    var l = document.createElement('span'); l.textContent = a;
+    if (sub) { var s = document.createElement('small'); s.textContent = sub; l.appendChild(s); }
+    var r = document.createElement('span'); r.textContent = b;
+    el.appendChild(l); el.appendChild(r);
+    return el;
+  }
+  var sl = document.getElementById('serv-list');
+  D.services.forEach(function(s){ sl.appendChild(li(s[0], s[1], s[2])); });
+  var hl = document.getElementById('hours');
+  var hoy = new Date().getDay();
+  D.hours.forEach(function(h){
+    var el = li(h.label + (h.days.indexOf(hoy) >= 0 ? ' (hoy)' : ''), h.value);
+    if (h.days.indexOf(hoy) >= 0) el.className = 'today';
+    hl.appendChild(el);
+  });
+  var st = document.getElementById('steps');
+  D.steps.forEach(function(s, i){
+    var el = document.createElement('li');
+    var n = document.createElement('span'); n.className = 'n'; n.textContent = 'Paso ' + (i + 1);
+    var d = document.createElement('div');
+    var b = document.createElement('b'); b.textContent = s[0];
+    var t = document.createElement('span'); t.textContent = s[1];
+    d.appendChild(b); d.appendChild(t); el.appendChild(n); el.appendChild(d); st.appendChild(el);
+  });
+
+  // Chat con guion
+  var log = document.getElementById('log'), chips = document.getElementById('chips');
+  var form = document.getElementById('form'), input = document.getElementById('msg'), ball = document.getElementById('ball');
+  var name = '', flow = null, step = 0, answers = [], awaiting = '', busy = false, greeted = false;
+
+  function add(role, text){
+    var m = document.createElement('div'); m.className = 'msg ' + role; m.textContent = text;
+    log.appendChild(m); log.scrollTop = log.scrollHeight;
+  }
+  function setChips(list){
+    chips.innerHTML = '';
+    (list || []).forEach(function(t){
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = t;
+      b.addEventListener('click', function(){ handle(t); });
+      chips.appendChild(b);
+    });
+  }
+  function fill(s){ return s.replace(/\{name\}/g, name ? ', ' + name : '').replace(/\{(\d)\}/g, function(_, i){ return answers[+i] || ''; }); }
+  function eris(text, after){
+    busy = true; ball.classList.add('think'); setChips([]);
+    setTimeout(function(){ ball.classList.remove('think'); add('bot', text); busy = false; setChips(after); }, 600);
+  }
+  function listText(){ return D.services.map(function(s){ return s[0] + ': ' + s[1]; }).join('\n'); }
+  function hoursText(){ return D.hours.map(function(h){ return h.label + ': ' + h.value; }).join('\n'); }
+
+  function handle(text){
+    if (busy) return;
+    text = (text || '').trim();
+    if (!text) return;
+    add('me', text);
+
+    if (flow) {
+      answers.push(text);
+      step++;
+      if (step < flow.steps.length) return eris(flow.steps[step][0], flow.steps[step][1]);
+      var done = fill(flow.done); flow = null; step = 0;
+      return eris(done, D.main);
+    }
+    if (awaiting === 'phone') {
+      awaiting = '';
+      return eris('Gracias, lo dejo anotado. Ya he avisado al equipo y te atenderá una persona en cuanto pueda. ¿Necesitas algo más?', D.main);
+    }
+    var t = text.toLowerCase();
+    for (var i = 0; i < D.flows.length; i++) {
+      if (new RegExp(D.flows[i].re, 'i').test(t)) {
+        flow = D.flows[i]; step = 0; answers = [];
+        return eris(fill(flow.intro) + '\n' + flow.steps[0][0], flow.steps[0][1]);
+      }
+    }
+    if (/persona|humano|alguien|dueñ/.test(t)) { awaiting = 'phone'; return eris('Claro. ¿Me dejas un teléfono para que te llamen?', []); }
+    for (var j = 0; j < D.intents.length; j++) {
+      if (new RegExp(D.intents[j].re, 'i').test(t)) {
+        var r = D.intents[j].reply;
+        r = r.replace('@servicios', D.services_intro + '\n' + listText()).replace('@horario', 'Abrimos así:\n' + hoursText());
+        return eris(fill(r), D.intents[j].chips || D.main);
+      }
+    }
+    if (/^(hola|buenas|buenos|hey|qué tal|que tal|cómo|como|qué|que|por qué|puedes|podéis|tenéis|hacéis)/i.test(text) || /[?¿]/.test(text)) {
+      return eris(name ? 'Dime, ' + name + ': ¿en qué te puedo ayudar?' : '¡Hola! Cuéntame, ¿con quién hablo?', D.main);
+    }
+    if (!name && text.split(/\s+/).length <= 2) {
+      name = text.replace(/^(soy|me llamo|mi nombre es)\s+/i, '').split(/\s+/).slice(0, 2).join(' ');
+      return eris('Encantada, ' + name + '. ¿En qué te puedo ayudar?', D.main);
+    }
+    return eris('En esta demostración solo contesto a los atajos de abajo. La Eris real contesta a lo que le preguntes: puedes probarla en el chat de euxenos.com.', D.main);
+  }
+
+  form.addEventListener('submit', function(e){ e.preventDefault(); var v = input.value; input.value = ''; handle(v); });
+  document.getElementById('open-chat').addEventListener('click', function(){
+    input.focus({ preventScroll: true });
+    document.querySelector('.chat').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  add('bot', D.greeting);
+  setChips(D.main);
+})();
+</script>
+</body>
+</html>
