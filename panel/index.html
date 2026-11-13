@@ -432,6 +432,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .vg-ok{background:rgba(52,211,153,.1);border-radius:12px;padding:12px 14px;margin:4px 0 8px}
 .vg-ok b{display:block;color:var(--verde-luz);font-size:1.05rem}
 .vg-ok span{color:var(--apagado);font-size:.88rem}
+.vg-vistos{margin:4px 0 10px}
+.vg-vistos summary{color:var(--apagado);font-size:.88rem;cursor:pointer;padding:6px 0}
 .vg-lista{display:grid;gap:6px;margin:6px 0}
 .vg-p{display:flex;gap:10px;align-items:center;font-size:.92rem}
 .vg-p i{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:.75rem;font-weight:800;background:rgba(52,211,153,.15);color:var(--verde-luz)}
@@ -895,6 +897,25 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   }
   // === Hoy de Tete (09/11, rediseñado 12/11): saludo y tarjetas con lo que toca hoy. Datos de «ver» de eux-dueno (HubSpot, Google, Vigía, ElevenLabs).
   // === Estado de Eris (13/11): detalle de los fallos y pruebas malas del Vigía, en lenguaje claro.
+  // 13/11 (Tete): «Visto, quitar el aviso». Se guarda en este móvil la hora del último fallo visto; los fallos hasta esa hora no ponen el semáforo en rojo.
+  var VG_VISTO = 'euxenos-vigia-visto';
+  function vigiaVisto(){ try { return Number(localStorage.getItem(VG_VISTO)) || 0; } catch (e) { return 0; } }
+  function vigiaEfectivo(){
+    var v0 = (comercial && comercial.vigia) || { color: 'gris' }, v = Object.assign({}, v0), visto = vigiaVisto(), fallos = v0.fallos || [];
+    v.fallosNuevos = fallos.filter(function(f){ return !(Date.parse(f.fecha) <= visto); });
+    v.fallosVistos = fallos.filter(function(f){ return Date.parse(f.fecha) <= visto; });
+    if (fallos.length && v.fallosVistos.length) {
+      v.errores = v.fallosNuevos.length;
+      var fl = {}; v.fallosNuevos.forEach(function(f){ if (f.flujo) fl[f.flujo] = 1; }); v.flujos = Object.keys(fl);
+      if (v.color === 'rojo' && !v.errores && !v.pruebasMal && !(v.diasInstagram != null && v.diasInstagram <= 3))
+        v.color = (!v.pruebas || (v.minutos != null && v.minutos < 20) || (v.diasInstagram != null && v.diasInstagram <= 15)) ? 'ambar' : 'verde';
+    }
+    return v;
+  }
+  document.getElementById('veloVigia').addEventListener('click', function(e){
+    if (e.target.closest('[data-vigia-visto]')) { var mx = 0; ((comercial && comercial.vigia && comercial.vigia.fallos) || []).forEach(function(f){ var d = Date.parse(f.fecha); if (d > mx) mx = d; }); try { localStorage.setItem(VG_VISTO, String(Math.max(mx, vigiaVisto()))); } catch (x) {} pintar(); abrirVigia(); toast('Aviso quitado'); }
+    else if (e.target.closest('[data-vigia-reset]')) { try { localStorage.removeItem(VG_VISTO); } catch (x) {} pintar(); abrirVigia(); }
+  });
   var VG_PRUEBAS = { precio: 'Dice bien los precios', web: 'Sabe qué pack lleva web', alta: 'Explica el alta', pdf: 'No promete presupuestos en PDF', minutos: 'Explica los minutos de voz', extra: 'Minutos extra (75 min)', caro: 'Responde a «es caro»', ingles: 'Contesta en inglés', persona: 'Nunca dice que es una persona', aviso_ia: 'Dice que es una IA al saludar' };
   function vigiaExplica(t){
     t = String(t || '');
@@ -912,11 +933,13 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + (exp ? '<p>' + esc(exp) + '</p>' : '') + (f.detalle ? '<code>' + esc(f.detalle) + '</code>' : '') + '</div>';
   }
   function abrirVigia(){
-    var v = (comercial && comercial.vigia) || {}, h = '', fallos = v.fallos || [], malas = v.malas || [];
+    var v = vigiaEfectivo(), h = '', fallos = v.fallosNuevos || [], malas = v.malas || [];
     if (v.errores) {
       h += '<p class="dia-sep">Fallos en las últimas 24 h (' + v.errores + ')</p>';
       h += fallos.length ? fallos.map(function(f){ return vigiaFila(f, false); }).join('') : '<p class="ayuda">Hay ' + v.errores + (v.errores === 1 ? ' fallo' : ' fallos') + ' en: ' + esc((v.flujos || []).join(', ')) + '. El detalle saldrá aquí en cuanto el Vigía lo mande.</p>';
+      if (fallos.length) h += '<button type="button" class="btn b-ok ancho" data-vigia-visto style="margin:2px 0 10px">Visto, quitar el aviso</button><p class="ayuda" style="margin:-4px 0 10px">Si sale un fallo nuevo, volverá a avisarte.</p>';
     }
+    if ((v.fallosVistos || []).length) h += '<details class="vg-vistos"><summary>Fallos ya vistos (' + v.fallosVistos.length + ')</summary>' + v.fallosVistos.map(function(f){ return vigiaFila(f, false); }).join('') + '<button type="button" class="btn b-otra ancho" data-vigia-reset style="margin-top:6px">Volver a avisarme de estos</button></details>';
     if (v.pruebasMal) h += '<p class="dia-sep">Pruebas que han salido mal (' + v.pruebasMal + ' de ' + v.pruebas + ')</p>' + (malas.length ? malas.map(function(f){ return vigiaFila(f, true); }).join('') : '');
     // 13/11 (Tete): ver también lo que está bien, prueba a prueba.
     var lista = v.lista || [];
@@ -928,7 +951,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     else if (!v.pruebas) h += '<p class="dia-sep">Pruebas de Eris</p><p class="ayuda">En las últimas 24 h no se han hecho las pruebas.</p>';
     if (v.minutos != null) h += '<p class="dia-sep">Minutos de voz</p><p class="ayuda">Quedan ' + v.minutos + ' min' + (v.renueva ? '; se renuevan el ' + corta(v.renueva) : '') + '.' + (v.minutos < 20 ? ' Quedan pocos.' : '') + '</p>';
     if (v.diasInstagram != null && v.diasInstagram <= 15) h += '<p class="dia-sep">Instagram</p><p class="ayuda">' + (v.diasInstagram > 0 ? 'El token caduca en ' + v.diasInstagram + ' días: hay que renovarlo.' : 'El token ha caducado: hay que renovarlo.') + '</p>';
-    if (!v.errores && !v.pruebasMal && v.color !== 'gris') h = '<div class="vg-ok"><b>Todo bien</b><span>Ningún fallo en las últimas 24 h.</span></div>' + h;
+    if (!v.errores && !v.pruebasMal && v.color !== 'gris') h = '<div class="vg-ok"><b>Todo bien</b><span>' + ((v.fallosVistos || []).length ? 'Ningún fallo nuevo en las últimas 24 h.' : 'Ningún fallo en las últimas 24 h.') + '</span></div>' + h;
     else if (v.color === 'gris') h = '<p class="ayuda">Ahora mismo no llegan datos del Vigía. Prueba a recargar en un momento.</p>' + h;
     else if (!v.errores) h = '<p class="dia-sep">Fallos en las últimas 24 h</p><p class="ayuda">Ninguno.</p>' + h;
     h += '<p class="ayuda" style="margin-top:16px">Si no sabes qué hacer con un fallo, pásame una captura de esta pantalla y lo miro.</p>';
@@ -939,7 +962,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var h = '<div class="t-saludo"><h1>' + saludoHora() + ', Tete.</h1><p>Esto es lo que toca hoy.</p><small>' + DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</small></div>';
     if (!comercial) return h + '<p class="vacio">Cargando…</p>';
     function tarjeta(titulo, n, cuerpo, extra){ return '<section class="tcard"><div class="tcab"><b>' + titulo + '</b>' + (n != null ? '<span class="n">' + n + '</span>' : '') + (extra || '') + '</div>' + cuerpo + '</section>'; }
-    var v = comercial.vigia || { color: 'gris' }, mot = [];
+    var v = vigiaEfectivo(), mot = [];
     if (v.errores) mot.push(v.errores + (v.errores === 1 ? ' fallo' : ' fallos') + ' en las últimas 24 h' + ((v.flujos || []).length ? ' (' + v.flujos.join(', ') + ')' : ''));
     if (v.pruebasMal) mot.push(v.pruebasMal + ' de ' + v.pruebas + ' pruebas de Eris han salido mal');
     else if (v.pruebas) mot.push('Pruebas de Eris: ' + v.pruebas + ' de ' + v.pruebas + ' bien');
