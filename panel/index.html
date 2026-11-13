@@ -377,6 +377,11 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .num-plan-c{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
 .num-plan-c b{color:var(--claro);font-size:1rem}
 .num-plan-c span{color:var(--apagado);font-size:.8rem}
+.num-total{background:rgba(52,211,153,.08);border:1px solid var(--linea);border-radius:16px;padding:16px;margin-top:20px}
+.num-total h3{margin:0 0 8px;font-size:1.25rem;color:var(--claro)}
+.num-total .num-tabla{font-size:1.08rem;gap:10px 12px}
+.num-total .num-tabla b{font-size:1.2rem}
+.num-total .num-tabla b.g{font-size:1.6rem;font-weight:800;color:var(--verde-luz)}
 /* === Hoy de Tete (09/11): pantalla de inicio de la cuenta de Tete (Euxenos). Para quitarla: borrar este bloque y el de script «Hoy de Tete (09/11)». */
 .semaforo{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.035);border-radius:14px;padding:13px 14px;margin:6px 0 4px}
 .semaforo i{flex:none;width:12px;height:12px;border-radius:50%;margin-top:5px;background:#4F6B60}
@@ -978,8 +983,10 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       // 13/11 (Tete): beneficio de cada plan, alta + mensualidad, y lo que deja cada mes que el cliente sigue.
       + '<h2 style="margin-top:18px">Lo que te deja cada cliente</h2>'
       + numPlan('Básico', 199, 49, r.ab, r.qb) + numPlan('Completo', 499, 79, r.ac, r.qc)
-      + '<h2 style="margin-top:18px">Con estos clientes</h2><div class="num-tabla"><span>Altas de estos clientes</span><b>' + numEur(r.altas) + '</b>'
-      + '<span class="t">El primer mes te quedan</span><b>' + numEur(r.gana + r.altas) + '</b></div>';
+      // 13/11 (Tete): «Con estos clientes» más grande.
+      + '<div class="num-total"><h3>Con estos clientes</h3><div class="num-tabla"><span>Altas de estos clientes</span><b>' + numEur(r.altas) + '</b>'
+      + '<span class="t">El primer mes te quedan</span><b class="g">' + numEur(r.gana + r.altas) + '</b>'
+      + '<span>Después, cada mes</span><b>' + numEur(r.gana) + '</b></div></div>';
   }
   function numPlan(nombre, alta, mes, a, q){
     return '<div class="num-plan"><div class="num-plan-c"><b>' + nombre + '</b><span>' + alta + ' € de alta + ' + mes + ' €/mes</span></div>'
