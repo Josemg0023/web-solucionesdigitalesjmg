@@ -1,11 +1,12 @@
 # Cabeceras de seguridad (13/11). Para quitarlas: borrar este archivo.
-# Sin CSP a propósito: el chat de n8n, ElevenLabs y los scripts en línea necesitan un estudio aparte.
+# CSP (13/11): probada en local en 14 páginas. Mantiene 'unsafe-inline' (la web usa scripts y estilos en línea). Para quitarla: borrar la línea Content-Security-Policy.
 /*
   Strict-Transport-Security: max-age=31536000
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' blob: data:; connect-src 'self' https://erisproject.app.n8n.cloud https://world.openfoodfacts.org https://world.openproductsfacts.org https://world.openbeautyfacts.org https://api.elevenlabs.io wss://api.elevenlabs.io wss://livekit.rtc.elevenlabs.io; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
 
 /sw.js
   Cache-Control: no-cache

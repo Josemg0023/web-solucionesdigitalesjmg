@@ -1777,7 +1777,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       return '<div class="rev' + (x.sel ? '' : ' no') + '"><button type="button" class="check' + (x.sel ? ' si' : '') + '" data-rsel="' + i + '" aria-label="Incluir">' + (x.sel ? '✓' : '') + '</button><div class="rev-c">' +
         '<input data-r="' + i + '" data-k="nombre" maxlength="120" value="' + esc(x.nombre) + '" aria-label="Nombre">' +
         '<div class="rev-pie"><input data-r="' + i + '" data-k="precio" maxlength="40" placeholder="Precio (ej.: 12 €)" value="' + esc(x.precio) + '" aria-label="Precio">' +
-        '<button type="button" class="rev-tipo" data-rtipo="' + i + '">' + (x.tipo === 'servicio' ? 'Servicio' + (x.duracion ? ' · ' + x.duracion + ' min' : '') : 'Producto' + (x.stock ? ' · ' + esc(x.stock) + ' ud' : '')) + '</button></div></div></div>';
+        '<button type="button" class="rev-tipo" data-rtipo="' + i + '">' + (x.tipo === 'servicio' ? 'Servicio' + (x.duracion ? ' · ' + esc(x.duracion) + ' min' : '') : 'Producto' + (x.stock ? ' · ' + esc(x.stock) + ' ud' : '')) + '</button></div></div></div>';
     }).join('');
     var n = revision.filter(function(x){ return x.sel && x.nombre.trim(); }).length;
     var b = document.getElementById('revisarGuardar'); b.textContent = n ? 'Guardar ' + n + (n === 1 ? ' elemento' : ' elementos') : 'Marca algo para guardar'; b.disabled = !n;
@@ -1843,7 +1843,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   // ---- Escáner de códigos de barras ----
   var escVideo = document.getElementById('escVideo'), escEstado = document.getElementById('escEstado'), formCodigo = document.getElementById('formCodigo');
   var camara = null, detector = null, lectorZX = null, escModo = 'stock', escTimer = 0, escListo = false;
-  var ZXING_URL = 'https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js';
+  var ZXING_URL = '/vendor/zxing/index.min.js'; // @zxing/library 0.21.3 (MIT), copia propia desde el 13/11 (antes unpkg.com, sin comprobación de integridad)
   function cargarScript(src){ return new Promise(function(ok, mal){ if (window.ZXing) { ok(); return; } var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = mal; document.head.appendChild(s); }); }
   function pararCamara(){
     clearTimeout(escTimer); escListo = false;
