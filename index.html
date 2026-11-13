@@ -2451,5 +2451,9 @@ html.secciones.en-seccion main > section.activa{padding-top:36px}
   }, { rootMargin: '-35% 0px 0px 0px' }).observe(portada);
 })();
 </script>
+<script>
+/* Sin conexión (13/11): registra el aviso «Sin conexión». No guarda datos de nadie. Para quitarlo: borrar este script, sw.js y offline.html. */
+if ('serviceWorker' in navigator) { window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () {}); }); }
+</script>
 </body>
 </html>

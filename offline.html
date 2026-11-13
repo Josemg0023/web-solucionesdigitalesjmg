@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Sin conexión · Euxenos</title>
+<meta name="theme-color" content="#04120E">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="/vendor/fuentes/fuentes.css" rel="stylesheet">
+<style>
+:root{--fondo:#04120E;--claro:#E9FBF4;--apagado:#9CC3B5;--linea:rgba(52,211,153,.18);--rubi:#D1104A;--esmeralda-luz:#34D399}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--fondo);color:var(--claro);font-family:'Figtree',system-ui,sans-serif;font-size:1.0625rem;line-height:1.6;display:flex;flex-direction:column}
+:focus-visible{outline:2px solid var(--esmeralda-luz);outline-offset:3px;border-radius:6px}
+header{border-bottom:1px solid var(--linea);padding:18px 24px}
+header img{height:30px;width:auto;display:block}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px}
+.caja{max-width:520px;text-align:center}
+h1{font-family:'Sora',system-ui,sans-serif;font-weight:700;font-size:clamp(1.5rem,5vw,2rem);line-height:1.2;margin:0 0 14px}
+p{margin:0 0 28px;color:var(--apagado)}
+button{font:600 1rem 'Figtree',system-ui,sans-serif;background:var(--rubi);color:#fff;border:0;border-radius:12px;padding:14px 28px;cursor:pointer}
+button:hover{background:#B80E40}
+.estado{margin-top:18px;font-size:.95rem;color:var(--apagado);min-height:1.5em}
+</style>
+</head>
+<body>
+<header><img src="/marca/euxenos-logo-griego.svg" alt="Euxenos" width="114" height="30"></header>
+<main>
+  <div class="caja">
+    <h1>Sin conexión a internet</h1>
+    <p>No podemos cargar la página ahora mismo. Revisa tu wifi o tus datos móviles y vuelve a intentarlo.</p>
+    <button type="button" id="reintentar">Reintentar</button>
+    <div class="estado" id="estado" role="status" aria-live="polite"></div>
+  </div>
+</main>
+<script>
+(function(){
+  var estado=document.getElementById('estado');
+  function ir(){ location.replace('/'); }
+  document.getElementById('reintentar').addEventListener('click',function(){
+    if(navigator.onLine===false){ estado.textContent='Todavía sin conexión. Prueba otra vez en un momento.'; return; }
+    estado.textContent='Comprobando…';
+    fetch('/favicon.svg',{cache:'no-store'}).then(ir).catch(function(){ estado.textContent='Todavía no hay conexión con Euxenos. Prueba otra vez en un momento.'; });
+  });
+  window.addEventListener('online',ir);
+})();
+</script>
+</body>
+</html>

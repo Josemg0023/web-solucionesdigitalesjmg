@@ -1,0 +1,11 @@
+# Cabeceras de seguridad (13/11). Para quitarlas: borrar este archivo.
+# Sin CSP a propósito: el chat de n8n, ElevenLabs y los scripts en línea necesitan un estudio aparte.
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=()
+
+/sw.js
+  Cache-Control: no-cache
