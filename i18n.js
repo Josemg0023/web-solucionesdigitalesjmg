@@ -118,6 +118,8 @@
     'Cuatro webs de ejemplo, como las que recibe un negocio con el Pack Completo. Entra en la que más se parezca a tu negocio y habla con Eris.': ['Four example websites, like the ones a business gets with the Complete Pack. Open the one closest to your business and talk to Eris.', 'Quatre sites d’exemple, comme ceux que reçoit un commerce avec le Pack Complet. Ouvrez celui qui ressemble le plus au vôtre et parlez à Eris.'],
     'Webs de ejemplo con Eris: peluquería, taller, restaurante y tatuajes': ['Example websites with Eris: hair salon, garage, restaurant and tattoo studio', 'Sites d’exemple avec Eris : salon de coiffure, garage, restaurant et studio de tatouage'],
     'Peluquería': ['Hair salon', 'Salon de coiffure'],
+    'Ver demostraciones': ['See the demos', 'Voir les démonstrations'],
+    'Webs de ejemplo con la Eris real': ['Example websites with the real Eris', 'Sites d’exemple avec la vraie Eris'],
     'Lúa Estudio. Habla con la Eris real': ['Lúa Estudio. Talk to the real Eris', 'Lúa Estudio. Parlez à la vraie Eris'],
     'Taller': ['Garage', 'Garage'],
     'Taller Los Pinos. Habla con la Eris real': ['Taller Los Pinos. Talk to the real Eris', 'Taller Los Pinos. Parlez à la vraie Eris'],
