@@ -373,6 +373,10 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .num-tabla{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:.88rem;color:var(--apagado);font-variant-numeric:tabular-nums;margin-top:6px}
 .num-tabla b{color:var(--claro);text-align:right;font-weight:600}
 .num-tabla .t{color:var(--claro);font-weight:700}
+.num-plan{background:rgba(255,255,255,.035);border-radius:14px;padding:12px 14px;margin-top:10px}
+.num-plan-c{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.num-plan-c b{color:var(--claro);font-size:1rem}
+.num-plan-c span{color:var(--apagado);font-size:.8rem}
 /* === Hoy de Tete (09/11): pantalla de inicio de la cuenta de Tete (Euxenos). Para quitarla: borrar este bloque y el de script «Hoy de Tete (09/11)». */
 .semaforo{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.035);border-radius:14px;padding:13px 14px;margin:6px 0 4px}
 .semaforo i{flex:none;width:12px;height:12px;border-radius:50%;margin-top:5px;background:#4F6B60}
@@ -969,14 +973,20 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var r = numCalc();
     return '<div class="num-res"><span class="num-big' + (r.gana < 0 ? ' neg' : '') + '">' + numEur(r.gana) + '</span><span>te quedan al mes</span></div>'
       + '<div class="num-tabla"><span>Cobras de cuotas</span><b>' + numEur(r.cobras) + '</b>'
-      + '<span>Cada Básico te deja</span><b>' + numEur(r.qb) + '</b>'
-      + '<span>Cada Completo te deja</span><b>' + numEur(r.qc) + '</b>'
       + '<span>Gastos fijos' + (NUM.aut ? ' (con autónomos)' : '') + '</span><b>' + numEur(-r.fijos) + '</b>'
       + '<span class="t">Para no perder dinero</span><b>' + r.minimo + ' Básicos</b></div>'
-      + '<h2 style="margin-top:18px">Altas (una sola vez)</h2><div class="num-tabla"><span>Cada alta Básico (199 €) te deja</span><b>' + numEur(r.ab) + '</b>'
-      + '<span>Cada alta Completo (499 €) te deja</span><b>' + numEur(r.ac) + '</b>'
-      + '<span>Altas de estos clientes</span><b>' + numEur(r.altas) + '</b>'
+      // 13/11 (Tete): beneficio de cada plan, alta + mensualidad, y lo que deja cada mes que el cliente sigue.
+      + '<h2 style="margin-top:18px">Lo que te deja cada cliente</h2>'
+      + numPlan('Básico', 199, 49, r.ab, r.qb) + numPlan('Completo', 499, 79, r.ac, r.qc)
+      + '<h2 style="margin-top:18px">Con estos clientes</h2><div class="num-tabla"><span>Altas de estos clientes</span><b>' + numEur(r.altas) + '</b>'
       + '<span class="t">El primer mes te quedan</span><b>' + numEur(r.gana + r.altas) + '</b></div>';
+  }
+  function numPlan(nombre, alta, mes, a, q){
+    return '<div class="num-plan"><div class="num-plan-c"><b>' + nombre + '</b><span>' + alta + ' € de alta + ' + mes + ' €/mes</span></div>'
+      + '<div class="num-tabla"><span>Primer mes (alta + cuota)</span><b>' + numEur(a + q) + '</b>'
+      + '<span>Cada mes que sigue</span><b>' + numEur(q) + '</b>'
+      + '<span>A los 6 meses</span><b>' + numEur(a + 6 * q) + '</b>'
+      + '<span class="t">Al año</span><b>' + numEur(a + 12 * q) + '</b></div></div>';
   }
   function vistaNumeros(abierto){
     return '<details class="plegable"' + (abierto || NUM.abierto ? ' open' : '') + ' data-numeros><summary><span>Números</span><span class="n">' + numEur(numCalc().gana) + '/mes</span></summary>'
