@@ -1,7 +1,7 @@
 /* Euxenos – service worker de la web: solo enseña la página «Sin conexión» cuando no hay internet.
    No guarda páginas ni datos de nadie; solo la página de aviso, el logo y las fuentes.
    El panel (/panel/) tiene el suyo propio y no se ve afectado. */
-var VERSION = 'euxenos-offline-v1';
+var VERSION = 'euxenos-offline-v2';
 var BASICOS = [
   '/offline.html',
   '/marca/euxenos-logo-griego.svg',
@@ -34,8 +34,10 @@ self.addEventListener('fetch', function (e) {
   if (url.origin !== self.location.origin) return;
 
   // Al abrir una página sin internet: enseña «Sin conexión».
+  // Cloudflare redirige /offline.html a /offline y Safari (y Chrome) no aceptan que el service worker
+  // conteste una navegación con una respuesta «redirigida»: se sirve una copia limpia (13/11).
   if (r.mode === 'navigate') {
-    e.respondWith(fetch(r).catch(function () { return caches.match('/offline.html'); }));
+    e.respondWith(fetch(r).catch(function () { return caches.match('/offline.html').then(limpia); }));
     return;
   }
   // Logo y fuentes de esa página: desde la copia guardada si no hay internet.
@@ -43,3 +45,10 @@ self.addEventListener('fetch', function (e) {
     e.respondWith(caches.match(r).then(function (c) { return c || fetch(r); }));
   }
 });
+
+function limpia(resp) {
+  if (!resp || !resp.redirected) return resp;
+  return resp.blob().then(function (b) {
+    return new Response(b, { status: 200, statusText: 'OK', headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  });
+}
