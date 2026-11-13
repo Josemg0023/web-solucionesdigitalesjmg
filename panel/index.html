@@ -1049,7 +1049,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   // Voz si gastan todos los minutos; Stripe aprox. 1,5 % + 0,25 €; autónomo = tarifa plana con MEI (88,64 €) e IVA 21 % dentro del precio.
   var NUM = { b: 3, c: 0, aut: false, abierto: false };
   var NUM_FIJOS = 18 + 22 + 6 + 1.75 + 1, NUM_AUTON = 88.64;
-  var NUM_PACKS = { b: { mes: 49, voz: 15, alta: 199 }, c: { mes: 79, voz: 30, alta: 499 } };
+  var NUM_PACKS = { b: { mes: 49, voz: 10, alta: 149 }, c: { mes: 79, voz: 20, alta: 349 } };
   // 12/11 (Tete): las altas (pago único, Packs y precios 09/11) se cuentan aparte: lo que dejan una vez, sin gastos de voz.
   function numAlta(p, aut){ return (aut ? p.alta / 1.21 : p.alta) - (p.alta * 0.015 + 0.25); }
   function numQueda(p, aut){ return (aut ? p.mes / 1.21 : p.mes) - p.voz - (p.mes * 0.015 + 0.25); }
@@ -1068,7 +1068,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + '<span class="t">Para no perder dinero</span><b>' + r.minimo + ' Básicos</b></div>'
       // 13/11 (Tete): beneficio de cada plan, alta + mensualidad, y lo que deja cada mes que el cliente sigue.
       + '<h2 style="margin-top:18px">Lo que te deja cada cliente</h2>'
-      + numPlan('Básico', 199, 49, r.ab, r.qb) + numPlan('Completo', 499, 79, r.ac, r.qc)
+      + numPlan('Básico', 149, 49, r.ab, r.qb) + numPlan('Completo', 349, 79, r.ac, r.qc)
       // 13/11 (Tete): «Con estos clientes» más grande.
       + '<div class="num-total"><h3>Con estos clientes</h3><div class="num-tabla"><span>Altas de estos clientes</span><b>' + numEur(r.altas) + '</b>'
       + '<span class="t">El primer mes te quedan</span><b class="g">' + numEur(r.gana + r.altas) + '</b>'
