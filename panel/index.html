@@ -421,6 +421,14 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .tcard .fila.atrasado .txt{border-left:3px solid var(--ambar);padding-left:10px;margin-left:-2px}
 .tcard .vacio{margin:6px 2px 12px}
 .tcard .dia-sep{margin:10px 2px 2px}
+.semaforo[data-vigia]{width:100%;text-align:left;border:0;color:inherit;font:inherit;cursor:pointer}
+.semaforo em{display:block;font-style:normal;color:var(--verde-luz);font-size:.85rem;font-weight:600;margin-top:6px}
+.vg-fila{background:rgba(255,255,255,.035);border-radius:12px;padding:11px 13px;margin:6px 0 10px}
+.vg-fila small{display:block;color:var(--tenue);font-size:.75rem}
+.vg-fila b{display:block;margin-top:2px}
+.vg-fila span{display:block;color:var(--apagado);font-size:.85rem}
+.vg-fila p{margin:6px 0 0;font-size:.9rem}
+.vg-fila code{display:block;margin-top:6px;color:var(--tenue);font-size:.75rem;white-space:pre-wrap;word-break:break-word}
 .tcard .semaforo{background:none;padding:6px 2px 12px;margin:0}
 .interes{display:inline-block;margin-left:8px;font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:999px;vertical-align:middle;background:rgba(255,255,255,.08);color:var(--apagado)}
 .interes.i-caliente{background:rgba(240,56,107,.18);color:#F7A3BC}.interes.i-tibio{background:rgba(245,185,66,.16);color:#F7D58C}.interes.i-frio{background:rgba(120,170,255,.16);color:#B7D0FF}
@@ -586,6 +594,12 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
 <button class="btn b-ok ancho" type="submit">Guardar en HubSpot</button>
 <button class="btn b-no ancho" type="button" id="borrarNegocio" style="margin-top:10px">Borrar posible cliente</button>
 </form></div>
+
+<!-- Estado de Eris (13/11): detalle de fallos del Vigía (solo Tete) -->
+<div class="velo abajo" id="veloVigia"><div class="hoja">
+<h3><span>Estado de Eris</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<div id="vigiaDetalle"></div>
+</div></div>
 
 <!-- Cambiar contraseña -->
 <div class="velo abajo" id="veloAcceso"><form class="hoja" id="formAcceso" autocomplete="on">
@@ -872,6 +886,36 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     }).catch(function(){ if (b) b.disabled = false; toast('Sin conexión, inténtalo de nuevo'); });
   }
   // === Hoy de Tete (09/11, rediseñado 12/11): saludo y tarjetas con lo que toca hoy. Datos de «ver» de eux-dueno (HubSpot, Google, Vigía, ElevenLabs).
+  // === Estado de Eris (13/11): detalle de los fallos y pruebas malas del Vigía, en lenguaje claro.
+  function vigiaExplica(t){
+    t = String(t || '');
+    if (/timed out|timeout/i.test(t)) return 'Tardó demasiado y se cortó. Suele ser un atasco puntual de la IA o de n8n; si se repite, hay que mirarlo.';
+    if (/429|quota|rate.?limit|resource.?exhausted/i.test(t)) return 'Se acabó un momento el cupo de la IA (Gemini). Suele arreglarse solo.';
+    if (/ECONN|ETIMEDOUT|ENOTFOUND|socket hang up|network/i.test(t)) return 'Falló la conexión con otro servicio. Suele ser algo puntual.';
+    if (/401|403|unauthori|forbidden|invalid.*(key|token)|expired/i.test(t)) return 'Problema de permisos: puede que una clave o un token haya caducado.';
+    if (/50[0-4]|bad gateway|service unavailable|internal server/i.test(t)) return 'Un servicio externo no respondió bien en ese momento.';
+    return '';
+  }
+  function vigiaFila(f, prueba){
+    var cuando = f.fecha ? corta(String(f.fecha).slice(0, 10)) + ' · ' + String(f.fecha).slice(11, 16) : '', exp = vigiaExplica(f.detalle);
+    return '<div class="vg-fila"><small>' + esc(cuando) + '</small><b>' + esc(prueba ? 'Prueba «' + (f.nodo || '?') + '»' : (f.flujo || 'Flujo sin nombre')) + '</b>'
+      + (!prueba && f.nodo ? '<span>Paso: ' + esc(f.nodo) + '</span>' : '')
+      + (exp ? '<p>' + esc(exp) + '</p>' : '') + (f.detalle ? '<code>' + esc(f.detalle) + '</code>' : '') + '</div>';
+  }
+  function abrirVigia(){
+    var v = (comercial && comercial.vigia) || {}, h = '', fallos = v.fallos || [], malas = v.malas || [];
+    if (v.errores) {
+      h += '<p class="dia-sep">Fallos en las últimas 24 h (' + v.errores + ')</p>';
+      h += fallos.length ? fallos.map(function(f){ return vigiaFila(f, false); }).join('') : '<p class="ayuda">Hay ' + v.errores + (v.errores === 1 ? ' fallo' : ' fallos') + ' en: ' + esc((v.flujos || []).join(', ')) + '. El detalle saldrá aquí en cuanto el Vigía lo mande.</p>';
+    }
+    if (v.pruebasMal) h += '<p class="dia-sep">Pruebas de esta noche que han salido mal (' + v.pruebasMal + ' de ' + v.pruebas + ')</p>' + (malas.length ? malas.map(function(f){ return vigiaFila(f, true); }).join('') : '<p class="ayuda">El detalle saldrá aquí en cuanto el Vigía lo mande.</p>');
+    else if (v.pruebas) h += '<p class="dia-sep">Pruebas de esta noche</p><p class="ayuda">Las ' + v.pruebas + ' han salido bien.</p>';
+    if (v.minutos != null) h += '<p class="dia-sep">Minutos de voz</p><p class="ayuda">Quedan ' + v.minutos + ' min' + (v.renueva ? '; se renuevan el ' + corta(v.renueva) : '') + '.' + (v.minutos < 20 ? ' Quedan pocos.' : '') + '</p>';
+    if (v.diasInstagram != null && v.diasInstagram <= 15) h += '<p class="dia-sep">Instagram</p><p class="ayuda">' + (v.diasInstagram > 0 ? 'El token caduca en ' + v.diasInstagram + ' días: hay que renovarlo.' : 'El token ha caducado: hay que renovarlo.') + '</p>';
+    if (!v.errores && !v.pruebasMal) h = '<p class="ayuda">No hay fallos en las últimas 24 h.</p>' + h;
+    h += '<p class="ayuda" style="margin-top:16px">Si no sabes qué hacer con un fallo, pásame una captura de esta pantalla y lo miro.</p>';
+    document.getElementById('vigiaDetalle').innerHTML = h; abrirHoja('veloVigia');
+  }
   function vistaHoyTete(){
     var d = new Date(), hoy = hoyISO(), man = new Date(); man.setDate(man.getDate() + 1); man = iso(man);
     var h = '<div class="t-saludo"><h1>' + saludoHora() + ', Tete.</h1><p>Esto es lo que toca hoy.</p><small>' + DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</small></div>';
@@ -885,7 +929,8 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (v.minutos != null) mot.push('Quedan ' + v.minutos + ' min de voz' + (v.renueva ? ' (se renuevan el ' + corta(v.renueva) + ')' : ''));
     if (v.diasInstagram != null && v.diasInstagram <= 15) mot.push(v.diasInstagram > 0 ? 'El token de Instagram caduca en ' + v.diasInstagram + ' días' : 'El token de Instagram ha caducado');
     var tit = { verde: 'Eris va bien', ambar: 'Ojo: hay algo que revisar', rojo: 'Hay que mirar algo', gris: 'Sin datos del Vigía' }[v.color] || 'Sin datos del Vigía';
-    var estado = tarjeta('Estado de Eris', null, '<div class="semaforo s-' + esc(v.color || 'gris') + '"><i aria-hidden="true"></i><div><b>' + tit + '</b><span>' + esc(mot.join(' · ')) + '</span></div></div>');
+    // 13/11 (Tete): se puede tocar para ver qué error marca.
+    var estado = tarjeta('Estado de Eris', null, '<button type="button" class="semaforo s-' + esc(v.color || 'gris') + '" data-vigia><i aria-hidden="true"></i><div><b>' + tit + '</b><span>' + esc(mot.join(' · ')) + '</span>' + (v.color === 'gris' ? '' : '<em>Ver detalle ›</em>') + '</div></button>');
     // Si algo va mal, el estado va arriba; si todo va bien, abajo.
     if (v.color === 'ambar' || v.color === 'rojo') h += estado;
     if (comercial.errorHubspot) h += '<div class="franja cerrado"><b>HubSpot no ha respondido.</b> Lo de abajo puede estar incompleto.</div>';
@@ -1557,6 +1602,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       hechos.reduce(function(pr, x){ return pr.then(function(){ return llamarApp('pendiente-borrar', { id: x.id }).then(function(r){ if (r && r.ok) info = r.datos; }); }); }, Promise.resolve()).then(function(){ pintar(); toast('Hechos borrados'); }).catch(sinConexion); return; }
     t = e.target.closest('[data-cuenta]');
     if (t) { if (t.getAttribute('data-cuenta') === 'acceso') abrirAcceso(t.getAttribute('data-modo')); else if (t.getAttribute('data-cuenta') === 'bio') { if (bioGuardada()) { bioBorrar(); toast('Face ID o huella quitado de este móvil'); pintar(); } else activarBio((datos && datos.negocio && datos.negocio.usuario) || '', function(ok){ if (ok) toast('Listo: la próxima vez entra con Face ID o huella'); pintar(); }); } else { quitarAvisos(true); olvidar(); pantallaLogin('Has cerrado la sesión.'); } return; }
+    t = e.target.closest('[data-vigia]'); if (t) { abrirVigia(); return; }
     t = e.target.closest('[data-borrar-neg]'); if (t) { borrarNegocio(t.getAttribute('data-borrar-neg'), t); return; }
     t = e.target.closest('[data-neg]'); if (t) { abrirNegocio(t.getAttribute('data-neg')); return; }
     t = e.target.closest('[data-quitar-rec]');
