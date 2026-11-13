@@ -983,8 +983,9 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   }
   function numPlan(nombre, alta, mes, a, q){
     return '<div class="num-plan"><div class="num-plan-c"><b>' + nombre + '</b><span>' + alta + ' € de alta + ' + mes + ' €/mes</span></div>'
-      + '<div class="num-tabla"><span>Primer mes (alta + cuota)</span><b>' + numEur(a + q) + '</b>'
-      + '<span>Cada mes que sigue</span><b>' + numEur(q) + '</b>'
+      + '<div class="num-tabla"><span>El alta te deja (una vez)</span><b>' + numEur(a) + '</b>'
+      + '<span>Cada mes que se mantiene</span><b>' + numEur(q) + '</b>'
+      + '<span class="t">Primer mes (alta + cuota)</span><b>' + numEur(a + q) + '</b>'
       + '<span>A los 6 meses</span><b>' + numEur(a + 6 * q) + '</b>'
       + '<span class="t">Al año</span><b>' + numEur(a + 12 * q) + '</b></div></div>';
   }
