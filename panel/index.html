@@ -1502,6 +1502,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   // 12/11 (Tete): acceso con tres botones (contraseña, correo, usuario). Servicios, horario y memoria de Eris pasan a «Mi empresa».
   function bloqueAcceso(){
     var neg = (datos && datos.negocio) || {};
+    if (esDemo()) return '<h2>Acceso</h2><div class="caja"><p style="margin:0">Cuenta de demostración: se entra solo con el usuario <b>' + esc(neg.usuario || '') + '</b>, sin contraseña. El acceso no se puede cambiar.</p></div>';
     return '<h2>Acceso</h2><div class="caja"><p style="margin:0 0 10px">Usuario: <b>' + esc(neg.usuario || '') + '</b>' + ((neg.correo || neg.email) ? '<br>Correo: <b>' + esc(neg.correo || neg.email) + '</b>' : '') + '</p>'
       + '<div class="columna"><button class="btn b-otra" data-cuenta="acceso" data-modo="clave">Cambiar contraseña</button><button class="btn b-otra" data-cuenta="acceso" data-modo="correo">Cambiar correo</button><button class="btn b-otra" data-cuenta="acceso" data-modo="usuario">Cambiar usuario</button></div></div>';
   }
@@ -2273,6 +2274,10 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     document.getElementById('bioEntrar').addEventListener('click', function(){ entrarConBio(el); });
     document.getElementById('bioClave').addEventListener('click', function(){ olvidar(); pantallaLogin(); });
   }
+  // 13/11 (Tete): las 4 demos entran solo con el usuario, sin contraseña. Son negocios inventados para enseñar la app en persona.
+  // Si alguien cambia la contraseña de una demo, su acceso de aquí deja de valer: volver a activarla y poner el nuevo aquí.
+  var DEMOS = {"demopelu": {"n": "demo-peluqueria", "k": "1d8ddd1cb117dc31558990b8.4f4212f6cd4679b1"}, "demobar": {"n": "demo-restaurante", "k": "0d1df77c5073a9e08efa55d4.5f62860548293b33"}, "demotaller": {"n": "demo-taller", "k": "a646f470c221d25a44014d158.cad2adfe19501510"}, "demosalon": {"n": "demo-tatuajes", "k": "ac79b787bba2924e87bbdd33e.88515fdd59ee3dfa"}};
+  function esDemo(){ for (var u in DEMOS) if (DEMOS[u].n === n) return true; return false; }
   function guardarAcceso(nn, kk){ n = nn; k = kk; try { localStorage.setItem('eris-agenda', JSON.stringify({ n:n, k:k })); } catch (e) {} }
   function olvidarPedidos(){ pedidos = null; pedidosVistos = null; }
   function olvidar(){ olvidarPedidos(); try { sessionStorage.removeItem(claveConv()); } catch (e) {} n = null; k = null; datos = null; info = null; conversacion = []; try { localStorage.removeItem('eris-agenda'); } catch (e) {} }
@@ -2281,7 +2286,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     ocultarFlotantes();
     app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Eris app</h1><p class="sub">Entra con tu usuario o tu correo para gestionar tu negocio</p>'
       + '<label class="campo"><span>Usuario o correo</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false"></label>'
-      + '<label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>'
+      + '<label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password"></label>'
       + '<p class="error" id="errorLogin">' + esc(aviso || '') + '</p><button class="btn b-ok ancho" type="submit">Entrar</button>'
       + (bioGuardada() ? '<button class="btn b-otra ancho" type="button" id="botonBio" style="margin-top:10px">' + BIO_ICONO + ' Entrar con Face ID o huella</button>' : '')
       + '<button class="btn b-otra ancho" type="button" id="botonOlvido" style="margin-top:10px">¿Has olvidado la contraseña?</button>'
@@ -2292,7 +2297,10 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var f = document.getElementById('formLogin');
     f.addEventListener('submit', function(e){
       e.preventDefault();
-      var u = f.usuario.value.trim().toLowerCase(), boton = f.querySelector('button'); boton.disabled = true;
+      var u = f.usuario.value.trim().toLowerCase(), boton = f.querySelector('button');
+      if (DEMOS[u]) { guardarAcceso(DEMOS[u].n, DEMOS[u].k); vista = 'hoy'; desbloqueada(); cargar(); return; }
+      if (!f.clave.value) { document.getElementById('errorLogin').textContent = 'Escribe tu contraseña.'; return; }
+      boton.disabled = true;
       document.getElementById('errorLogin').textContent = '';
       derivar(u, f.clave.value).then(function(h){ return llamar({ accion:'login', usuario:u, hash:h }); }).then(function(r){
         boton.disabled = false;
