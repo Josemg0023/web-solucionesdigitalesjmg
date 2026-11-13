@@ -9,7 +9,7 @@
 <title>Cuervo Negro Tattoo · Demostración de Euxenos</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/vendor/fuentes/fuentes.css">
-<!-- Demostración (13/11): negocio inventado para enseñar cómo queda la web del Pack Completo. El chat usa un guion, no la Eris real. -->
+<!-- Demostración (13/11): negocio inventado para enseñar cómo queda la web del Pack Completo. El chat usa un guion, no la Eris real. Generada con gen_demos.py. -->
 <style>
 /* Diseño: banda de transparencia de Euxenos arriba; debajo, la web del negocio con el chat de Eris junto al titular. */
 :root{
@@ -73,6 +73,7 @@ nav.menu a:hover{color:var(--fg)}
 .send input{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--c-fg);background:var(--c-bot);border:1px solid var(--c-line);border-radius:10px;padding:10px 12px}
 .send input::placeholder{color:var(--c-muted)}
 .send button{font:inherit;font-weight:600;background:var(--c-user);color:var(--c-user-fg);border:0;border-radius:10px;padding:0 16px;cursor:pointer}
+.nota{align-self:center;max-width:90%;font-size:13px;color:var(--c-muted);text-align:center;line-height:1.4}
 .chat-note{font-size:12.5px;color:var(--c-muted);padding:0 16px 12px;line-height:1.4}
 
 section.sec{border-top:1px solid var(--line)}
@@ -205,7 +206,7 @@ footer a{color:var(--muted)}
 
 <script>
 (function(){
-  var D = {"services": [["Pieza pequeña", "1 h aprox."], ["Pieza mediana", "2 a 4 h aprox."], ["Sesión de día entero", "6 h aprox."], ["Cover-up", "Según el diseño"], ["Retoque", "Se valora en persona"]], "services_intro": "Estos son los trabajos que hacemos (duraciones de ejemplo). El precio lo da el tatuador según tu idea:", "hours": [{"label": "Martes a sábado", "value": "16:00 a 21:00, con cita", "days": [2, 3, 4, 5, 6]}, {"label": "Domingo y lunes", "value": "Cerrado", "days": [0, 1]}], "steps": [["Le cuentas tu idea a Eris", "Con una frase vale. Si tienes una foto de referencia, puedes mandarla."], ["Eris recoge lo que hace falta", "Zona del cuerpo, tamaño aproximado y días que te vienen bien."], ["El tatuador te contesta", "Con presupuesto y fecha. El precio lo da él, no Eris."]], "greeting": "¡Hola! Soy Eris, la agente de inteligencia artificial de Cuervo Negro Tattoo. ¿Con quién hablo?", "main": ["Quiero hacerme un tatuaje", "¿Cuánto cuesta un tatuaje?", "¿Qué horario tenéis?"], "flows": [{"re": "quiero hacerme|empezar|cita|consulta", "intro": "Genial{name}.", "steps": [["Cuéntame tu idea en una frase.", ["Una luna con flores", "Un nombre en caligrafía"]], ["¿En qué zona del cuerpo?", ["Antebrazo", "Hombro", "Tobillo"]], ["¿De qué tamaño más o menos?", ["Pequeño, unos 5 cm", "Mediano, unos 15 cm"]], ["¿Qué días te vendrían bien para ir al estudio?", ["Entre semana por la tarde", "Sábados"]]], "done": "Anotado{name}: {0}, en {1}, tamaño {2}, disponibilidad: {3}. Se lo paso al tatuador y te responde con presupuesto y fecha. Si tienes una foto de referencia, mándamela por aquí. ¿Necesitas algo más?"}], "intents": [{"re": "cuest|precio|cuánto|cuanto|tarifa", "reply": "Depende del diseño, la zona y el tamaño, así que no te doy un precio sin que el tatuador lo vea. Si me cuentas tu idea, le paso lo que necesita para presupuestarte. ¿Empezamos?", "chips": ["Quiero hacerme un tatuaje", "¿Qué horario tenéis?"]}, {"re": "dolor|duele|cuidado|cicatri|alerg|piel", "reply": "Eso lo explica mejor el tatuador en persona antes de empezar. Si quieres, te apunto una consulta con él. ¿Te parece bien?", "chips": ["Quiero hacerme un tatuaje", "¿Qué horario tenéis?"]}, {"re": "horario|hora|abr|cerr", "reply": "@horario\n¿Te ayudo a preparar tu tatuaje?", "chips": ["Quiero hacerme un tatuaje", "¿Cuánto cuesta un tatuaje?"]}]};
+  var D = {"services": [["Pieza pequeña", "1 h aprox."], ["Pieza mediana", "2 a 4 h aprox."], ["Sesión de día entero", "6 h aprox."], ["Cover-up", "Según el diseño"], ["Retoque", "Se valora en persona"]], "services_intro": "Estos son los trabajos que hacemos (duraciones de ejemplo). El precio lo da el tatuador según tu idea:", "hours": [{"label": "Martes a sábado", "value": "16:00 a 21:00, con cita", "days": [2, 3, 4, 5, 6]}, {"label": "Domingo y lunes", "value": "Cerrado", "days": [0, 1]}], "steps": [["Le cuentas tu idea a Eris", "Con una frase vale. Si tienes una foto de referencia, puedes mandarla."], ["Eris recoge lo que hace falta", "Zona del cuerpo, tamaño aproximado y días que te vienen bien."], ["El tatuador te contesta", "Con presupuesto y fecha. El precio lo da él, no Eris."]], "greeting": "¡Hola! Soy Eris, la agente de inteligencia artificial de Cuervo Negro Tattoo. ¿Con quién hablo?", "main": ["Quiero hacerme un tatuaje", "¿Cuánto cuesta un tatuaje?", "¿Qué horario tenéis?"], "flows": [{"re": "quiero hacerme|empezar|cita|consulta", "intro": "Genial{name}.", "steps": [["Cuéntame tu idea en una frase.", ["Una luna con flores", "Un nombre en caligrafía"]], ["¿En qué zona del cuerpo?", ["Antebrazo", "Hombro", "Tobillo"]], ["¿De qué tamaño más o menos?", ["Pequeño, unos 5 cm", "Mediano, unos 15 cm"]], ["¿Qué días te vendrían bien para ir al estudio?", ["Entre semana por la tarde", "Sábados"]]], "done": "Anotado{name}: {0}, en {1}, tamaño {2}, disponibilidad: {3}. Se lo paso al tatuador y te responde con presupuesto y fecha. Si tienes una foto de referencia, mándamela por aquí. ¿Necesitas algo más?"}], "intents": [{"re": "cuest|precio|cuánto|cuanto|tarifa", "reply": "Depende del diseño, la zona y el tamaño, así que no te doy un precio sin que el tatuador lo vea. Si me cuentas tu idea, le paso lo que necesita para presupuestarte. ¿Empezamos?", "chips": ["Quiero hacerme un tatuaje", "¿Qué horario tenéis?"]}, {"re": "dolor|duele|cuidado|cicatri|alerg|piel", "reply": "Eso lo explica mejor el tatuador en persona antes de empezar. Si quieres, te apunto una consulta con él. ¿Te parece bien?", "chips": ["Quiero hacerme un tatuaje", "¿Qué horario tenéis?"]}, {"re": "horario|hora|abr|cerr", "reply": "@horario\n¿Te ayudo a preparar tu tatuaje?", "chips": ["Quiero hacerme un tatuaje", "¿Cuánto cuesta un tatuaje?"]}], "real": false, "negocio": ""};
 
   function li(a, b, sub){
     var el = document.createElement('li');
@@ -241,7 +242,7 @@ footer a{color:var(--muted)}
 
   function add(role, text){
     var m = document.createElement('div'); m.className = 'msg ' + role; m.textContent = text;
-    log.appendChild(m); log.scrollTop = log.scrollHeight;
+    log.appendChild(m); log.scrollTop = log.scrollHeight; return m;
   }
   function setChips(list){
     chips.innerHTML = '';
@@ -259,7 +260,33 @@ footer a{color:var(--muted)}
   function listText(){ return D.services.map(function(s){ return s[0] + ': ' + s[1]; }).join('\n'); }
   function hoursText(){ return D.hours.map(function(h){ return h.label + ': ' + h.value; }).join('\n'); }
 
-  function handle(text){
+  function handle(text){ return (D.real ? handleReal : handleScript)(text); }
+
+  // Eris real: la misma que atiende a los negocios clientes (n8n «eris-negocio»), con los datos de este negocio de demostración.
+  var URL_ERIS = 'https://erisproject.app.n8n.cloud/webhook/eris-negocio';
+  var sesion = 'web-' + Math.random().toString(36).slice(2, 12);
+  function limpiar(t){ return String(t || '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/^\s*[-*]\s+/gm, '• ').replace(/\*(.+?)\*/g, '$1').trim(); }
+  function aviso(txt){ var d = document.createElement('div'); d.className = 'nota'; d.textContent = txt; log.appendChild(d); log.scrollTop = log.scrollHeight; }
+  function handleReal(text){
+    if (busy) return;
+    text = (text || '').trim();
+    if (!text) return;
+    add('me', text);
+    busy = true; ball.classList.add('think'); setChips([]);
+    var esp = add('bot', '…');
+    var ctl = ('AbortController' in window) ? new AbortController() : null;
+    var tm = setTimeout(function(){ if (ctl) ctl.abort(); }, 70000);
+    fetch(URL_ERIS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ negocio: D.negocio, sesion: sesion, mensaje: text, canal: 'web' }), signal: ctl ? ctl.signal : undefined })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if (j && j.ok && j.respuesta) { esp.textContent = limpiar(j.respuesta); }
+        else { esp.remove(); aviso(j && j.pausada ? 'Esta conversación la lleva ahora una persona del negocio.' : ((j && j.motivo) || 'No se ha podido contestar. Prueba otra vez en un momento.')); }
+      })
+      .catch(function(){ esp.remove(); aviso('Eris no ha podido contestar ahora mismo. Prueba otra vez en un momento.'); })
+      .then(function(){ clearTimeout(tm); ball.classList.remove('think'); busy = false; setChips(D.main); log.scrollTop = log.scrollHeight; });
+  }
+
+  function handleScript(text){
     if (busy) return;
     text = (text || '').trim();
     if (!text) return;
@@ -307,7 +334,8 @@ footer a{color:var(--muted)}
     document.querySelector('.chat').scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 
-  add('bot', D.greeting);
+  if (D.real) aviso('Escríbele a Eris o toca un atajo. Contesta de verdad, con los datos de este negocio de ejemplo.');
+  else add('bot', D.greeting);
   setChips(D.main);
 })();
 </script>

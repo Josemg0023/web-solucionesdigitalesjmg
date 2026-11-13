@@ -9,7 +9,7 @@
 <title>La Brasa · Demostración de Euxenos</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/vendor/fuentes/fuentes.css">
-<!-- Demostración (13/11): negocio inventado para enseñar cómo queda la web del Pack Completo. El chat usa un guion, no la Eris real. -->
+<!-- Demostración (13/11): negocio inventado para enseñar cómo queda la web del Pack Completo. El chat es la Eris real (negocio demo-restaurante). Generada con gen_demos.py. -->
 <style>
 /* Diseño: banda de transparencia de Euxenos arriba; debajo, la web del negocio con el chat de Eris junto al titular. */
 :root{
@@ -73,6 +73,7 @@ nav.menu a:hover{color:var(--fg)}
 .send input{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--c-fg);background:var(--c-bot);border:1px solid var(--c-line);border-radius:10px;padding:10px 12px}
 .send input::placeholder{color:var(--c-muted)}
 .send button{font:inherit;font-weight:600;background:var(--c-user);color:var(--c-user-fg);border:0;border-radius:10px;padding:0 16px;cursor:pointer}
+.nota{align-self:center;max-width:90%;font-size:13px;color:var(--c-muted);text-align:center;line-height:1.4}
 .chat-note{font-size:12.5px;color:var(--c-muted);padding:0 16px 12px;line-height:1.4}
 
 section.sec{border-top:1px solid var(--line)}
@@ -103,10 +104,10 @@ footer a{color:var(--muted)}
 <body>
 <div class="aviso-demo" role="note">
   <div class="in">
-    <p><b>Demostración de Euxenos.</b> Este negocio no existe: el nombre, el teléfono, la dirección y los precios son inventados. El chat responde con un guion de ejemplo para enseñarte cómo trabaja Eris; no es una conversación real y no se envía nada a nadie.</p>
+    <p><b>Demostración de Euxenos.</b> Este negocio no existe: el nombre, el teléfono y la dirección son inventados. Eris, en cambio, es la real: contesta con los datos de este negocio de ejemplo. Si pides una cita o un pedido, queda como prueba en una agenda de demostración y no llega a ningún negocio de verdad.</p>
     <nav aria-label="Euxenos">
       <a href="/#demostraciones">← Todas las demostraciones</a>
-      <a href="/?eris=chat">Hablar con la Eris real</a>
+      
     </nav>
   </div>
 </div>
@@ -129,7 +130,7 @@ footer a{color:var(--muted)}
       <div>
         <p class="kicker">Restaurante de brasas</p>
         <h1>Reserva mesa o pide para llevar, a cualquier hora.</h1>
-        <p class="lead">Eris toma pedidos para recoger o a domicilio y reservas de mesa, también cuando la cocina está a tope. Te cuenta qué lleva cada plato antes de que pidas.</p>
+        <p class="lead">Eris toma pedidos para recoger o a domicilio y reservas de mesa, también cuando la cocina está a tope. Te cuenta qué lleva cada plato y sus alérgenos antes de que pidas.</p>
         <div class="cta">
           <button class="btn main" type="button" id="open-chat">Hablar con Eris</button>
           <a class="btn alt" href="#servicios">Ver la carta</a>
@@ -147,7 +148,7 @@ footer a{color:var(--muted)}
           <input id="msg" type="text" placeholder="Escríbele a Eris…" aria-label="Escribe tu mensaje">
           <button type="submit">Enviar</button>
         </form>
-        <p class="chat-note">Eris es una agente de inteligencia artificial. Esta conversación es un ejemplo con guion: no se envía nada.</p>
+        <p class="chat-note">Eris es una agente de inteligencia artificial y contesta de verdad. Es un negocio de ejemplo: lo que pidas queda como prueba.</p>
       </div>
     </div>
   </section>
@@ -155,7 +156,7 @@ footer a{color:var(--muted)}
   <section class="sec" id="servicios">
     <div class="in">
       <h2>Carta</h2>
-      <p class="sub">Carta y precios de ejemplo. Eris lee la carta del restaurante y no se inventa platos.</p>
+      <p class="sub">La carta tal como la tiene Eris, con precios y alérgenos. Si tienes una alergia seria, confírmalo siempre con el equipo del restaurante.</p>
       <ul class="list" id="serv-list"></ul>
     </div>
   </section>
@@ -163,7 +164,7 @@ footer a{color:var(--muted)}
   <section class="sec" id="horario">
     <div class="in">
       <h2>Horario</h2>
-      <p class="sub">Eris recoge pedidos y reservas también con el local cerrado y los deja listos para el siguiente servicio.</p>
+      <p class="sub">Reparto a domicilio solo en Talavera de la Reina: gratis desde 20 €, 2,50 € por debajo. Se paga al recoger o al recibirlo: efectivo, tarjeta o Bizum.</p>
       <ul class="list" id="hours"></ul>
     </div>
   </section>
@@ -205,7 +206,7 @@ footer a{color:var(--muted)}
 
 <script>
 (function(){
-  var D = {"services": [["Pollo a la brasa (medio)", "9,50 €", "Sin gluten"], ["Costillas barbacoa", "13,90 €"], ["Ensalada de la casa", "7,50 €", "Sin gluten"], ["Patatas bravas", "5,50 €"], ["Entrecot a la brasa", "16,90 €", "Sin gluten"], ["Flan casero", "3,50 €", "Contiene huevo y lácteos"]], "services_intro": "Esta es la carta de ejemplo:", "hours": [{"label": "Martes a jueves", "value": "13:00 a 16:00 y 20:00 a 23:30", "days": [2, 3, 4]}, {"label": "Viernes a domingo", "value": "13:00 a 16:30 y 20:00 a 00:00", "days": [5, 6, 0]}, {"label": "Lunes", "value": "Cerrado", "days": [1]}], "steps": [["Escribes o llamas", "Eris te saluda y te pregunta tu nombre."], ["Eliges: pedido o mesa", "Para llevar, a domicilio o reserva para cuántos sois."], ["Queda apuntado", "El restaurante lo recibe con aviso al momento y lo confirma."]], "greeting": "¡Hola! Soy Eris, la agente de inteligencia artificial de La Brasa. ¿Con quién hablo?", "main": ["Quiero hacer un pedido", "Reservar mesa", "¿Tenéis algo sin gluten?", "¿Qué horario tenéis?"], "flows": [{"re": "pedid|pedir|recoger|domicilio|llevar", "intro": "¡Genial{name}!", "steps": [["¿Qué quieres pedir?", ["Pollo a la brasa", "Costillas barbacoa", "Entrecot a la brasa"]], ["¿Lo recoges o te lo llevamos a casa?", ["Lo recojo", "A domicilio"]], ["¿A qué hora lo quieres?", ["21:00", "21:30"]]], "done": "Pedido anotado{name}: {0}, {1}, a las {2}. El restaurante lo recibe con aviso al momento y te lo confirma. ¿Necesitas algo más?"}, {"re": "mesa|reserv", "intro": "Claro{name}.", "steps": [["¿Para cuántas personas?", ["2", "4", "6"]], ["¿Qué día y a qué hora?", ["Viernes a las 21:00", "Sábado a las 14:00"]]], "done": "Solicitud de mesa anotada{name}: {0} personas, {1}. El restaurante te la confirma. ¿Necesitas algo más?"}], "intents": [{"re": "gluten|alerg|celiac|celíac|intoler", "reply": "En la carta de ejemplo, el pollo a la brasa, la ensalada de la casa y el entrecot están marcados como sin gluten. Si tienes una alergia o una intolerancia seria, confírmalo siempre con el equipo del restaurante antes de pedir. ¿Quieres hacer un pedido?", "chips": ["Quiero hacer un pedido", "Reservar mesa"]}, {"re": "cuest|precio|cuánto|cuanto|carta|plato", "reply": "@servicios\n¿Quieres hacer un pedido?", "chips": ["Quiero hacer un pedido", "Reservar mesa"]}, {"re": "horario|hora|abr|cerr", "reply": "@horario\n¿Reservamos mesa?", "chips": ["Reservar mesa", "Quiero hacer un pedido"]}]};
+  var D = {"services": [["Hamburguesa clásica", "9,90 €", "Ternera, cheddar, lechuga, tomate y cebolla. Alérgenos: gluten, lácteos, huevo, sésamo"], ["Hamburguesa de pollo crujiente", "9,50 €", "Alérgenos: gluten, huevo, mostaza, sésamo"], ["Hamburguesa vegana", "10,50 €", "Hamburguesa vegetal, aguacate, tomate y rúcula. Alérgenos: gluten, soja, sésamo"], ["Pollo asado entero", "12,00 €", "Sin alérgenos principales"], ["Medio pollo asado", "7,00 €", "Sin alérgenos principales"], ["Costillas a la barbacoa", "14,90 €", "Con patatas. Alérgenos: mostaza, sulfitos"], ["Croquetas caseras de jamón (6)", "7,00 €", "Alérgenos: gluten, lácteos, huevo"], ["Ensalada César", "8,50 €", "Alérgenos: gluten, lácteos, huevo, pescado"], ["Patatas fritas", "3,50 €", "Sin alérgenos principales"], ["Patatas bravas", "5,00 €", "Alérgenos: huevo"], ["Extra de bacon", "1,50 €", "Para cualquier hamburguesa"], ["Extra de queso", "1,00 €", "Alérgenos: lácteos"], ["Pan sin gluten", "1,00 €", "Para cambiar el pan de cualquier hamburguesa"], ["Refresco", "2,20 €", "Cola, cola zero, naranja o limón"], ["Cerveza", "2,50 €", "Tercio. Alérgenos: gluten"], ["Agua", "1,50 €", "50 cl"], ["Tarta de queso", "4,50 €", "Casera. Alérgenos: gluten, lácteos, huevo"]], "services_intro": "", "hours": [{"label": "Martes a jueves", "value": "13:00 a 16:00 y 20:00 a 23:30", "days": [2, 3, 4]}, {"label": "Viernes y sábado", "value": "13:00 a 16:30 y 20:00 a 00:30", "days": [5, 6]}, {"label": "Domingo", "value": "13:00 a 16:30", "days": [0]}, {"label": "Lunes", "value": "Cerrado", "days": [1]}], "steps": [["Escribes o llamas", "Eris te saluda y te pregunta tu nombre."], ["Eliges: pedido o mesa", "Para llevar, a domicilio o reserva para cuántos sois."], ["Queda apuntado", "El restaurante lo recibe con aviso al momento y lo confirma."]], "greeting": "", "main": ["Quiero hacer un pedido", "Quiero reservar una mesa", "¿Qué lleva la hamburguesa vegana?", "¿Tenéis algo sin gluten?"], "flows": [], "intents": [], "real": true, "negocio": "demo-restaurante"};
 
   function li(a, b, sub){
     var el = document.createElement('li');
@@ -241,7 +242,7 @@ footer a{color:var(--muted)}
 
   function add(role, text){
     var m = document.createElement('div'); m.className = 'msg ' + role; m.textContent = text;
-    log.appendChild(m); log.scrollTop = log.scrollHeight;
+    log.appendChild(m); log.scrollTop = log.scrollHeight; return m;
   }
   function setChips(list){
     chips.innerHTML = '';
@@ -259,7 +260,33 @@ footer a{color:var(--muted)}
   function listText(){ return D.services.map(function(s){ return s[0] + ': ' + s[1]; }).join('\n'); }
   function hoursText(){ return D.hours.map(function(h){ return h.label + ': ' + h.value; }).join('\n'); }
 
-  function handle(text){
+  function handle(text){ return (D.real ? handleReal : handleScript)(text); }
+
+  // Eris real: la misma que atiende a los negocios clientes (n8n «eris-negocio»), con los datos de este negocio de demostración.
+  var URL_ERIS = 'https://erisproject.app.n8n.cloud/webhook/eris-negocio';
+  var sesion = 'web-' + Math.random().toString(36).slice(2, 12);
+  function limpiar(t){ return String(t || '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/^\s*[-*]\s+/gm, '• ').replace(/\*(.+?)\*/g, '$1').trim(); }
+  function aviso(txt){ var d = document.createElement('div'); d.className = 'nota'; d.textContent = txt; log.appendChild(d); log.scrollTop = log.scrollHeight; }
+  function handleReal(text){
+    if (busy) return;
+    text = (text || '').trim();
+    if (!text) return;
+    add('me', text);
+    busy = true; ball.classList.add('think'); setChips([]);
+    var esp = add('bot', '…');
+    var ctl = ('AbortController' in window) ? new AbortController() : null;
+    var tm = setTimeout(function(){ if (ctl) ctl.abort(); }, 70000);
+    fetch(URL_ERIS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ negocio: D.negocio, sesion: sesion, mensaje: text, canal: 'web' }), signal: ctl ? ctl.signal : undefined })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if (j && j.ok && j.respuesta) { esp.textContent = limpiar(j.respuesta); }
+        else { esp.remove(); aviso(j && j.pausada ? 'Esta conversación la lleva ahora una persona del negocio.' : ((j && j.motivo) || 'No se ha podido contestar. Prueba otra vez en un momento.')); }
+      })
+      .catch(function(){ esp.remove(); aviso('Eris no ha podido contestar ahora mismo. Prueba otra vez en un momento.'); })
+      .then(function(){ clearTimeout(tm); ball.classList.remove('think'); busy = false; setChips(D.main); log.scrollTop = log.scrollHeight; });
+  }
+
+  function handleScript(text){
     if (busy) return;
     text = (text || '').trim();
     if (!text) return;
@@ -307,7 +334,8 @@ footer a{color:var(--muted)}
     document.querySelector('.chat').scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 
-  add('bot', D.greeting);
+  if (D.real) aviso('Escríbele a Eris o toca un atajo. Contesta de verdad, con los datos de este negocio de ejemplo.');
+  else add('bot', D.greeting);
   setChips(D.main);
 })();
 </script>
