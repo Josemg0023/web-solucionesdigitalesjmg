@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Euxenos</title>
+<title>Eris app</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#04120E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Euxenos">
+<meta name="apple-mobile-web-app-title" content="Eris app">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon-96.png" sizes="96x96" type="image/png">
@@ -495,7 +495,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
 
 <!-- Menú -->
 <div class="velo" id="veloMenu"><div class="cajon" role="dialog" aria-label="Menú">
-  <div class="marca"><img src="icono-192.png" alt=""><div><b>Euxenos</b><span id="menuNegocio"></span></div></div>
+  <div class="marca"><img src="icono-192.png" alt=""><div><b>Eris app</b><span id="menuNegocio"></span></div></div>
   <nav id="menuNav"></nav>
 </div></div>
 
@@ -696,7 +696,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   // ---- Recordar la sesión ----
   // El acceso queda guardado en este dispositivo hasta que se pulse «Cerrar sesión».
   function pantallaSinServicio(red){
-    app.innerHTML = '<div class="mensaje"><h1>' + (red ? 'Sin conexión' : 'Euxenos no responde') + '</h1><p>' + (red ? 'No se ha podido cargar Euxenos. Comprueba la conexión y vuelve a intentarlo.' : 'Ahora mismo no se puede cargar tu negocio. Tu sesión sigue guardada: vuelve a intentarlo en un momento.') + '</p><p><button class="btn b-ok" onclick="location.reload()">Reintentar</button></p></div>';
+    app.innerHTML = '<div class="mensaje"><h1>' + (red ? 'Sin conexión' : 'Eris app no responde') + '</h1><p>' + (red ? 'No se ha podido cargar la Eris app. Comprueba la conexión y vuelve a intentarlo.' : 'Ahora mismo no se puede cargar tu negocio. Tu sesión sigue guardada: vuelve a intentarlo en un momento.') + '</p><p><button class="btn b-ok" onclick="location.reload()">Reintentar</button></p></div>';
   }
   function pedirPersistencia(){ try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function(){}); } catch (e) {} }
   // Face ID o huella: solo se pide si la app lleva más de 12 horas sin usarse en este móvil.
@@ -714,7 +714,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       // Solo se cierra la sesión si el servidor dice claramente que no es válida (contraseña cambiada o cuenta quitada).
       // Un fallo pasajero (n8n caído, límite de peticiones, error) NO borra el acceso guardado.
       if (d && d.ok === false && Object.prototype.hasOwnProperty.call(d, 'activar')) { var gb = bioGuardada(); if (gb && gb.k === k) bioBorrar(); olvidar(); pantallaLogin('Tu sesión ha caducado. Vuelve a entrar con tu usuario o correo y tu contraseña.'); return; }
-      if (!d || !d.ok) { if (bR) bR.classList.remove('girando'); if (!datos) pantallaSinServicio(); else toast('Euxenos no responde ahora: mostrando lo último cargado'); return; }
+      if (!d || !d.ok) { if (bR) bR.classList.remove('girando'); if (!datos) pantallaSinServicio(); else toast('Eris app no responde ahora: mostrando lo último cargado'); return; }
       usoAhora(); pedirPersistencia();
       var primera = !datos; datos = d; pintar(); sincronizarClientes();
       if (primera) { comprobarAvisos(); cargarInfo(); cargarPedidos(); cargarComercial(); }
@@ -1659,7 +1659,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       }).catch(function(){ listo(); sinConexion(); });
     } else listo();
   });
-  function sinConexion(e){ toast(e && e.servidor ? 'Euxenos no responde ahora mismo. Inténtalo en un minuto' : 'Sin conexión, inténtalo de nuevo'); pintar(); }
+  function sinConexion(e){ toast(e && e.servidor ? 'Eris app no responde ahora mismo. Inténtalo en un minuto' : 'Sin conexión, inténtalo de nuevo'); pintar(); }
   function confirmar(t){ try { return window.confirm(t); } catch (e) { return true; } }
 
   function accionCita(a, ref){
@@ -2211,7 +2211,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   function plataformaBio(){ if (!bioPosible || !PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) return Promise.resolve(false); return PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(function(){ return false; }); }
   function activarBio(usuario, hecho){
     navigator.credentials.create({ publicKey: {
-      challenge: azar(32), rp: { name: 'Euxenos' },
+      challenge: azar(32), rp: { name: 'Eris app' },
       user: { id: azar(16), name: usuario || 'euxenos', displayName: usuario || 'Euxenos' },
       pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
       authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' },
@@ -2243,7 +2243,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   }
   function pantallaBloqueo(){
     ocultarFlotantes();
-    app.innerHTML = '<div class="login"><img class="logo" src="icono-192.png" alt=""><h1>Euxenos</h1><p class="sub">Desbloquea para ver tu negocio</p>'
+    app.innerHTML = '<div class="login"><img class="logo" src="icono-192.png" alt=""><h1>Eris app</h1><p class="sub">Desbloquea para ver tu negocio</p>'
       + '<button class="btn b-ok ancho" id="bioEntrar">' + BIO_ICONO + ' Entrar con Face ID o huella</button>'
       + '<p class="error" id="errorBio"></p><button class="btn b-otra ancho" id="bioClave" style="margin-top:6px">Entrar con contraseña</button></div>';
     var el = document.getElementById('errorBio');
@@ -2256,7 +2256,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   function ocultarFlotantes(){ document.getElementById('tabbar').classList.add('oculto'); document.body.classList.remove('tete', 'cli'); document.getElementById('nueva').classList.add('oculto'); lanzador.classList.add('oculto'); cerrarEris(); lanzador.classList.add('oculto'); }
   function pantallaLogin(aviso){
     ocultarFlotantes();
-    app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Euxenos</h1><p class="sub">Entra con tu usuario o tu correo para gestionar tu negocio</p>'
+    app.innerHTML = '<form class="login" id="formLogin" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Eris app</h1><p class="sub">Entra con tu usuario o tu correo para gestionar tu negocio</p>'
       + '<label class="campo"><span>Usuario o correo</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false"></label>'
       + '<label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>'
       + '<p class="error" id="errorLogin">' + esc(aviso || '') + '</p><button class="btn b-ok ancho" type="submit">Entrar</button>'
@@ -2280,13 +2280,13 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   }
   function pantallaAlta(nombre, sugerido, nn, kk){
     ocultarFlotantes();
-    app.innerHTML = '<form class="login" id="formAlta" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Activa tu cuenta</h1><p class="sub">' + esc(nombre || 'Tu negocio') + ': crea tu acceso a Euxenos con un usuario, tu correo y una contraseña</p>'
+    app.innerHTML = '<form class="login" id="formAlta" autocomplete="on"><img class="logo" src="icono-192.png" alt=""><h1>Activa tu cuenta</h1><p class="sub">' + esc(nombre || 'Tu negocio') + ': crea tu acceso a la Eris app con un usuario, tu correo y una contraseña</p>'
       + '<label class="campo"><span>Usuario (para entrar)</span><input name="usuario" type="text" autocomplete="username" required autocapitalize="none" spellcheck="false" placeholder="por ejemplo: peluqueria.ana"></label>'
       + '<label class="campo"><span>Correo electrónico</span><input name="correo" type="email" inputmode="email" autocomplete="email" required autocapitalize="none" value="' + esc(sugerido || '') + '"></label>'
       + '<label class="campo"><span>Contraseña (mínimo 8 caracteres)</span><input name="clave1" type="password" autocomplete="new-password" required minlength="8"></label>'
       + '<label class="campo"><span>Repite la contraseña</span><input name="clave2" type="password" autocomplete="new-password" required minlength="8"></label>'
       + '<p class="error" id="errorAlta"></p><button class="btn b-ok ancho" type="submit">Activar y entrar</button>'
-      + '<p class="instalar">A partir de ahora entrarás en la app Euxenos (o en euxenos.com/panel) con este usuario o correo y tu contraseña, desde cualquier móvil u ordenador.</p></form>';
+      + '<p class="instalar">A partir de ahora entrarás en la Eris app (o en euxenos.com/panel) con este usuario o correo y tu contraseña, desde cualquier móvil u ordenador.</p></form>';
     var f = document.getElementById('formAlta');
     f.addEventListener('submit', function(e){
       e.preventDefault();
@@ -2355,7 +2355,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       if (r && r.activar) pantallaAlta(r.nombre, r.sugerido, nn, kk);
       else if (r && r.activado) { if (n && k) cargar(); else pantallaLogin('Tu cuenta ya está activada: entra con tu usuario o correo y tu contraseña.'); }
       else pantallaLogin('Este enlace no es válido o ya ha caducado. Entra con tu usuario y contraseña, o pide uno nuevo a Euxenos (contacto@euxenos.com).');
-    }).catch(function(e){ pantallaLogin(e && e.servidor ? 'Euxenos no responde ahora mismo. Inténtalo en un minuto.' : 'Sin conexión, inténtalo de nuevo.'); });
+    }).catch(function(e){ pantallaLogin(e && e.servidor ? 'Eris app no responde ahora mismo. Inténtalo en un minuto.' : 'Sin conexión, inténtalo de nuevo.'); });
   }
   var formA = document.getElementById('formAcceso');
   var modoAcceso = 'clave';
@@ -2419,9 +2419,9 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (estadoAvisos === 'cargando') h = '<p>Comprobando los avisos de este dispositivo…</p>';
     else if (estadoAvisos === 'activo') { activo = true; h = '<p><b>🔔 Avisos activados.</b> Te avisamos al momento de cada petición de cita nueva y 15 minutos antes de cada cita.</p><div class="acciones"><button class="btn b-otra" data-avisos="probar">Enviar un aviso de prueba</button><button class="btn b-no" data-avisos="quitar">Desactivar</button></div>'; }
     else if (estadoAvisos === 'inactivo') h = '<p><b>🔕 Avisos desactivados.</b> Actívalos y te avisaremos al momento de cada petición de cita nueva y 15 minutos antes de cada cita, aunque tengas la app cerrada.</p><div class="acciones"><button class="btn b-ok" data-avisos="activar">Activar avisos</button></div>';
-    else if (estadoAvisos === 'ios') h = '<p><b>🔔 Avisos en iPhone:</b> primero añade Euxenos a la pantalla de inicio (botón Compartir → «Añadir a pantalla de inicio»), ábrela desde ese icono y vuelve aquí para activar los avisos.</p>';
-    else if (estadoAvisos === 'bloqueado') h = '<p><b>🔕 Los avisos están bloqueados</b> en este dispositivo. Para recibirlos, permite las notificaciones de Euxenos en los ajustes del móvil o del navegador y vuelve a abrirla.</p>';
-    else h = '<p><b>🔕 Este navegador no admite avisos.</b> Abre Euxenos con Chrome (Android u ordenador) o, en iPhone, desde el icono de la pantalla de inicio.</p>';
+    else if (estadoAvisos === 'ios') h = '<p><b>🔔 Avisos en iPhone:</b> primero añade la Eris app a la pantalla de inicio (botón Compartir → «Añadir a pantalla de inicio»), ábrela desde ese icono y vuelve aquí para activar los avisos.</p>';
+    else if (estadoAvisos === 'bloqueado') h = '<p><b>🔕 Los avisos están bloqueados</b> en este dispositivo. Para recibirlos, permite las notificaciones de la Eris app en los ajustes del móvil o del navegador y vuelve a abrirla.</p>';
+    else h = '<p><b>🔕 Este navegador no admite avisos.</b> Abre la Eris app con Chrome (Android u ordenador) o, en iPhone, desde el icono de la pantalla de inicio.</p>';
     var aj = document.getElementById('avisosAjustes');
     if (aj) { aj.className = 'caja' + (activo ? ' activo' : ''); aj.innerHTML = h; }
     // En «Hoy» solo aparece la invitación mientras no estén activados (y si no ha dicho «Ahora no»)
@@ -2484,11 +2484,11 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   // ---- Instalar la app ----
   var promptInstalar = null;
   window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); promptInstalar = e; pintarInstalar(); });
-  window.addEventListener('appinstalled', function(){ promptInstalar = null; instalada = true; pintarInstalar(); toast('Euxenos instalada'); });
+  window.addEventListener('appinstalled', function(){ promptInstalar = null; instalada = true; pintarInstalar(); toast('Eris app instalada'); });
   function pintarInstalar(){
     var h = '';
     if (instalada) h = '';
-    else if (promptInstalar) h = '<h2>App</h2><button class="btn b-otra ancho" type="button" data-instalar>📲 Instalar Euxenos en este dispositivo</button>';
+    else if (promptInstalar) h = '<h2>App</h2><button class="btn b-otra ancho" type="button" data-instalar>📲 Instalar Eris app en este dispositivo</button>';
     else if (esIOS) h = '<p class="instalar"><b>Tenla como una app:</b> pulsa el botón Compartir de Safari y luego «Añadir a pantalla de inicio».</p>';
     else h = '<p class="instalar"><b>Tenla como una app:</b> abre el menú del navegador (⋮) y pulsa «Instalar aplicación» o «Añadir a pantalla de inicio».</p>';
     document.querySelectorAll('.instalar-app').forEach(function(el){ el.innerHTML = h; });

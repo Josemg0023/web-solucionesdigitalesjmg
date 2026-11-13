@@ -1,7 +1,7 @@
 {
   "id": "/panel/",
-  "name": "Euxenos",
-  "short_name": "Euxenos",
+  "name": "Eris app",
+  "short_name": "Eris app",
   "description": "Gestiona tu negocio con Eris: citas, catálogo, horario, cierres y pendientes.",
   "start_url": "/panel/",
   "scope": "/panel/",
