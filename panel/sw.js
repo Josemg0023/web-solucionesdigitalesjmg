@@ -1,4 +1,4 @@
-/* Euxenos – service worker: solo avisos (no guarda nada en caché) */
+/* Euxenos – service worker del panel: avisos, y página «Sin conexión» si no hay internet (no guarda datos de nadie) */
 self.addEventListener('install', function () { self.skipWaiting(); });
 self.addEventListener('activate', function (e) { e.waitUntil(self.clients.claim()); });
 
@@ -31,5 +31,24 @@ self.addEventListener('notificationclick', function (e) {
       }
     }
     return self.clients.openWindow(url);
+  }));
+});
+
+// Sin internet al abrir el panel: se enseña la misma página «Sin conexión» de la web
+// (la guarda /sw.js al visitar euxenos.com). Si no está guardada, el navegador muestra su aviso de siempre.
+function limpia(resp) {
+  if (!resp || !resp.redirected) return resp;
+  return resp.blob().then(function (b) {
+    return new Response(b, { status: 200, statusText: 'OK', headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  });
+}
+self.addEventListener('fetch', function (e) {
+  var r = e.request;
+  if (r.method !== 'GET' || r.mode !== 'navigate') return;
+  e.respondWith(fetch(r).catch(function (err) {
+    return caches.match('/offline.html').then(function (c) {
+      if (!c) throw err;
+      return limpia(c);
+    });
   }));
 });

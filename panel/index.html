@@ -688,7 +688,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   function svg(path){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
   function post(url, cuerpo){
     // text/plain evita la comprobación previa del navegador (CORS)
-    return fetch(url, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=UTF-8' }, body: JSON.stringify(cuerpo), cache:'no-store' }).then(function(r){ return r.json(); });
+    return fetch(url, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=UTF-8' }, body: JSON.stringify(cuerpo), cache:'no-store' }).then(function(r){ return r.json().catch(function(){ var e = new Error('servidor'); e.servidor = true; throw e; }); });
   }
   function llamar(cuerpo){ return post(API, cuerpo); }
   function llamarApp(accion, d){ return post(API_APP, { n:n, k:k, accion:accion, datos:d || {} }); }
@@ -1659,7 +1659,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       }).catch(function(){ listo(); sinConexion(); });
     } else listo();
   });
-  function sinConexion(){ toast('Sin conexión, inténtalo de nuevo'); pintar(); }
+  function sinConexion(e){ toast(e && e.servidor ? 'Euxenos no responde ahora mismo. Inténtalo en un minuto' : 'Sin conexión, inténtalo de nuevo'); pintar(); }
   function confirmar(t){ try { return window.confirm(t); } catch (e) { return true; } }
 
   function accionCita(a, ref){
@@ -2354,8 +2354,8 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     llamar({ n:nn, k:kk, accion:'ver' }).then(function(r){
       if (r && r.activar) pantallaAlta(r.nombre, r.sugerido, nn, kk);
       else if (r && r.activado) { if (n && k) cargar(); else pantallaLogin('Tu cuenta ya está activada: entra con tu usuario o correo y tu contraseña.'); }
-      else pantallaLogin('Este enlace no es válido.');
-    }).catch(function(){ pantallaLogin('Sin conexión, inténtalo de nuevo.'); });
+      else pantallaLogin('Este enlace no es válido o ya ha caducado. Entra con tu usuario y contraseña, o pide uno nuevo a Euxenos (contacto@euxenos.com).');
+    }).catch(function(e){ pantallaLogin(e && e.servidor ? 'Euxenos no responde ahora mismo. Inténtalo en un minuto.' : 'Sin conexión, inténtalo de nuevo.'); });
   }
   var formA = document.getElementById('formAcceso');
   var modoAcceso = 'clave';
