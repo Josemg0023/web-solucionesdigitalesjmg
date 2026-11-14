@@ -661,6 +661,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     comercial: { t:'Ventas', m:'Ventas', i:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>' },
     bandeja: { t:'Mensajes', i:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.1A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/>' },
     numeros: { t:'Números', i:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>' },
+    modulos: { t:'Clientes y planes', i:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/>' },
     presupuestos: { t:'Presupuestos', i:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>' },
     pedidos: { t:'Pedidos', i:'<path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>' },
     hoy: { t:'Hoy', i:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><circle cx="12" cy="15" r="2"/>' },
@@ -1549,7 +1550,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
 
   function pintarMenu(){
     var pc = porConfirmar().length, pp = pendientesAbiertos().length;
-    var orden = esTete() ? ['hoy','comercial','bandeja','numeros','pendientes','memoria','|','ajustes','cuenta'] : ['hoy','empresa','calendario','citas'].concat(pedidosOn() ? ['pedidos'] : []).concat(presupuestosOn() ? ['presupuestos'] : []).concat(['clientes','pendientes','|','ajustes','cuenta']);
+    var orden = esTete() ? ['hoy','comercial','bandeja','numeros','pendientes','memoria','modulos','|','ajustes','cuenta'] : ['hoy','empresa','calendario','citas'].concat(pedidosOn() ? ['pedidos'] : []).concat(presupuestosOn() ? ['presupuestos'] : []).concat(['clientes','pendientes','|','ajustes','cuenta']);
     // 12/11 (Tete: «hay cosas que se repiten»): el menú ☰ solo enseña lo que no está ya en la barra de abajo.
     var enBarra = itemsTabbar().map(function(i){ return i[0]; });
     orden = orden.filter(function(v){ return enBarra.indexOf(v) < 0; });
@@ -1568,13 +1569,14 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (vista === 'comercial' && !esDueno) vista = 'hoy';
     if (esTete() && SOLO_DEMO.indexOf(vista) >= 0) vista = 'hoy';
     if ((vista === 'numeros' || vista === 'memoria' || vista === 'bandeja') && !esTete()) vista = 'hoy';
-    var cuerpo = { bandeja: vistaBandeja, empresa: vistaEmpresa, memoria: vistaMemoria, comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, presupuestos: vistaPresupuestos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
+    var cuerpo = { bandeja: vistaBandeja, empresa: vistaEmpresa, memoria: vistaMemoria, comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, presupuestos: vistaPresupuestos, modulos: vistaModulos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
     if (vista === 'pedidos' && !pedidosOn() && pedidos) vista = 'hoy';
     if (vista === 'presupuestos' && presu && !presupuestosOn()) vista = 'hoy';
+    if (vista === 'modulos' && !esTete()) vista = 'hoy';
     var y = window.scrollY, hayAviso = porConfirmar().length > 0 || (pedidos || []).some(function(p){ return p.estado === 'nuevo'; });
     app.innerHTML = '<header><div class="cab">'
       + '<button class="icono-btn" id="abrirMenu" aria-label="Abrir el menú">' + svg('<path d="M4 7h16M4 12h16M4 17h16"/>') + (hayAviso && vista !== 'hoy' && vista !== 'citas' ? '<span class="bolita"></span>' : '') + '</button>'
-      + '<div class="titulo"><small>' + esc(vista === 'comercial' || vista === 'numeros' || vista === 'memoria' || vista === 'bandeja' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
+      + '<div class="titulo"><small>' + esc(vista === 'comercial' || vista === 'numeros' || vista === 'memoria' || vista === 'bandeja' || vista === 'modulos' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
       + '<button class="icono-btn" id="recargar" aria-label="Actualizar">' + svg('<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>') + '</button>'
       + '</div></header><main>' + cuerpo() + '</main>';
     document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); if (vista === 'bandeja') cargarBandeja(); });
@@ -1609,6 +1611,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (v === 'comercial' || v === 'memoria' || (v === 'pendientes' && esTete())) cargarComercial();
     if (v === 'bandeja') cargarBandeja();
     if (v === 'presupuestos') cargarPresu();
+    if (v === 'modulos') cargarModulos();
   }
 
   // === Presupuestos (14/11): módulo de Mi Eris, pack aparte. Se activa por negocio añadiendo una fila en la tabla n8n «Eris presupuestos» (062XPqKS0ppWkWjy).
@@ -1849,6 +1852,32 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     else if (a === 'mail') { window.location.href = 'mailto:' + encodeURIComponent(prDoc.cliente.email) + '?subject=' + encodeURIComponent('Presupuesto ' + prCodigo(prDoc)) + '&body=' + encodeURIComponent(prMensaje(prDoc)); }
     else if (a === 'estado') { var nuevo = JSON.parse(JSON.stringify(prDoc)); nuevo.estado = b.getAttribute('data-e'); if (nuevo.estado === 'aceptado') nuevo.aceptado = new Date().toISOString(); prGuardarDocs(prSustituir(nuevo), 'Anotado', function(){ prDoc = nuevo; }); }
     else if (a === 'duplicar') { var cp = JSON.parse(JSON.stringify(prDoc)), nu = prNuevoDoc(); nu.cliente = cp.cliente; nu.trabajo = cp.trabajo; nu.partidas = cp.partidas; nu.condiciones = cp.condiciones; nu.validez = cp.validez; prDoc = nu; prVista = 'editar'; pintar(); }
+  });
+
+  // === Clientes y planes (14/11, solo Tete): activar o quitar el módulo de presupuestos a cada negocio. Flujo n8n «Euxenos – Módulos por cliente» (0frlgP66fiTp6ll7).
+  // Quitarlo no borra nada: la fila de ese negocio pasa a llamarse «baja:negocio» y se recupera al volver a activarlo.
+  var API_MOD = 'https://erisproject.app.n8n.cloud/webhook/eris-modulos', modulos = null, modOcupado = false;
+  function cargarModulos(){
+    if (!n || !k || !esTete()) return;
+    post(API_MOD, { n:n, k:k, accion:'modulos-ver' }).then(function(r){ if (r && r.ok) { modulos = r.negocios || []; if (datos && vista === 'modulos' && !algoAbierto()) pintar(); } }).catch(function(){});
+  }
+  function vistaModulos(){
+    if (!modulos) return '<p class="vacio" style="margin-top:16px">Cargando negocios…</p>';
+    var h = '<p class="ayuda" style="margin:14px 0 0">Activa o quita módulos a cada cliente. Ahora mismo: <b>Presupuestos</b> (pack aparte).</p><h2>Negocios <span class="n">' + modulos.length + '</span></h2>';
+    return h + modulos.map(function(x){
+      return '<div class="fila"><span class="txt"><b>' + esc(x.nombre) + '</b><span>' + esc(x.negocio) + (x.presupuestos_baja && !x.presupuestos ? ' · tuvo presupuestos (se guardan)' : '') + '</span></span><button class="btn ' + (x.presupuestos ? 'b-ok' : 'b-otra') + '" data-mod="' + esc(x.negocio) + '" data-on="' + (x.presupuestos ? '1' : '0') + '" style="min-width:120px">' + (x.presupuestos ? 'Presupuestos ✓' : 'Presupuestos') + '</button></div>';
+    }).join('');
+  }
+  app.addEventListener('click', function(e){
+    var b = e.target.closest('[data-mod]'); if (!b || modOcupado) return;
+    var neg = b.getAttribute('data-mod'), activar = b.getAttribute('data-on') !== '1';
+    if (!activar && !confirmar('¿Quitar los presupuestos a «' + neg + '»? Sus datos se guardan por si vuelves a activarlo.')) return;
+    modOcupado = true; b.disabled = true;
+    post(API_MOD, { n:n, k:k, accion:'modulos-activar', datos:{ negocio: neg, activo: activar } }).then(function(r){
+      modOcupado = false;
+      if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido cambiar'); pintar(); return; }
+      modulos = r.negocios || modulos; toast(activar ? 'Presupuestos activados' : 'Presupuestos quitados'); pintar();
+    }).catch(function(x){ modOcupado = false; sinConexion(x); });
   });
 
   // ---- Menú ----
