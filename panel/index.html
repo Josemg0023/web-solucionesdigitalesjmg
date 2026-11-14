@@ -374,6 +374,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .num-tabla b{color:var(--claro);text-align:right;font-weight:600}
 .num-tabla .t{color:var(--claro);font-weight:700}
 .num-plan{background:rgba(255,255,255,.035);border-radius:14px;padding:12px 14px;margin-top:10px}
+.num-fijos{margin-top:12px;font-size:.88rem;color:var(--apagado)}
+.num-fijos summary{cursor:pointer}
 .num-plan-c{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
 .num-plan-c b{color:var(--claro);font-size:1rem}
 .num-plan-c span{color:var(--apagado);font-size:.8rem}
@@ -381,6 +383,7 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .num-total h3{margin:0 0 8px;font-size:1.25rem;color:var(--claro)}
 .num-total .num-tabla{font-size:1.08rem;gap:10px 12px}
 .num-total .num-tabla b{font-size:1.2rem}
+.num-plan .num-tabla b.g{color:var(--verde-luz);font-weight:700}
 .num-total .num-tabla b.g{font-size:1.6rem;font-weight:800;color:var(--verde-luz)}
 /* === Hoy de Tete (09/11): pantalla de inicio de la cuenta de Tete (Euxenos). Para quitarla: borrar este bloque y el de script «Hoy de Tete (09/11)». */
 .semaforo{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.035);border-radius:14px;padding:13px 14px;margin:6px 0 4px}
@@ -1049,40 +1052,68 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + '<button class="btn b-ok ancho" type="submit">Guardar</button></form>';
     return h;
   }
-  // === Números (08/11): cuánto le queda a Tete al mes según sus clientes. Datos de la bóveda (packs 04/11, gastos 05/11).
-  // Voz si gastan todos los minutos; Stripe aprox. 1,5 % + 0,25 €; autónomo = tarifa plana con MEI (88,64 €) e IVA 21 % dentro del precio.
-  var NUM = { b: 3, c: 0, aut: false, abierto: false };
+  // === Números (08/11): cuánto le queda a Tete al mes según sus clientes.
+  // 14/11 (Tete: «añade todos los gastos que se generan y dame números exactos al céntimo»): cada gasto por cliente, línea a línea.
+  // Supuestos (bóveda, Packs y precios → «Números del panel»): 1 $ = 0,89 € (EUR/USD 1,12, nov. 2026); voz ElevenLabs 0,08 $/min + IA de la voz 0,0018 €/min;
+  // número de Zadarma 2 $/mes; IA de los chats (Gemini Flash-Lite de pago) ≈ 450 mensajes/mes = 0,37 €; n8n ≈ 500 ejecuciones/mes a precio de n8n Pro (60 € / 10.000) = 3 €;
+  // Stripe 1,5 % + 0,25 € por cobro; autónomo = tarifa plana con MEI (88,64 €) e IVA 21 % dentro del precio. Sin IRPF.
+  var NUM = { b: 3, c: 0, aut: false, abierto: false, uso: 100 };
   var NUM_FIJOS = 18 + 22 + 6 + 1.75 + 1, NUM_AUTON = 88.64;
-  var NUM_PACKS = { b: { mes: 49, voz: 10, alta: 149 }, c: { mes: 79, voz: 20, alta: 349 } };
-  // 12/11 (Tete): las altas (pago único, Packs y precios 09/11) se cuentan aparte: lo que dejan una vez, sin gastos de voz.
-  function numAlta(p, aut){ return (aut ? p.alta / 1.21 : p.alta) - (p.alta * 0.015 + 0.25); }
-  function numQueda(p, aut){ return (aut ? p.mes / 1.21 : p.mes) - p.voz - (p.mes * 0.015 + 0.25); }
-  function numEur(x){ var v = Math.round(x); return (v === 0 ? 0 : v).toLocaleString('es-ES') + ' €'; }
+  var NUM_PACKS = { b: { nombre: 'Básico', mes: 49, alta: 149, min: 100 }, c: { nombre: 'Completo', mes: 79, alta: 349, min: 200 } };
+  var NUM_G = { usd: 0.89, vozMin: 0.08, iaVozMin: 0.0018, numero: 2, iaChats: 0.37, n8n: 3 };
+  function numR(x){ var v = Math.round(x * 100) / 100; return v === 0 ? 0 : v; }
+  function numStripe(x){ return x * 0.015 + 0.25; }
+  function numSuma(g){ return numR(g.reduce(function(s, x){ return s + x[1]; }, 0)); }
+  function numGastosMes(p, aut){
+    var min = Math.round(p.min * NUM.uso / 100);
+    var g = [
+      ['Voz de Eris al teléfono (' + min + ' min)', min * (NUM_G.vozMin * NUM_G.usd + NUM_G.iaVozMin)],
+      ['Número de teléfono (Zadarma)', NUM_G.numero * NUM_G.usd],
+      ['IA de los chats (Gemini)', NUM_G.iaChats],
+      ['n8n (unas 500 ejecuciones)', NUM_G.n8n],
+      ['Comisión de Stripe', numStripe(p.mes)]
+    ];
+    if (aut) g.push(['IVA (21 %, va a Hacienda)', p.mes * 21 / 121]);
+    return g.map(function(x){ return [x[0], numR(x[1])]; });
+  }
+  function numGastosAlta(p, aut){
+    var g = [['Comisión de Stripe', numR(numStripe(p.alta))]];
+    if (aut) g.push(['IVA (21 %, va a Hacienda)', numR(p.alta * 21 / 121)]);
+    return g;
+  }
+  function numAlta(p, aut){ return numR(p.alta - numSuma(numGastosAlta(p, aut))); }
+  function numQueda(p, aut){ return numR(p.mes - numSuma(numGastosMes(p, aut))); }
+  function numEur(x){ return numR(x).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
   function numCalc(){
     var qb = numQueda(NUM_PACKS.b, NUM.aut), qc = numQueda(NUM_PACKS.c, NUM.aut);
-    var fijos = NUM_FIJOS + (NUM.aut ? NUM_AUTON : 0);
-    var ab = numAlta(NUM_PACKS.b, NUM.aut), ac = numAlta(NUM_PACKS.c, NUM.aut), altas = NUM.b * ab + NUM.c * ac;
-    return { ab: ab, ac: ac, altas: altas, qb: qb, qc: qc, fijos: fijos, cobras: NUM.b * 49 + NUM.c * 79, gana: NUM.b * qb + NUM.c * qc - fijos, minimo: Math.ceil(fijos / qb) };
+    var fijos = numR(NUM_FIJOS + (NUM.aut ? NUM_AUTON : 0));
+    var ab = numAlta(NUM_PACKS.b, NUM.aut), ac = numAlta(NUM_PACKS.c, NUM.aut), altas = numR(NUM.b * ab + NUM.c * ac);
+    return { ab: ab, ac: ac, altas: altas, qb: qb, qc: qc, fijos: fijos, cobras: NUM.b * NUM_PACKS.b.mes + NUM.c * NUM_PACKS.c.mes, gana: numR(NUM.b * qb + NUM.c * qc - fijos), minimo: Math.ceil(fijos / qb) };
   }
   function numDentro(){
     var r = numCalc();
     return '<div class="num-res"><span class="num-big' + (r.gana < 0 ? ' neg' : '') + '">' + numEur(r.gana) + '</span><span>te quedan al mes</span></div>'
       + '<div class="num-tabla"><span>Cobras de cuotas</span><b>' + numEur(r.cobras) + '</b>'
+      + '<span>Gastos de estos clientes</span><b>' + numEur(-(r.cobras - (NUM.b * r.qb + NUM.c * r.qc))) + '</b>'
       + '<span>Gastos fijos' + (NUM.aut ? ' (con autónomos)' : '') + '</span><b>' + numEur(-r.fijos) + '</b>'
       + '<span class="t">Para no perder dinero</span><b>' + r.minimo + ' Básicos</b></div>'
-      // 13/11 (Tete): beneficio de cada plan, alta + mensualidad, y lo que deja cada mes que el cliente sigue.
       + '<h2 style="margin-top:18px">Lo que te deja cada cliente</h2>'
-      + numPlan('Básico', 149, 49, r.ab, r.qb) + numPlan('Completo', 349, 79, r.ac, r.qc)
-      // 13/11 (Tete): «Con estos clientes» más grande.
+      + numPlan(NUM_PACKS.b, r.ab, r.qb) + numPlan(NUM_PACKS.c, r.ac, r.qc)
       + '<div class="num-total"><h3>Con estos clientes</h3><div class="num-tabla"><span>Altas de estos clientes</span><b>' + numEur(r.altas) + '</b>'
       + '<span class="t">El primer mes te quedan</span><b class="g">' + numEur(r.gana + r.altas) + '</b>'
-      + '<span>Después, cada mes</span><b>' + numEur(r.gana) + '</b></div></div>';
+      + '<span>Después, cada mes</span><b>' + numEur(r.gana) + '</b></div></div>'
+      + '<details class="num-fijos"><summary>Gastos fijos al mes</summary><div class="num-tabla">'
+      + '<span>Claude Pro</span><b>18,00 €</b><span>n8n Starter</span><b>22,00 €</b><span>ElevenLabs Starter</span><b>6,00 €</b><span>Zadarma (919)</span><b>1,75 €</b><span>Dominio euxenos.com</span><b>1,00 €</b>'
+      + (NUM.aut ? '<span>Cuota de autónomos</span><b>' + numEur(NUM_AUTON) + '</b>' : '') + '<span class="t">Total</span><b>' + numEur(r.fijos) + '</b></div></details>';
   }
-  function numPlan(nombre, alta, mes, a, q){
-    return '<div class="num-plan"><div class="num-plan-c"><b>' + nombre + '</b><span>' + alta + ' € de alta + ' + mes + ' €/mes</span></div>'
-      + '<div class="num-tabla"><span>El alta te deja (una vez)</span><b>' + numEur(a) + '</b>'
-      + '<span>Cada mes que se mantiene</span><b>' + numEur(q) + '</b>'
-      + '<span class="t">Primer mes (alta + cuota)</span><b>' + numEur(a + q) + '</b>'
+  function numLineas(g){ return g.map(function(x){ return '<span>− ' + esc(x[0]) + '</span><b>' + numEur(-x[1]) + '</b>'; }).join(''); }
+  function numPlan(p, a, q){
+    return '<div class="num-plan"><div class="num-plan-c"><b>' + p.nombre + '</b><span>' + p.alta + ' € de alta + ' + p.mes + ' €/mes</span></div>'
+      + '<div class="num-tabla"><span class="t">Alta (una vez)</span><b>' + numEur(p.alta) + '</b>' + numLineas(numGastosAlta(p, NUM.aut))
+      + '<span class="t">El alta te deja</span><b class="g">' + numEur(a) + '</b>'
+      + '<span class="t" style="margin-top:8px">Cuota del mes</span><b style="margin-top:8px">' + numEur(p.mes) + '</b>' + numLineas(numGastosMes(p, NUM.aut))
+      + '<span class="t">Cada mes te deja</span><b class="g">' + numEur(q) + '</b>'
+      + '<span style="margin-top:8px">Primer mes (alta + cuota)</span><b style="margin-top:8px">' + numEur(a + q) + '</b>'
       + '<span>A los 6 meses</span><b>' + numEur(a + 6 * q) + '</b>'
       + '<span class="t">Al año</span><b>' + numEur(a + 12 * q) + '</b></div></div>';
   }
@@ -1090,14 +1121,15 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     return '<details class="plegable"' + (abierto || NUM.abierto ? ' open' : '') + ' data-numeros><summary><span>Números</span><span class="n">' + numEur(numCalc().gana) + '/mes</span></summary>'
       + '<div class="num-ctl"><div><label for="numB">Clientes en el Básico (49 €)</label><output data-num-o="b">' + NUM.b + '</output></div><input type="range" id="numB" data-num="b" min="0" max="40" value="' + NUM.b + '"></div>'
       + '<div class="num-ctl"><div><label for="numC">Clientes en el Completo (79 €)</label><output data-num-o="c">' + NUM.c + '</output></div><input type="range" id="numC" data-num="c" min="0" max="40" value="' + NUM.c + '"></div>'
+      + '<div class="num-ctl"><div><label for="numU">Minutos de voz que gastan</label><output data-num-o="uso">' + NUM.uso + ' %</output></div><input type="range" id="numU" data-num="uso" min="0" max="100" step="10" value="' + NUM.uso + '"></div>'
       + '<label class="interruptor"><input type="checkbox" id="numAut" data-num="aut"' + (NUM.aut ? ' checked' : '') + '> <span>Ya soy autónomo (cuota e IVA)</span></label>'
       + '<div data-num-dentro>' + numDentro() + '</div>'
-      + '<p class="ayuda" style="margin:12px 0 0">Cuenta que gastan todos sus minutos de voz. Las altas se cobran una vez, al contratar. No incluye IRPF ni minutos extra.</p></details>';
+      + '<p class="ayuda" style="margin:12px 0 0">Cuenta cada gasto que genera un cliente: voz, número, IA, n8n, Stripe e IVA. La voz, la IA y n8n son lo que cuestan con el uso que pongas; el dólar, a 0,89 €. No incluye IRPF ni minutos extra.</p></details>';
   }
   document.addEventListener('input', function(e){
     var el = e.target, c = el && el.getAttribute && el.getAttribute('data-num'); if (!c) return;
     if (c === 'aut') NUM.aut = el.checked; else NUM[c] = +el.value;
-    var o = document.querySelector('[data-num-o="' + c + '"]'); if (o) o.textContent = el.value;
+    var o = document.querySelector('[data-num-o="' + c + '"]'); if (o) o.textContent = el.value + (c === 'uso' ? ' %' : '');
     var d = document.querySelector('[data-num-dentro]'); if (d) d.innerHTML = numDentro();
     var s = document.querySelector('[data-numeros] summary .n'); if (s) s.textContent = numEur(numCalc().gana) + '/mes';
   });
