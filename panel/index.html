@@ -374,6 +374,8 @@ h2 .n{background:none;border:0;padding:0;color:var(--tenue);font-size:.82rem;fon
 .num-tabla b{color:var(--claro);text-align:right;font-weight:600}
 .num-tabla .t{color:var(--claro);font-weight:700}
 .num-plan{background:rgba(255,255,255,.035);border-radius:14px;padding:12px 14px;margin-top:10px}
+/* 14/11 (Tete: «hay que hacerlo también para PC»): en pantallas anchas, Números más ancho y los dos packs lado a lado. */
+@media (min-width:900px){main:has([data-numeros]){max-width:1040px}[data-numeros] .num-planes{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}[data-numeros] .num-planes .num-plan{margin-top:10px}[data-numeros] .num-ctl,[data-num-dentro]>.num-tabla{max-width:620px}}
 .num-fijos{margin-top:12px;font-size:.88rem;color:var(--apagado)}
 .num-fijos summary{cursor:pointer}
 .num-plan-c{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -1098,7 +1100,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + '<span>Gastos fijos' + (NUM.aut ? ' (con autónomos)' : '') + '</span><b>' + numEur(-r.fijos) + '</b>'
       + '<span class="t">Para no perder dinero</span><b>' + r.minimo + ' Básicos</b></div>'
       + '<h2 style="margin-top:18px">Lo que te deja cada cliente</h2>'
-      + numPlan(NUM_PACKS.b, r.ab, r.qb) + numPlan(NUM_PACKS.c, r.ac, r.qc)
+      + '<div class="num-planes">' + numPlan(NUM_PACKS.b, r.ab, r.qb) + numPlan(NUM_PACKS.c, r.ac, r.qc) + '</div>'
       + '<div class="num-total"><h3>Con estos clientes</h3><div class="num-tabla"><span>Altas de estos clientes</span><b>' + numEur(r.altas) + '</b>'
       + '<span class="t">El primer mes te quedan</span><b class="g">' + numEur(r.gana + r.altas) + '</b>'
       + '<span>Después, cada mes</span><b>' + numEur(r.gana) + '</b></div></div>'
