@@ -8,6 +8,7 @@
 //   META_APP_SECRET    «Clave secreta de la app» de Meta (Configuración de la app → Básica)
 //   META_IG_APP_SECRET «Clave secreta de la aplicación de Instagram» (caso de uso de Instagram → Configuración de la API)
 //   N8N_KEY            clave inventada; la misma que la credencial «Clave filtro Meta» de n8n
+//   DEMO_CODIGO        código para hablar con Eris en las demostraciones (14/11). Sin él, el chat de las demos queda cerrado.
 // El resto de la web se sirve igual que siempre.
 
 const N8N_URL = 'https://erisproject.app.n8n.cloud/webhook/eris-meta';
@@ -18,6 +19,8 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === '/api/meta') return meta(request, env, ctx, url);
+    if (url.pathname === '/api/demo-acceso') return demoAcceso(request, env);
+    if (url.pathname === '/api/demo-eris') return demoEris(request, env);
     return env.ASSETS.fetch(request);
   },
   // Vigía externo (05/11): si se cae n8n, el Vigía de dentro de n8n no puede avisar. Esto vive fuera.
@@ -253,4 +256,77 @@ async function firmaValida(crudo, cabecera, secreto) {
   let dif = 0;
   for (let i = 0; i < hex.length; i++) dif |= hex.charCodeAt(i) ^ dada.charCodeAt(i);
   return dif === 0;
+}
+
+// ── Código de las demostraciones (14/11, Tete) ──────────────────────────────
+// Las demos se ven libremente, pero para hablar con Eris hace falta el código (secreto DEMO_CODIGO).
+// El código nunca está en la web ni en el repositorio: lo comprueba este worker.
+// Si es correcto, deja una cookie firmada 30 días. El chat de las demos ya no llama a n8n directamente:
+// pasa por /api/demo-eris, que solo reenvía si la cookie es buena y el negocio es uno de los de demostración.
+const DEMO_NEGOCIOS = ['demo-peluqueria', 'demo-taller', 'demo-restaurante', 'demo-tatuajes'];
+const ERIS_NEGOCIO = 'https://erisproject.app.n8n.cloud/webhook/eris-negocio';
+const DEMO_DIAS = 30;
+const DEMO_INTENTOS = 8; // fallos por IP cada 15 min
+
+function jsonResp(obj, status, extra) {
+  return new Response(JSON.stringify(obj), { status: status || 200, headers: Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }, extra || {}) });
+}
+
+async function hmacHex(clave, texto) {
+  const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(clave), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const f = await crypto.subtle.sign('HMAC', k, new TextEncoder().encode(texto));
+  return [...new Uint8Array(f)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function iguales(a, b) {
+  if (a.length !== b.length) return false;
+  let d = 0; for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return d === 0;
+}
+
+async function demoTokenValido(request, env) {
+  if (!env.DEMO_CODIGO) return false;
+  const m = (request.headers.get('Cookie') || '').match(/(?:^|;\s*)demo_acceso=(\d+)\.([0-9a-f]{64})/);
+  if (!m || Number(m[1]) < Date.now()) return false;
+  return iguales(m[2], await hmacHex(env.DEMO_CODIGO, 'demo|' + m[1]));
+}
+
+async function demoFallos(ip, sumar) {
+  const clave = new Request('https://euxenos.com/__demo/fallos/' + encodeURIComponent(ip));
+  try {
+    const c = caches.default;
+    const r = await c.match(clave);
+    let n = r ? Number(await r.text()) || 0 : 0;
+    if (sumar) { n++; await c.put(clave, new Response(String(n), { headers: { 'Cache-Control': 'max-age=900' } })); }
+    return n;
+  } catch (e) { return 0; }
+}
+
+async function demoAcceso(request, env) {
+  if (request.method === 'GET') return jsonResp({ ok: await demoTokenValido(request, env) });
+  if (request.method !== 'POST') return jsonResp({ ok: false }, 405);
+  if (!env.DEMO_CODIGO) return jsonResp({ ok: false, motivo: 'Las demostraciones están cerradas ahora mismo.' }, 503);
+  const ip = request.headers.get('CF-Connecting-IP') || 'x';
+  if (await demoFallos(ip, false) >= DEMO_INTENTOS) return jsonResp({ ok: false, motivo: 'Demasiados intentos. Prueba otra vez dentro de un rato.' }, 429);
+  let j = null; try { j = await request.json(); } catch (e) {}
+  const codigo = String((j && j.codigo) || '').replace(/\s+/g, '').slice(0, 64);
+  const ok = codigo && iguales(await hmacHex('demo-comparar', codigo), await hmacHex('demo-comparar', String(env.DEMO_CODIGO).trim()));
+  if (!ok) { await demoFallos(ip, true); return jsonResp({ ok: false, motivo: 'Ese código no es correcto.' }, 403); }
+  const hasta = Date.now() + DEMO_DIAS * 86400000;
+  const cookie = 'demo_acceso=' + hasta + '.' + (await hmacHex(env.DEMO_CODIGO, 'demo|' + hasta)) + '; Max-Age=' + (DEMO_DIAS * 86400) + '; Path=/; Secure; HttpOnly; SameSite=Lax';
+  return jsonResp({ ok: true }, 200, { 'Set-Cookie': cookie });
+}
+
+async function demoEris(request, env) {
+  if (request.method !== 'POST') return jsonResp({ ok: false }, 405);
+  if (!(await demoTokenValido(request, env))) return jsonResp({ ok: false, sinAcceso: true, motivo: 'Hace falta el código de acceso.' }, 401);
+  let j = null; try { j = await request.json(); } catch (e) {}
+  if (!j || !DEMO_NEGOCIOS.includes(j.negocio)) return jsonResp({ ok: false, motivo: 'Negocio no válido.' }, 400);
+  const mensaje = String(j.mensaje || '').slice(0, 2000);
+  const sesion = String(j.sesion || '').replace(/[^\w-]/g, '').slice(0, 64);
+  if (!mensaje.trim() || !sesion) return jsonResp({ ok: false, motivo: 'Mensaje vacío.' }, 400);
+  try {
+    const r = await fetch(ERIS_NEGOCIO, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ negocio: j.negocio, sesion, mensaje, canal: 'web' }), signal: AbortSignal.timeout(65000) });
+    return new Response(await r.text(), { status: r.ok ? 200 : 502, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
+  } catch (e) { return jsonResp({ ok: false, motivo: 'Eris no ha podido contestar ahora mismo. Prueba otra vez en un momento.' }, 504); }
 }

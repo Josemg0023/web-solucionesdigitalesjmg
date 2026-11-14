@@ -69,6 +69,7 @@ nav.menu a:hover{color:var(--fg)}
 .msg.me{background:var(--c-user);color:var(--c-user-fg);align-self:flex-end;border-bottom-right-radius:0}
 .typing{align-self:flex-start;padding:2px 0}
 .nota{align-self:center;max-width:90%;font-size:13px;color:var(--c-muted);text-align:center;line-height:1.4}
+.nota a{color:inherit;text-decoration:underline}
 .send{display:flex;align-items:flex-end;background:var(--c-bot);border-top:1px solid var(--c-line)}
 .send:focus-within{box-shadow:inset 0 0 0 1.5px var(--c-user)}
 .send textarea{flex:1;min-width:0;height:84px;resize:none;border:0;outline:none;background:transparent;color:var(--c-fg);font:inherit;font-size:16px;line-height:1.5;padding:14px 16px}
@@ -270,23 +271,62 @@ footer a{color:var(--muted)}
   function handle(text){ return (D.real ? handleReal : handleScript)(text); }
 
   // Eris real: la misma que atiende a los negocios clientes (n8n «eris-negocio»), con los datos de este negocio de demostración.
-  var URL_ERIS = 'https://erisproject.app.n8n.cloud/webhook/eris-negocio';
+  // Desde el 14/11 pasa por euxenos.com/api/demo-eris, que solo deja hablar con Eris a quien tiene el código de acceso.
+  var URL_ERIS = '/api/demo-eris';
+  var acceso = false;
   var sesion = 'web-' + Math.random().toString(36).slice(2, 12);
   function limpiar(t){ return String(t || '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/^\s*[-*]\s+/gm, '• ').replace(/\*(.+?)\*/g, '$1').trim(); }
   function aviso(txt){ var d = document.createElement('div'); d.className = 'nota'; d.textContent = txt; log.appendChild(d); log.scrollTop = log.scrollHeight; }
+  function saludar(){
+    // Mismo arranque que el chat de euxenos.com: saludo y «¿Con quién hablo?». Es solo decoración; la conversación real la lleva Eris.
+    var h = new Date().getHours();
+    add('bot', (h < 13 ? '¡Buenos días!' : (h < 21 ? '¡Buenas tardes!' : '¡Buenas noches!')) + ' Te atiende Eris, de ' + D.nombre + ' 😊');
+    add('bot', '¿Con quién hablo?');
+  }
+  function pedirCodigo(){
+    add('bot', 'Esta demostración es privada. Escribe el código de acceso para hablar conmigo.');
+    input.placeholder = 'Código de acceso'; input.setAttribute('inputmode', 'numeric'); input.setAttribute('autocomplete', 'off');
+  }
+  function sinCodigo(txt){
+    var d = document.createElement('div'); d.className = 'nota';
+    d.appendChild(document.createTextNode(txt + ' Si quieres ver a Eris funcionando, '));
+    var a = document.createElement('a'); a.href = '/?eris=chat'; a.textContent = 'habla con ella en euxenos.com'; d.appendChild(a);
+    d.appendChild(document.createTextNode('.'));
+    log.appendChild(d); log.scrollTop = log.scrollHeight;
+  }
+  function probarCodigo(text){
+    add('me', '•'.repeat(Math.min(text.length, 12)));
+    busy = true;
+    var esp = typing();
+    fetch('/api/demo-acceso', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ codigo: text }) })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        esp.remove();
+        if (j && j.ok) {
+          acceso = true;
+          input.placeholder = 'Escribe tu mensaje…'; input.removeAttribute('inputmode');
+          aviso('Código correcto. Este móvil lo recordará 30 días.');
+          saludar();
+        } else sinCodigo((j && j.motivo) || 'Ese código no es correcto.');
+      })
+      .catch(function(){ esp.remove(); aviso('No se ha podido comprobar el código. Prueba otra vez en un momento.'); })
+      .then(function(){ busy = false; });
+  }
   function handleReal(text){
     if (busy) return;
     text = (text || '').trim();
     if (!text) return;
+    if (!acceso) return probarCodigo(text);
     add('me', text);
     busy = true;
     var esp = typing();
     var ctl = ('AbortController' in window) ? new AbortController() : null;
     var tm = setTimeout(function(){ if (ctl) ctl.abort(); }, 70000);
-    fetch(URL_ERIS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ negocio: D.negocio, sesion: sesion, mensaje: text, canal: 'web' }), signal: ctl ? ctl.signal : undefined })
+    fetch(URL_ERIS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ negocio: D.negocio, sesion: sesion, mensaje: text, canal: 'web' }), credentials: 'same-origin', signal: ctl ? ctl.signal : undefined })
       .then(function(r){ return r.json(); })
       .then(function(j){
         esp.remove();
+        if (j && j.sinAcceso) { acceso = false; pedirCodigo(); return; }
         if (j && j.ok && j.respuesta) { add('bot', limpiar(j.respuesta)); }
         else { aviso(j && j.pausada ? 'Esta conversación la lleva ahora una persona del negocio.' : ((j && j.motivo) || 'No se ha podido contestar. Prueba otra vez en un momento.')); }
       })
@@ -347,10 +387,11 @@ footer a{color:var(--muted)}
   });
 
   if (D.real) {
-    // Mismo arranque que el chat de euxenos.com: saludo y «¿Con quién hablo?». Es solo decoración; la conversación real la lleva Eris.
-    var h = new Date().getHours();
-    add('bot', (h < 13 ? '¡Buenos días!' : (h < 21 ? '¡Buenas tardes!' : '¡Buenas noches!')) + ' Te atiende Eris, de ' + D.nombre + ' 😊');
-    add('bot', '¿Con quién hablo?');
+    // Código de acceso (14/11, Tete): si este móvil ya lo puso, saluda; si no, lo pide.
+    fetch('/api/demo-acceso', { credentials: 'same-origin', cache: 'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(function(j){ acceso = !!(j && j.ok); if (acceso) saludar(); else pedirCodigo(); })
+      .catch(function(){ pedirCodigo(); });
   } else add('bot', D.greeting);
 })();
 </script>
