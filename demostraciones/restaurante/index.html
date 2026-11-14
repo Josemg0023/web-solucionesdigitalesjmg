@@ -8,13 +8,15 @@
 <meta name="theme-color" content="#16100D">
 <title>La Brasa · Demostración de Euxenos</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/vendor/fuentes/fuentes.css">
 <!-- Demostración (13/11): negocio inventado para enseñar cómo queda la web del Pack Completo. El chat es la Eris real (negocio demo-restaurante). Generada con gen_demos.py. -->
 <style>
-/* Diseño: banda de transparencia de Euxenos arriba; debajo, la web del negocio con el chat de Eris junto al titular. */
+/* Diseño: banda de transparencia de Euxenos arriba; debajo, la web del negocio con el chat de Eris junto al titular.
+   El chat de Eris tiene la estructura del de euxenos.com pero con los colores de cada web (variables --c-*). */
 :root{
   --bg:#16100D;--surface:#211814;--fg:#F3E6D6;--muted:#BFAE9C;--line:#3A2C24;--accent:#E2552C;--accent-fg:#16100D;--mark:#E2552C;
-  --c-bg:#211814;--c-bot:#2E211B;--c-fg:#F3E6D6;--c-user:#E2552C;--c-user-fg:#16100D;--c-line:#3A2C24;--c-muted:#A8957F;
-  --display:Rockwell,'Roboto Slab','Bookman Old Style',Georgia,serif;--body:'Trebuchet MS','Segoe UI',system-ui,sans-serif;--r:8px;--rb:6px;--ball:radial-gradient(circle at 50% 70%,#FFD08A,#E2552C 55%,#5A1E0E);
+  --c-bg:#211814;--c-bot:#2E211B;--c-fg:#F3E6D6;--c-user:#E2552C;--c-user-fg:#16100D;--c-line:#3A2C24;--c-muted:#A8957F;--c-head:linear-gradient(120deg,#5A1E0E,#E2552C);--c-head-fg:#FFF3E6;--c-head-sub:#FFD9BF;--r:8px;--rm:8px;--ball:radial-gradient(circle at 50% 70%,#FFD08A,#E2552C 55%,#5A1E0E);
+  --display:Rockwell,'Roboto Slab','Bookman Old Style',Georgia,serif;--body:'Trebuchet MS','Segoe UI',system-ui,sans-serif;--rb:6px;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55}
@@ -50,27 +52,30 @@ nav.menu a:hover{color:var(--fg)}
 .btn.alt:hover{border-color:var(--accent)}
 .small{margin-top:14px;font-size:14px;color:var(--muted)}
 
-.chat{background:var(--c-bg);color:var(--c-fg);border-radius:var(--r);border:1px solid var(--c-line);overflow:hidden;display:flex;flex-direction:column;height:540px;max-height:85vh;min-width:0}
-.chat-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--c-line)}
-.ball{width:34px;height:34px;border-radius:50%;flex:none;background:var(--ball);position:relative}
-.ball::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--c-bg);opacity:.55}
-.ball.think{animation:pulse 1s ease-in-out infinite}
-@keyframes pulse{50%{transform:scale(.86)}}
-.chat-head strong{display:block;font-family:var(--display);font-size:16px}
-.chat-head span{font-size:12.5px;color:var(--c-muted)}
-.log{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
-.msg{max-width:88%;padding:10px 14px;border-radius:14px;font-size:15px;line-height:1.45;overflow-wrap:anywhere;white-space:pre-line}
-.msg.bot{background:var(--c-bot);align-self:flex-start;border-bottom-left-radius:4px}
-.msg.me{background:var(--c-user);color:var(--c-user-fg);align-self:flex-end;border-bottom-right-radius:4px}
-.chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 12px}
-.chip{font:inherit;font-size:14px;color:var(--c-fg);background:transparent;border:1px solid var(--c-line);border-radius:var(--rb);padding:6px 13px;cursor:pointer}
-.chip:hover{border-color:var(--c-user);color:var(--c-fg)}
-.send{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--c-line)}
-.send input{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--c-fg);background:var(--c-bot);border:1px solid var(--c-line);border-radius:var(--rb);padding:10px 12px}
-.send input::placeholder{color:var(--c-muted)}
-.send button{font:inherit;font-weight:600;background:var(--c-user);color:var(--c-user-fg);border:0;border-radius:var(--rb);padding:0 16px;cursor:pointer}
+/* Chat de Eris: misma estructura que el de euxenos.com (cabecera, mensajes, fondo de ondas, caja de texto con avión), con los colores de cada web. Sin botones de atajo. */
+.chat{background:var(--c-bg);color:var(--c-fg);border-radius:var(--r);border:1px solid var(--c-line);overflow:hidden;display:flex;flex-direction:column;height:540px;max-height:85vh;min-width:0;font-family:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif}
+.chat-head{display:flex;align-items:center;gap:12px;padding:12px 14px 12px 18px;background:var(--c-head);color:var(--c-head-fg)}
+.ball{width:46px;height:46px;border-radius:50%;flex:none;border:1.5px solid var(--c-line);background:var(--ball)}
+.ball.mini{width:34px;height:34px}
+.ball.think,.typing .ball{animation:piensa 1.2s ease-in-out infinite}
+@keyframes piensa{0%,100%{transform:scale(1)}50%{transform:scale(.9)}}
+.chat-head strong{display:block;font-family:'Sora','Figtree',system-ui,sans-serif;font-weight:700;font-size:1.05rem;line-height:1.2}
+.chat-head span{display:block;font-size:.85rem;color:var(--c-head-sub)}
+.privacidad{margin:0;padding:8px 14px;background:var(--c-bot);border-bottom:1px solid var(--c-line);color:var(--c-muted);font:400 .74rem/1.4 'Figtree',system-ui,sans-serif}
+.privacidad a{color:var(--c-fg)}
+.log{flex:1;overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:10px;background-color:var(--c-bg);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='64'%3E%3Cg fill='none' stroke-width='1.6' stroke-linecap='round' stroke='%23E2552C' stroke-opacity='.2'%3E%3Cpath d='M14 22q6-5 12 0t12 0'/%3E%3Cpath d='M14 28q6-5 12 0t12 0'/%3E%3Cpath d='M14 34q6-5 12 0t12 0'/%3E%3C/g%3E%3C/svg%3E")}
+.msg{max-width:92%;padding:16px 20px;border-radius:var(--rm);font-size:1rem;line-height:1.5;overflow-wrap:anywhere;white-space:pre-line}
+.msg.bot{background:var(--c-bot);color:var(--c-fg);border:1px solid var(--c-line);align-self:flex-start;border-bottom-left-radius:0}
+.msg.me{background:var(--c-user);color:var(--c-user-fg);align-self:flex-end;border-bottom-right-radius:0}
+.typing{align-self:flex-start;padding:2px 0}
 .nota{align-self:center;max-width:90%;font-size:13px;color:var(--c-muted);text-align:center;line-height:1.4}
-.chat-note{font-size:12.5px;color:var(--c-muted);padding:0 16px 12px;line-height:1.4}
+.send{display:flex;align-items:flex-end;background:var(--c-bot);border-top:1px solid var(--c-line)}
+.send:focus-within{box-shadow:inset 0 0 0 1.5px var(--c-user)}
+.send textarea{flex:1;min-width:0;height:84px;resize:none;border:0;outline:none;background:transparent;color:var(--c-fg);font:inherit;font-size:16px;line-height:1.5;padding:14px 16px}
+.send textarea::placeholder{color:var(--c-muted)}
+.send button{flex:none;width:46px;height:46px;margin:8px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--rm);background:transparent;color:var(--c-user);cursor:pointer;transition:opacity .15s}
+.send button:hover{opacity:.75}
+.send button svg{width:28px;height:28px}
 
 section.sec{border-top:1px solid var(--line)}
 section.sec .in{padding-block:52px}
@@ -94,7 +99,7 @@ section.sec .in{padding-block:52px}
 footer .in{padding-block:28px 40px;font-size:13.5px;color:var(--muted);display:grid;gap:6px}
 footer a{color:var(--muted)}
 @media (max-width:860px){.hero .in{grid-template-columns:1fr;gap:28px}.cols{grid-template-columns:1fr;gap:36px}.chat{height:520px}}
-@media (prefers-reduced-motion:reduce){.ball.think{animation:none}}
+@media (prefers-reduced-motion:reduce){.ball.think,.typing .ball{animation:none}}
 .d-restaurante .hero{background:radial-gradient(70% 90% at 15% 110%,rgba(226,85,44,.28),transparent 70%)}
 .d-restaurante .hero h1{font-weight:700}
 .d-restaurante .kicker{text-transform:uppercase;letter-spacing:.2em;color:#E2552C;font-size:12px}
@@ -142,15 +147,14 @@ footer a{color:var(--muted)}
       <div class="chat" role="region" aria-label="Chat con Eris">
         <div class="chat-head">
           <div class="ball" id="ball" aria-hidden="true"></div>
-          <div><strong>Eris</strong><span>Agente de inteligencia artificial de La Brasa</span></div>
+          <div><strong>Eris</strong><span>Agente de inteligencia artificial</span></div>
         </div>
+        <p class="privacidad">Demostración: negocio de ejemplo, lo que pidas queda como prueba. Al continuar aceptas la <a href="/privacidad.html" target="_blank">política de privacidad</a>: guardamos la conversación para atenderte.</p>
         <div class="log" id="log" aria-live="polite"></div>
-        <div class="chips" id="chips"></div>
         <form class="send" id="form" autocomplete="off">
-          <input id="msg" type="text" placeholder="Escríbele a Eris…" aria-label="Escribe tu mensaje">
-          <button type="submit">Enviar</button>
+          <textarea id="msg" rows="2" placeholder="Escribe tu mensaje…" aria-label="Escribe tu mensaje"></textarea>
+          <button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.5 20.5 22 12 2.5 3.5l-.01 6.6L15 12 2.49 13.9z"/></svg></button>
         </form>
-        <p class="chat-note">Eris es una agente de inteligencia artificial y contesta de verdad. Es un negocio de ejemplo: lo que pidas queda como prueba.</p>
       </div>
     </div>
   </section>
@@ -208,7 +212,7 @@ footer a{color:var(--muted)}
 
 <script>
 (function(){
-  var D = {"services": [["Hamburguesa clásica", "9,90 €", "Ternera, cheddar, lechuga, tomate y cebolla. Alérgenos: gluten, lácteos, huevo, sésamo"], ["Hamburguesa de pollo crujiente", "9,50 €", "Alérgenos: gluten, huevo, mostaza, sésamo"], ["Hamburguesa vegana", "10,50 €", "Hamburguesa vegetal, aguacate, tomate y rúcula. Alérgenos: gluten, soja, sésamo"], ["Pollo asado entero", "12,00 €", "Sin alérgenos principales"], ["Medio pollo asado", "7,00 €", "Sin alérgenos principales"], ["Costillas a la barbacoa", "14,90 €", "Con patatas. Alérgenos: mostaza, sulfitos"], ["Croquetas caseras de jamón (6)", "7,00 €", "Alérgenos: gluten, lácteos, huevo"], ["Ensalada César", "8,50 €", "Alérgenos: gluten, lácteos, huevo, pescado"], ["Patatas fritas", "3,50 €", "Sin alérgenos principales"], ["Patatas bravas", "5,00 €", "Alérgenos: huevo"], ["Extra de bacon", "1,50 €", "Para cualquier hamburguesa"], ["Extra de queso", "1,00 €", "Alérgenos: lácteos"], ["Pan sin gluten", "1,00 €", "Para cambiar el pan de cualquier hamburguesa"], ["Refresco", "2,20 €", "Cola, cola zero, naranja o limón"], ["Cerveza", "2,50 €", "Tercio. Alérgenos: gluten"], ["Agua", "1,50 €", "50 cl"], ["Tarta de queso", "4,50 €", "Casera. Alérgenos: gluten, lácteos, huevo"]], "services_intro": "", "hours": [{"label": "Martes a jueves", "value": "13:00 a 16:00 y 20:00 a 23:30", "days": [2, 3, 4]}, {"label": "Viernes y sábado", "value": "13:00 a 16:30 y 20:00 a 00:30", "days": [5, 6]}, {"label": "Domingo", "value": "13:00 a 16:30", "days": [0]}, {"label": "Lunes", "value": "Cerrado", "days": [1]}], "steps": [["Escribes o llamas", "Eris te saluda y te pregunta tu nombre."], ["Eliges: pedido o mesa", "Para llevar, a domicilio o reserva para cuántos sois."], ["Queda apuntado", "El restaurante lo recibe con aviso al momento y lo confirma."]], "greeting": "", "main": ["Quiero hacer un pedido", "Quiero reservar una mesa", "¿Qué lleva la hamburguesa vegana?", "¿Tenéis algo sin gluten?"], "flows": [], "intents": [], "real": true, "negocio": "demo-restaurante"};
+  var D = {"services": [["Hamburguesa clásica", "9,90 €", "Ternera, cheddar, lechuga, tomate y cebolla. Alérgenos: gluten, lácteos, huevo, sésamo"], ["Hamburguesa de pollo crujiente", "9,50 €", "Alérgenos: gluten, huevo, mostaza, sésamo"], ["Hamburguesa vegana", "10,50 €", "Hamburguesa vegetal, aguacate, tomate y rúcula. Alérgenos: gluten, soja, sésamo"], ["Pollo asado entero", "12,00 €", "Sin alérgenos principales"], ["Medio pollo asado", "7,00 €", "Sin alérgenos principales"], ["Costillas a la barbacoa", "14,90 €", "Con patatas. Alérgenos: mostaza, sulfitos"], ["Croquetas caseras de jamón (6)", "7,00 €", "Alérgenos: gluten, lácteos, huevo"], ["Ensalada César", "8,50 €", "Alérgenos: gluten, lácteos, huevo, pescado"], ["Patatas fritas", "3,50 €", "Sin alérgenos principales"], ["Patatas bravas", "5,00 €", "Alérgenos: huevo"], ["Extra de bacon", "1,50 €", "Para cualquier hamburguesa"], ["Extra de queso", "1,00 €", "Alérgenos: lácteos"], ["Pan sin gluten", "1,00 €", "Para cambiar el pan de cualquier hamburguesa"], ["Refresco", "2,20 €", "Cola, cola zero, naranja o limón"], ["Cerveza", "2,50 €", "Tercio. Alérgenos: gluten"], ["Agua", "1,50 €", "50 cl"], ["Tarta de queso", "4,50 €", "Casera. Alérgenos: gluten, lácteos, huevo"]], "services_intro": "", "hours": [{"label": "Martes a jueves", "value": "13:00 a 16:00 y 20:00 a 23:30", "days": [2, 3, 4]}, {"label": "Viernes y sábado", "value": "13:00 a 16:30 y 20:00 a 00:30", "days": [5, 6]}, {"label": "Domingo", "value": "13:00 a 16:30", "days": [0]}, {"label": "Lunes", "value": "Cerrado", "days": [1]}], "steps": [["Escribes o llamas", "Eris te saluda y te pregunta tu nombre."], ["Eliges: pedido o mesa", "Para llevar, a domicilio o reserva para cuántos sois."], ["Queda apuntado", "El restaurante lo recibe con aviso al momento y lo confirma."]], "greeting": "", "main": [], "flows": [], "intents": [], "real": true, "negocio": "demo-restaurante", "nombre": "La Brasa"};
 
   function li(a, b, sub){
     var el = document.createElement('li');
@@ -237,27 +241,26 @@ footer a{color:var(--muted)}
     d.appendChild(b); d.appendChild(t); el.appendChild(n); el.appendChild(d); st.appendChild(el);
   });
 
-  // Chat con guion
-  var log = document.getElementById('log'), chips = document.getElementById('chips');
+  // Chat
+  var log = document.getElementById('log');
   var form = document.getElementById('form'), input = document.getElementById('msg'), ball = document.getElementById('ball');
-  var name = '', flow = null, step = 0, answers = [], awaiting = '', busy = false, greeted = false;
+  var name = '', flow = null, step = 0, answers = [], awaiting = '', busy = false;
 
   function add(role, text){
     var m = document.createElement('div'); m.className = 'msg ' + role; m.textContent = text;
     log.appendChild(m); log.scrollTop = log.scrollHeight; return m;
   }
-  function setChips(list){
-    chips.innerHTML = '';
-    (list || []).forEach(function(t){
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = t;
-      b.addEventListener('click', function(){ handle(t); });
-      chips.appendChild(b);
-    });
+  // Sin botones de atajo (13/11, Tete): el chat es como el de euxenos.com. Se deja la función vacía porque la usa el modo con guion.
+  function setChips(){}
+  function typing(){
+    var t = document.createElement('div'); t.className = 'typing';
+    var o = document.createElement('div'); o.className = 'ball mini'; t.appendChild(o);
+    log.appendChild(t); log.scrollTop = log.scrollHeight; return t;
   }
   function fill(s){ return s.replace(/\{name\}/g, name ? ', ' + name : '').replace(/\{(\d)\}/g, function(_, i){ return answers[+i] || ''; }); }
   function eris(text, after){
-    busy = true; ball.classList.add('think'); setChips([]);
-    setTimeout(function(){ ball.classList.remove('think'); add('bot', text); busy = false; setChips(after); }, 600);
+    busy = true; ball.classList.add('think');
+    setTimeout(function(){ ball.classList.remove('think'); add('bot', text); busy = false; }, 600);
   }
   function listText(){ return D.services.map(function(s){ return s[0] + ': ' + s[1]; }).join('\n'); }
   function hoursText(){ return D.hours.map(function(h){ return h.label + ': ' + h.value; }).join('\n'); }
@@ -274,18 +277,19 @@ footer a{color:var(--muted)}
     text = (text || '').trim();
     if (!text) return;
     add('me', text);
-    busy = true; ball.classList.add('think'); setChips([]);
-    var esp = add('bot', '…');
+    busy = true;
+    var esp = typing();
     var ctl = ('AbortController' in window) ? new AbortController() : null;
     var tm = setTimeout(function(){ if (ctl) ctl.abort(); }, 70000);
     fetch(URL_ERIS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ negocio: D.negocio, sesion: sesion, mensaje: text, canal: 'web' }), signal: ctl ? ctl.signal : undefined })
       .then(function(r){ return r.json(); })
       .then(function(j){
-        if (j && j.ok && j.respuesta) { esp.textContent = limpiar(j.respuesta); }
-        else { esp.remove(); aviso(j && j.pausada ? 'Esta conversación la lleva ahora una persona del negocio.' : ((j && j.motivo) || 'No se ha podido contestar. Prueba otra vez en un momento.')); }
+        esp.remove();
+        if (j && j.ok && j.respuesta) { add('bot', limpiar(j.respuesta)); }
+        else { aviso(j && j.pausada ? 'Esta conversación la lleva ahora una persona del negocio.' : ((j && j.motivo) || 'No se ha podido contestar. Prueba otra vez en un momento.')); }
       })
       .catch(function(){ esp.remove(); aviso('Eris no ha podido contestar ahora mismo. Prueba otra vez en un momento.'); })
-      .then(function(){ clearTimeout(tm); ball.classList.remove('think'); busy = false; setChips(D.main); log.scrollTop = log.scrollHeight; });
+      .then(function(){ clearTimeout(tm); busy = false; log.scrollTop = log.scrollHeight; });
   }
 
   function handleScript(text){
@@ -327,18 +331,25 @@ footer a{color:var(--muted)}
       name = text.replace(/^(soy|me llamo|mi nombre es)\s+/i, '').split(/\s+/).slice(0, 2).join(' ');
       return eris('Encantada, ' + name + '. ¿En qué te puedo ayudar?', D.main);
     }
-    return eris('En esta demostración solo contesto a los atajos de abajo. La Eris real contesta a lo que le preguntes: puedes probarla en el chat de euxenos.com.', D.main);
+    return eris('En esta demostración solo contesto a unas pocas preguntas. La Eris real contesta a lo que le preguntes: puedes probarla en el chat de euxenos.com.', D.main);
   }
 
   form.addEventListener('submit', function(e){ e.preventDefault(); var v = input.value; input.value = ''; handle(v); });
+  // Intro envía; Mayús+Intro hace salto de línea (como en el chat de euxenos.com)
+  input.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true })); }
+  });
   document.getElementById('open-chat').addEventListener('click', function(){
     input.focus({ preventScroll: true });
     document.querySelector('.chat').scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 
-  if (D.real) aviso('Escríbele a Eris o toca un atajo. Contesta de verdad, con los datos de este negocio de ejemplo.');
-  else add('bot', D.greeting);
-  setChips(D.main);
+  if (D.real) {
+    // Mismo arranque que el chat de euxenos.com: saludo y «¿Con quién hablo?». Es solo decoración; la conversación real la lleva Eris.
+    var h = new Date().getHours();
+    add('bot', (h < 13 ? '¡Buenos días!' : (h < 21 ? '¡Buenas tardes!' : '¡Buenas noches!')) + ' Te atiende Eris, de ' + D.nombre + ' 😊');
+    add('bot', '¿Con quién hablo?');
+  } else add('bot', D.greeting);
 })();
 </script>
 </body>
