@@ -2278,9 +2278,11 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   // Si alguien cambia la contraseña de una demo, su acceso de aquí deja de valer: volver a activarla y poner el nuevo aquí.
   var DEMOS = {"demopelu": {"n": "demo-peluqueria", "k": "1d8ddd1cb117dc31558990b8.4f4212f6cd4679b1"}, "demobar": {"n": "demo-restaurante", "k": "0d1df77c5073a9e08efa55d4.5f62860548293b33"}, "demotaller": {"n": "demo-taller", "k": "a646f470c221d25a44014d158.cad2adfe19501510"}, "demosalon": {"n": "demo-tatuajes", "k": "ac79b787bba2924e87bbdd33e.88515fdd59ee3dfa"}};
   function esDemo(){ for (var u in DEMOS) if (DEMOS[u].n === n) return true; return false; }
-  function guardarAcceso(nn, kk){ n = nn; k = kk; try { localStorage.setItem('eris-agenda', JSON.stringify({ n:n, k:k })); } catch (e) {} }
+  function guardarAcceso(nn, kk){ if (nn !== n) olvidarModoTete(); n = nn; k = kk; try { localStorage.setItem('eris-agenda', JSON.stringify({ n:n, k:k })); } catch (e) {} }
   function olvidarPedidos(){ pedidos = null; pedidosVistos = null; }
-  function olvidar(){ olvidarPedidos(); try { sessionStorage.removeItem(claveConv()); } catch (e) {} n = null; k = null; datos = null; info = null; conversacion = []; try { localStorage.removeItem('eris-agenda'); } catch (e) {} }
+  // 14/11: al cambiar de cuenta se olvida también el modo Tete (si no, una demo entraba con la pantalla de Tete)
+  function olvidarModoTete(){ esDueno = false; comercial = null; cargandoCom = false; bandeja = null; cargandoBan = false; chatAbierto = null; chatDatos = null; try { clearInterval(chatTimer); } catch (e) {} }
+  function olvidar(){ olvidarModoTete(); olvidarPedidos(); try { sessionStorage.removeItem(claveConv()); } catch (e) {} n = null; k = null; datos = null; info = null; conversacion = []; try { localStorage.removeItem('eris-agenda'); } catch (e) {} }
   function ocultarFlotantes(){ document.getElementById('tabbar').classList.add('oculto'); document.body.classList.remove('tete', 'cli'); document.getElementById('nueva').classList.add('oculto'); lanzador.classList.add('oculto'); cerrarEris(); lanzador.classList.add('oculto'); }
   function pantallaLogin(aviso){
     ocultarFlotantes();
