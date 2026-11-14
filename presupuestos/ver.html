@@ -85,7 +85,7 @@ button{font:inherit;font-weight:700;border-radius:10px;padding:12px 18px;cursor:
   var dato = (location.hash.match(/[#&]d=([^&]+)/) || [])[1];
   var d = dato ? P.decodificar(dato) : null;
 
-  // Sin datos en el enlace: el ejemplo de pladur
+  // Sin datos en el enlace: el ejemplo genérico
   if(!d){
     var s = P.DEMO_SOLICITUD, t = {};
     P.DEMO_TARIFA.forEach(function(x){ t[x.id] = x; });

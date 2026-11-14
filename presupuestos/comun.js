@@ -78,46 +78,42 @@
       '</article>';
   }
 
-  // Ejemplo: empresa de pladur inventada
+  // Ejemplo genérico (vale para cualquier sector): negocio inventado con conceptos típicos
   var DEMO_TARIFA = [
-    { id: 'tab-ais', t: 'Tabique de pladur con aislamiento', d: 'Estructura de 70 mm, doble placa 13 mm por cara y lana mineral.', u: 'm²', p: 42 },
-    { id: 'tab', t: 'Tabique de pladur sencillo', d: 'Estructura de 48 mm y placa 13 mm por cara.', u: 'm²', p: 30 },
-    { id: 'tras', t: 'Trasdosado de pared', d: 'Placa 13 mm sobre perfilería, con aislamiento.', u: 'm²', p: 28 },
-    { id: 'techo', t: 'Falso techo continuo', d: 'Placa estándar 13 mm sobre perfilería.', u: 'm²', p: 30 },
-    { id: 'techo-h', t: 'Falso techo en baño o cocina (placa hidrófuga)', d: 'Placa resistente a la humedad 13 mm.', u: 'm²', p: 36 },
-    { id: 'puerta', t: 'Hueco de puerta', d: 'Refuerzo y premarco para puerta de paso (puerta no incluida).', u: 'ud', p: 85 },
-    { id: 'foco', t: 'Huecos para focos empotrados', d: 'Corte y preparación. La instalación eléctrica la hace el electricista.', u: 'ud', p: 8 },
-    { id: 'foseado', t: 'Foseado para tira LED', d: 'Moldura perimetral de pladur para luz indirecta.', u: 'm', p: 24 },
-    { id: 'acabado', t: 'Acabado listo para pintar', d: 'Cinta, masilla en juntas y lijado.', u: '', p: 0 },
-    { id: 'limpieza', t: 'Protección, limpieza y retirada de restos', d: '', u: '', p: 60 }
+    { id: 'visita', t: 'Visita y valoración previa', d: 'Revisión en el sitio y toma de medidas o datos.', u: 'ud', p: 35 },
+    { id: 'mo', t: 'Mano de obra', d: 'Trabajo del equipo, por hora.', u: 'h', p: 38 },
+    { id: 'mat', t: 'Materiales', d: 'Material necesario según el trabajo, a precio de tarifa.', u: 'ud', p: 120 },
+    { id: 'serv', t: 'Servicio estándar', d: 'Servicio habitual del negocio, precio por unidad.', u: 'ud', p: 55 },
+    { id: 'urg', t: 'Suplemento de urgencia', d: 'Atención en menos de 24 horas.', u: 'ud', p: 30 },
+    { id: 'desp', t: 'Desplazamiento', d: 'Hasta 20 km desde el local.', u: 'ud', p: 20 },
+    { id: 'garantia', t: 'Garantía ampliada', d: 'Un año de garantía sobre el trabajo realizado.', u: 'ud', p: 40 },
+    { id: 'limpieza', t: 'Limpieza y retirada de restos', d: '', u: '', p: 40 }
   ];
   var DEMO_EMPRESA = {
-    nombre: 'Pladur y Reformas Ejemplo', sub: 'Tabiquería seca · Techos · Aislamiento',
-    contacto: 'Talavera de la Reina · 600 00 00 00 · info@pladurejemplo.es', color: '#1f6f5c', inicial: 'P'
+    nombre: 'Servicios Ejemplo', sub: 'Tu negocio, tu tarifa, tu marca',
+    contacto: 'Talavera de la Reina · 600 00 00 00 · info@ejemplo.es', color: '#1f6f5c', inicial: 'S'
   };
   var DEMO_COND = [
-    'Plazo de ejecución: 3 días laborables. Inicio según agenda, tras aceptar el presupuesto.',
-    'Forma de pago: 40 % al aceptar y 60 % al terminar, por transferencia o Bizum.',
-    'No incluye pintura, puerta, electricidad ni trabajos no descritos. Cualquier cambio se presupuesta aparte antes de hacerlo.',
-    'Las medidas se confirman en la visita previa; si cambian, se ajusta el importe y se envía de nuevo para su aceptación.'
+    'Plazo de ejecución: según agenda, una vez aceptado el presupuesto.',
+    'Forma de pago: 30 % al aceptar y el resto al terminar, por transferencia, Bizum o tarjeta.',
+    'No incluye trabajos ni materiales no descritos. Cualquier cambio se presupuesta aparte antes de hacerlo.',
+    'Las medidas y datos se confirman en la visita previa; si cambian, se ajusta el importe y se envía de nuevo para su aceptación.'
   ];
   // Lo que Eris recogió por WhatsApp (borrador inicial)
   var DEMO_SOLICITUD = {
     cli: { nombre: 'Laura Martín', dir: 'C/ Ejemplo 14, 3.º B · Talavera de la Reina', via: 'Contacto: WhatsApp · 26/10/2026, 21:47', tel: '' },
-    trabajo: 'Dividir el salón en dos para hacer un despacho (tabique con aislamiento acústico y puerta) y bajar el techo de la cocina para luces empotradas.',
-    medidas: 'Medidas facilitadas por el cliente con fotos.',
+    trabajo: 'Trabajo a domicilio de ejemplo: visita previa, mano de obra, materiales y limpieza final.',
+    medidas: 'Datos facilitados por el cliente con fotos.',
     resumen: [
-      'Quiere separar el salón para hacer un despacho: pared de 4,50 m de largo y 2,60 m de alto, que no se oiga mucho.',
-      'Con una puerta normal en esa pared.',
-      'Bajar el techo de la cocina (3 × 3 m) para poner 6 focos empotrados.',
+      'Pide un presupuesto para un trabajo en su casa y manda fotos.',
+      'Quiere saber el precio antes de decidir y si puede ser esta semana.',
       'Vive en C/ Ejemplo 14, 3.º B. Prefiere que la visita sea por la tarde.'
     ],
     partidas: [
-      { id: 'tab-ais', c: 11.7, d: 'Estructura de 70 mm, doble placa 13 mm por cara y lana mineral. 4,50 × 2,60 m.' },
-      { id: 'puerta', c: 1, d: 'Refuerzo y premarco para puerta de paso de 82,5 cm (puerta no incluida).' },
-      { id: 'techo', c: 9, d: 'Placa estándar 13 mm sobre perfilería, a 2,50 m.' },
-      { id: 'foco', c: 6 },
-      { id: 'acabado', c: 1, d: 'Cinta, masilla en juntas y lijado de tabique y techo.' },
+      { id: 'visita', c: 1, d: 'Revisión en el sitio y toma de medidas.' },
+      { id: 'mo', c: 6, d: 'Trabajo estimado en 6 horas.' },
+      { id: 'mat', c: 1, d: 'Material necesario según lo visto en las fotos.' },
+      { id: 'desp', c: 1 },
       { id: 'limpieza', c: 1 }
     ]
   };
