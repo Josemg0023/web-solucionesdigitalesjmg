@@ -492,7 +492,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
 .ban-escribir .btn{flex:0 0 auto}
 #chatAyuda{margin:6px 0 0}#chatAyuda.error{color:#FFB3C6}
 /* Presupuestos (14/11) */
-.pr-enviado{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-emitida{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-cobrada{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-aceptado{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-rechazado{background:rgba(244,63,94,.18);color:#FDA4AF}.pr-sin_respuesta{background:rgba(251,191,36,.18);color:#FCD34D}
+.pr-enviado{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-emitida{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-cobrada{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-aceptado{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-rechazado{background:rgba(244,63,94,.18);color:#FDA4AF}.pr-sin_respuesta{background:rgba(251,191,36,.18);color:#FCD34D}.pr-rectificativa{background:rgba(251,191,36,.18);color:#FCD34D}
 </style>
 </head>
 <body>
@@ -1571,12 +1571,12 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   function vistaHerramientas(){
     if (!presu) return '<p class="vacio" style="margin-top:16px">Cargando…</p>';
     var docs = presu.docs || [], env = docs.filter(function(x){ return x.estado === 'enviado' || x.estado === 'sin_respuesta'; }).length, bor = docs.filter(function(x){ return x.estado === 'borrador'; }).length;
-    var nFac = docs.filter(prEsFactura).length, pend = docs.filter(function(x){ return prEsFactura(x) && x.estado === 'emitida'; }).length;
+    var nFac = docs.filter(prEsFactura).length, pend = docs.filter(function(x){ return prEsFactura(x) && !prEsRect(x) && x.estado === 'emitida'; }).length;
     docs = docs.filter(function(x){ return !prEsFactura(x); });
     var resumen = !docs.length ? 'Aún no has hecho ninguno.' : [env ? env + (env === 1 ? ' enviado sin respuesta' : ' enviados sin respuesta') : '', bor ? bor + (bor === 1 ? ' borrador' : ' borradores') : ''].filter(Boolean).join(' · ') || docs.length + (docs.length === 1 ? ' presupuesto' : ' presupuestos');
     return '<h2>Tus módulos</h2><div class="caja"><p style="margin:0 0 4px"><b>Presupuestos</b></p><p class="ayuda" style="margin:0 0 10px">' + esc(resumen) + ' Díselo a Eris o hazlos tú, con tu tarifa, y mándalos en PDF.</p><button class="btn b-ok ancho" data-ir="presupuestos">Abrir presupuestos</button></div>'
       + '<div class="caja"><p style="margin:0 0 4px"><b>Catálogo</b></p><p class="ayuda" style="margin:0 0 10px">Sube los catálogos de tus proveedores y tus precios para crear presupuestos y que Eris los conozca.</p><button class="btn b-otra ancho" data-ir="catalogo">Abrir catálogo</button></div>'
-      + '<div class="caja"><p style="margin:0 0 4px"><b>Facturas</b></p><p class="ayuda" style="margin:0 0 10px">' + (nFac ? nFac + (nFac === 1 ? ' factura' : ' facturas') + (pend ? ' · ' + pend + ' pendiente' + (pend === 1 ? '' : 's') + ' de cobro.' : '.') : 'Se crean desde un presupuesto aceptado.') + '</p><button class="btn b-otra ancho" data-pr="filtro" data-f="factura" data-go="1">Abrir facturas</button></div>';
+      + '<div class="caja"><p style="margin:0 0 4px"><b>Facturas</b></p><p class="ayuda" style="margin:0 0 10px">' + (nFac ? nFac + (nFac === 1 ? ' factura' : ' facturas') + (pend ? ' · ' + pend + ' pendiente' + (pend === 1 ? '' : 's') + ' de cobro.' : '.') : 'Créalas desde un presupuesto aceptado o a mano.') + '</p><button class="btn b-otra ancho" data-pr="filtro" data-f="factura" data-go="1">Abrir facturas</button></div>';
   }
   function vistaCuenta(enEmpresa){
     var neg = (datos && datos.negocio) || {};
@@ -1671,7 +1671,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   // Un documento enviado NO se edita ni se borra: se duplica como nuevo. Para quitarlo todo: borrar este bloque, el CSS «Presupuestos (14/11)» y 'presupuestos' de VISTAS, menú y pintar().
   var API_PRESU = 'https://erisproject.app.n8n.cloud/webhook/eris-presupuestos';
   var prFiltro = 'presupuesto', presu = null, prVista = 'lista', prDoc = null, prT = null, prOcupado = false;
-  var PR_ESTADOS = { borrador:'Borrador', enviado:'Enviado', aceptado:'Aceptado', rechazado:'Rechazado', sin_respuesta:'Sin respuesta', emitida:'Pendiente de cobro', cobrada:'Cobrada' };
+  var PR_ESTADOS = { borrador:'Borrador', enviado:'Enviado', aceptado:'Aceptado', rechazado:'Rechazado', sin_respuesta:'Sin respuesta', emitida:'Pendiente de cobro', cobrada:'Cobrada', rectificativa:'Rectificativa' };
   function presupuestosOn(){ return !!(presu && presu.activo); }
   function llamarPresu(accion, d){ return post(API_PRESU, { n:n, k:k, accion:accion, datos:d || {} }); }
   function cargarPresu(){
@@ -1703,12 +1703,16 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   function prToken(){ var a = new Uint8Array(12), h = ''; try { (window.crypto || window.msCrypto).getRandomValues(a); } catch (e) { for (var j = 0; j < 12; j++) a[j] = Math.floor(Math.random() * 256); } for (var i = 0; i < 12; i++) h += ('0' + a[i].toString(16)).slice(-2); return h; }
   function prEnlace(d){ return d && d.token ? location.origin + '/presupuesto/?t=' + d.token : ''; }
   function prEsFactura(d){ return d && d.tipo === 'factura'; }
+  // 16/11: factura rectificativa = factura de serie R con importes en negativo que apunta a la original (rectifica = id). Se emite «por diferencias».
+  function prEsRect(d){ return !!(d && d.rectifica); }
+  function prEtqDoc(d){ return prEtq(prEsRect(d) && d.estado !== 'borrador' ? 'rectificativa' : d.estado); }
+  function prNombreDoc(d){ return prEsRect(d) ? 'Factura rectificativa ' : prEsFactura(d) ? 'Factura ' : 'Presupuesto '; }
   function prCodigo(d){ return d.numero ? (d.serie || 'P') + '-' + String(d.numero).padStart(4, '0') : 'Sin número'; }
-  function prNuevoDoc(){
-    var a = prAjustes();
-    return { id: 'p' + Date.now().toString(36), tipo: 'presupuesto', serie: 'P', numero: 0, estado: 'borrador', fecha_emision: '', creado: hoyISO(),
+  function prNuevoDoc(tipo){
+    var a = prAjustes(), fac = tipo === 'factura';
+    return { id: (fac ? 'f' : 'p') + Date.now().toString(36), tipo: fac ? 'factura' : 'presupuesto', serie: fac ? 'F' : 'P', numero: 0, estado: 'borrador', fecha_emision: '', creado: hoyISO(),
       emisor: { razon_social: a.razon_social, nif: a.nif, direccion: a.direccion, contacto: a.contacto },
-      cliente: { nombre: '', telefono: '', email: '', direccion: '', nif: '' }, trabajo: '', partidas: [], validez: a.validez, condiciones: a.condiciones.slice(),
+      cliente: { nombre: '', telefono: '', email: '', direccion: '', nif: '' }, trabajo: '', partidas: [], validez: a.validez, condiciones: fac ? [] : a.condiciones.slice(),
       forma_pago: '', presupuesto_origen: '', estado_pago: '' };
   }
   function prGuardar(parte, msg, despues){
@@ -1739,8 +1743,9 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var cond = (d.condiciones || []).filter(Boolean).map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('');
     var fecha = d.fecha_emision ? d.fecha_emision.split('-').reverse().join('/') : '';
     return '<article class="doc"><header class="doc-cab"><div class="doc-logo"><div class="doc-inicial">' + esc(neg.charAt(0) || '?') + '</div><div><b>' + esc(neg) + '</b><small>' + esc(e.razon_social && e.razon_social !== neg ? e.razon_social : '') + (e.nif ? ' · NIF ' + esc(e.nif) : '') + (e.direccion ? '<br>' + esc(e.direccion) : '') + (e.contacto ? '<br>' + esc(e.contacto) : '') + '</small></div></div>'
-      + '<div class="doc-num"><h1>' + (prEsFactura(d) ? 'FACTURA' : 'PRESUPUESTO') + '</h1><div>Nº ' + esc(prCodigo(d)) + '</div><div>Fecha: ' + esc(fecha) + (prEsFactura(d) ? '' : ' · Válido ' + (Number(d.validez) || 30) + ' días') + '</div></div></header>'
+      + '<div class="doc-num"><h1>' + (prEsRect(d) ? 'FACTURA RECTIFICATIVA' : prEsFactura(d) ? 'FACTURA' : 'PRESUPUESTO') + '</h1><div>Nº ' + esc(prCodigo(d)) + '</div><div>Fecha: ' + esc(fecha) + (prEsFactura(d) ? '' : ' · Válido ' + (Number(d.validez) || 30) + ' días') + '</div></div></header>'
       + '<div class="doc-bloques"><div><h3>Cliente</h3>' + esc(c.nombre) + (c.nif ? ' · ' + esc(c.nif) : '') + (c.direccion ? '<br>' + esc(c.direccion) : '') + '<small>' + esc([c.telefono, c.email].filter(Boolean).join(' · ')) + '</small></div></div>'
+      + (prEsRect(d) ? '<p class="doc-trabajo"><b>Rectifica a la factura</b> ' + esc(d.rectifica_codigo || '') + (d.rectifica_fecha ? ' de fecha ' + esc(d.rectifica_fecha.split('-').reverse().join('/')) : '') + '.<br><b>Motivo:</b> ' + esc(d.motivo || '') + '<br><b>Método:</b> por diferencias (importes en negativo).</p>' : '')
       + (d.trabajo ? '<p class="doc-trabajo"><b>Trabajo:</b> ' + esc(d.trabajo) + '</p>' : '')
       + '<table class="doc-tabla"><thead><tr><th>Concepto</th><th class="n">Cantidad</th><th class="n">Precio</th><th class="n">IVA</th><th class="n">Importe</th></tr></thead><tbody>' + filas + '</tbody></table>'
       + '<div class="doc-totales"><div><span>Base imponible</span><span>' + prEur(t.base) + '</span></div><div><span>IVA</span><span>' + prEur(t.iva) + '</span></div><div class="doc-total"><span>TOTAL</span><span>' + prEur(t.total) + '</span></div></div>'
@@ -1761,12 +1766,13 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   function prAbrirPdf(d){
     var w = window.open('', '_blank');
     if (!w) { toast('Tu navegador ha bloqueado la ventana. Permítela e inténtalo otra vez'); return; }
-    w.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + (prEsFactura(d) ? 'Factura ' : 'Presupuesto ') + esc(prCodigo(d)) + '</title><style>' + PR_CSS + '</style></head><body><button class="cerrar-doc" aria-label="Cerrar" onclick="window.close();setTimeout(function(){document.body.innerHTML=\'<p style=padding:24px;font-family:Arial>Ya puedes cerrar esta pestaña y volver a la app.</p>\'},300)">\u2715</button><div class="cerrar-doc-pad"></div>' + prHtmlDocumento(d) + '<scr' + 'ipt>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script></body></html>');
+    w.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + prNombreDoc(d) + esc(prCodigo(d)) + '</title><style>' + PR_CSS + '</style></head><body><button class="cerrar-doc" aria-label="Cerrar" onclick="window.close();setTimeout(function(){document.body.innerHTML=\'<p style=padding:24px;font-family:Arial>Ya puedes cerrar esta pestaña y volver a la app.</p>\'},300)">\u2715</button><div class="cerrar-doc-pad"></div>' + prHtmlDocumento(d) + '<scr' + 'ipt>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script></body></html>');
     w.document.close();
   }
   function prTelWa(t){ var s = String(t || '').replace(/\D/g, ''); if (s.length === 9) s = '34' + s; return s; }
   function prMensaje(d){
     var neg = (datos && datos.negocio && datos.negocio.nombre) || '', t = prTotales(d), c = d.cliente || {};
+    if (prEsRect(d)) return 'Hola' + (c.nombre ? ' ' + c.nombre.split(' ')[0] : '') + ', te enviamos la factura rectificativa ' + prCodigo(d) + ' de ' + neg + ', que corrige la factura ' + (d.rectifica_codigo || '') + ', por un importe de ' + prEur(t.total) + '. Va en el PDF adjunto. Gracias.';
     if (prEsFactura(d)) return 'Hola' + (c.nombre ? ' ' + c.nombre.split(' ')[0] : '') + ', te enviamos la factura ' + prCodigo(d) + ' de ' + neg + ' por un total de ' + prEur(t.total) + ' (IVA incluido). Va en el PDF adjunto. Gracias.';
     return 'Hola' + (c.nombre ? ' ' + c.nombre.split(' ')[0] : '') + ', te enviamos el presupuesto ' + prCodigo(d) + ' de ' + neg + ' por un total de ' + prEur(t.total) + ' (IVA incluido). Va en el PDF adjunto.' + (prEnlace(d) ? ' Si te encaja, puedes aceptarlo con un toque aquí: ' + prEnlace(d) : ' Si te encaja, contesta «Acepto» a este mensaje.');
   }
@@ -1780,12 +1786,13 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var nF = presu.docs.filter(prEsFactura).length, nP = presu.docs.length - nF, fac = prFiltro === 'factura';
     var h = '<div class="fila" style="display:flex;gap:8px;margin:14px 0 10px"><button class="btn ' + (fac ? 'b-otra' : 'b-ok') + '" style="flex:1" data-pr="filtro" data-f="presupuesto">Presupuestos (' + nP + ')</button><button class="btn ' + (fac ? 'b-ok' : 'b-otra') + '" style="flex:1" data-pr="filtro" data-f="factura">Facturas (' + nF + ')</button></div>';
     if (!fac) h += '<h2>Presupuestos <button class="accion" data-pr="nuevo">+ Nuevo</button></h2>';
+    else h += '<h2>Facturas <button class="accion" data-pr="nueva-factura">+ Nueva</button></h2>';
     h += '<div class="herr" style="margin:0 0 12px"><button class="btn b-otra ancho" data-pr="tarifa">💶 Mi tarifa y datos de empresa</button></div>';
     var lista = presu.docs.filter(function(d){ return prEsFactura(d) === fac; });
-    if (!lista.length) return h + (fac ? '<p class="vacio">Aún no hay facturas. Cuando un cliente acepte un presupuesto, ábrelo y pulsa <b>Crear factura</b>.</p>' : '<p class="vacio">Aún no hay presupuestos. Primero rellena tu tarifa (lo que cobras por cada cosa) y luego crea el primero con <b>+ Nuevo</b>.</p>');
+    if (!lista.length) return h + (fac ? '<p class="vacio">Aún no hay facturas. Crea una con <b>+ Nueva</b> o, cuando un cliente acepte un presupuesto, ábrelo y pulsa <b>Crear factura</b>.</p>' : '<p class="vacio">Aún no hay presupuestos. Primero rellena tu tarifa (lo que cobras por cada cosa) y luego crea el primero con <b>+ Nuevo</b>.</p>');
     h += lista.slice().sort(function(a, b){ return String(b.creado).localeCompare(String(a.creado)) || (b.numero || 0) - (a.numero || 0); }).map(function(d){
       var c = d.cliente || {};
-      return '<button class="fila tocable" data-pr="abrir" data-id="' + esc(d.id) + '"><span class="txt"><b>' + esc(c.nombre || 'Sin cliente') + prEtq(d.estado) + '</b><span>' + esc(prCodigo(d)) + (d.trabajo ? ' · ' + esc(d.trabajo.slice(0, 50)) : '') + '</span></span><span class="precio">' + prEur(prTotales(d).total) + '</span></button>';
+      return '<button class="fila tocable" data-pr="abrir" data-id="' + esc(d.id) + '"><span class="txt"><b>' + esc(c.nombre || 'Sin cliente') + prEtqDoc(d) + '</b><span>' + esc(prCodigo(d)) + (d.trabajo ? ' · ' + esc(d.trabajo.slice(0, 50)) : '') + '</span></span><span class="precio">' + prEur(prTotales(d).total) + '</span></button>';
     }).join('');
     return h;
   }
@@ -1812,8 +1819,9 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     h += '<button class="btn b-ok ancho" data-pr="t-guardar" style="margin-top:6px">Guardar tarifa y datos</button>';
     return h;
   }
-  function prPartidasHtml(d, editable){
+  function prPartidasHtml(d, editable, rect){
     return (d.partidas || []).map(function(x, i){
+      if (rect && editable) return '<div class="caja" style="margin-bottom:10px"><p style="margin:0 0 8px"><b>' + esc(x.concepto) + '</b><br><span class="ayuda">Facturado: ' + prCant(x.cantidad_orig != null ? x.cantidad_orig : x.cantidad, x.unidad) + ' × ' + prEur(x.precio) + ' · IVA ' + prNum(x.iva) + ' %</span></p><label class="campo"><span>Cantidad a abonar</span><input data-pp="' + i + '.cantidad" inputmode="decimal" value="' + esc(x.cantidad) + '"></label><button class="btn b-no" data-pr="l-quitar" data-i="' + i + '">Quitar</button></div>';
       if (!editable) return '<div class="fila"><span class="txt"><b>' + esc(x.concepto) + '</b><span>' + prCant(x.cantidad, x.unidad) + ' × ' + prEur(x.precio) + ' · IVA ' + prNum(x.iva) + ' %</span></span><span class="precio">' + prEur(prNum(x.cantidad) * prNum(x.precio)) + '</span></div>';
       return '<div class="caja" style="margin-bottom:10px"><label class="campo"><span>Concepto</span><input data-pp="' + i + '.concepto" value="' + esc(x.concepto) + '" maxlength="100"></label>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><label class="campo"><span>Cantidad</span><input data-pp="' + i + '.cantidad" inputmode="decimal" value="' + esc(x.cantidad) + '"></label>'
@@ -1824,37 +1832,54 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   }
   function prTotalesHtml(d){ var t = prTotales(d); return '<div class="caja"><p style="margin:0">Base: <b>' + prEur(t.base) + '</b> · IVA: <b>' + prEur(t.iva) + '</b></p><p style="margin:6px 0 0;font-size:1.15rem">Total: <b>' + prEur(t.total) + '</b></p></div>'; }
   function prVistaEditar(){
-    var d = prDoc, c = d.cliente, tar = prConceptos();
-    var h = '<p class="ayuda" style="margin:14px 0 0"><button class="accion" data-pr="volver">← Presupuestos</button></p><h2>Cliente</h2><div class="caja">'
-      + '<label class="campo"><span>Nombre</span><input data-pd="cliente.nombre" value="' + esc(c.nombre) + '" maxlength="100"></label>'
-      + '<label class="campo"><span>Teléfono (para WhatsApp)</span><input data-pd="cliente.telefono" inputmode="tel" value="' + esc(c.telefono) + '" maxlength="20"></label>'
-      + '<label class="campo"><span>Correo</span><input data-pd="cliente.email" inputmode="email" value="' + esc(c.email) + '" maxlength="100"></label>'
-      + '<label class="campo"><span>Dirección</span><input data-pd="cliente.direccion" value="' + esc(c.direccion) + '" maxlength="160"></label>'
-      + '<label class="campo"><span>NIF (solo si lo necesita)</span><input data-pd="cliente.nif" value="' + esc(c.nif) + '" maxlength="20"></label></div>'
-      + '<h2>Trabajo</h2><div class="caja"><label class="campo" style="margin:0"><textarea data-pd="trabajo" rows="3" maxlength="600" placeholder="Qué se va a hacer, dónde y cuándo.">' + esc(d.trabajo) + '</textarea></label></div>'
-      + '<h2>Partidas <span class="n">' + d.partidas.length + '</span></h2>' + prPartidasHtml(d, true);
-    if (tar.length) h += '<div class="caja" style="margin-bottom:10px"><label class="campo" style="margin:0"><span>Añadir desde tu tarifa</span><select data-pr-sel><option value="">Elegir…</option>' + tar.map(function(x, i){ return '<option value="' + i + '">' + esc(x.concepto) + ' · ' + prEur(x.precio) + (x.unidad ? '/' + esc(x.unidad) : '') + '</option>'; }).join('') + '</select></label></div>';
-    var cat = prCatalogo();
-    if (cat.length) h += '<div class="caja" style="margin-bottom:10px"><label class="campo" style="margin:0"><span>Añadir desde tu catálogo</span><input type="search" data-pr-buscar placeholder="🔍 Buscar en el catálogo…" autocomplete="off" style="margin-bottom:8px"><select data-pr-cat><option value="">Elegir…</option>' + cat.map(function(x, i){ return '<option value="' + i + '">' + esc(x.nombre) + (x.precio ? ' · ' + prEur(prNum(x.precio)) : '') + '</option>'; }).join('') + '</select></label></div>';
-    h += '<button class="btn b-otra ancho" data-pr="l-libre">+ Línea libre</button>';
-    h += '<h2>Total</h2><div id="prTot">' + prTotalesHtml(d) + '</div>';
-    h += '<h2>Condiciones</h2><div class="caja"><label class="campo"><span>Una por línea</span><textarea data-pd="condiciones" rows="4" maxlength="1500">' + esc((d.condiciones || []).join('\n')) + '</textarea></label><label class="campo" style="margin:0"><span>Días de validez</span><input data-pd="validez" inputmode="numeric" value="' + esc(d.validez) + '"></label></div>';
-    h += '<div class="columna" style="margin-top:14px">' + (d.numero ? '<button class="btn b-ok ancho" data-pr="enviar">Guardar cambios y volver a enviar</button><button class="btn b-otra ancho" data-pr="cancelar-edicion">Cancelar</button></div>' : '<button class="btn b-ok ancho" data-pr="enviar">Guardar y preparar para enviar</button><button class="btn b-otra ancho" data-pr="borrador">Guardar borrador</button><button class="btn b-no ancho" data-pr="borrar">Borrar borrador</button></div>')
-      + '<p class="ayuda">' + (d.numero ? 'Al guardar, este presupuesto conserva su número, el enlace anterior deja de valer y hay que volver a enviárselo a tu cliente.' : 'Al preparar para enviar se le pone número. Después, si hay que cambiar algo, podrás editarlo y volver a enviarlo.') + '</p>';
+    var d = prDoc, c = d.cliente || {}, tar = prConceptos(), fac = prEsFactura(d), rect = prEsRect(d);
+    var h = '<p class="ayuda" style="margin:14px 0 0"><button class="accion" data-pr="volver">← ' + (fac ? 'Facturas' : 'Presupuestos') + '</button></p>';
+    if (rect) h += '<h2>Factura rectificativa</h2><div class="caja"><p style="margin:0 0 8px">Corrige la factura <b>' + esc(d.rectifica_codigo || '') + '</b> de <b>' + esc(c.nombre || '') + '</b>. Pon cuánto se abona de cada línea: se emite con importes en negativo.</p><label class="campo" style="margin:0"><span>Motivo (obligatorio)</span><textarea data-pd="motivo" rows="2" maxlength="300" placeholder="Ej.: Error en el precio / Devolución del servicio.">' + esc(d.motivo || '') + '</textarea></label></div>';
+    else {
+      h += '<h2>Cliente</h2><div class="caja">'
+        + '<label class="campo"><span>Nombre</span><input data-pd="cliente.nombre" value="' + esc(c.nombre) + '" maxlength="100"></label>'
+        + '<label class="campo"><span>Teléfono (para WhatsApp)</span><input data-pd="cliente.telefono" inputmode="tel" value="' + esc(c.telefono) + '" maxlength="20"></label>'
+        + '<label class="campo"><span>Correo</span><input data-pd="cliente.email" inputmode="email" value="' + esc(c.email) + '" maxlength="100"></label>'
+        + '<label class="campo"><span>Dirección</span><input data-pd="cliente.direccion" value="' + esc(c.direccion) + '" maxlength="160"></label>'
+        + '<label class="campo"><span>' + (fac ? 'NIF (obligatorio si es una empresa o un autónomo)' : 'NIF (solo si lo necesita)') + '</span><input data-pd="cliente.nif" value="' + esc(c.nif) + '" maxlength="20"></label></div>'
+        + '<h2>' + (fac ? 'Concepto' : 'Trabajo') + '</h2><div class="caja"><label class="campo" style="margin:0"><textarea data-pd="trabajo" rows="3" maxlength="600" placeholder="' + (fac ? 'Qué se factura (opcional).' : 'Qué se va a hacer, dónde y cuándo.') + '">' + esc(d.trabajo) + '</textarea></label></div>';
+    }
+    h += '<h2>' + (rect ? 'Líneas a abonar' : 'Partidas') + ' <span class="n">' + d.partidas.length + '</span></h2>' + prPartidasHtml(d, true, rect);
+    if (!rect) {
+      if (tar.length) h += '<div class="caja" style="margin-bottom:10px"><label class="campo" style="margin:0"><span>Añadir desde tu tarifa</span><select data-pr-sel><option value="">Elegir…</option>' + tar.map(function(x, i){ return '<option value="' + i + '">' + esc(x.concepto) + ' · ' + prEur(x.precio) + (x.unidad ? '/' + esc(x.unidad) : '') + '</option>'; }).join('') + '</select></label></div>';
+      var cat = prCatalogo();
+      if (cat.length) h += '<div class="caja" style="margin-bottom:10px"><label class="campo" style="margin:0"><span>Añadir desde tu catálogo</span><input type="search" data-pr-buscar placeholder="🔍 Buscar en el catálogo…" autocomplete="off" style="margin-bottom:8px"><select data-pr-cat><option value="">Elegir…</option>' + cat.map(function(x, i){ return '<option value="' + i + '">' + esc(x.nombre) + (x.precio ? ' · ' + prEur(prNum(x.precio)) : '') + '</option>'; }).join('') + '</select></label></div>';
+      h += '<button class="btn b-otra ancho" data-pr="l-libre">+ Línea libre</button>';
+    }
+    h += '<h2>' + (rect ? 'Importe a abonar' : 'Total') + '</h2><div id="prTot">' + prTotalesHtml(d) + '</div>';
+    if (fac && !rect) h += '<h2>Pago y notas</h2><div class="caja"><label class="campo"><span>Forma de pago (opcional)</span><input data-pd="forma_pago" value="' + esc(d.forma_pago || '') + '" maxlength="120" placeholder="Ej.: Transferencia / Efectivo / Bizum"></label><label class="campo" style="margin:0"><span>Notas (una por línea)</span><textarea data-pd="condiciones" rows="3" maxlength="1500">' + esc((d.condiciones || []).join('\n')) + '</textarea></label></div>';
+    else if (!fac) h += '<h2>Condiciones</h2><div class="caja"><label class="campo"><span>Una por línea</span><textarea data-pd="condiciones" rows="4" maxlength="1500">' + esc((d.condiciones || []).join('\n')) + '</textarea></label><label class="campo" style="margin:0"><span>Días de validez</span><input data-pd="validez" inputmode="numeric" value="' + esc(d.validez) + '"></label></div>';
+    if (fac) h += '<div class="columna" style="margin-top:14px"><button class="btn b-ok ancho" data-pr="enviar">Emitir ' + (rect ? 'rectificativa' : 'factura') + '</button><button class="btn b-otra ancho" data-pr="borrador">Guardar borrador</button><button class="btn b-no ancho" data-pr="borrar">Borrar borrador</button></div><p class="ayuda">Al emitirla se le pone número y ya no se puede editar ni borrar.' + (rect ? ' Se emite con los importes en negativo y queda unida a la factura original.' : '') + '</p>';
+    else {
+      h += '<div class="columna" style="margin-top:14px">' + (d.numero ? '<button class="btn b-ok ancho" data-pr="enviar">Guardar cambios y volver a enviar</button><button class="btn b-otra ancho" data-pr="cancelar-edicion">Cancelar</button></div>' : '<button class="btn b-ok ancho" data-pr="enviar">Guardar y preparar para enviar</button><button class="btn b-otra ancho" data-pr="borrador">Guardar borrador</button><button class="btn b-no ancho" data-pr="borrar">Borrar borrador</button></div>')
+        + '<p class="ayuda">' + (d.numero ? 'Al guardar, este presupuesto conserva su número, el enlace anterior deja de valer y hay que volver a enviárselo a tu cliente.' : 'Al preparar para enviar se le pone número. Después, si hay que cambiar algo, podrás editarlo y volver a enviarlo.') + '</p>';
+    }
     return h;
   }
   function prVistaFactura(){
-    var d = prDoc, c = d.cliente || {}, cob = d.estado === 'cobrada';
-    return '<p class="ayuda" style="margin:14px 0 0"><button class="accion" data-pr="volver">← Facturas</button></p>'
-      + '<h2>' + esc(prCodigo(d)) + ' ' + prEtq(d.estado) + '</h2><div class="caja"><p style="margin:0"><b>' + esc(c.nombre) + '</b>' + (c.nif ? '<br>NIF ' + esc(c.nif) : '') + (c.direccion ? '<br>' + esc(c.direccion) : '') + (c.telefono ? '<br>' + esc(c.telefono) : '') + (c.email ? '<br>' + esc(c.email) : '') + (d.trabajo ? '<br>' + esc(d.trabajo) : '') + '</p></div>'
-      + '<h2>Cobro</h2><div class="columna">' + (cob ? '<button class="btn b-otra" data-pr="pago" data-e="emitida">Volver a «pendiente de cobro»</button>' : '<button class="btn b-ok" data-pr="pago" data-e="cobrada">✅ Marcar como cobrada</button>') + '</div>'
-      + '<h2>Partidas</h2>' + prPartidasHtml(d, false) + '<div style="margin-top:10px">' + prTotalesHtml(d) + '</div>'
+    var d = prDoc, c = d.cliente || {}, cob = d.estado === 'cobrada', rect = prEsRect(d);
+    var rects = rect ? [] : presu.docs.filter(function(x){ return x.rectifica === d.id && x.estado !== 'borrador'; });
+    var h = '<p class="ayuda" style="margin:14px 0 0"><button class="accion" data-pr="volver">← Facturas</button></p>'
+      + '<h2>' + esc(prCodigo(d)) + ' ' + prEtqDoc(d) + '</h2><div class="caja"><p style="margin:0"><b>' + esc(c.nombre) + '</b>' + (c.nif ? '<br>NIF ' + esc(c.nif) : '') + (c.direccion ? '<br>' + esc(c.direccion) : '') + (c.telefono ? '<br>' + esc(c.telefono) : '') + (c.email ? '<br>' + esc(c.email) : '') + (d.trabajo ? '<br>' + esc(d.trabajo) : '') + '</p></div>';
+    if (rect) h += '<div class="caja" style="margin-top:10px"><p style="margin:0">Rectifica la factura <b>' + esc(d.rectifica_codigo || '') + '</b>.<br>Motivo: ' + esc(d.motivo || '') + '</p></div>';
+    else h += '<h2>Cobro</h2><div class="columna">' + (cob ? '<button class="btn b-otra" data-pr="pago" data-e="emitida">Volver a «pendiente de cobro»</button>' : '<button class="btn b-ok" data-pr="pago" data-e="cobrada">✅ Marcar como cobrada</button>') + '</div>';
+    h += '<h2>Partidas</h2>' + prPartidasHtml(d, false) + '<div style="margin-top:10px">' + prTotalesHtml(d) + '</div>'
       + '<h2>Enviar al cliente</h2><div class="columna"><button class="btn b-ok" data-pr="pdf">📄 Ver y guardar PDF</button>'
       + (c.telefono ? '<button class="btn b-otra" data-pr="wa">💬 Abrir WhatsApp con el mensaje</button>' : '')
       + (c.email ? '<button class="btn b-otra" data-pr="mail">✉️ Abrir correo con el mensaje</button>' : '') + '</div>'
-      + '<p class="ayuda">Primero guarda el PDF y luego adjúntalo en WhatsApp o en el correo.</p>'
-      + (d.presupuesto_origen && prDocPorId(d.presupuesto_origen) ? '<div class="columna" style="margin-top:12px"><button class="btn b-otra" data-pr="abrir" data-id="' + esc(d.presupuesto_origen) + '">Ver el presupuesto de origen</button></div>' : '')
-      + '<p class="ayuda">Una factura emitida no se puede editar ni borrar. Si hay un error, pídele a tu gestor una factura rectificativa. Consulta con tu gestor cómo cumplir con la facturación electrónica obligatoria.</p>';
+      + '<p class="ayuda">Primero guarda el PDF y luego adjúntalo en WhatsApp o en el correo.</p>';
+    if (rect) h += (d.rectifica && prDocPorId(d.rectifica) ? '<div class="columna" style="margin-top:12px"><button class="btn b-otra" data-pr="abrir" data-id="' + esc(d.rectifica) + '">Ver la factura original</button></div>' : '');
+    else {
+      h += (d.presupuesto_origen && prDocPorId(d.presupuesto_origen) ? '<div class="columna" style="margin-top:12px"><button class="btn b-otra" data-pr="abrir" data-id="' + esc(d.presupuesto_origen) + '">Ver el presupuesto de origen</button></div>' : '');
+      if (rects.length) h += '<h2>Rectificativas</h2>' + rects.map(function(x){ return '<button class="fila tocable" data-pr="abrir" data-id="' + esc(x.id) + '"><span class="txt"><b>' + esc(prCodigo(x)) + '</b><span>' + esc(x.motivo || '') + '</span></span><span class="precio">' + prEur(prTotales(x).total) + '</span></button>'; }).join('');
+      h += '<div class="columna" style="margin-top:12px"><button class="btn b-otra" data-pr="crear-rectificativa">↩️ Crear factura rectificativa</button></div>';
+    }
+    return h + '<p class="ayuda">Una factura emitida no se puede editar ni borrar. Si hay un error, créale una factura rectificativa. Consulta con tu gestor cómo cumplir con la facturación electrónica obligatoria.</p>';
   }
   function prVistaVer(){
     var d = prDoc, c = d.cliente || {};
@@ -1914,10 +1939,43 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     return '';
   }
   function prLimpiar(d){ d.partidas.forEach(function(x){ x.cantidad = prNum(x.cantidad); x.precio = prNum(x.precio); x.iva = prNum(x.iva); }); return d; }
+  function prEmitirFactura(){
+    if (prOcupado || !prDoc) return;
+    var d = JSON.parse(JSON.stringify(prDoc)), rect = prEsRect(d), aj = prAjustes(), emi = d.emisor || {};
+    var razon = emi.razon_social || aj.razon_social, nif = emi.nif || aj.nif;
+    if (!razon) { toast('Antes rellena los datos de tu empresa en «Mi tarifa y datos»'); return; }
+    if (!nif) { toast('Antes pon el NIF de tu empresa en «Mi tarifa y datos»'); return; }
+    if (!String((d.cliente || {}).nombre || '').trim()) { toast('Pon el nombre del cliente'); return; }
+    prLimpiar(d);
+    d.partidas = d.partidas.filter(function(x){ return String(x.concepto || '').trim(); });
+    if (!d.partidas.length) { toast('Añade al menos una línea con concepto'); return; }
+    if (d.partidas.some(function(x){ return !(x.cantidad > 0); })) { toast(rect ? 'Las cantidades a abonar deben ser mayores que 0' : 'La cantidad de cada línea debe ser mayor que 0'); return; }
+    if (rect) {
+      if (!String(d.motivo || '').trim()) { toast('Escribe el motivo de la rectificación'); return; }
+      var org = prDocPorId(d.rectifica); if (!org) { toast('No encuentro la factura original'); return; }
+      var abono = prTotales(d).total, disp = prTotales(org).total;
+      presu.docs.forEach(function(x){ if (x.rectifica === org.id && x.estado !== 'borrador') disp += prTotales(x).total; });
+      if (abono > disp + 0.005) { toast('No puedes abonar más de lo facturado (quedan ' + prEur(disp) + ')'); return; }
+    }
+    if (!confirmar(rect ? '¿Emitir la factura rectificativa? Una vez emitida no se podrá editar ni borrar.' : '¿Emitir la factura? Una vez emitida no se podrá editar ni borrar.')) return;
+    var serie = rect ? 'R' : 'F', maxN = 0; presu.docs.forEach(function(x){ if (x.serie === serie && x.numero > maxN) maxN = x.numero; });
+    d.serie = serie; d.numero = maxN + 1; d.estado = 'emitida'; d.estado_pago = rect ? 'no_aplica' : 'pendiente'; d.fecha_emision = hoyISO();
+    d.emisor = { razon_social: razon, nif: nif, direccion: emi.direccion || aj.direccion || '', contacto: emi.contacto || aj.contacto || '' };
+    if (rect) d.partidas.forEach(function(x){ x.cantidad = -Math.abs(x.cantidad); delete x.cantidad_orig; });
+    prGuardarDocs(prSustituir(d), 'Factura ' + prCodigo(d) + ' emitida', function(){ prDoc = d; prVista = 'ver'; prFiltro = 'factura'; });
+  }
   app.addEventListener('click', function(e){
     var b = e.target.closest('[data-pr]'); if (!b) return;
     var a = b.getAttribute('data-pr');
     if (a === 'nuevo') { prDoc = prNuevoDoc(); prVista = 'editar'; pintar(); }
+    else if (a === 'nueva-factura') { prDoc = prNuevoDoc('factura'); prFiltro = 'factura'; prVista = 'editar'; pintar(); }
+    else if (a === 'crear-rectificativa') {
+      var og = prDoc; if (prOcupado || !og || !prEsFactura(og) || prEsRect(og) || og.estado === 'borrador') return;
+      var rr = prNuevoDoc('factura'); rr.serie = 'R'; rr.rectifica = og.id; rr.rectifica_codigo = prCodigo(og); rr.rectifica_fecha = og.fecha_emision || ''; rr.motivo = '';
+      rr.emisor = JSON.parse(JSON.stringify(og.emisor || rr.emisor)); rr.cliente = JSON.parse(JSON.stringify(og.cliente || {})); rr.trabajo = og.trabajo || '';
+      rr.partidas = JSON.parse(JSON.stringify(og.partidas || [])).map(function(x){ x.cantidad_orig = x.cantidad; return x; });
+      prDoc = rr; prFiltro = 'factura'; prVista = 'editar'; pintar();
+    }
     else if (a === 'abrir') { var d0 = prDocPorId(b.getAttribute('data-id')); if (!d0) return;
       // 16/11: los presupuestos enviados antes del botón «Aceptar» no tenían enlace; al abrirlos se les pone uno y se guarda sin avisar.
       if ((d0.estado === 'enviado' || d0.estado === 'sin_respuesta') && !d0.token && !prOcupado) { var cn = JSON.parse(JSON.stringify(d0)); cn.token = prToken(); cn.nombre_negocio = (datos && datos.negocio && datos.negocio.nombre) || ''; d0 = cn; prGuardar({ docs: prSustituir(cn) }, '', null); }
@@ -1951,6 +2009,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     else if (a === 'l-quitar') { prDoc.partidas.splice(+b.getAttribute('data-i'), 1); pintar(); }
     else if (a === 'borrador') { prGuardarDocs(prSustituir(prLimpiar(prDoc)), 'Borrador guardado', function(){ prVista = 'lista'; prDoc = null; }); }
     else if (a === 'borrar') { if (!confirmar('¿Borrar este borrador?')) return; prGuardarDocs(presu.docs.filter(function(x){ return x.id !== prDoc.id; }), 'Borrador borrado', function(){ prVista = 'lista'; prDoc = null; }); }
+    else if (a === 'enviar' && prEsFactura(prDoc)) { prEmitirFactura(); }
     else if (a === 'enviar') {
       var err = prValidarDoc(prDoc, true); if (err) { toast(err); return; }
       var maxN = 0; presu.docs.forEach(function(x){ if ((x.serie || 'P') === 'P' && x.numero > maxN) maxN = x.numero; });
@@ -1961,7 +2020,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     }
     else if (a === 'pdf') prAbrirPdf(prDoc);
     else if (a === 'wa') { window.open('https://wa.me/' + prTelWa(prDoc.cliente.telefono) + '?text=' + encodeURIComponent(prMensaje(prDoc)), '_blank'); }
-    else if (a === 'mail') { window.location.href = 'mailto:' + encodeURIComponent(prDoc.cliente.email) + '?subject=' + encodeURIComponent((prEsFactura(prDoc) ? 'Factura ' : 'Presupuesto ') + prCodigo(prDoc)) + '&body=' + encodeURIComponent(prMensaje(prDoc)); }
+    else if (a === 'mail') { window.location.href = 'mailto:' + encodeURIComponent(prDoc.cliente.email) + '?subject=' + encodeURIComponent(prNombreDoc(prDoc) + prCodigo(prDoc)) + '&body=' + encodeURIComponent(prMensaje(prDoc)); }
     else if (a === 'editar') { prDoc = JSON.parse(JSON.stringify(prDoc)); prVista = 'editar'; pintar(); }
     else if (a === 'cancelar-edicion') { var o = prDocPorId(prDoc.id); prDoc = o ? JSON.parse(JSON.stringify(o)) : null; prVista = o ? 'ver' : 'lista'; pintar(); }
     else if (a === 'estado') { var ee = b.getAttribute('data-e'); if (!confirmar(ee === 'aceptado' ? '¿Anotar que tu cliente ha aceptado este presupuesto?' : '¿Anotar que tu cliente ha rechazado este presupuesto?')) return; var nuevo = JSON.parse(JSON.stringify(prDoc)); nuevo.estado = ee; nuevo.respondido_por = 'dueño'; delete nuevo.comentario_cliente; if (nuevo.estado === 'aceptado') nuevo.aceptado = new Date().toISOString(); else nuevo.rechazado = new Date().toISOString(); prGuardarDocs(prSustituir(nuevo), 'Anotado', function(){ prDoc = nuevo; }); }
