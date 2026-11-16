@@ -1834,7 +1834,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   function prVistaVer(){
     var d = prDoc, c = d.cliente || {};
     var h = '<p class="ayuda" style="margin:14px 0 0"><button class="accion" data-pr="volver">← Presupuestos</button></p>'
-      + '<h2>' + esc(prCodigo(d)) + ' ' + prEtq(d.estado) + '</h2><div class="caja"><p style="margin:0"><b>' + esc(c.nombre) + '</b>' + (c.telefono ? '<br>' + esc(c.telefono) : '') + (c.email ? '<br>' + esc(c.email) : '') + (d.trabajo ? '<br>' + esc(d.trabajo) : '') + '</p></div>'
+      + '<h2>' + esc(prCodigo(d)) + ' ' + prEtq(d.estado) + '</h2>' + ((d.estado === 'enviado' || d.estado === 'sin_respuesta') ? '<div class="fila" style="display:flex;gap:8px;margin:0 0 10px"><button class="btn b-ok" style="flex:1" data-pr="estado" data-e="aceptado">✅ Aprobado</button><button class="btn b-otra" style="flex:1" data-pr="editar">✏️ Personalizar</button><button class="btn b-no" style="flex:1" data-pr="estado" data-e="rechazado">❌ Denegado</button></div><p class="ayuda" style="margin:0 0 10px">Si el cliente contesta por teléfono o en persona. Al personalizar, el enlace anterior deja de valer y se crea uno nuevo.</p>' : '') + '<div class="caja"><p style="margin:0"><b>' + esc(c.nombre) + '</b>' + (c.telefono ? '<br>' + esc(c.telefono) : '') + (c.email ? '<br>' + esc(c.email) : '') + (d.trabajo ? '<br>' + esc(d.trabajo) : '') + '</p></div>'
       + '<h2>Partidas</h2>' + prPartidasHtml(d, false) + '<div style="margin-top:10px">' + prTotalesHtml(d) + '</div>'
       + '<h2>Enviar al cliente</h2><div class="columna"><button class="btn b-ok" data-pr="pdf">📄 Ver y guardar PDF</button>'
       + (c.telefono ? '<button class="btn b-otra" data-pr="wa">💬 Abrir WhatsApp con el mensaje</button>' : '')
@@ -1844,7 +1844,6 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + (d.respondido_por === 'cliente' ? '<div class="caja"><p style="margin:0">Tu cliente lo ' + (d.estado === 'aceptado' ? '<b>ha aceptado</b>' : '<b>ha rechazado</b>') + ' desde el enlace.' + (d.comentario_cliente ? '<br>Dice: «' + esc(d.comentario_cliente) + '»' : '') + '</p></div>'
         : (d.estado === 'aceptado' || d.estado === 'rechazado') ? '<div class="caja"><p style="margin:0">Lo has marcado como <b>' + (d.estado === 'aceptado' ? 'aceptado' : 'rechazado') + '</b>.</p></div>'
         : '<div class="caja"><p style="margin:0">Esperando respuesta. Cuando tu cliente acepte o rechace desde el enlace, se anota solo y te llega un aviso al móvil.</p></div>')
-      + ((d.estado === 'enviado' || d.estado === 'sin_respuesta') ? '<p class="ayuda">¿Te ha contestado por teléfono o en persona? Anótalo aquí:</p><div class="columna"><button class="btn b-ok" data-pr="estado" data-e="aceptado">✅ Lo ha aceptado</button><button class="btn b-no" data-pr="estado" data-e="rechazado">❌ Lo ha rechazado</button><button class="btn b-otra" data-pr="editar">✏️ Editar presupuesto</button></div><p class="ayuda">Si lo editas, el enlace anterior deja de valer y se crea uno nuevo para volver a enviarlo (conserva el mismo número).</p>' : '')
       + '<div class="columna" style="margin-top:12px"><button class="btn b-otra" data-pr="duplicar">Hacer uno nuevo a partir de este</button></div>';
     return h;
   }
