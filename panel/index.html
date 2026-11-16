@@ -668,7 +668,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     numeros: { t:'Números', i:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>' },
     modulos: { t:'Clientes y planes', i:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/>' },
     presupuestos: { t:'Presupuestos', i:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>' },
-    herramientas: { t:'Herramientas', i:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4 2.6-2.6z"/>' },
+    herramientas: { t:'Módulos', i:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4 2.6-2.6z"/>' },
     pedidos: { t:'Pedidos', i:'<path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>' },
     hoy: { t:'Hoy', i:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><circle cx="12" cy="15" r="2"/>' },
     calendario: { t:'Calendario', i:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2"/>' },
@@ -1574,7 +1574,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var nFac = docs.filter(prEsFactura).length, pend = docs.filter(function(x){ return prEsFactura(x) && x.estado === 'emitida'; }).length;
     docs = docs.filter(function(x){ return !prEsFactura(x); });
     var resumen = !docs.length ? 'Aún no has hecho ninguno.' : [env ? env + (env === 1 ? ' enviado sin respuesta' : ' enviados sin respuesta') : '', bor ? bor + (bor === 1 ? ' borrador' : ' borradores') : ''].filter(Boolean).join(' · ') || docs.length + (docs.length === 1 ? ' presupuesto' : ' presupuestos');
-    return '<h2>Tus herramientas</h2><div class="caja"><p style="margin:0 0 4px"><b>Presupuestos</b></p><p class="ayuda" style="margin:0 0 10px">' + esc(resumen) + ' Díselo a Eris o hazlos tú, con tu tarifa, y mándalos en PDF.</p><button class="btn b-ok ancho" data-ir="presupuestos">Abrir presupuestos</button></div>'
+    return '<h2>Tus módulos</h2><div class="caja"><p style="margin:0 0 4px"><b>Presupuestos</b></p><p class="ayuda" style="margin:0 0 10px">' + esc(resumen) + ' Díselo a Eris o hazlos tú, con tu tarifa, y mándalos en PDF.</p><button class="btn b-ok ancho" data-ir="presupuestos">Abrir presupuestos</button></div>'
       + '<div class="caja"><p style="margin:0 0 4px"><b>Catálogo</b></p><p class="ayuda" style="margin:0 0 10px">Sube los catálogos de tus proveedores y tus precios para crear presupuestos y que Eris los conozca.</p><button class="btn b-otra ancho" data-ir="catalogo">Abrir catálogo</button></div>'
       + '<div class="caja"><p style="margin:0 0 4px"><b>Facturas</b></p><p class="ayuda" style="margin:0 0 10px">' + (nFac ? nFac + (nFac === 1 ? ' factura' : ' facturas') + (pend ? ' · ' + pend + ' pendiente' + (pend === 1 ? '' : 's') + ' de cobro.' : '.') : 'Se crean desde un presupuesto aceptado.') + '</p><button class="btn b-otra ancho" data-pr="filtro" data-f="factura" data-go="1">Abrir facturas</button></div>';
   }
@@ -1638,7 +1638,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     // 16/11 (Tete): «Cuenta» y «Mi empresa» eran casi lo mismo: ahora es una sola pantalla, «Mi empresa» (la cuenta va abajo).
     // 16/11 (Tete): «Herramientas» (presupuestos y, más adelante, facturas) va en la barra y no en el menú. Solo sale si el negocio tiene el módulo; entonces «Pendientes» pasa al menú ☰ para que la barra siga en 5.
     var cola = [['empresa', 'Mi empresa', 0]];
-    if (presupuestosOn()) return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['herramientas', 'Herramientas', 0]].concat(cola);
+    if (presupuestosOn()) return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['herramientas', 'Módulos', 0]].concat(cola);
     return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['pendientes', 'Pendientes', pendientesAbiertos().length]].concat(cola);
   }
   // 12/11: barra de abajo y píldora «Habla con Eris», solo en la cuenta de Tete.
