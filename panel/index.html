@@ -1881,7 +1881,10 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var b = e.target.closest('[data-pr]'); if (!b) return;
     var a = b.getAttribute('data-pr');
     if (a === 'nuevo') { prDoc = prNuevoDoc(); prVista = 'editar'; pintar(); }
-    else if (a === 'abrir') { var d0 = prDocPorId(b.getAttribute('data-id')); if (!d0) return; prDoc = JSON.parse(JSON.stringify(d0)); prVista = d0.estado === 'borrador' ? 'editar' : 'ver'; pintar(); }
+    else if (a === 'abrir') { var d0 = prDocPorId(b.getAttribute('data-id')); if (!d0) return;
+      // 16/11: los presupuestos enviados antes del botón «Aceptar» no tenían enlace; al abrirlos se les pone uno y se guarda sin avisar.
+      if ((d0.estado === 'enviado' || d0.estado === 'sin_respuesta') && !d0.token && !prOcupado) { var cn = JSON.parse(JSON.stringify(d0)); cn.token = prToken(); cn.nombre_negocio = (datos && datos.negocio && datos.negocio.nombre) || ''; d0 = cn; prGuardar({ docs: prSustituir(cn) }, '', null); }
+      prDoc = JSON.parse(JSON.stringify(d0)); prVista = d0.estado === 'borrador' ? 'editar' : 'ver'; pintar(); }
     else if (a === 'volver') { prVista = 'lista'; prDoc = null; prT = null; pintar(); }
     else if (a === 'tarifa') { var aj = prAjustes(); prT = { aj: aj, conceptos: JSON.parse(JSON.stringify(prConceptos())) }; prVista = 'tarifa'; pintar(); }
     else if (a === 't-add') { prT.conceptos.push({ id: 'c' + Date.now().toString(36), concepto: '', descripcion: '', unidad: '', precio: '' }); pintar(); }
