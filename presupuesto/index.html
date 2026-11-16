@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#1f6f5c">
+<title>Tu presupuesto</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f7f5;color:#1d2a26;font-family:"Helvetica Neue",Arial,system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%}
+.pag{max-width:640px;margin:0 auto;padding:16px 14px 40px}
+.hoja{background:#fff;border-radius:14px;padding:18px 16px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.cab{display:flex;gap:12px;align-items:center;border-bottom:3px solid #1f6f5c;padding-bottom:12px}
+.ini{flex:none;width:44px;height:44px;border-radius:10px;background:#1f6f5c;color:#fff;font-weight:800;font-size:21px;display:flex;align-items:center;justify-content:center}
+.cab b{display:block;font-size:17px;line-height:1.25}
+.cab small{display:block;color:#5d6f69;font-size:12px}
+.num{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin:12px 0 0;font-size:13px;color:#5d6f69}
+.num h1{margin:0;font-size:19px;color:#1f6f5c;letter-spacing:.03em}
+.cli{margin:14px 0;background:#f3f7f5;border-radius:10px;padding:10px 12px}
+.cli h3,.cond h3{margin:0 0 3px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#1f6f5c}
+.trabajo{margin:0 0 12px}
+.lin{padding:10px 0;border-bottom:1px solid #e1e8e5}
+.lin .arr{display:flex;justify-content:space-between;gap:10px}
+.lin b{font-weight:700}
+.lin small{display:block;color:#5d6f69;font-size:12.5px}
+.lin .det{color:#5d6f69;font-size:12.5px;margin-top:2px}
+.tot{margin:12px 0 0 auto;max-width:300px}
+.tot div{display:flex;justify-content:space-between;padding:4px 8px}
+.tot .t{background:#1f6f5c;color:#fff;font-weight:800;font-size:18px;border-radius:9px;padding:10px 12px;margin-top:4px}
+.cond{margin-top:16px;font-size:13px}
+.cond ul{margin:0;padding-left:18px}
+.valido{margin-top:14px;font-size:12.5px;color:#5d6f69}
+.acc{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+button{font:inherit;cursor:pointer;border:0;border-radius:11px;padding:15px 18px;font-weight:700;font-size:16px}
+.si{background:#1f6f5c;color:#fff}
+.no{background:#fff;color:#8a2d2d;border:1.5px solid #d9b8b8}
+.atras{background:#fff;color:#1d2a26;border:1.5px solid #cfd9d5}
+button:disabled{opacity:.55;cursor:default}
+textarea{width:100%;font:inherit;border:1.5px solid #cfd9d5;border-radius:10px;padding:10px;min-height:84px;resize:vertical}
+.conf{background:#eaf4f0;border-radius:11px;padding:14px}
+.conf p{margin:0 0 10px}
+.aviso{margin:18px 0 0;border-radius:11px;padding:14px;text-align:center;font-weight:600}
+.ok{background:#e3f5ec;color:#14664a}
+.mal{background:#fbeaea;color:#8a2d2d}
+.info{background:#eef2f1;color:#41504b}
+.cargando{text-align:center;padding:50px 0;color:#5d6f69}
+.pie{margin-top:18px;text-align:center;font-size:11px;color:#a0a0a0}
+.pie i{font-style:normal;font-weight:700}
+.pie em{font-style:normal;font-weight:800;padding:0 .25em 0 .05em;background:linear-gradient(135deg,#F06CA3,#10B981);-webkit-background-clip:text;background-clip:text;color:transparent}
+</style>
+</head>
+<body>
+<div class="pag">
+  <div id="raiz"><p class="cargando">Cargando tu presupuesto…</p></div>
+  <p class="pie">Desarrollado por <i>Euxenos</i> <em>ξ</em></p>
+</div>
+<script>
+(function(){
+  var API = 'https://erisproject.app.n8n.cloud/webhook/eris-presupuesto-publico';
+  var raiz = document.getElementById('raiz');
+  var t = (new URLSearchParams(location.search).get('t') || '').toLowerCase();
+  var datos = null;
+  function el(tag, cls, txt){ var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function eur(v){ return (Math.round((Number(v) || 0) * 100) / 100).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+  function fecha(s){ return s ? s.split('-').reverse().join('/') : ''; }
+  function cant(x){ var n = Number(x.cantidad) || 0, u = x.unidad ? ' ' + x.unidad : ''; return String(n).replace('.', ',') + (u || ' ud'); }
+  function llamar(cuerpo){
+    return fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) })
+      .then(function(r){ return r.json(); });
+  }
+  function fallo(msg){ raiz.textContent = ''; raiz.appendChild(el('div', 'aviso mal', msg)); }
+  function pintar(){
+    var d = datos, h = el('div', 'hoja');
+    var cab = el('div', 'cab'), nom = d.negocio || d.razon_social || 'Presupuesto';
+    cab.appendChild(el('div', 'ini', (nom.charAt(0) || '?').toUpperCase()));
+    var c1 = el('div'); c1.appendChild(el('b', null, nom));
+    var sub = [d.razon_social && d.razon_social !== nom ? d.razon_social : '', d.nif ? 'NIF ' + d.nif : ''].filter(Boolean).join(' · ');
+    if (sub) c1.appendChild(el('small', null, sub));
+    if (d.direccion) c1.appendChild(el('small', null, d.direccion));
+    if (d.contacto) c1.appendChild(el('small', null, d.contacto));
+    cab.appendChild(c1); h.appendChild(cab);
+    var num = el('div', 'num'); num.appendChild(el('h1', null, 'PRESUPUESTO'));
+    num.appendChild(el('span', null, 'Nº ' + d.numero + (d.fecha ? ' · ' + fecha(d.fecha) : ''))); h.appendChild(num);
+    var cli = el('div', 'cli'); cli.appendChild(el('h3', null, 'Cliente')); cli.appendChild(el('span', null, d.cliente || '')); h.appendChild(cli);
+    if (d.trabajo) { var tr = el('p', 'trabajo'); tr.appendChild(el('b', null, 'Trabajo: ')); tr.appendChild(document.createTextNode(d.trabajo)); h.appendChild(tr); }
+    (d.partidas || []).forEach(function(x){
+      var l = el('div', 'lin'), a = el('div', 'arr');
+      a.appendChild(el('b', null, x.concepto)); a.appendChild(el('span', null, eur(x.importe))); l.appendChild(a);
+      if (x.descripcion) l.appendChild(el('small', null, x.descripcion));
+      l.appendChild(el('div', 'det', cant(x) + (x.precio ? ' × ' + eur(x.precio) : ' · incluido') + ' · IVA ' + x.iva + ' %'));
+      h.appendChild(l);
+    });
+    var tot = el('div', 'tot');
+    [['Base imponible', d.base], ['IVA', d.iva]].forEach(function(f){ var r = el('div'); r.appendChild(el('span', null, f[0])); r.appendChild(el('span', null, eur(f[1]))); tot.appendChild(r); });
+    var rt = el('div', 't'); rt.appendChild(el('span', null, 'TOTAL')); rt.appendChild(el('span', null, eur(d.total))); tot.appendChild(rt); h.appendChild(tot);
+    if (d.condiciones && d.condiciones.length) { var cd = el('div', 'cond'); cd.appendChild(el('h3', null, 'Condiciones')); var ul = el('ul'); d.condiciones.forEach(function(x){ ul.appendChild(el('li', null, x)); }); cd.appendChild(ul); h.appendChild(cd); }
+    if (d.hasta) h.appendChild(el('p', 'valido', 'Válido hasta el ' + fecha(d.hasta) + '.'));
+    raiz.textContent = ''; raiz.appendChild(h);
+    var zona = el('div'); raiz.appendChild(zona);
+    if (d.estado === 'aceptado') zona.appendChild(el('div', 'aviso ok', 'Has aceptado este presupuesto. El negocio ya lo sabe.'));
+    else if (d.estado === 'rechazado') zona.appendChild(el('div', 'aviso info', 'Has rechazado este presupuesto.'));
+    else if (d.caducado) zona.appendChild(el('div', 'aviso mal', 'Este presupuesto ha caducado. Pide uno nuevo al negocio.'));
+    else if (d.estado !== 'enviado' && d.estado !== 'sin_respuesta') zona.appendChild(el('div', 'aviso info', 'Este presupuesto no está disponible para responder.'));
+    else acciones(zona);
+  }
+  function acciones(zona){
+    zona.textContent = '';
+    var acc = el('div', 'acc'), si = el('button', 'si', 'Aceptar presupuesto'), no = el('button', 'no', 'No me interesa');
+    si.addEventListener('click', function(){ confirmar(zona, true); });
+    no.addEventListener('click', function(){ confirmar(zona, false); });
+    acc.appendChild(si); acc.appendChild(no); zona.appendChild(acc);
+  }
+  function confirmar(zona, acepta){
+    zona.textContent = '';
+    var c = el('div', 'conf'), acc = el('div', 'acc'), ta = null;
+    c.appendChild(el('p', null, acepta ? '¿Confirmas que aceptas este presupuesto por ' + eur(datos.total) + '?' : '¿Seguro que no te interesa? Si quieres, cuéntale al negocio por qué (opcional).'));
+    if (!acepta) { ta = el('textarea'); ta.maxLength = 300; ta.placeholder = 'Ej.: es más de lo que esperaba'; ta.setAttribute('aria-label', 'Mensaje para el negocio (opcional)'); c.appendChild(ta); }
+    var ok = el('button', acepta ? 'si' : 'no', acepta ? 'Sí, aceptar' : 'Sí, rechazar'), at = el('button', 'atras', 'Volver');
+    at.addEventListener('click', function(){ acciones(zona); });
+    ok.addEventListener('click', function(){
+      ok.disabled = true; at.disabled = true; ok.textContent = 'Enviando…';
+      llamar({ t: t, accion: 'responder', respuesta: acepta ? 'aceptar' : 'rechazar', comentario: ta ? ta.value : '' }).then(function(r){
+        zona.textContent = '';
+        if (r && r.ok) { datos.estado = r.estado || (acepta ? 'aceptado' : 'rechazado'); zona.appendChild(el('div', acepta ? 'aviso ok' : 'aviso info', acepta ? '¡Listo! Has aceptado el presupuesto. El negocio ya lo sabe y se pondrá en contacto contigo.' : 'Anotado. Hemos avisado al negocio.')); }
+        else { var m = el('div', 'aviso mal', (r && r.motivo) || 'No se ha podido enviar tu respuesta. Inténtalo otra vez.'); zona.appendChild(m); if (!(r && (r.ya || r.caducado))) { var b = el('button', 'atras', 'Volver a intentarlo'); b.style.marginTop = '10px'; b.addEventListener('click', function(){ acciones(zona); }); zona.appendChild(b); } }
+      }).catch(function(){
+        zona.textContent = ''; zona.appendChild(el('div', 'aviso mal', 'No hay conexión. Inténtalo otra vez en un momento.'));
+        var b = el('button', 'atras', 'Volver a intentarlo'); b.style.marginTop = '10px'; b.addEventListener('click', function(){ acciones(zona); }); zona.appendChild(b);
+      });
+    });
+    acc.appendChild(ok); acc.appendChild(at); c.appendChild(acc); zona.appendChild(c);
+  }
+  if (!/^[a-f0-9]{24}$/.test(t)) { fallo('Este enlace no es válido. Pídele al negocio que te lo envíe otra vez.'); return; }
+  llamar({ t: t, accion: 'ver' }).then(function(r){
+    if (!r || !r.ok) { fallo((r && r.motivo) || 'No se ha podido abrir el presupuesto.'); return; }
+    datos = r; document.title = 'Presupuesto ' + (r.numero || '') + (r.negocio ? ' · ' + r.negocio : ''); pintar();
+  }).catch(function(){ fallo('No se ha podido abrir el presupuesto. Revisa tu conexión e inténtalo otra vez.'); });
+})();
+</script>
+</body>
+</html>

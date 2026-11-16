@@ -1621,7 +1621,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + '<div class="titulo"><small>' + esc(vista === 'comercial' || vista === 'numeros' || vista === 'memoria' || vista === 'bandeja' || vista === 'modulos' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
       + '<button class="icono-btn" id="recargar" aria-label="Actualizar">' + svg('<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>') + '</button>'
       + '</div></header><main>' + cuerpo() + '</main>';
-    document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); if (vista === 'bandeja') cargarBandeja(); });
+    document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); if (vista === 'bandeja') cargarBandeja(); if (vista === 'presupuestos' || vista === 'herramientas') cargarPresu(); });
     document.getElementById('abrirMenu').addEventListener('click', abrirMenu);
     document.getElementById('nueva').classList.toggle('oculto', esTete() || ['hoy','calendario','citas'].indexOf(vista) < 0);
     document.getElementById('lanzador').classList.remove('oculto');
@@ -1676,6 +1676,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       if (!r || !r.ok) return;
       var antes = presupuestosOn();
       presu = { activo: !!r.activo, tarifa: r.tarifa || [], docs: r.docs || [] };
+      if (prVista === 'ver' && prDoc && !algoAbierto()) { var nd = prDocPorId(prDoc.id); if (nd && nd.estado !== prDoc.estado) { prDoc = nd; pintar(); } }
       if (datos && (antes !== presupuestosOn() || (vista === 'presupuestos' && !algoAbierto() && prVista === 'lista') || vista === 'herramientas')) pintar();
     }).catch(function(){});
   }
@@ -1693,6 +1694,9 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     base = Math.round(base * 100) / 100; iva = Math.round(iva * 100) / 100;
     return { base: base, iva: iva, total: Math.round((base + iva) * 100) / 100 };
   }
+  // 16/11 (Tete: «ahí debería aparecer el botón aceptar»): cada presupuesto enviado lleva un enlace único (token de 24 letras y números) a euxenos.com/presupuesto/. El cliente lo abre sin cuenta y acepta o rechaza; el flujo n8n «Presupuesto público (aceptar)» lo anota y avisa al móvil del dueño.
+  function prToken(){ var a = new Uint8Array(12), h = ''; try { (window.crypto || window.msCrypto).getRandomValues(a); } catch (e) { for (var j = 0; j < 12; j++) a[j] = Math.floor(Math.random() * 256); } for (var i = 0; i < 12; i++) h += ('0' + a[i].toString(16)).slice(-2); return h; }
+  function prEnlace(d){ return d && d.token ? location.origin + '/presupuesto/?t=' + d.token : ''; }
   function prCodigo(d){ return d.numero ? (d.serie || 'P') + '-' + String(d.numero).padStart(4, '0') : 'Sin número'; }
   function prNuevoDoc(){
     var a = prAjustes();
@@ -1735,7 +1739,8 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + '<table class="doc-tabla"><thead><tr><th>Concepto</th><th class="n">Cantidad</th><th class="n">Precio</th><th class="n">IVA</th><th class="n">Importe</th></tr></thead><tbody>' + filas + '</tbody></table>'
       + '<div class="doc-totales"><div><span>Base imponible</span><span>' + prEur(t.base) + '</span></div><div><span>IVA</span><span>' + prEur(t.iva) + '</span></div><div class="doc-total"><span>TOTAL</span><span>' + prEur(t.total) + '</span></div></div>'
       + (cond ? '<section class="doc-cond"><h3>Condiciones</h3><ul>' + cond + '</ul></section>' : '')
-      + '<div class="doc-acepto">Para aceptar este presupuesto, responde <b>«Acepto»</b> al mensaje con el que lo has recibido.</div>'
+      + (prEnlace(d) ? '<div class="doc-acepto"><a class="doc-boton" href="' + esc(prEnlace(d)) + '">Aceptar presupuesto</a><p>¿No se abre el botón? Entra en este enlace: <span>' + esc(prEnlace(d).replace(/^https?:\/\//, '')) + '</span></p></div>'
+        : '<div class="doc-acepto">Para aceptar este presupuesto, responde <b>«Acepto»</b> al mensaje con el que lo has recibido.</div>')
       + '<footer class="doc-pie"><span class="doc-marca">Desarrollado por <i>Euxenos</i> <em>ξ</em></span></footer></article>';
   }
   var PR_CSS = '@page{size:A4;margin:14mm}*{box-sizing:border-box}body{margin:0;background:#fff;font-family:"Helvetica Neue",Arial,sans-serif}.doc{--marca:#1f6f5c;color:#1d2a26;font-size:12px;line-height:1.45;max-width:820px;margin:0 auto;padding:18px}'
@@ -1744,7 +1749,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     + '.doc-bloques{margin:14px 0}.doc-bloques>div{background:#f3f7f5;border-radius:8px;padding:10px 12px}.doc-bloques h3,.doc-cond h3{margin:0 0 4px;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--marca)}'
     + '.doc-tabla{width:100%;border-collapse:collapse}.doc-tabla th{background:var(--marca);color:#fff;text-align:left;padding:7px 8px;font-weight:600}.doc-tabla td{padding:8px;border-bottom:1px solid #e1e8e5;vertical-align:top}.doc-tabla td small{color:#5d6f69;display:block;font-size:10.5px}.doc-tabla .n{text-align:right;white-space:nowrap}'
     + '.doc-totales{margin:10px 0 0 auto;width:300px;font-size:13px;break-inside:avoid}.doc-totales div{display:flex;justify-content:space-between;padding:4px 8px}.doc-totales .doc-total{background:var(--marca);color:#fff;font-weight:800;font-size:16px;border-radius:7px;padding:8px}'
-    + '.doc-cond{margin-top:16px;font-size:11px;break-inside:avoid}.doc-cond ul{margin:0;padding-left:16px}.doc-acepto{margin-top:14px;border:1.5px dashed var(--marca);border-radius:8px;padding:9px 12px;font-size:11.5px}'
+    + '.doc-cond{margin-top:16px;font-size:11px;break-inside:avoid}.doc-cond ul{margin:0;padding-left:16px}.doc-acepto{margin-top:14px;border:1.5px dashed var(--marca);border-radius:8px;padding:9px 12px;font-size:11.5px}.doc-acepto p{margin:8px 0 0;color:#5d6f69;font-size:10px;word-break:break-all}.doc-boton{display:inline-block;background:var(--marca);color:#fff!important;text-decoration:none;font-weight:700;font-size:14px;padding:11px 22px;border-radius:9px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
     + '.cerrar-doc{position:fixed;top:max(10px,env(safe-area-inset-top));right:10px;z-index:10;width:44px;height:44px;border:0;border-radius:50%;background:#1d2a26;color:#fff;font:400 24px/1 Arial,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer}.cerrar-doc-pad{height:50px}@media print{.cerrar-doc,.cerrar-doc-pad{display:none!important}}'
     + '.doc-pie{margin-top:18px;border-top:1px solid #e1e8e5;padding:6px 4px 0 0;text-align:right}.doc-marca{font-size:9px;color:#a0a0a0;white-space:nowrap}.doc-marca i{font-style:normal;font-weight:700}.doc-marca em{font-style:normal;font-weight:800;padding:0 .25em 0 .05em;background:linear-gradient(135deg,#F06CA3,#10B981);-webkit-background-clip:text;background-clip:text;color:transparent}';
   function prAbrirPdf(d){
@@ -1756,7 +1761,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   function prTelWa(t){ var s = String(t || '').replace(/\D/g, ''); if (s.length === 9) s = '34' + s; return s; }
   function prMensaje(d){
     var neg = (datos && datos.negocio && datos.negocio.nombre) || '', t = prTotales(d), c = d.cliente || {};
-    return 'Hola' + (c.nombre ? ' ' + c.nombre.split(' ')[0] : '') + ', te enviamos el presupuesto ' + prCodigo(d) + ' de ' + neg + ' por un total de ' + prEur(t.total) + ' (IVA incluido). Va en el PDF adjunto. Si te encaja, contesta «Acepto» a este mensaje.';
+    return 'Hola' + (c.nombre ? ' ' + c.nombre.split(' ')[0] : '') + ', te enviamos el presupuesto ' + prCodigo(d) + ' de ' + neg + ' por un total de ' + prEur(t.total) + ' (IVA incluido). Va en el PDF adjunto.' + (prEnlace(d) ? ' Si te encaja, puedes aceptarlo con un toque aquí: ' + prEnlace(d) : ' Si te encaja, contesta «Acepto» a este mensaje.');
   }
   // ---- Vistas ----
   function prEtq(e){ return '<span class="etq pr-' + esc(e) + '">' + esc(PR_ESTADOS[e] || e) + '</span>'; }
@@ -1834,8 +1839,10 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + '<h2>Enviar al cliente</h2><div class="columna"><button class="btn b-ok" data-pr="pdf">📄 Ver y guardar PDF</button>'
       + (c.telefono ? '<button class="btn b-otra" data-pr="wa">💬 Abrir WhatsApp con el mensaje</button>' : '')
       + (c.email ? '<button class="btn b-otra" data-pr="mail">✉️ Abrir correo con el mensaje</button>' : '') + '</div>'
-      + '<p class="ayuda">Primero guarda el PDF y luego adjúntalo en WhatsApp o en el correo.</p>'
-      + '<h2>¿Qué ha dicho el cliente?</h2><div class="columna">'
+      + '<p class="ayuda">Primero guarda el PDF y luego adjúntalo en WhatsApp o en el correo.' + (d.token ? ' El mensaje y el PDF llevan un botón para que tu cliente acepte con un toque; te llega un aviso al móvil cuando responda.' : '') + '</p>'
+      + '<h2>¿Qué ha dicho el cliente?</h2>'
+      + (d.respondido_por === 'cliente' ? '<div class="caja"><p style="margin:0">Tu cliente lo ' + (d.estado === 'aceptado' ? '<b>ha aceptado</b>' : '<b>ha rechazado</b>') + ' desde el enlace.' + (d.comentario_cliente ? '<br>Dice: «' + esc(d.comentario_cliente) + '»' : '') + '</p></div>' : '')
+      + '<div class="columna">'
       + (d.estado !== 'aceptado' ? '<button class="btn b-otra" data-pr="estado" data-e="aceptado">✅ Ha aceptado</button>' : '')
       + (d.estado !== 'rechazado' ? '<button class="btn b-otra" data-pr="estado" data-e="rechazado">❌ Lo ha rechazado</button>' : '')
       + (d.estado !== 'sin_respuesta' && d.estado !== 'aceptado' ? '<button class="btn b-otra" data-pr="estado" data-e="sin_respuesta">⏳ No ha contestado</button>' : '')
@@ -1892,7 +1899,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       var err = prValidarDoc(prDoc, true); if (err) { toast(err); return; }
       var maxN = 0; presu.docs.forEach(function(x){ if ((x.serie || 'P') === 'P' && x.numero > maxN) maxN = x.numero; });
       var aj2 = prAjustes(), doc = prLimpiar(prDoc);
-      doc.numero = maxN + 1; doc.estado = 'enviado'; doc.fecha_emision = hoyISO(); doc.enviado = new Date().toISOString();
+      doc.numero = maxN + 1; doc.estado = 'enviado'; doc.fecha_emision = hoyISO(); doc.enviado = new Date().toISOString(); doc.token = prToken(); doc.nombre_negocio = (datos && datos.negocio && datos.negocio.nombre) || '';
       doc.emisor = { razon_social: aj2.razon_social, nif: aj2.nif, direccion: aj2.direccion, contacto: aj2.contacto };
       prGuardarDocs(prSustituir(doc), 'Listo: ' + prCodigo(doc), function(){ prDoc = doc; prVista = 'ver'; });
     }

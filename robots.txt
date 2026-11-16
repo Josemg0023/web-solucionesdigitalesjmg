@@ -1,4 +1,5 @@
 User-agent: *
+Disallow: /presupuesto/
 Disallow: /panel/
 Disallow: /pagar.html
 Disallow: /gracias.html
