@@ -1687,6 +1687,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     return { _aj: true, razon_social: a.razon_social || '', nif: a.nif || '', direccion: a.direccion || '', contacto: a.contacto || '', iva: a.iva != null ? a.iva : 21, validez: a.validez || 30, condiciones: a.condiciones || [] };
   }
   function prConceptos(){ return (presu.tarifa || []).filter(function(x){ return x && !x._aj; }); }
+  function prCatalogo(){ return (info && info.catalogo || []).filter(function(x){ return x && x.nombre && x.activo !== false; }); }
   function prNum(v){ var x = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isFinite(x) ? x : 0; }
   function prEur(v){ return (Math.round((Number(v) || 0) * 100) / 100).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping: 'always' }) + ' €'; }
   function prCant(v, u){ var x = Number(v) || 0; return x.toLocaleString('es-ES', { minimumFractionDigits: x % 1 ? 2 : 0, maximumFractionDigits: 2 }) + (u ? ' ' + u : ''); }
@@ -1826,6 +1827,8 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + '<h2>Trabajo</h2><div class="caja"><label class="campo" style="margin:0"><textarea data-pd="trabajo" rows="3" maxlength="600" placeholder="Qué se va a hacer, dónde y cuándo.">' + esc(d.trabajo) + '</textarea></label></div>'
       + '<h2>Partidas <span class="n">' + d.partidas.length + '</span></h2>' + prPartidasHtml(d, true);
     if (tar.length) h += '<div class="caja" style="margin-bottom:10px"><label class="campo" style="margin:0"><span>Añadir desde tu tarifa</span><select data-pr-sel><option value="">Elegir…</option>' + tar.map(function(x, i){ return '<option value="' + i + '">' + esc(x.concepto) + ' · ' + prEur(x.precio) + (x.unidad ? '/' + esc(x.unidad) : '') + '</option>'; }).join('') + '</select></label></div>';
+    var cat = prCatalogo();
+    if (cat.length) h += '<div class="caja" style="margin-bottom:10px"><label class="campo" style="margin:0"><span>Añadir desde tu catálogo</span><select data-pr-cat><option value="">Elegir…</option>' + cat.map(function(x, i){ return '<option value="' + i + '">' + esc(x.nombre) + (x.precio ? ' · ' + prEur(prNum(x.precio)) : '') + '</option>'; }).join('') + '</select></label></div>';
     h += '<button class="btn b-otra ancho" data-pr="l-libre">+ Línea libre</button>';
     h += '<h2>Total</h2><div id="prTot">' + prTotalesHtml(d) + '</div>';
     h += '<h2>Condiciones</h2><div class="caja"><label class="campo"><span>Una por línea</span><textarea data-pd="condiciones" rows="4" maxlength="1500">' + esc((d.condiciones || []).join('\n')) + '</textarea></label><label class="campo" style="margin:0"><span>Días de validez</span><input data-pd="validez" inputmode="numeric" value="' + esc(d.validez) + '"></label></div>';
@@ -1866,6 +1869,12 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var t = e.target; if (!t || !t.hasAttribute || !t.hasAttribute('data-pr-sel') || !prDoc) return;
     var x = prConceptos()[+t.value]; if (!x) return;
     prDoc.partidas.push({ concepto: x.concepto, descripcion: x.descripcion || '', cantidad: 1, unidad: x.unidad || '', precio: x.precio, iva: prAjustes().iva });
+    pintar();
+  });
+  app.addEventListener('change', function(e){
+    var t = e.target; if (!t || !t.hasAttribute || !t.hasAttribute('data-pr-cat') || !prDoc) return;
+    var x = prCatalogo()[+t.value]; if (!x) return;
+    prDoc.partidas.push({ concepto: x.nombre, descripcion: x.descripcion || '', cantidad: 1, unidad: '', precio: prNum(x.precio), iva: prAjustes().iva });
     pintar();
   });
   function prValidarDoc(d, aEnviar){
