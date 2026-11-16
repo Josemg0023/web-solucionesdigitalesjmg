@@ -1827,8 +1827,8 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     h += '<button class="btn b-otra ancho" data-pr="l-libre">+ Línea libre</button>';
     h += '<h2>Total</h2><div id="prTot">' + prTotalesHtml(d) + '</div>';
     h += '<h2>Condiciones</h2><div class="caja"><label class="campo"><span>Una por línea</span><textarea data-pd="condiciones" rows="4" maxlength="1500">' + esc((d.condiciones || []).join('\n')) + '</textarea></label><label class="campo" style="margin:0"><span>Días de validez</span><input data-pd="validez" inputmode="numeric" value="' + esc(d.validez) + '"></label></div>';
-    h += '<div class="columna" style="margin-top:14px"><button class="btn b-ok ancho" data-pr="enviar">Guardar y preparar para enviar</button><button class="btn b-otra ancho" data-pr="borrador">Guardar borrador</button><button class="btn b-no ancho" data-pr="borrar">Borrar borrador</button></div>'
-      + '<p class="ayuda">Al preparar para enviar se le pone número y ya no se puede cambiar (si hay que corregir algo, se hace uno nuevo).</p>';
+    h += '<div class="columna" style="margin-top:14px">' + (d.numero ? '<button class="btn b-ok ancho" data-pr="enviar">Guardar cambios y volver a enviar</button><button class="btn b-otra ancho" data-pr="cancelar-edicion">Cancelar</button></div>' : '<button class="btn b-ok ancho" data-pr="enviar">Guardar y preparar para enviar</button><button class="btn b-otra ancho" data-pr="borrador">Guardar borrador</button><button class="btn b-no ancho" data-pr="borrar">Borrar borrador</button></div>')
+      + '<p class="ayuda">' + (d.numero ? 'Al guardar, este presupuesto conserva su número, el enlace anterior deja de valer y hay que volver a enviárselo a tu cliente.' : 'Al preparar para enviar se le pone número. Después, si hay que cambiar algo, podrás editarlo y volver a enviarlo.') + '</p>';
     return h;
   }
   function prVistaVer(){
@@ -1844,6 +1844,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + (d.respondido_por === 'cliente' ? '<div class="caja"><p style="margin:0">Tu cliente lo ' + (d.estado === 'aceptado' ? '<b>ha aceptado</b>' : '<b>ha rechazado</b>') + ' desde el enlace.' + (d.comentario_cliente ? '<br>Dice: «' + esc(d.comentario_cliente) + '»' : '') + '</p></div>'
         : (d.estado === 'aceptado' || d.estado === 'rechazado') ? '<div class="caja"><p style="margin:0">Lo has marcado como <b>' + (d.estado === 'aceptado' ? 'aceptado' : 'rechazado') + '</b>.</p></div>'
         : '<div class="caja"><p style="margin:0">Esperando respuesta. Cuando tu cliente acepte o rechace desde el enlace, se anota solo y te llega un aviso al móvil.</p></div>')
+      + ((d.estado === 'enviado' || d.estado === 'sin_respuesta') ? '<p class="ayuda">¿Te ha contestado por teléfono o en persona? Anótalo aquí:</p><div class="columna"><button class="btn b-ok" data-pr="estado" data-e="aceptado">✅ Lo ha aceptado</button><button class="btn b-no" data-pr="estado" data-e="rechazado">❌ Lo ha rechazado</button><button class="btn b-otra" data-pr="editar">✏️ Editar presupuesto</button></div><p class="ayuda">Si lo editas, el enlace anterior deja de valer y se crea uno nuevo para volver a enviarlo (conserva el mismo número).</p>' : '')
       + '<div class="columna" style="margin-top:12px"><button class="btn b-otra" data-pr="duplicar">Hacer uno nuevo a partir de este</button></div>';
     return h;
   }
@@ -1900,14 +1901,16 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       var err = prValidarDoc(prDoc, true); if (err) { toast(err); return; }
       var maxN = 0; presu.docs.forEach(function(x){ if ((x.serie || 'P') === 'P' && x.numero > maxN) maxN = x.numero; });
       var aj2 = prAjustes(), doc = prLimpiar(prDoc);
-      doc.numero = maxN + 1; doc.estado = 'enviado'; doc.fecha_emision = hoyISO(); doc.enviado = new Date().toISOString(); doc.token = prToken(); doc.nombre_negocio = (datos && datos.negocio && datos.negocio.nombre) || '';
+      var eraEnviado = !!prDoc.numero; doc.numero = prDoc.numero || (maxN + 1); if (eraEnviado) { doc.version = (doc.version || 1) + 1; delete doc.aceptado; delete doc.rechazado; delete doc.respondido_por; delete doc.comentario_cliente; delete doc.recordado; } doc.estado = 'enviado'; doc.fecha_emision = hoyISO(); doc.enviado = new Date().toISOString(); doc.token = prToken(); doc.nombre_negocio = (datos && datos.negocio && datos.negocio.nombre) || '';
       doc.emisor = { razon_social: aj2.razon_social, nif: aj2.nif, direccion: aj2.direccion, contacto: aj2.contacto };
-      prGuardarDocs(prSustituir(doc), 'Listo: ' + prCodigo(doc), function(){ prDoc = doc; prVista = 'ver'; });
+      prGuardarDocs(prSustituir(doc), eraEnviado ? 'Cambios guardados: ' + prCodigo(doc) : 'Listo: ' + prCodigo(doc), function(){ prDoc = doc; prVista = 'ver'; });
     }
     else if (a === 'pdf') prAbrirPdf(prDoc);
     else if (a === 'wa') { window.open('https://wa.me/' + prTelWa(prDoc.cliente.telefono) + '?text=' + encodeURIComponent(prMensaje(prDoc)), '_blank'); }
     else if (a === 'mail') { window.location.href = 'mailto:' + encodeURIComponent(prDoc.cliente.email) + '?subject=' + encodeURIComponent('Presupuesto ' + prCodigo(prDoc)) + '&body=' + encodeURIComponent(prMensaje(prDoc)); }
-    else if (a === 'estado') { var nuevo = JSON.parse(JSON.stringify(prDoc)); nuevo.estado = b.getAttribute('data-e'); if (nuevo.estado === 'aceptado') nuevo.aceptado = new Date().toISOString(); prGuardarDocs(prSustituir(nuevo), 'Anotado', function(){ prDoc = nuevo; }); }
+    else if (a === 'editar') { prDoc = JSON.parse(JSON.stringify(prDoc)); prVista = 'editar'; pintar(); }
+    else if (a === 'cancelar-edicion') { var o = prDocPorId(prDoc.id); prDoc = o ? JSON.parse(JSON.stringify(o)) : null; prVista = o ? 'ver' : 'lista'; pintar(); }
+    else if (a === 'estado') { var ee = b.getAttribute('data-e'); if (!confirmar(ee === 'aceptado' ? '¿Anotar que tu cliente ha aceptado este presupuesto?' : '¿Anotar que tu cliente ha rechazado este presupuesto?')) return; var nuevo = JSON.parse(JSON.stringify(prDoc)); nuevo.estado = ee; nuevo.respondido_por = 'dueño'; delete nuevo.comentario_cliente; if (nuevo.estado === 'aceptado') nuevo.aceptado = new Date().toISOString(); else nuevo.rechazado = new Date().toISOString(); prGuardarDocs(prSustituir(nuevo), 'Anotado', function(){ prDoc = nuevo; }); }
     else if (a === 'duplicar') { var cp = JSON.parse(JSON.stringify(prDoc)), nu = prNuevoDoc(); nu.cliente = cp.cliente; nu.trabajo = cp.trabajo; nu.partidas = cp.partidas; nu.condiciones = cp.condiciones; nu.validez = cp.validez; prDoc = nu; prVista = 'editar'; pintar(); }
   });
 

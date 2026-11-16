@@ -135,7 +135,7 @@ textarea{width:100%;font:inherit;border:1.5px solid #cfd9d5;border-radius:10px;p
   }
   if (!/^[a-f0-9]{24}$/.test(t)) { fallo('Este enlace no es válido. Pídele al negocio que te lo envíe otra vez.'); return; }
   llamar({ t: t, accion: 'ver' }).then(function(r){
-    if (!r || !r.ok) { fallo((r && r.motivo) || 'No se ha podido abrir el presupuesto.'); return; }
+    if (!r || !r.ok) { fallo(((r && r.motivo) || 'No se ha podido abrir el presupuesto.') + ' Si el negocio lo ha modificado, pídele el enlace nuevo.'); return; }
     datos = r; document.title = 'Presupuesto ' + (r.numero || '') + (r.negocio ? ' · ' + r.negocio : ''); pintar();
   }).catch(function(){ fallo('No se ha podido abrir el presupuesto. Revisa tu conexión e inténtalo otra vez.'); });
 })();
