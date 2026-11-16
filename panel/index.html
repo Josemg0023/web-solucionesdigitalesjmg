@@ -1572,7 +1572,9 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (!presu) return '<p class="vacio" style="margin-top:16px">Cargando…</p>';
     var docs = presu.docs || [], env = docs.filter(function(x){ return x.estado === 'enviado' || x.estado === 'sin_respuesta'; }).length, bor = docs.filter(function(x){ return x.estado === 'borrador'; }).length;
     var resumen = !docs.length ? 'Aún no has hecho ninguno.' : [env ? env + (env === 1 ? ' enviado sin respuesta' : ' enviados sin respuesta') : '', bor ? bor + (bor === 1 ? ' borrador' : ' borradores') : ''].filter(Boolean).join(' · ') || docs.length + (docs.length === 1 ? ' presupuesto' : ' presupuestos');
-    return '<h2>Tus herramientas</h2><div class="caja"><p style="margin:0 0 4px"><b>Presupuestos</b></p><p class="ayuda" style="margin:0 0 10px">' + esc(resumen) + ' Díselo a Eris o hazlos tú, con tu tarifa, y mándalos en PDF.</p><button class="btn b-ok ancho" data-ir="presupuestos">Abrir presupuestos</button></div>';
+    return '<h2>Tus herramientas</h2><div class="caja"><p style="margin:0 0 4px"><b>Presupuestos</b></p><p class="ayuda" style="margin:0 0 10px">' + esc(resumen) + ' Díselo a Eris o hazlos tú, con tu tarifa, y mándalos en PDF.</p><button class="btn b-ok ancho" data-ir="presupuestos">Abrir presupuestos</button></div>'
+      + '<div class="caja"><p style="margin:0 0 4px"><b>Catálogo</b></p><p class="ayuda" style="margin:0 0 10px">Tus servicios, productos y precios. Eris y los presupuestos los usan.</p><button class="btn b-otra ancho" data-ir="catalogo">Abrir catálogo</button></div>'
+      + '<div class="caja"><p style="margin:0 0 4px"><b>Facturas</b> <span class="n">Próximamente</span></p><p class="ayuda" style="margin:0">Pronto podrás convertir un presupuesto aceptado en factura.</p></div>';
   }
   function vistaCuenta(enEmpresa){
     var neg = (datos && datos.negocio) || {};
