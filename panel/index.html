@@ -1576,7 +1576,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var resumen = !docs.length ? 'Aún no has hecho ninguno.' : [env ? env + (env === 1 ? ' enviado sin respuesta' : ' enviados sin respuesta') : '', bor ? bor + (bor === 1 ? ' borrador' : ' borradores') : ''].filter(Boolean).join(' · ') || docs.length + (docs.length === 1 ? ' presupuesto' : ' presupuestos');
     return '<h2>Tus módulos</h2><div class="caja"><p style="margin:0 0 4px"><b>Presupuestos</b></p><p class="ayuda" style="margin:0 0 10px">' + esc(resumen) + ' Díselo a Eris o hazlos tú, con tu tarifa, y mándalos en PDF.</p><button class="btn b-ok ancho" data-ir="presupuestos">Abrir presupuestos</button></div>'
       + '<div class="caja"><p style="margin:0 0 4px"><b>Catálogo</b></p><p class="ayuda" style="margin:0 0 10px">Sube los catálogos de tus proveedores y tus precios para crear presupuestos y que Eris los conozca.</p><button class="btn b-otra ancho" data-ir="catalogo">Abrir catálogo</button></div>'
-      + '<div class="caja"><p style="margin:0 0 4px"><b>Facturas</b></p><p class="ayuda" style="margin:0 0 10px">' + (nFac ? nFac + (nFac === 1 ? ' factura' : ' facturas') + (pend ? ' · ' + pend + ' pendiente' + (pend === 1 ? '' : 's') + ' de cobro.' : '.') : 'Créalas desde un presupuesto aceptado o a mano.') + '</p><button class="btn b-otra ancho" data-pr="filtro" data-f="factura" data-go="1">Abrir facturas</button></div>';
+      + (!FACTURAS_ON ? '' : '<div class="caja"><p style="margin:0 0 4px"><b>Facturas</b></p><p class="ayuda" style="margin:0 0 10px">' + (nFac ? nFac + (nFac === 1 ? ' factura' : ' facturas') + (pend ? ' · ' + pend + ' pendiente' + (pend === 1 ? '' : 's') + ' de cobro.' : '.') : 'Créalas desde un presupuesto aceptado o a mano.') + '</p><button class="btn b-otra ancho" data-pr="filtro" data-f="factura" data-go="1">Abrir facturas</button></div>');
   }
   function vistaCuenta(enEmpresa){
     var neg = (datos && datos.negocio) || {};
@@ -1702,6 +1702,8 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   // 16/11 (Tete: «ahí debería aparecer el botón aceptar»): cada presupuesto enviado lleva un enlace único (token de 24 letras y números) a euxenos.com/presupuesto/. El cliente lo abre sin cuenta y acepta o rechaza; el flujo n8n «Presupuesto público (aceptar)» lo anota y avisa al móvil del dueño.
   function prToken(){ var a = new Uint8Array(12), h = ''; try { (window.crypto || window.msCrypto).getRandomValues(a); } catch (e) { for (var j = 0; j < 12; j++) a[j] = Math.floor(Math.random() * 256); } for (var i = 0; i < 12; i++) h += ('0' + a[i].toString(16)).slice(-2); return h; }
   function prEnlace(d){ return d && d.token ? location.origin + '/presupuesto/?t=' + d.token : ''; }
+  // 16/11 (Tete): «quita el módulo de facturas y ya lo añadiremos». Código conservado; se enciende poniendo esto a true.
+  var FACTURAS_ON = false;
   function prEsFactura(d){ return d && d.tipo === 'factura'; }
   // 16/11: factura rectificativa = factura de serie R con importes en negativo que apunta a la original (rectifica = id). Se emite «por diferencias».
   function prEsRect(d){ return !!(d && d.rectifica); }
@@ -1783,8 +1785,8 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (prVista === 'tarifa') return prVistaTarifa();
     if (prVista === 'editar' && prDoc) return prVistaEditar();
     if (prVista === 'ver' && prDoc) return prEsFactura(prDoc) ? prVistaFactura() : prVistaVer();
-    var nF = presu.docs.filter(prEsFactura).length, nP = presu.docs.length - nF, fac = prFiltro === 'factura';
-    var h = '<div class="fila" style="display:flex;gap:8px;margin:14px 0 10px"><button class="btn ' + (fac ? 'b-otra' : 'b-ok') + '" style="flex:1" data-pr="filtro" data-f="presupuesto">Presupuestos (' + nP + ')</button><button class="btn ' + (fac ? 'b-ok' : 'b-otra') + '" style="flex:1" data-pr="filtro" data-f="factura">Facturas (' + nF + ')</button></div>';
+    var nF = presu.docs.filter(prEsFactura).length, nP = presu.docs.length - nF, fac = FACTURAS_ON && prFiltro === 'factura';
+    var h = !FACTURAS_ON ? '' : '<div class="fila" style="display:flex;gap:8px;margin:14px 0 10px"><button class="btn ' + (fac ? 'b-otra' : 'b-ok') + '" style="flex:1" data-pr="filtro" data-f="presupuesto">Presupuestos (' + nP + ')</button><button class="btn ' + (fac ? 'b-ok' : 'b-otra') + '" style="flex:1" data-pr="filtro" data-f="factura">Facturas (' + nF + ')</button></div>';
     if (!fac) h += '<h2>Presupuestos <button class="accion" data-pr="nuevo">+ Nuevo</button></h2>';
     else h += '<h2>Facturas <button class="accion" data-pr="nueva-factura">+ Nueva</button></h2>';
     h += '<div class="herr" style="margin:0 0 12px"><button class="btn b-otra ancho" data-pr="tarifa">💶 Mi tarifa y datos de empresa</button></div>';
@@ -1894,7 +1896,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + (d.respondido_por === 'cliente' ? '<div class="caja"><p style="margin:0">Tu cliente lo ' + (d.estado === 'aceptado' ? '<b>ha aceptado</b>' : '<b>ha rechazado</b>') + ' desde el enlace.' + (d.comentario_cliente ? '<br>Dice: «' + esc(d.comentario_cliente) + '»' : '') + '</p></div>'
         : (d.estado === 'aceptado' || d.estado === 'rechazado') ? '<div class="caja"><p style="margin:0">Lo has marcado como <b>' + (d.estado === 'aceptado' ? 'aceptado' : 'rechazado') + '</b>.</p></div>'
         : '<div class="caja"><p style="margin:0">Esperando respuesta. Cuando tu cliente acepte o rechace desde el enlace, se anota solo y te llega un aviso al móvil.</p></div>')
-      + '<div class="columna" style="margin-top:12px">' + (d.estado === 'aceptado' ? (d.factura_id && prDocPorId(d.factura_id) ? '<button class="btn b-ok" data-pr="abrir" data-id="' + esc(d.factura_id) + '">🧾 Ver su factura</button>' : '<button class="btn b-ok" data-pr="crear-factura">🧾 Crear factura</button>') : '') + '<button class="btn b-otra" data-pr="duplicar">Hacer uno nuevo a partir de este</button></div>';
+      + '<div class="columna" style="margin-top:12px">' + (d.estado === 'aceptado' && FACTURAS_ON ? (d.factura_id && prDocPorId(d.factura_id) ? '<button class="btn b-ok" data-pr="abrir" data-id="' + esc(d.factura_id) + '">🧾 Ver su factura</button>' : '<button class="btn b-ok" data-pr="crear-factura">🧾 Crear factura</button>') : '') + '<button class="btn b-otra" data-pr="duplicar">Hacer uno nuevo a partir de este</button></div>';
     return h;
   }
   // ---- Lectura de campos y clics ----
