@@ -492,7 +492,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
 .ban-escribir .btn{flex:0 0 auto}
 #chatAyuda{margin:6px 0 0}#chatAyuda.error{color:#FFB3C6}
 /* Presupuestos (14/11) */
-.pr-enviado{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-emitida{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-cobrada{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-aceptado{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-rechazado{background:rgba(244,63,94,.18);color:#FDA4AF}.pr-sin_respuesta{background:rgba(251,191,36,.18);color:#FCD34D}.pr-rectificativa{background:rgba(251,191,36,.18);color:#FCD34D}
+.pr-recibido{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-reparacion{background:rgba(245,185,66,.18);color:#F7D58C}.pr-listo{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-entregado{background:rgba(255,255,255,.08);color:var(--apagado)}.pr-enviado{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-emitida{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-cobrada{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-aceptado{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-rechazado{background:rgba(244,63,94,.18);color:#FDA4AF}.pr-sin_respuesta{background:rgba(251,191,36,.18);color:#FCD34D}.pr-rectificativa{background:rgba(251,191,36,.18);color:#FCD34D}
 </style>
 </head>
 <body>
@@ -668,6 +668,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     numeros: { t:'Números', i:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>' },
     modulos: { t:'Clientes y planes', i:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/>' },
     presupuestos: { t:'Presupuestos', i:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>' },
+    taller: { t:'Taller', i:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4 2.6-2.6z"/>' },
     herramientas: { t:'Módulos', i:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4 2.6-2.6z"/>' },
     pedidos: { t:'Pedidos', i:'<path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>' },
     hoy: { t:'Hoy', i:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><circle cx="12" cy="15" r="2"/>' },
@@ -729,7 +730,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       if (!d || !d.ok) { if (bR) bR.classList.remove('girando'); if (!datos) pantallaSinServicio(); else toast('Mi Eris no responde ahora: mostrando lo último cargado'); return; }
       usoAhora(); pedirPersistencia();
       var primera = !datos; datos = d; pintar(); sincronizarClientes();
-      if (primera) { comprobarAvisos(); cargarInfo(); cargarPedidos(); cargarPresu(); cargarComercial(); }
+      if (primera) { comprobarAvisos(); cargarInfo(); cargarPedidos(); cargarPresu(); cargarTaller(); cargarComercial(); }
     }).catch(function(){
       cargando = false; if (bR) bR.classList.remove('girando');
       if (!datos) pantallaSinServicio(true);
@@ -1574,7 +1575,8 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var nFac = docs.filter(prEsFactura).length, pend = docs.filter(function(x){ return prEsFactura(x) && !prEsRect(x) && x.estado === 'emitida'; }).length;
     docs = docs.filter(function(x){ return !prEsFactura(x); });
     var resumen = !docs.length ? 'Aún no has hecho ninguno.' : [env ? env + (env === 1 ? ' enviado sin respuesta' : ' enviados sin respuesta') : '', bor ? bor + (bor === 1 ? ' borrador' : ' borradores') : ''].filter(Boolean).join(' · ') || docs.length + (docs.length === 1 ? ' presupuesto' : ' presupuestos');
-    return '<h2>Tus módulos</h2><div class="caja"><p style="margin:0 0 4px"><b>Presupuestos</b></p><p class="ayuda" style="margin:0 0 10px">' + esc(resumen) + ' Díselo a Eris o hazlos tú, con tu tarifa, y mándalos en PDF.</p><button class="btn b-ok ancho" data-ir="presupuestos">Abrir presupuestos</button></div>'
+    return '<h2>Tus módulos</h2>' + (!presupuestosOn() ? '' : '<div class="caja"><p style="margin:0 0 4px"><b>Presupuestos</b></p><p class="ayuda" style="margin:0 0 10px">' + esc(resumen) + ' Díselo a Eris o hazlos tú, con tu tarifa, y mándalos en PDF.</p><button class="btn b-ok ancho" data-ir="presupuestos">Abrir presupuestos</button></div>')
+      + (!tallerOn() ? '' : '<div class="caja"><p style="margin:0 0 4px"><b>Taller</b></p><p class="ayuda" style="margin:0 0 10px">' + esc(tallResumen()) + ' Vehículos de tus clientes y partes de trabajo, con aviso por correo cuando el coche está listo.</p><button class="btn b-ok ancho" data-ir="taller">Abrir taller</button></div>')
       + '<div class="caja"><p style="margin:0 0 4px"><b>Catálogo</b></p><p class="ayuda" style="margin:0 0 10px">Sube los catálogos de tus proveedores y tus precios para crear presupuestos y que Eris los conozca.</p><button class="btn b-otra ancho" data-ir="catalogo">Abrir catálogo</button></div>'
       + (!FACTURAS_ON ? '' : '<div class="caja"><p style="margin:0 0 4px"><b>Facturas</b></p><p class="ayuda" style="margin:0 0 10px">' + (nFac ? nFac + (nFac === 1 ? ' factura' : ' facturas') + (pend ? ' · ' + pend + ' pendiente' + (pend === 1 ? '' : 's') + ' de cobro.' : '.') : 'Créalas desde un presupuesto aceptado o a mano.') + '</p><button class="btn b-otra ancho" data-pr="filtro" data-f="factura" data-go="1">Abrir facturas</button></div>');
   }
@@ -1615,9 +1617,11 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (vista === 'comercial' && !esDueno) vista = 'hoy';
     if (esTete() && (SOLO_DEMO.indexOf(vista) >= 0 || vista === 'herramientas')) vista = 'hoy';
     if ((vista === 'numeros' || vista === 'memoria' || vista === 'bandeja') && !esTete()) vista = 'hoy';
-    var cuerpo = { bandeja: vistaBandeja, empresa: vistaEmpresa, memoria: vistaMemoria, comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, presupuestos: vistaPresupuestos, herramientas: vistaHerramientas, modulos: vistaModulos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
+    var cuerpo = { bandeja: vistaBandeja, empresa: vistaEmpresa, memoria: vistaMemoria, comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, presupuestos: vistaPresupuestos, herramientas: vistaHerramientas, taller: vistaTaller, modulos: vistaModulos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
     if (vista === 'pedidos' && !pedidosOn() && pedidos) vista = 'hoy';
-    if ((vista === 'presupuestos' || vista === 'herramientas') && presu && !presupuestosOn()) vista = 'hoy';
+    if (vista === 'presupuestos' && presu && !presupuestosOn()) vista = 'hoy';
+    if (vista === 'herramientas' && presu && tall && !modulosOn()) vista = 'hoy';
+    if (vista === 'taller' && tall && !tallerOn()) vista = 'hoy';
     if (vista === 'modulos' && !esTete()) vista = 'hoy';
     var y = window.scrollY, hayAviso = porConfirmar().length > 0 || (pedidos || []).some(function(p){ return p.estado === 'nuevo'; });
     app.innerHTML = '<header><div class="cab">'
@@ -1625,7 +1629,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + '<div class="titulo"><small>' + esc(vista === 'comercial' || vista === 'numeros' || vista === 'memoria' || vista === 'bandeja' || vista === 'modulos' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
       + '<button class="icono-btn" id="recargar" aria-label="Actualizar">' + svg('<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>') + '</button>'
       + '</div></header><main>' + cuerpo() + '</main>';
-    document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); if (vista === 'bandeja') cargarBandeja(); if (vista === 'presupuestos' || vista === 'herramientas') cargarPresu(); });
+    document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); if (vista === 'bandeja') cargarBandeja(); if (vista === 'presupuestos' || vista === 'herramientas') cargarPresu(); if (vista === 'taller' || vista === 'herramientas') cargarTaller(); });
     document.getElementById('abrirMenu').addEventListener('click', abrirMenu);
     document.getElementById('nueva').classList.toggle('oculto', esTete() || ['hoy','calendario','citas'].indexOf(vista) < 0);
     document.getElementById('lanzador').classList.remove('oculto');
@@ -1638,7 +1642,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     // 16/11 (Tete): «Cuenta» y «Mi empresa» eran casi lo mismo: ahora es una sola pantalla, «Mi empresa» (la cuenta va abajo).
     // 16/11 (Tete): «Herramientas» (presupuestos y, más adelante, facturas) va en la barra y no en el menú. Solo sale si el negocio tiene el módulo; entonces «Pendientes» pasa al menú ☰ para que la barra siga en 5.
     var cola = [['empresa', 'Mi empresa', 0]];
-    if (presupuestosOn()) return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['herramientas', 'Módulos', 0]].concat(cola);
+    if (modulosOn()) return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['herramientas', 'Módulos', 0]].concat(cola);
     return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['pendientes', 'Pendientes', pendientesAbiertos().length]].concat(cola);
   }
   // 12/11: barra de abajo y píldora «Habla con Eris», solo en la cuenta de Tete.
@@ -1648,7 +1652,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     nav.classList.remove('oculto');
     if (tx && tx.nodeType === 3) tx.nodeValue = t ? 'Habla con Eris' : 'Habla con tu Eris';
     items = itemsTabbar();
-    var PADRE = { presupuestos: 'herramientas', horario: 'empresa', catalogo: 'empresa', cuenta: 'empresa' };
+    var PADRE = { taller: 'herramientas', presupuestos: 'herramientas', horario: 'empresa', catalogo: 'empresa', cuenta: 'empresa' };
     var activa = vista; if (!t && PADRE[vista] && items.some(function(x){ return x[0] === PADRE[vista]; })) activa = PADRE[vista];
     nav.innerHTML = items.map(function(i){
       return '<button type="button" data-ir="' + i[0] + '"' + (activa === i[0] ? ' aria-current="page"' : '') + '>' + svg(VISTAS[i[0]].i) + i[1] + (i[2] ? '<span class="cuenta-n">' + i[2] + '</span>' : '') + '</button>';
@@ -1663,6 +1667,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (v === 'comercial' || v === 'memoria' || (v === 'pendientes' && esTete())) cargarComercial();
     if (v === 'bandeja') cargarBandeja();
     if (v === 'presupuestos' || v === 'herramientas') cargarPresu();
+    if (v === 'taller' || v === 'herramientas') cargarTaller();
     if (v === 'modulos') cargarModulos();
   }
 
@@ -2027,6 +2032,185 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     else if (a === 'cancelar-edicion') { var o = prDocPorId(prDoc.id); prDoc = o ? JSON.parse(JSON.stringify(o)) : null; prVista = o ? 'ver' : 'lista'; pintar(); }
     else if (a === 'estado') { var ee = b.getAttribute('data-e'); if (!confirmar(ee === 'aceptado' ? '¿Anotar que tu cliente ha aceptado este presupuesto?' : '¿Anotar que tu cliente ha rechazado este presupuesto?')) return; var nuevo = JSON.parse(JSON.stringify(prDoc)); nuevo.estado = ee; nuevo.respondido_por = 'dueño'; delete nuevo.comentario_cliente; if (nuevo.estado === 'aceptado') nuevo.aceptado = new Date().toISOString(); else nuevo.rechazado = new Date().toISOString(); prGuardarDocs(prSustituir(nuevo), 'Anotado', function(){ prDoc = nuevo; }); }
     else if (a === 'duplicar') { var cp = JSON.parse(JSON.stringify(prDoc)), nu = prNuevoDoc(); nu.cliente = cp.cliente; nu.trabajo = cp.trabajo; nu.partidas = cp.partidas; nu.condiciones = cp.condiciones; nu.validez = cp.validez; prDoc = nu; prVista = 'editar'; pintar(); }
+  });
+
+  // === Taller (16/11): módulo de Mi Eris para talleres (vehículos y partes de trabajo). Se contrata por negocio: fila en la tabla n8n «Eris taller» (SKIvGLJ39VghTZE3).
+  // Flujo n8n «Euxenos – Taller (Mi Eris)» (kxIXTfMS2eGCFaRH): acciones taller-ver / taller-guardar / taller-avisar (correo al cliente, máx. 30 al día).
+  // Para quitarlo todo: borrar este bloque, el CSS .pr-recibido…, 'taller' de VISTAS y las líneas que mencionan tall/tallerOn/modulosOn.
+  var API_TALLER = 'https://erisproject.app.n8n.cloud/webhook/eris-taller';
+  var tall = null, tallVista = 'lista', tallTab = 'partes', tallFiltro = 'curso', tallDoc = null, tallOcupado = false;
+  var TL_ESTADOS = { recibido:'Recibido', reparacion:'En reparación', listo:'Listo', entregado:'Entregado' };
+  function tallerOn(){ return !!(tall && tall.activo); }
+  function modulosOn(){ return presupuestosOn() || tallerOn(); }
+  function llamarTaller(accion, d){ return post(API_TALLER, { n:n, k:k, accion:accion, datos:d || {} }); }
+  function cargarTaller(){
+    if (!n || !k || esTete()) return Promise.resolve();
+    return llamarTaller('taller-ver').then(function(r){
+      if (!r || !r.ok) { if (r && r.activo === false && !tall) { tall = { activo: false, vehiculos: [], partes: [] }; } return; }
+      var antes = tallerOn();
+      tall = { activo: !!r.activo, vehiculos: r.vehiculos || [], partes: r.partes || [] };
+      if (datos && !algoAbierto() && (antes !== tallerOn() || (vista === 'taller' && tallVista === 'lista') || vista === 'herramientas')) pintar();
+    }).catch(function(){});
+  }
+  function tlEtq(e){ return '<span class="etq pr-' + esc(e) + '">' + esc(TL_ESTADOS[e] || e) + '</span>'; }
+  function tlId(p){ return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+  function tlMat(m){ return String(m || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+  function tallResumen(){
+    if (!tall) return '';
+    var c = tall.partes.filter(function(x){ return x.estado === 'recibido' || x.estado === 'reparacion'; }).length, l = tall.partes.filter(function(x){ return x.estado === 'listo'; }).length;
+    return !tall.partes.length ? 'Aún no hay partes.' : [c ? c + (c === 1 ? ' en curso' : ' en curso') : '', l ? l + (l === 1 ? ' listo para entregar' : ' listos para entregar') : ''].filter(Boolean).join(' · ') + '.';
+  }
+  function tlGuardar(msg, despues){
+    if (tallOcupado) return; tallOcupado = true;
+    llamarTaller('taller-guardar', { vehiculos: tall.vehiculos, partes: tall.partes }).then(function(r){
+      tallOcupado = false;
+      if (!r || !r.ok) { toast((r && r.motivo) || 'No se pudo guardar. Inténtalo otra vez.'); return; }
+      tall.vehiculos = r.vehiculos || tall.vehiculos; tall.partes = r.partes || tall.partes;
+      if (despues) despues(); toast(msg || 'Guardado'); pintar();
+    }).catch(function(){ tallOcupado = false; toast('Sin conexión. Inténtalo otra vez.'); });
+  }
+  function vistaTaller(){
+    if (!tall) return '<p class="vacio" style="margin-top:16px">Cargando taller…</p>';
+    if (tallVista === 'parte' && tallDoc) return tlVistaParte();
+    if (tallVista === 'vehiculo' && tallDoc) return tlVistaVehiculo();
+    var veh = tallTab === 'vehiculos';
+    var h = '<div class="fila" style="display:flex;gap:8px;margin:14px 0 10px"><button class="btn ' + (veh ? 'b-otra' : 'b-ok') + '" style="flex:1" data-tl="tab" data-f="partes">Partes (' + tall.partes.length + ')</button><button class="btn ' + (veh ? 'b-ok' : 'b-otra') + '" style="flex:1" data-tl="tab" data-f="vehiculos">Vehículos (' + tall.vehiculos.length + ')</button></div>';
+    if (veh) {
+      h += '<h2>Vehículos <button class="accion" data-tl="nuevo-veh">+ Nuevo</button></h2>';
+      if (!tall.vehiculos.length) return h + '<p class="vacio">Aún no hay vehículos. Se añaden solos al crear un parte con matrícula, o con <b>+ Nuevo</b>.</p>';
+      return h + tall.vehiculos.slice().sort(function(a, b){ return String(a.cliente || '').localeCompare(String(b.cliente || '')); }).map(function(v){
+        var np = tall.partes.filter(function(x){ return x.vehiculo_id === v.id; }).length;
+        return '<button class="fila tocable" data-tl="abrir-veh" data-id="' + esc(v.id) + '"><span class="txt"><b>' + esc(v.modelo || 'Sin modelo') + (v.matricula ? ' · ' + esc(v.matricula) : '') + '</b><span>' + esc(v.cliente || 'Sin cliente') + (np ? ' · ' + np + (np === 1 ? ' parte' : ' partes') : '') + '</span></span></button>';
+      }).join('');
+    }
+    var F = { curso: ['recibido', 'reparacion'], listos: ['listo'], entregados: ['entregado'] };
+    var cuenta = function(f){ return tall.partes.filter(function(x){ return F[f].indexOf(x.estado) >= 0; }).length; };
+    h += '<h2>Partes de trabajo <button class="accion" data-tl="nuevo-parte">+ Nuevo</button></h2>';
+    h += '<div style="display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap">' + ['curso', 'listos', 'entregados'].map(function(f){ return '<button class="btn ' + (tallFiltro === f ? 'b-ok' : 'b-otra') + '" style="flex:1;min-width:90px" data-tl="filtro" data-f="' + f + '">' + { curso: 'En curso', listos: 'Listos', entregados: 'Entregados' }[f] + ' (' + cuenta(f) + ')</button>'; }).join('') + '</div>';
+    var lista = tall.partes.filter(function(x){ return F[tallFiltro].indexOf(x.estado) >= 0; });
+    if (!lista.length) return h + '<p class="vacio">' + (tall.partes.length ? 'No hay partes en esta lista.' : 'Aún no hay partes. Crea el primero con <b>+ Nuevo</b> cuando entre un coche.') + '</p>';
+    return h + lista.slice().sort(function(a, b){ return String(b.entrada || '').localeCompare(String(a.entrada || '')); }).map(function(x){
+      return '<button class="fila tocable" data-tl="abrir-parte" data-id="' + esc(x.id) + '"><span class="txt"><b>' + esc(x.modelo || 'Sin modelo') + (x.matricula ? ' · ' + esc(x.matricula) : '') + tlEtq(x.estado) + '</b><span>' + esc(x.cliente || 'Sin cliente') + (x.trabajo ? ' · ' + esc(x.trabajo.slice(0, 50)) : '') + '</span></span></button>';
+    }).join('');
+  }
+  function tlNuevoParte(v){
+    return { id: tlId('tp'), vehiculo_id: v ? v.id : '', cliente: v ? v.cliente || '' : '', telefono: v ? v.telefono || '' : '', email: v ? v.email || '' : '', modelo: v ? v.modelo || '' : '', matricula: v ? v.matricula || '' : '', trabajo: '', notas: '', estado: 'recibido', entrada: hoyISO(), listo: '', entregado: '', avisado: '', nuevo: true };
+  }
+  function tlVistaParte(){
+    var d = tallDoc, nuevo = !!d.nuevo;
+    var h = '<p class="ayuda" style="margin:14px 0 0"><button class="accion" data-tl="volver">← Taller</button></p>';
+    h += '<h2>' + (nuevo ? 'Nuevo parte' : 'Parte de trabajo') + ' ' + tlEtq(d.estado) + '</h2>';
+    if (!nuevo) h += '<div style="display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap">' + ['recibido', 'reparacion', 'listo', 'entregado'].map(function(e){ return '<button class="btn ' + (d.estado === e ? 'b-ok' : 'b-otra') + '" style="flex:1;min-width:110px" data-tl="estado" data-e="' + e + '">' + TL_ESTADOS[e] + '</button>'; }).join('') + '</div>';
+    var vs = tall.vehiculos;
+    if (nuevo && vs.length) h += '<div class="caja"><label class="campo"><span>Elegir un vehículo guardado</span><select data-tl-sel="veh"><option value="">— Vehículo nuevo —</option>' + vs.map(function(v){ return '<option value="' + esc(v.id) + '"' + (d.vehiculo_id === v.id ? ' selected' : '') + '>' + esc((v.modelo || 'Sin modelo') + (v.matricula ? ' · ' + v.matricula : '') + (v.cliente ? ' — ' + v.cliente : '')) + '</option>'; }).join('') + '</select></label></div>';
+    h += '<div class="caja">'
+      + '<label class="campo"><span>Cliente</span><input data-tp="cliente" value="' + esc(d.cliente) + '" maxlength="80"></label>'
+      + '<label class="campo"><span>Teléfono</span><input data-tp="telefono" inputmode="tel" value="' + esc(d.telefono) + '" maxlength="20"></label>'
+      + '<label class="campo"><span>Correo (para avisarle cuando esté listo)</span><input data-tp="email" inputmode="email" value="' + esc(d.email) + '" maxlength="120"></label>'
+      + '<label class="campo"><span>Vehículo (marca y modelo)</span><input data-tp="modelo" value="' + esc(d.modelo) + '" maxlength="80" placeholder="Ej.: Seat León 2015"></label>'
+      + '<label class="campo"><span>Matrícula</span><input data-tp="matricula" value="' + esc(d.matricula) + '" maxlength="20" autocapitalize="characters"></label>'
+      + '<label class="campo"><span>Qué hay que hacer</span><textarea data-tp="trabajo" rows="3" maxlength="600">' + esc(d.trabajo) + '</textarea></label>'
+      + '<label class="campo"><span>Notas internas</span><textarea data-tp="notas" rows="3" maxlength="800">' + esc(d.notas) + '</textarea></label></div>';
+    h += '<div class="columna" style="margin-top:12px"><button class="btn b-ok" data-tl="guardar-parte">' + (nuevo ? 'Crear parte' : 'Guardar cambios') + '</button>';
+    if (!nuevo && (d.estado === 'listo' || d.estado === 'entregado') && d.email) h += '<button class="btn b-otra" data-tl="avisar">' + (d.avisado ? 'Volver a avisar por correo' : '📧 Avisar al cliente por correo') + '</button>';
+    if (!nuevo && d.avisado) h += '<p class="ayuda" style="margin:0;text-align:center">Aviso enviado el ' + esc(String(d.avisado).slice(0, 10)) + '.</p>';
+    if (!nuevo) h += '<button class="btn b-otra" data-tl="borrar-parte">Borrar este parte</button>';
+    return h + '</div>';
+  }
+  function tlVistaVehiculo(){
+    var d = tallDoc, nuevo = !!d.nuevo;
+    var h = '<p class="ayuda" style="margin:14px 0 0"><button class="accion" data-tl="volver">← Taller</button></p><h2>' + (nuevo ? 'Nuevo vehículo' : 'Vehículo') + '</h2><div class="caja">'
+      + '<label class="campo"><span>Vehículo (marca y modelo)</span><input data-tv="modelo" value="' + esc(d.modelo) + '" maxlength="80"></label>'
+      + '<label class="campo"><span>Matrícula</span><input data-tv="matricula" value="' + esc(d.matricula) + '" maxlength="20" autocapitalize="characters"></label>'
+      + '<label class="campo"><span>Cliente</span><input data-tv="cliente" value="' + esc(d.cliente) + '" maxlength="80"></label>'
+      + '<label class="campo"><span>Teléfono</span><input data-tv="telefono" inputmode="tel" value="' + esc(d.telefono) + '" maxlength="20"></label>'
+      + '<label class="campo"><span>Correo</span><input data-tv="email" inputmode="email" value="' + esc(d.email) + '" maxlength="120"></label>'
+      + '<label class="campo"><span>Notas</span><textarea data-tv="notas" rows="3" maxlength="800">' + esc(d.notas) + '</textarea></label></div>';
+    h += '<div class="columna" style="margin-top:12px"><button class="btn b-ok" data-tl="guardar-veh">' + (nuevo ? 'Guardar vehículo' : 'Guardar cambios') + '</button>';
+    if (!nuevo) h += '<button class="btn b-otra" data-tl="parte-de-veh">+ Nuevo parte para este vehículo</button><button class="btn b-otra" data-tl="borrar-veh">Borrar vehículo</button>';
+    h += '</div>';
+    if (!nuevo) {
+      var hist = tall.partes.filter(function(x){ return x.vehiculo_id === d.id; }).sort(function(a, b){ return String(b.entrada || '').localeCompare(String(a.entrada || '')); });
+      h += '<h2>Historial <span class="n">' + hist.length + '</span></h2>' + (hist.length ? hist.map(function(x){ return '<button class="fila tocable" data-tl="abrir-parte" data-id="' + esc(x.id) + '"><span class="txt"><b>' + esc(String(x.entrada || '').slice(0, 10)) + tlEtq(x.estado) + '</b><span>' + esc((x.trabajo || 'Sin descripción').slice(0, 70)) + '</span></span></button>'; }).join('') : '<p class="vacio">Todavía no tiene partes.</p>');
+    }
+    return h;
+  }
+  // El vehículo se crea o se actualiza solo al guardar un parte con matrícula.
+  function tlSincVehiculo(p){
+    var m = tlMat(p.matricula); if (!m) return;
+    var v = tall.vehiculos.filter(function(x){ return tlMat(x.matricula) === m; })[0];
+    if (!v) { v = { id: tlId('tv'), modelo: p.modelo, matricula: p.matricula, cliente: p.cliente, telefono: p.telefono, email: p.email, notas: '' }; tall.vehiculos.unshift(v); }
+    else { if (p.modelo) v.modelo = p.modelo; if (p.cliente) v.cliente = p.cliente; if (p.telefono) v.telefono = p.telefono; if (p.email) v.email = p.email; }
+    p.vehiculo_id = v.id;
+  }
+  function tlGuardarParte(msg, despues){
+    var d = tallDoc;
+    if (!d.cliente.trim() && !d.modelo.trim() && !d.matricula.trim()) { toast('Pon al menos el cliente o el vehículo'); return; }
+    var copia = JSON.parse(JSON.stringify(d)); delete copia.nuevo;
+    tlSincVehiculo(copia);
+    var i = -1; tall.partes.forEach(function(x, j){ if (x.id === copia.id) i = j; });
+    if (i >= 0) tall.partes[i] = copia; else tall.partes.unshift(copia);
+    tlGuardar(msg, function(){ tallDoc = copia; if (despues) despues(); });
+  }
+  app.addEventListener('input', function(e){
+    var t = e.target; if (!t || !t.getAttribute || !tallDoc) return;
+    var a = t.getAttribute('data-tp'), v = t.getAttribute('data-tv');
+    if (a) tallDoc[a] = t.value; else if (v) tallDoc[v] = t.value;
+  });
+  app.addEventListener('change', function(e){
+    var t = e.target; if (!t || !t.getAttribute || t.getAttribute('data-tl-sel') !== 'veh' || !tallDoc) return;
+    var v = tall.vehiculos.filter(function(x){ return x.id === t.value; })[0];
+    if (v) { tallDoc.vehiculo_id = v.id; tallDoc.cliente = v.cliente || ''; tallDoc.telefono = v.telefono || ''; tallDoc.email = v.email || ''; tallDoc.modelo = v.modelo || ''; tallDoc.matricula = v.matricula || ''; }
+    else { tallDoc.vehiculo_id = ''; }
+    pintar();
+  });
+  app.addEventListener('click', function(e){
+    var b = e.target.closest('[data-tl]'); if (!b) return;
+    var a = b.getAttribute('data-tl'), id = b.getAttribute('data-id');
+    if (a === 'tab') { tallTab = b.getAttribute('data-f'); pintar(); }
+    else if (a === 'filtro') { tallFiltro = b.getAttribute('data-f'); pintar(); }
+    else if (a === 'volver') { tallVista = 'lista'; tallDoc = null; pintar(); }
+    else if (a === 'nuevo-parte') { tallDoc = tlNuevoParte(null); tallVista = 'parte'; pintar(); }
+    else if (a === 'abrir-parte') { var x = tall.partes.filter(function(y){ return y.id === id; })[0]; if (x) { tallDoc = JSON.parse(JSON.stringify(x)); tallVista = 'parte'; pintar(); } }
+    else if (a === 'nuevo-veh') { tallDoc = { id: tlId('tv'), modelo: '', matricula: '', cliente: '', telefono: '', email: '', notas: '', nuevo: true }; tallVista = 'vehiculo'; pintar(); }
+    else if (a === 'abrir-veh') { var v = tall.vehiculos.filter(function(y){ return y.id === id; })[0]; if (v) { tallDoc = JSON.parse(JSON.stringify(v)); tallVista = 'vehiculo'; pintar(); } }
+    else if (a === 'parte-de-veh') { var v2 = tall.vehiculos.filter(function(y){ return y.id === tallDoc.id; })[0]; tallDoc = tlNuevoParte(v2); tallVista = 'parte'; pintar(); }
+    else if (a === 'guardar-parte') { var nuevo = !!tallDoc.nuevo; tlGuardarParte(nuevo ? 'Parte creado' : 'Cambios guardados', function(){ tallVista = 'lista'; tallDoc = null; if (nuevo) tallFiltro = 'curso'; }); }
+    else if (a === 'estado') {
+      var e2 = b.getAttribute('data-e'); if (tallDoc.estado === e2) return;
+      var antes = tallDoc.estado; tallDoc.estado = e2;
+      if (e2 === 'listo' && !tallDoc.listo) tallDoc.listo = hoyISO();
+      if (e2 === 'entregado' && !tallDoc.entregado) tallDoc.entregado = hoyISO();
+      tlGuardarParte(e2 === 'listo' && tallDoc.email && !tallDoc.avisado ? 'Listo. Pulsa «Avisar al cliente por correo»' : 'Marcado como ' + TL_ESTADOS[e2].toLowerCase());
+    }
+    else if (a === 'avisar') {
+      var d = tallDoc; if (!d.email) { toast('Falta el correo del cliente'); return; }
+      if (!confirmar('¿Enviar un correo a ' + d.email + ' avisando de que su vehículo está listo?')) return;
+      if (tallOcupado) return; tallOcupado = true; b.disabled = true;
+      llamarTaller('taller-avisar', { aviso: { email: d.email, cliente: d.cliente, vehiculo: d.modelo || 'vehículo', matricula: d.matricula, mensaje: '' } }).then(function(r){
+        tallOcupado = false;
+        if (!r || !r.ok) { b.disabled = false; toast((r && r.motivo) || 'No se pudo enviar el aviso.'); return; }
+        tallDoc.avisado = new Date().toISOString(); tlGuardarParte('Aviso enviado a ' + d.email);
+      }).catch(function(){ tallOcupado = false; b.disabled = false; toast('Sin conexión. Inténtalo otra vez.'); });
+    }
+    else if (a === 'borrar-parte') {
+      if (!confirmar('¿Borrar este parte? No se puede deshacer.')) return;
+      var idp = tallDoc.id; tall.partes = tall.partes.filter(function(y){ return y.id !== idp; });
+      tlGuardar('Parte borrado', function(){ tallVista = 'lista'; tallDoc = null; });
+    }
+    else if (a === 'guardar-veh') {
+      var dv = tallDoc; if (!dv.modelo.trim() && !dv.matricula.trim()) { toast('Pon el modelo o la matrícula'); return; }
+      var cv = JSON.parse(JSON.stringify(dv)); delete cv.nuevo;
+      var j = -1; tall.vehiculos.forEach(function(y, q){ if (y.id === cv.id) j = q; });
+      if (j >= 0) tall.vehiculos[j] = cv; else tall.vehiculos.unshift(cv);
+      tlGuardar('Vehículo guardado', function(){ tallVista = 'lista'; tallDoc = null; tallTab = 'vehiculos'; });
+    }
+    else if (a === 'borrar-veh') {
+      var np = tall.partes.filter(function(y){ return y.vehiculo_id === tallDoc.id; }).length;
+      if (!confirmar(np ? '¿Borrar el vehículo? Sus ' + np + ' partes se quedan guardados.' : '¿Borrar el vehículo?')) return;
+      var idv = tallDoc.id; tall.vehiculos = tall.vehiculos.filter(function(y){ return y.id !== idv; });
+      tlGuardar('Vehículo borrado', function(){ tallVista = 'lista'; tallDoc = null; });
+    }
   });
 
   // === Clientes y planes (14/11, solo Tete): activar o quitar el módulo de presupuestos a cada negocio. Flujo n8n «Euxenos – Módulos por cliente» (0frlgP66fiTp6ll7).
