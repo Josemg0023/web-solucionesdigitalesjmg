@@ -1840,13 +1840,11 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + (c.telefono ? '<button class="btn b-otra" data-pr="wa">💬 Abrir WhatsApp con el mensaje</button>' : '')
       + (c.email ? '<button class="btn b-otra" data-pr="mail">✉️ Abrir correo con el mensaje</button>' : '') + '</div>'
       + '<p class="ayuda">Primero guarda el PDF y luego adjúntalo en WhatsApp o en el correo.' + (d.token ? ' El mensaje y el PDF llevan un botón para que tu cliente acepte con un toque; te llega un aviso al móvil cuando responda.' : '') + '</p>'
-      + '<h2>¿Qué ha dicho el cliente?</h2>'
-      + (d.respondido_por === 'cliente' ? '<div class="caja"><p style="margin:0">Tu cliente lo ' + (d.estado === 'aceptado' ? '<b>ha aceptado</b>' : '<b>ha rechazado</b>') + ' desde el enlace.' + (d.comentario_cliente ? '<br>Dice: «' + esc(d.comentario_cliente) + '»' : '') + '</p></div>' : '')
-      + '<div class="columna">'
-      + (d.estado !== 'aceptado' ? '<button class="btn b-otra" data-pr="estado" data-e="aceptado">✅ Ha aceptado</button>' : '')
-      + (d.estado !== 'rechazado' ? '<button class="btn b-otra" data-pr="estado" data-e="rechazado">❌ Lo ha rechazado</button>' : '')
-      + (d.estado !== 'sin_respuesta' && d.estado !== 'aceptado' ? '<button class="btn b-otra" data-pr="estado" data-e="sin_respuesta">⏳ No ha contestado</button>' : '')
-      + '<button class="btn b-otra" data-pr="duplicar">Hacer uno nuevo a partir de este</button></div>';
+      + '<h2>Respuesta del cliente</h2>'
+      + (d.respondido_por === 'cliente' ? '<div class="caja"><p style="margin:0">Tu cliente lo ' + (d.estado === 'aceptado' ? '<b>ha aceptado</b>' : '<b>ha rechazado</b>') + ' desde el enlace.' + (d.comentario_cliente ? '<br>Dice: «' + esc(d.comentario_cliente) + '»' : '') + '</p></div>'
+        : (d.estado === 'aceptado' || d.estado === 'rechazado') ? '<div class="caja"><p style="margin:0">Lo has marcado como <b>' + (d.estado === 'aceptado' ? 'aceptado' : 'rechazado') + '</b>.</p></div>'
+        : '<div class="caja"><p style="margin:0">Esperando respuesta. Cuando tu cliente acepte o rechace desde el enlace, se anota solo y te llega un aviso al móvil.</p></div>')
+      + '<div class="columna" style="margin-top:12px"><button class="btn b-otra" data-pr="duplicar">Hacer uno nuevo a partir de este</button></div>';
     return h;
   }
   // ---- Lectura de campos y clics ----
