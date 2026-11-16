@@ -2220,22 +2220,28 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (!n || !k || !esTete()) return;
     post(API_MOD, { n:n, k:k, accion:'modulos-ver' }).then(function(r){ if (r && r.ok) { modulos = r.negocios || []; if (datos && vista === 'modulos' && !algoAbierto()) pintar(); } }).catch(function(){});
   }
+  var MODS = [['presupuestos', 'Presupuestos'], ['taller', 'Taller']];
   function vistaModulos(){
     if (!modulos) return '<p class="vacio" style="margin-top:16px">Cargando negocios…</p>';
-    var h = '<p class="ayuda" style="margin:14px 0 0">Activa o quita módulos a cada cliente. Ahora mismo: <b>Presupuestos</b> (pack aparte).</p><h2>Negocios <span class="n">' + modulos.length + '</span></h2>';
+    var h = '<p class="ayuda" style="margin:14px 0 0">Activa o quita módulos a cada cliente. Ahora mismo: <b>Presupuestos</b> y <b>Taller</b> (cada uno es un pack aparte).</p><h2>Negocios <span class="n">' + modulos.length + '</span></h2>';
     return h + modulos.map(function(x){
-      return '<div class="fila"><span class="txt"><b>' + esc(x.nombre) + '</b><span>' + esc(x.negocio) + (x.presupuestos_baja && !x.presupuestos ? ' · tuvo presupuestos (se guardan)' : '') + '</span></span><button class="btn ' + (x.presupuestos ? 'b-ok' : 'b-otra') + '" data-mod="' + esc(x.negocio) + '" data-on="' + (x.presupuestos ? '1' : '0') + '" style="min-width:120px">' + (x.presupuestos ? 'Presupuestos ✓' : 'Presupuestos') + '</button></div>';
+      var baja = MODS.filter(function(m){ return x[m[0] + '_baja'] && !x[m[0]]; }).map(function(m){ return m[1].toLowerCase(); });
+      return '<div class="caja"><p style="margin:0 0 2px"><b>' + esc(x.nombre) + '</b></p><p class="ayuda" style="margin:0 0 10px">' + esc(x.negocio) + (baja.length ? ' · tuvo ' + esc(baja.join(' y ')) + ' (se guardan)' : '') + '</p>'
+        + '<div style="display:flex;gap:8px;flex-wrap:wrap">' + MODS.map(function(m){
+          return '<button class="btn ' + (x[m[0]] ? 'b-ok' : 'b-otra') + '" data-mod="' + esc(x.negocio) + '" data-m="' + m[0] + '" data-on="' + (x[m[0]] ? '1' : '0') + '" style="flex:1;min-width:120px">' + m[1] + (x[m[0]] ? ' ✓' : '') + '</button>';
+        }).join('') + '</div></div>';
     }).join('');
   }
   app.addEventListener('click', function(e){
     var b = e.target.closest('[data-mod]'); if (!b || modOcupado) return;
-    var neg = b.getAttribute('data-mod'), activar = b.getAttribute('data-on') !== '1';
-    if (!activar && !confirmar('¿Quitar los presupuestos a «' + neg + '»? Sus datos se guardan por si vuelves a activarlo.')) return;
+    var neg = b.getAttribute('data-mod'), mod = b.getAttribute('data-m') || 'presupuestos', activar = b.getAttribute('data-on') !== '1';
+    var nom = mod === 'taller' ? 'el módulo de taller' : 'los presupuestos', nomOk = mod === 'taller' ? 'Taller' : 'Presupuestos';
+    if (!activar && !confirmar('¿Quitar ' + nom + ' a «' + neg + '»? Sus datos se guardan por si vuelves a activarlo.')) return;
     modOcupado = true; b.disabled = true;
-    post(API_MOD, { n:n, k:k, accion:'modulos-activar', datos:{ negocio: neg, activo: activar } }).then(function(r){
+    post(API_MOD, { n:n, k:k, accion:'modulos-activar', datos:{ negocio: neg, modulo: mod, activo: activar } }).then(function(r){
       modOcupado = false;
       if (!r || !r.ok) { toast((r && r.motivo) || 'No se ha podido cambiar'); pintar(); return; }
-      modulos = r.negocios || modulos; toast(activar ? 'Presupuestos activados' : 'Presupuestos quitados'); pintar();
+      modulos = r.negocios || modulos; toast(nomOk + (activar ? ' activado' : ' quitado')); pintar();
     }).catch(function(x){ modOcupado = false; sinConexion(x); });
   });
 
