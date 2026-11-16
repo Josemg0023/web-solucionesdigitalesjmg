@@ -1828,7 +1828,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + '<h2>Partidas <span class="n">' + d.partidas.length + '</span></h2>' + prPartidasHtml(d, true);
     if (tar.length) h += '<div class="caja" style="margin-bottom:10px"><label class="campo" style="margin:0"><span>Añadir desde tu tarifa</span><select data-pr-sel><option value="">Elegir…</option>' + tar.map(function(x, i){ return '<option value="' + i + '">' + esc(x.concepto) + ' · ' + prEur(x.precio) + (x.unidad ? '/' + esc(x.unidad) : '') + '</option>'; }).join('') + '</select></label></div>';
     var cat = prCatalogo();
-    if (cat.length) h += '<div class="caja" style="margin-bottom:10px"><label class="campo" style="margin:0"><span>Añadir desde tu catálogo</span><select data-pr-cat><option value="">Elegir…</option>' + cat.map(function(x, i){ return '<option value="' + i + '">' + esc(x.nombre) + (x.precio ? ' · ' + prEur(prNum(x.precio)) : '') + '</option>'; }).join('') + '</select></label></div>';
+    if (cat.length) h += '<div class="caja" style="margin-bottom:10px"><label class="campo" style="margin:0"><span>Añadir desde tu catálogo</span><input type="search" data-pr-buscar placeholder="🔍 Buscar en el catálogo…" autocomplete="off" style="margin-bottom:8px"><select data-pr-cat><option value="">Elegir…</option>' + cat.map(function(x, i){ return '<option value="' + i + '">' + esc(x.nombre) + (x.precio ? ' · ' + prEur(prNum(x.precio)) : '') + '</option>'; }).join('') + '</select></label></div>';
     h += '<button class="btn b-otra ancho" data-pr="l-libre">+ Línea libre</button>';
     h += '<h2>Total</h2><div id="prTot">' + prTotalesHtml(d) + '</div>';
     h += '<h2>Condiciones</h2><div class="caja"><label class="campo"><span>Una por línea</span><textarea data-pd="condiciones" rows="4" maxlength="1500">' + esc((d.condiciones || []).join('\n')) + '</textarea></label><label class="campo" style="margin:0"><span>Días de validez</span><input data-pd="validez" inputmode="numeric" value="' + esc(d.validez) + '"></label></div>';
@@ -1870,6 +1870,14 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var x = prConceptos()[+t.value]; if (!x) return;
     prDoc.partidas.push({ concepto: x.concepto, descripcion: x.descripcion || '', cantidad: 1, unidad: x.unidad || '', precio: x.precio, iva: prAjustes().iva });
     pintar();
+  });
+  app.addEventListener('input', function(e){
+    var t = e.target; if (!t || !t.hasAttribute || !t.hasAttribute('data-pr-buscar')) return;
+    var sel = t.parentNode.querySelector('[data-pr-cat]'); if (!sel) return;
+    var q = t.value.trim().toLowerCase(), h = '<option value="">' + (q ? 'Resultados…' : 'Elegir…') + '</option>', n = 0;
+    prCatalogo().forEach(function(x, i){ if (q && (String(x.nombre) + ' ' + String(x.codigo || '') + ' ' + String(x.descripcion || '')).toLowerCase().indexOf(q) < 0) return; n++; h += '<option value="' + i + '">' + esc(x.nombre) + (x.precio ? ' · ' + prEur(prNum(x.precio)) : '') + '</option>'; });
+    if (!n) h = '<option value="">Sin resultados</option>';
+    sel.innerHTML = h;
   });
   app.addEventListener('change', function(e){
     var t = e.target; if (!t || !t.hasAttribute || !t.hasAttribute('data-pr-cat') || !prDoc) return;
