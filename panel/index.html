@@ -492,7 +492,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
 .ban-escribir .btn{flex:0 0 auto}
 #chatAyuda{margin:6px 0 0}#chatAyuda.error{color:#FFB3C6}
 /* Presupuestos (14/11) */
-.pr-enviado{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-aceptado{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-rechazado{background:rgba(244,63,94,.18);color:#FDA4AF}.pr-sin_respuesta{background:rgba(251,191,36,.18);color:#FCD34D}
+.pr-enviado{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-emitida{background:rgba(96,165,250,.18);color:#9CC7FF}.pr-cobrada{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-aceptado{background:rgba(16,185,129,.2);color:#6EE7B7}.pr-rechazado{background:rgba(244,63,94,.18);color:#FDA4AF}.pr-sin_respuesta{background:rgba(251,191,36,.18);color:#FCD34D}
 </style>
 </head>
 <body>
@@ -1571,10 +1571,12 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   function vistaHerramientas(){
     if (!presu) return '<p class="vacio" style="margin-top:16px">Cargando…</p>';
     var docs = presu.docs || [], env = docs.filter(function(x){ return x.estado === 'enviado' || x.estado === 'sin_respuesta'; }).length, bor = docs.filter(function(x){ return x.estado === 'borrador'; }).length;
+    var nFac = docs.filter(prEsFactura).length, pend = docs.filter(function(x){ return prEsFactura(x) && x.estado === 'emitida'; }).length;
+    docs = docs.filter(function(x){ return !prEsFactura(x); });
     var resumen = !docs.length ? 'Aún no has hecho ninguno.' : [env ? env + (env === 1 ? ' enviado sin respuesta' : ' enviados sin respuesta') : '', bor ? bor + (bor === 1 ? ' borrador' : ' borradores') : ''].filter(Boolean).join(' · ') || docs.length + (docs.length === 1 ? ' presupuesto' : ' presupuestos');
     return '<h2>Tus herramientas</h2><div class="caja"><p style="margin:0 0 4px"><b>Presupuestos</b></p><p class="ayuda" style="margin:0 0 10px">' + esc(resumen) + ' Díselo a Eris o hazlos tú, con tu tarifa, y mándalos en PDF.</p><button class="btn b-ok ancho" data-ir="presupuestos">Abrir presupuestos</button></div>'
       + '<div class="caja"><p style="margin:0 0 4px"><b>Catálogo</b></p><p class="ayuda" style="margin:0 0 10px">Sube los catálogos de tus proveedores y tus precios para crear presupuestos y que Eris los conozca.</p><button class="btn b-otra ancho" data-ir="catalogo">Abrir catálogo</button></div>'
-      + '<div class="caja"><p style="margin:0 0 4px"><b>Facturas</b> <span class="n">Próximamente</span></p><p class="ayuda" style="margin:0">Pronto podrás convertir un presupuesto aceptado en factura.</p></div>';
+      + '<div class="caja"><p style="margin:0 0 4px"><b>Facturas</b></p><p class="ayuda" style="margin:0 0 10px">' + (nFac ? nFac + (nFac === 1 ? ' factura' : ' facturas') + (pend ? ' · ' + pend + ' pendiente' + (pend === 1 ? '' : 's') + ' de cobro.' : '.') : 'Se crean desde un presupuesto aceptado.') + '</p><button class="btn b-otra ancho" data-pr="filtro" data-f="factura" data-go="1">Abrir facturas</button></div>';
   }
   function vistaCuenta(enEmpresa){
     var neg = (datos && datos.negocio) || {};
@@ -1668,8 +1670,8 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   // Flujo n8n «Euxenos – Presupuestos (Mi Eris)» (Ackn3HOYscvt7mxw). Los datos se guardan ya preparados para facturas (serie, número, emisor, IVA por partida, presupuesto_origen, estado_pago).
   // Un documento enviado NO se edita ni se borra: se duplica como nuevo. Para quitarlo todo: borrar este bloque, el CSS «Presupuestos (14/11)» y 'presupuestos' de VISTAS, menú y pintar().
   var API_PRESU = 'https://erisproject.app.n8n.cloud/webhook/eris-presupuestos';
-  var presu = null, prVista = 'lista', prDoc = null, prT = null, prOcupado = false;
-  var PR_ESTADOS = { borrador:'Borrador', enviado:'Enviado', aceptado:'Aceptado', rechazado:'Rechazado', sin_respuesta:'Sin respuesta' };
+  var prFiltro = 'presupuesto', presu = null, prVista = 'lista', prDoc = null, prT = null, prOcupado = false;
+  var PR_ESTADOS = { borrador:'Borrador', enviado:'Enviado', aceptado:'Aceptado', rechazado:'Rechazado', sin_respuesta:'Sin respuesta', emitida:'Pendiente de cobro', cobrada:'Cobrada' };
   function presupuestosOn(){ return !!(presu && presu.activo); }
   function llamarPresu(accion, d){ return post(API_PRESU, { n:n, k:k, accion:accion, datos:d || {} }); }
   function cargarPresu(){
@@ -1700,6 +1702,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   // 16/11 (Tete: «ahí debería aparecer el botón aceptar»): cada presupuesto enviado lleva un enlace único (token de 24 letras y números) a euxenos.com/presupuesto/. El cliente lo abre sin cuenta y acepta o rechaza; el flujo n8n «Presupuesto público (aceptar)» lo anota y avisa al móvil del dueño.
   function prToken(){ var a = new Uint8Array(12), h = ''; try { (window.crypto || window.msCrypto).getRandomValues(a); } catch (e) { for (var j = 0; j < 12; j++) a[j] = Math.floor(Math.random() * 256); } for (var i = 0; i < 12; i++) h += ('0' + a[i].toString(16)).slice(-2); return h; }
   function prEnlace(d){ return d && d.token ? location.origin + '/presupuesto/?t=' + d.token : ''; }
+  function prEsFactura(d){ return d && d.tipo === 'factura'; }
   function prCodigo(d){ return d.numero ? (d.serie || 'P') + '-' + String(d.numero).padStart(4, '0') : 'Sin número'; }
   function prNuevoDoc(){
     var a = prAjustes();
@@ -1736,13 +1739,13 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var cond = (d.condiciones || []).filter(Boolean).map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('');
     var fecha = d.fecha_emision ? d.fecha_emision.split('-').reverse().join('/') : '';
     return '<article class="doc"><header class="doc-cab"><div class="doc-logo"><div class="doc-inicial">' + esc(neg.charAt(0) || '?') + '</div><div><b>' + esc(neg) + '</b><small>' + esc(e.razon_social && e.razon_social !== neg ? e.razon_social : '') + (e.nif ? ' · NIF ' + esc(e.nif) : '') + (e.direccion ? '<br>' + esc(e.direccion) : '') + (e.contacto ? '<br>' + esc(e.contacto) : '') + '</small></div></div>'
-      + '<div class="doc-num"><h1>PRESUPUESTO</h1><div>Nº ' + esc(prCodigo(d)) + '</div><div>Fecha: ' + esc(fecha) + ' · Válido ' + (Number(d.validez) || 30) + ' días</div></div></header>'
+      + '<div class="doc-num"><h1>' + (prEsFactura(d) ? 'FACTURA' : 'PRESUPUESTO') + '</h1><div>Nº ' + esc(prCodigo(d)) + '</div><div>Fecha: ' + esc(fecha) + (prEsFactura(d) ? '' : ' · Válido ' + (Number(d.validez) || 30) + ' días') + '</div></div></header>'
       + '<div class="doc-bloques"><div><h3>Cliente</h3>' + esc(c.nombre) + (c.nif ? ' · ' + esc(c.nif) : '') + (c.direccion ? '<br>' + esc(c.direccion) : '') + '<small>' + esc([c.telefono, c.email].filter(Boolean).join(' · ')) + '</small></div></div>'
       + (d.trabajo ? '<p class="doc-trabajo"><b>Trabajo:</b> ' + esc(d.trabajo) + '</p>' : '')
       + '<table class="doc-tabla"><thead><tr><th>Concepto</th><th class="n">Cantidad</th><th class="n">Precio</th><th class="n">IVA</th><th class="n">Importe</th></tr></thead><tbody>' + filas + '</tbody></table>'
       + '<div class="doc-totales"><div><span>Base imponible</span><span>' + prEur(t.base) + '</span></div><div><span>IVA</span><span>' + prEur(t.iva) + '</span></div><div class="doc-total"><span>TOTAL</span><span>' + prEur(t.total) + '</span></div></div>'
       + (cond ? '<section class="doc-cond"><h3>Condiciones</h3><ul>' + cond + '</ul></section>' : '')
-      + (prEnlace(d) ? '<div class="doc-acepto"><a class="doc-boton" href="' + esc(prEnlace(d)) + '">Aceptar presupuesto</a><p>¿No se abre el botón? Entra en este enlace: <span>' + esc(prEnlace(d).replace(/^https?:\/\//, '')) + '</span></p></div>'
+      + (prEsFactura(d) ? (d.forma_pago ? '<div class="doc-acepto">Forma de pago: ' + esc(d.forma_pago) + '</div>' : '') : prEnlace(d) ? '<div class="doc-acepto"><a class="doc-boton" href="' + esc(prEnlace(d)) + '">Aceptar presupuesto</a><p>¿No se abre el botón? Entra en este enlace: <span>' + esc(prEnlace(d).replace(/^https?:\/\//, '')) + '</span></p></div>'
         : '<div class="doc-acepto">Para aceptar este presupuesto, responde <b>«Acepto»</b> al mensaje con el que lo has recibido.</div>')
       + '<footer class="doc-pie"><span class="doc-marca">Desarrollado por <i>Euxenos</i> <em>ξ</em></span></footer></article>';
   }
@@ -1758,12 +1761,13 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   function prAbrirPdf(d){
     var w = window.open('', '_blank');
     if (!w) { toast('Tu navegador ha bloqueado la ventana. Permítela e inténtalo otra vez'); return; }
-    w.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Presupuesto ' + esc(prCodigo(d)) + '</title><style>' + PR_CSS + '</style></head><body><button class="cerrar-doc" aria-label="Cerrar" onclick="window.close();setTimeout(function(){document.body.innerHTML=\'<p style=padding:24px;font-family:Arial>Ya puedes cerrar esta pestaña y volver a la app.</p>\'},300)">\u2715</button><div class="cerrar-doc-pad"></div>' + prHtmlDocumento(d) + '<scr' + 'ipt>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script></body></html>');
+    w.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + (prEsFactura(d) ? 'Factura ' : 'Presupuesto ') + esc(prCodigo(d)) + '</title><style>' + PR_CSS + '</style></head><body><button class="cerrar-doc" aria-label="Cerrar" onclick="window.close();setTimeout(function(){document.body.innerHTML=\'<p style=padding:24px;font-family:Arial>Ya puedes cerrar esta pestaña y volver a la app.</p>\'},300)">\u2715</button><div class="cerrar-doc-pad"></div>' + prHtmlDocumento(d) + '<scr' + 'ipt>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script></body></html>');
     w.document.close();
   }
   function prTelWa(t){ var s = String(t || '').replace(/\D/g, ''); if (s.length === 9) s = '34' + s; return s; }
   function prMensaje(d){
     var neg = (datos && datos.negocio && datos.negocio.nombre) || '', t = prTotales(d), c = d.cliente || {};
+    if (prEsFactura(d)) return 'Hola' + (c.nombre ? ' ' + c.nombre.split(' ')[0] : '') + ', te enviamos la factura ' + prCodigo(d) + ' de ' + neg + ' por un total de ' + prEur(t.total) + ' (IVA incluido). Va en el PDF adjunto. Gracias.';
     return 'Hola' + (c.nombre ? ' ' + c.nombre.split(' ')[0] : '') + ', te enviamos el presupuesto ' + prCodigo(d) + ' de ' + neg + ' por un total de ' + prEur(t.total) + ' (IVA incluido). Va en el PDF adjunto.' + (prEnlace(d) ? ' Si te encaja, puedes aceptarlo con un toque aquí: ' + prEnlace(d) : ' Si te encaja, contesta «Acepto» a este mensaje.');
   }
   // ---- Vistas ----
@@ -1772,11 +1776,14 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (!presu) return '<p class="vacio" style="margin-top:16px">Cargando presupuestos…</p>';
     if (prVista === 'tarifa') return prVistaTarifa();
     if (prVista === 'editar' && prDoc) return prVistaEditar();
-    if (prVista === 'ver' && prDoc) return prVistaVer();
-    var h = '<h2>Presupuestos <span class="n">' + presu.docs.length + '</span><button class="accion" data-pr="nuevo">+ Nuevo</button></h2>';
+    if (prVista === 'ver' && prDoc) return prEsFactura(prDoc) ? prVistaFactura() : prVistaVer();
+    var nF = presu.docs.filter(prEsFactura).length, nP = presu.docs.length - nF, fac = prFiltro === 'factura';
+    var h = '<div class="fila" style="display:flex;gap:8px;margin:14px 0 10px"><button class="btn ' + (fac ? 'b-otra' : 'b-ok') + '" style="flex:1" data-pr="filtro" data-f="presupuesto">Presupuestos (' + nP + ')</button><button class="btn ' + (fac ? 'b-ok' : 'b-otra') + '" style="flex:1" data-pr="filtro" data-f="factura">Facturas (' + nF + ')</button></div>';
+    if (!fac) h += '<h2>Presupuestos <button class="accion" data-pr="nuevo">+ Nuevo</button></h2>';
     h += '<div class="herr" style="margin:0 0 12px"><button class="btn b-otra ancho" data-pr="tarifa">💶 Mi tarifa y datos de empresa</button></div>';
-    if (!presu.docs.length) return h + '<p class="vacio">Aún no hay presupuestos. Primero rellena tu tarifa (lo que cobras por cada cosa) y luego crea el primero con <b>+ Nuevo</b>.</p>';
-    h += presu.docs.slice().sort(function(a, b){ return String(b.creado).localeCompare(String(a.creado)) || (b.numero || 0) - (a.numero || 0); }).map(function(d){
+    var lista = presu.docs.filter(function(d){ return prEsFactura(d) === fac; });
+    if (!lista.length) return h + (fac ? '<p class="vacio">Aún no hay facturas. Cuando un cliente acepte un presupuesto, ábrelo y pulsa <b>Crear factura</b>.</p>' : '<p class="vacio">Aún no hay presupuestos. Primero rellena tu tarifa (lo que cobras por cada cosa) y luego crea el primero con <b>+ Nuevo</b>.</p>');
+    h += lista.slice().sort(function(a, b){ return String(b.creado).localeCompare(String(a.creado)) || (b.numero || 0) - (a.numero || 0); }).map(function(d){
       var c = d.cliente || {};
       return '<button class="fila tocable" data-pr="abrir" data-id="' + esc(d.id) + '"><span class="txt"><b>' + esc(c.nombre || 'Sin cliente') + prEtq(d.estado) + '</b><span>' + esc(prCodigo(d)) + (d.trabajo ? ' · ' + esc(d.trabajo.slice(0, 50)) : '') + '</span></span><span class="precio">' + prEur(prTotales(d).total) + '</span></button>';
     }).join('');
@@ -1836,6 +1843,19 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + '<p class="ayuda">' + (d.numero ? 'Al guardar, este presupuesto conserva su número, el enlace anterior deja de valer y hay que volver a enviárselo a tu cliente.' : 'Al preparar para enviar se le pone número. Después, si hay que cambiar algo, podrás editarlo y volver a enviarlo.') + '</p>';
     return h;
   }
+  function prVistaFactura(){
+    var d = prDoc, c = d.cliente || {}, cob = d.estado === 'cobrada';
+    return '<p class="ayuda" style="margin:14px 0 0"><button class="accion" data-pr="volver">← Facturas</button></p>'
+      + '<h2>' + esc(prCodigo(d)) + ' ' + prEtq(d.estado) + '</h2><div class="caja"><p style="margin:0"><b>' + esc(c.nombre) + '</b>' + (c.nif ? '<br>NIF ' + esc(c.nif) : '') + (c.direccion ? '<br>' + esc(c.direccion) : '') + (c.telefono ? '<br>' + esc(c.telefono) : '') + (c.email ? '<br>' + esc(c.email) : '') + (d.trabajo ? '<br>' + esc(d.trabajo) : '') + '</p></div>'
+      + '<h2>Cobro</h2><div class="columna">' + (cob ? '<button class="btn b-otra" data-pr="pago" data-e="emitida">Volver a «pendiente de cobro»</button>' : '<button class="btn b-ok" data-pr="pago" data-e="cobrada">✅ Marcar como cobrada</button>') + '</div>'
+      + '<h2>Partidas</h2>' + prPartidasHtml(d, false) + '<div style="margin-top:10px">' + prTotalesHtml(d) + '</div>'
+      + '<h2>Enviar al cliente</h2><div class="columna"><button class="btn b-ok" data-pr="pdf">📄 Ver y guardar PDF</button>'
+      + (c.telefono ? '<button class="btn b-otra" data-pr="wa">💬 Abrir WhatsApp con el mensaje</button>' : '')
+      + (c.email ? '<button class="btn b-otra" data-pr="mail">✉️ Abrir correo con el mensaje</button>' : '') + '</div>'
+      + '<p class="ayuda">Primero guarda el PDF y luego adjúntalo en WhatsApp o en el correo.</p>'
+      + (d.presupuesto_origen && prDocPorId(d.presupuesto_origen) ? '<div class="columna" style="margin-top:12px"><button class="btn b-otra" data-pr="abrir" data-id="' + esc(d.presupuesto_origen) + '">Ver el presupuesto de origen</button></div>' : '')
+      + '<p class="ayuda">Una factura emitida no se puede editar ni borrar. Si hay un error, pídele a tu gestor una factura rectificativa. Consulta con tu gestor cómo cumplir con la facturación electrónica obligatoria.</p>';
+  }
   function prVistaVer(){
     var d = prDoc, c = d.cliente || {};
     var h = '<p class="ayuda" style="margin:14px 0 0"><button class="accion" data-pr="volver">← Presupuestos</button></p>'
@@ -1849,7 +1869,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + (d.respondido_por === 'cliente' ? '<div class="caja"><p style="margin:0">Tu cliente lo ' + (d.estado === 'aceptado' ? '<b>ha aceptado</b>' : '<b>ha rechazado</b>') + ' desde el enlace.' + (d.comentario_cliente ? '<br>Dice: «' + esc(d.comentario_cliente) + '»' : '') + '</p></div>'
         : (d.estado === 'aceptado' || d.estado === 'rechazado') ? '<div class="caja"><p style="margin:0">Lo has marcado como <b>' + (d.estado === 'aceptado' ? 'aceptado' : 'rechazado') + '</b>.</p></div>'
         : '<div class="caja"><p style="margin:0">Esperando respuesta. Cuando tu cliente acepte o rechace desde el enlace, se anota solo y te llega un aviso al móvil.</p></div>')
-      + '<div class="columna" style="margin-top:12px"><button class="btn b-otra" data-pr="duplicar">Hacer uno nuevo a partir de este</button></div>';
+      + '<div class="columna" style="margin-top:12px">' + (d.estado === 'aceptado' ? (d.factura_id && prDocPorId(d.factura_id) ? '<button class="btn b-ok" data-pr="abrir" data-id="' + esc(d.factura_id) + '">🧾 Ver su factura</button>' : '<button class="btn b-ok" data-pr="crear-factura">🧾 Crear factura</button>') : '') + '<button class="btn b-otra" data-pr="duplicar">Hacer uno nuevo a partir de este</button></div>';
     return h;
   }
   // ---- Lectura de campos y clics ----
@@ -1901,7 +1921,23 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     else if (a === 'abrir') { var d0 = prDocPorId(b.getAttribute('data-id')); if (!d0) return;
       // 16/11: los presupuestos enviados antes del botón «Aceptar» no tenían enlace; al abrirlos se les pone uno y se guarda sin avisar.
       if ((d0.estado === 'enviado' || d0.estado === 'sin_respuesta') && !d0.token && !prOcupado) { var cn = JSON.parse(JSON.stringify(d0)); cn.token = prToken(); cn.nombre_negocio = (datos && datos.negocio && datos.negocio.nombre) || ''; d0 = cn; prGuardar({ docs: prSustituir(cn) }, '', null); }
-      prDoc = JSON.parse(JSON.stringify(d0)); prVista = d0.estado === 'borrador' ? 'editar' : 'ver'; pintar(); }
+      prDoc = JSON.parse(JSON.stringify(d0)); prVista = d0.estado === 'borrador' ? 'editar' : 'ver'; prFiltro = prEsFactura(d0) ? 'factura' : 'presupuesto'; pintar(); }
+    else if (a === 'filtro') { prFiltro = b.getAttribute('data-f') === 'factura' ? 'factura' : 'presupuesto'; if (b.hasAttribute('data-go')) { prVista = 'lista'; prDoc = null; ir('presupuestos'); } else pintar(); }
+    else if (a === 'crear-factura') {
+      if (prOcupado || !prDoc || prDoc.estado !== 'aceptado' || prDoc.factura_id) return;
+      var aj3 = prAjustes(), emi = prDoc.emisor || {};
+      if (!(emi.nif || aj3.nif)) { toast('Antes pon el NIF de tu empresa en «Mi tarifa y datos»'); return; }
+      if (!confirmar('¿Crear la factura de este presupuesto? Una vez emitida no se podrá editar ni borrar.')) return;
+      var maxF = 0; presu.docs.forEach(function(x){ if (x.serie === 'F' && x.numero > maxF) maxF = x.numero; });
+      var q0 = JSON.parse(JSON.stringify(prDoc)), fid = 'f' + Date.now().toString(36);
+      var fa = { id: fid, tipo: 'factura', serie: 'F', numero: maxF + 1, estado: 'emitida', estado_pago: 'pendiente', fecha_emision: hoyISO(), creado: hoyISO(), presupuesto_origen: q0.id,
+        emisor: { razon_social: emi.razon_social || aj3.razon_social, nif: emi.nif || aj3.nif, direccion: emi.direccion || aj3.direccion, contacto: emi.contacto || aj3.contacto },
+        cliente: q0.cliente, trabajo: q0.trabajo || '', partidas: q0.partidas, condiciones: [], forma_pago: '' };
+      q0.factura_id = fid;
+      var ls = presu.docs.map(function(x){ return x.id === q0.id ? q0 : x; }); ls.unshift(fa);
+      prGuardarDocs(ls, 'Factura ' + prCodigo(fa) + ' creada', function(){ prDoc = fa; prVista = 'ver'; prFiltro = 'factura'; });
+    }
+    else if (a === 'pago') { var nf = JSON.parse(JSON.stringify(prDoc)); nf.estado = b.getAttribute('data-e') === 'cobrada' ? 'cobrada' : 'emitida'; nf.estado_pago = nf.estado === 'cobrada' ? 'cobrada' : 'pendiente'; if (nf.estado === 'cobrada') nf.cobrada = new Date().toISOString(); else delete nf.cobrada; prGuardarDocs(prSustituir(nf), 'Anotado', function(){ prDoc = nf; }); }
     else if (a === 'volver') { prVista = 'lista'; prDoc = null; prT = null; pintar(); }
     else if (a === 'tarifa') { var aj = prAjustes(); prT = { aj: aj, conceptos: JSON.parse(JSON.stringify(prConceptos())) }; prVista = 'tarifa'; pintar(); }
     else if (a === 't-add') { prT.conceptos.push({ id: 'c' + Date.now().toString(36), concepto: '', descripcion: '', unidad: '', precio: '' }); pintar(); }
@@ -1925,7 +1961,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     }
     else if (a === 'pdf') prAbrirPdf(prDoc);
     else if (a === 'wa') { window.open('https://wa.me/' + prTelWa(prDoc.cliente.telefono) + '?text=' + encodeURIComponent(prMensaje(prDoc)), '_blank'); }
-    else if (a === 'mail') { window.location.href = 'mailto:' + encodeURIComponent(prDoc.cliente.email) + '?subject=' + encodeURIComponent('Presupuesto ' + prCodigo(prDoc)) + '&body=' + encodeURIComponent(prMensaje(prDoc)); }
+    else if (a === 'mail') { window.location.href = 'mailto:' + encodeURIComponent(prDoc.cliente.email) + '?subject=' + encodeURIComponent((prEsFactura(prDoc) ? 'Factura ' : 'Presupuesto ') + prCodigo(prDoc)) + '&body=' + encodeURIComponent(prMensaje(prDoc)); }
     else if (a === 'editar') { prDoc = JSON.parse(JSON.stringify(prDoc)); prVista = 'editar'; pintar(); }
     else if (a === 'cancelar-edicion') { var o = prDocPorId(prDoc.id); prDoc = o ? JSON.parse(JSON.stringify(o)) : null; prVista = o ? 'ver' : 'lista'; pintar(); }
     else if (a === 'estado') { var ee = b.getAttribute('data-e'); if (!confirmar(ee === 'aceptado' ? '¿Anotar que tu cliente ha aceptado este presupuesto?' : '¿Anotar que tu cliente ha rechazado este presupuesto?')) return; var nuevo = JSON.parse(JSON.stringify(prDoc)); nuevo.estado = ee; nuevo.respondido_por = 'dueño'; delete nuevo.comentario_cliente; if (nuevo.estado === 'aceptado') nuevo.aceptado = new Date().toISOString(); else nuevo.rechazado = new Date().toISOString(); prGuardarDocs(prSustituir(nuevo), 'Anotado', function(){ prDoc = nuevo; }); }
