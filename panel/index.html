@@ -554,6 +554,19 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
 <button class="btn b-ok ancho" type="submit" id="revisarGuardar" style="margin-top:14px">Guardar</button>
 </form></div>
 
+<!-- Leer un catálogo grande por enlace o PDF, por tandas de páginas (17/11) -->
+<input type="file" id="archivoGrande" accept="application/pdf,.pdf" hidden>
+<div class="velo abajo" id="veloEnlace"><form class="hoja" id="formEnlace" autocomplete="off">
+<h3><span>Catálogo por enlace o PDF grande</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<p class="ayuda" style="margin:0 0 10px">Pega el enlace de un PDF (el catálogo o la tarifa de tu proveedor) o elige el PDF del móvil. Eris lo lee por tandas de páginas: pon cuáles y repite con las siguientes. Una tanda con un catálogo enorme puede tardar un par de minutos.</p>
+<input id="enlUrl" type="url" inputmode="url" maxlength="500" placeholder="https://…catalogo.pdf" aria-label="Enlace del PDF">
+<button type="button" class="btn b-otra ancho" id="enlArchivo" style="margin-top:8px">o elegir un PDF del móvil</button>
+<p class="ayuda" id="enlNombre" style="margin:6px 0 0"></p>
+<input id="enlPag" maxlength="20" placeholder="Páginas (ej.: 1-10)" value="1-10" aria-label="Páginas" style="margin-top:8px">
+<p class="ayuda" style="margin:8px 0 0">Los precios de las tarifas suelen ir sin IVA: revísalos antes de guardar. Usa solo catálogos que tengas derecho a usar.</p>
+<button class="btn b-ok ancho" type="submit" id="enlLeer" style="margin-top:14px">Leer estas páginas</button>
+</form></div>
+
 <!-- Importar un Excel o CSV (17/11) -->
 <input type="file" id="archivoTabla" accept=".xlsx,.csv,.tsv,.txt,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
 <div class="velo abajo" id="veloImportar"><form class="hoja" id="formImportar" autocomplete="off">
@@ -1377,7 +1390,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     h += '<div class="pestanas"><button data-tab="servicio" aria-pressed="' + (tabCat === 'servicio') + '">Servicios</button><button data-tab="producto" aria-pressed="' + (tabCat === 'producto') + '">Productos</button></div>';
     h += '<h2>' + (tabCat === 'servicio' ? 'Servicios' : 'Productos') + ' <span class="n">' + (lista ? lista.length : '…') + '</span><button class="accion" data-item="nuevo">+ Añadir</button></h2>';
     if (!lista) return h + '<p class="vacio">Cargando…</p>';
-    h += '<div class="herr" style="margin:0 0 12px"><button class="btn b-otra" data-importar>📷 Foto o PDF</button><button class="btn b-otra" data-importar-tabla>📊 Excel o CSV</button>' + (tabCat === 'producto' ? '<button class="btn b-otra" data-escanear>▦ Escanear</button>' : '') + '</div>';
+    h += '<div class="herr" style="margin:0 0 12px"><button class="btn b-otra" data-importar>📷 Foto o PDF</button><button class="btn b-otra" data-importar-tabla>📊 Excel o CSV</button><button class="btn b-otra" data-importar-enlace>🔗 Enlace o PDF grande</button>' + (tabCat === 'producto' ? '<button class="btn b-otra" data-escanear>▦ Escanear</button>' : '') + '</div>';
     if (!lista.length) {
       h += '<p class="vacio">' + (tabCat === 'servicio' ? 'Aún no hay servicios. Haz una foto a tu lista de precios o empieza con una plantilla:' : 'Aún no hay productos. Haz una foto a la carta o a una factura del proveedor, escanea los códigos de barras o empieza con una plantilla:') + '</p>';
       h += '<div class="plantillas">' + Object.keys(typeof PLANTILLAS === 'object' ? PLANTILLAS : {}).map(function(c){ return '<button data-plantilla="' + c + '">' + esc(PLANTILLAS[c].t) + '</button>'; }).join('') + '</div>';
@@ -2278,6 +2291,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     t = e.target.closest('[data-item]'); if (t) { abrirItem(t.getAttribute('data-item')); return; }
     t = e.target.closest('[data-cliente]'); if (t) { abrirCliente(t.getAttribute('data-cliente')); return; }
     t = e.target.closest('[data-importar]'); if (t) { archivoCat.value = ''; archivoCat.click(); return; }
+    t = e.target.closest('[data-importar-enlace]'); if (t) { abrirEnlace(); return; }
     t = e.target.closest('[data-importar-tabla]'); if (t) { archivoTabla.value = ''; archivoTabla.click(); return; }
     t = e.target.closest('[data-escanear]'); if (t) { abrirEscaner('stock'); return; }
     t = e.target.closest('[data-plantilla]'); if (t) { usarPlantilla(t.getAttribute('data-plantilla')); return; }
@@ -2441,7 +2455,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   };
   var revision = [], formRevisar = document.getElementById('formRevisar'), listaRev = document.getElementById('revisarLista');
   function abrirRevision(items, titulo, ayuda){
-    revision = items.map(function(x){ return { tipo: x.tipo === 'producto' ? 'producto' : 'servicio', nombre: x.nombre || '', precio: x.precio || '', duracion: x.duracion || 0, descripcion: x.descripcion || '', stock: x.stock || '', sel: true }; });
+    revision = items.map(function(x){ return { tipo: x.tipo === 'producto' ? 'producto' : 'servicio', nombre: x.nombre || '', precio: x.precio || '', duracion: x.duracion || 0, descripcion: x.descripcion || '', stock: x.stock || '', codigo: x.codigo || '', sel: true }; });
     document.getElementById('revisarTitulo').textContent = titulo;
     document.getElementById('revisarAyuda').textContent = ayuda;
     pintarRevision(); abrirHoja('veloRevisar');
@@ -2464,7 +2478,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   });
   formRevisar.addEventListener('submit', function(e){
     e.preventDefault();
-    var items = revision.filter(function(x){ return x.sel && x.nombre.trim(); }).map(function(x){ return { tipo: x.tipo, nombre: x.nombre.trim(), precio: x.precio.trim(), duracion: x.tipo === 'servicio' ? x.duracion : 0, descripcion: x.descripcion, stock: x.tipo === 'producto' ? x.stock : '' }; });
+    var items = revision.filter(function(x){ return x.sel && x.nombre.trim(); }).map(function(x){ return { tipo: x.tipo, nombre: x.nombre.trim(), precio: x.precio.trim(), duracion: x.tipo === 'servicio' ? x.duracion : 0, descripcion: x.descripcion, stock: x.tipo === 'producto' ? x.stock : '', codigo: x.codigo || '' }; });
     if (!items.length) return;
     var boton = document.getElementById('revisarGuardar'); boton.disabled = true; boton.textContent = 'Guardando…';
     llamarApp('catalogo-varios', { items: items }).then(function(r){
@@ -2512,6 +2526,35 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       if (!r || !r.ok || !r.items || !r.items.length) { cerrarHojas(); toast((r && r.motivo) || 'No se ha podido leer'); return; }
       abrirRevision(r.items, 'He encontrado ' + r.items.length + (r.items.length === 1 ? ' elemento' : ' elementos'), 'Revisa nombres y precios, quita lo que sobre (✓) y toca «Servicio/Producto» si alguno está mal. Si ya existe uno con el mismo nombre, se actualiza.');
     }).catch(function(){ cerrarHojas(); toast('No se ha podido enviar. Revisa la conexión'); });
+  });
+
+  // === Catálogo por enlace o PDF grande (17/11): manda la URL (o el PDF) y un rango de páginas a catalogo-leer; luego se revisa igual que una foto.
+  var archivoGrande = document.getElementById('archivoGrande'), formEnlace = document.getElementById('formEnlace'), enlSiguiente = 11;
+  function abrirEnlace(){ archivoGrande.value = ''; document.getElementById('enlNombre').textContent = ''; document.getElementById('enlPag').value = (enlSiguiente - 10 > 0 && enlSiguiente > 11 ? enlSiguiente + '-' + (enlSiguiente + 9) : '1-10'); abrirHoja('veloEnlace'); }
+  document.getElementById('enlArchivo').addEventListener('click', function(){ archivoGrande.click(); });
+  archivoGrande.addEventListener('change', function(){ var f = archivoGrande.files && archivoGrande.files[0]; document.getElementById('enlNombre').textContent = f ? 'PDF elegido: ' + f.name : ''; if (f) document.getElementById('enlUrl').value = ''; });
+  formEnlace.addEventListener('submit', function(e){
+    e.preventDefault();
+    var url = document.getElementById('enlUrl').value.trim(), file = archivoGrande.files && archivoGrande.files[0];
+    var pag = document.getElementById('enlPag').value.replace(/[^0-9,\- ]/g, '').trim();
+    if (!url && !file) { toast('Pega un enlace o elige un PDF'); return; }
+    if (url && !/^https:\/\//i.test(url)) { toast('El enlace debe empezar por https://'); return; }
+    if (file && file.size > 9 * 1024 * 1024) { toast('El PDF es muy grande (máx. 9 MB). Usa el enlace.'); return; }
+    var m = pag.match(/(\d+)\s*-\s*(\d+)/), fin = m ? +m[2] : (parseInt(pag, 10) || 0);
+    document.getElementById('revisarTitulo').textContent = 'Leyendo el catálogo…';
+    document.getElementById('revisarAyuda').textContent = '';
+    listaRev.innerHTML = '<div class="leyendo"><i></i>Eris está leyendo ' + (pag ? 'las páginas ' + esc(pag) : 'el documento') + '. Con catálogos grandes puede tardar un par de minutos; no cierres esta pantalla.</div>';
+    var b = document.getElementById('revisarGuardar'); b.disabled = true; b.textContent = 'Esperando…';
+    abrirHoja('veloRevisar');
+    (file ? leerBase64(file) : Promise.resolve(null)).then(function(a){
+      var cuerpo = { n:n, k:k, accion:'catalogo-leer', datos:{ paginas: pag } };
+      if (a) { cuerpo.archivo = a.datos; cuerpo.archivoTipo = a.tipo; } else { cuerpo.datos.url = url; }
+      return post(API_APP, cuerpo);
+    }).then(function(r){
+      if (!r || !r.ok || !r.items || !r.items.length) { cerrarHojas(); toast((r && r.motivo) || 'No se ha podido leer'); return; }
+      if (fin) enlSiguiente = fin + 1;
+      abrirRevision(r.items, 'He encontrado ' + r.items.length + (r.items.length === 1 ? ' elemento' : ' elementos'), 'Revisa nombres y precios (en tarifas suelen ir sin IVA), quita lo que sobre (✓) y guarda. Para seguir, pulsa otra vez «Enlace o PDF grande»: te propongo las páginas siguientes.');
+    }).catch(function(){ cerrarHojas(); toast('No se ha podido leer. Revisa la conexión o prueba menos páginas'); });
   });
 
   // === Importar Excel o CSV (17/11): lee el archivo en el móvil (sin IA), pregunta qué columna es cada cosa y guarda de 200 en 200 (catalogo-varios).
