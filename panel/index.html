@@ -554,6 +554,16 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
 <button class="btn b-ok ancho" type="submit" id="revisarGuardar" style="margin-top:14px">Guardar</button>
 </form></div>
 
+<!-- Importar un Excel o CSV (17/11) -->
+<input type="file" id="archivoTabla" accept=".xlsx,.csv,.tsv,.txt,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+<div class="velo abajo" id="veloImportar"><form class="hoja" id="formImportar" autocomplete="off">
+<h3><span>Importar Excel o CSV</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
+<p class="ayuda" id="impAyuda" style="margin:0 0 10px"></p>
+<div id="impCampos"></div>
+<div id="impVista"></div>
+<button class="btn b-ok ancho" type="submit" id="impGuardar" style="margin-top:14px">Importar</button>
+</form></div>
+
 <!-- Escáner de código de barras -->
 <div class="velo abajo" id="veloEscaner"><div class="hoja">
 <h3>Escanear código <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
@@ -1367,7 +1377,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     h += '<div class="pestanas"><button data-tab="servicio" aria-pressed="' + (tabCat === 'servicio') + '">Servicios</button><button data-tab="producto" aria-pressed="' + (tabCat === 'producto') + '">Productos</button></div>';
     h += '<h2>' + (tabCat === 'servicio' ? 'Servicios' : 'Productos') + ' <span class="n">' + (lista ? lista.length : '…') + '</span><button class="accion" data-item="nuevo">+ Añadir</button></h2>';
     if (!lista) return h + '<p class="vacio">Cargando…</p>';
-    h += '<div class="herr" style="margin:0 0 12px"><button class="btn b-otra" data-importar>📷 Foto o PDF</button>' + (tabCat === 'producto' ? '<button class="btn b-otra" data-escanear>▦ Escanear</button>' : '') + '</div>';
+    h += '<div class="herr" style="margin:0 0 12px"><button class="btn b-otra" data-importar>📷 Foto o PDF</button><button class="btn b-otra" data-importar-tabla>📊 Excel o CSV</button>' + (tabCat === 'producto' ? '<button class="btn b-otra" data-escanear>▦ Escanear</button>' : '') + '</div>';
     if (!lista.length) {
       h += '<p class="vacio">' + (tabCat === 'servicio' ? 'Aún no hay servicios. Haz una foto a tu lista de precios o empieza con una plantilla:' : 'Aún no hay productos. Haz una foto a la carta o a una factura del proveedor, escanea los códigos de barras o empieza con una plantilla:') + '</p>';
       h += '<div class="plantillas">' + Object.keys(typeof PLANTILLAS === 'object' ? PLANTILLAS : {}).map(function(c){ return '<button data-plantilla="' + c + '">' + esc(PLANTILLAS[c].t) + '</button>'; }).join('') + '</div>';
@@ -2268,6 +2278,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     t = e.target.closest('[data-item]'); if (t) { abrirItem(t.getAttribute('data-item')); return; }
     t = e.target.closest('[data-cliente]'); if (t) { abrirCliente(t.getAttribute('data-cliente')); return; }
     t = e.target.closest('[data-importar]'); if (t) { archivoCat.value = ''; archivoCat.click(); return; }
+    t = e.target.closest('[data-importar-tabla]'); if (t) { archivoTabla.value = ''; archivoTabla.click(); return; }
     t = e.target.closest('[data-escanear]'); if (t) { abrirEscaner('stock'); return; }
     t = e.target.closest('[data-plantilla]'); if (t) { usarPlantilla(t.getAttribute('data-plantilla')); return; }
     t = e.target.closest('[data-cierre]'); if (t) { abrirCierre(); return; }
@@ -2501,6 +2512,161 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       if (!r || !r.ok || !r.items || !r.items.length) { cerrarHojas(); toast((r && r.motivo) || 'No se ha podido leer'); return; }
       abrirRevision(r.items, 'He encontrado ' + r.items.length + (r.items.length === 1 ? ' elemento' : ' elementos'), 'Revisa nombres y precios, quita lo que sobre (✓) y toca «Servicio/Producto» si alguno está mal. Si ya existe uno con el mismo nombre, se actualiza.');
     }).catch(function(){ cerrarHojas(); toast('No se ha podido enviar. Revisa la conexión'); });
+  });
+
+  // === Importar Excel o CSV (17/11): lee el archivo en el móvil (sin IA), pregunta qué columna es cada cosa y guarda de 200 en 200 (catalogo-varios).
+  // .xlsx se abre con un lector propio (zip + XML); .xls antiguo no. Para quitarlo: este bloque, la hoja #veloImportar, #archivoTabla y el botón data-importar-tabla.
+  var archivoTabla = document.getElementById('archivoTabla'), formImp = document.getElementById('formImportar');
+  var tabla = null, IMP_MAX = 2000, impOcupado = false;
+  function sinTildes(t){ return String(t == null ? '' : t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim(); }
+  function leerBuffer(file){ return new Promise(function(ok, mal){ var fr = new FileReader(); fr.onload = function(){ ok(fr.result); }; fr.onerror = mal; fr.readAsArrayBuffer(file); }); }
+  function inflar(datos){
+    if (typeof DecompressionStream === 'undefined') return Promise.reject(new Error('sin-inflar'));
+    return new Response(new Blob([datos]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
+  }
+  function abrirZip(buf){
+    var dv = new DataView(buf), u8 = new Uint8Array(buf), i = u8.length - 22;
+    while (i >= 0 && dv.getUint32(i, true) !== 0x06054b50) i--;
+    if (i < 0) throw new Error('zip');
+    var total = dv.getUint16(i + 10, true), off = dv.getUint32(i + 16, true), ent = {};
+    for (var k = 0; k < total; k++) {
+      if (dv.getUint32(off, true) !== 0x02014b50) break;
+      var nlen = dv.getUint16(off + 28, true), elen = dv.getUint16(off + 30, true), clen = dv.getUint16(off + 32, true);
+      ent[new TextDecoder().decode(u8.subarray(off + 46, off + 46 + nlen))] = { metodo: dv.getUint16(off + 10, true), csize: dv.getUint32(off + 20, true), lho: dv.getUint32(off + 42, true) };
+      off += 46 + nlen + elen + clen;
+    }
+    function sacar(nombre){
+      var e = ent[nombre]; if (!e) return Promise.resolve(null);
+      var st = e.lho + 30 + dv.getUint16(e.lho + 26, true) + dv.getUint16(e.lho + 28, true), dat = u8.slice(st, st + e.csize);
+      var p = e.metodo === 0 ? Promise.resolve(dat.buffer) : inflar(dat);
+      return p.then(function(b){ return new TextDecoder().decode(b); });
+    }
+    return { nombres: Object.keys(ent), sacar: sacar };
+  }
+  function filasXlsx(buf){
+    var zip = abrirZip(buf), hoja = zip.nombres.filter(function(x){ return /^xl\/worksheets\/sheet\d+\.xml$/.test(x); }).sort(function(a, b){ return parseInt(a.replace(/\D/g, ''), 10) - parseInt(b.replace(/\D/g, ''), 10); })[0];
+    if (!hoja) return Promise.reject(new Error('sin-hoja'));
+    return Promise.all([zip.sacar('xl/sharedStrings.xml'), zip.sacar(hoja)]).then(function(r){
+      var dp = new DOMParser(), comp = [];
+      if (r[0]) { var xs = dp.parseFromString(r[0], 'application/xml').getElementsByTagName('si'); for (var a = 0; a < xs.length; a++) { var ts = xs[a].getElementsByTagName('t'), tx = ''; for (var b = 0; b < ts.length; b++) tx += ts[b].textContent; comp.push(tx); } }
+      var rows = dp.parseFromString(r[1], 'application/xml').getElementsByTagName('row'), out = [];
+      for (var i = 0; i < rows.length && out.length < 20000; i++) {
+        var cs = rows[i].getElementsByTagName('c'), fila = [], vacio = true;
+        for (var j = 0; j < cs.length; j++) {
+          var c = cs[j], ref = c.getAttribute('r') || '', m = /^([A-Z]+)/.exec(ref), col = j;
+          if (m) { col = 0; for (var q = 0; q < m[1].length; q++) col = col * 26 + (m[1].charCodeAt(q) - 64); col -= 1; }
+          var t = c.getAttribute('t'), v = c.getElementsByTagName('v')[0], val = '';
+          if (t === 'inlineStr') { var is = c.getElementsByTagName('t'); for (var z = 0; z < is.length; z++) val += is[z].textContent; }
+          else if (v) { val = v.textContent; if (t === 's') val = comp[parseInt(val, 10)] || ''; else if (t === 'b' || t === 'e') val = ''; else if (t !== 'str') val = val.replace('.', ','); }
+          while (fila.length < col) fila.push('');
+          fila[col] = String(val).trim(); if (fila[col]) vacio = false;
+        }
+        if (!vacio) out.push(fila);
+      }
+      return out;
+    });
+  }
+  function filasCsv(buf){
+    var txt; try { txt = new TextDecoder('utf-8', { fatal: true }).decode(buf); } catch (e) { txt = new TextDecoder('windows-1252').decode(buf); }
+    txt = txt.replace(/^﻿/, '');
+    var l1 = txt.split(/\r?\n/, 1)[0] || '', cnt = { ';': 0, ',': 0, '\t': 0 }, d = ';';
+    for (var i = 0; i < l1.length; i++) if (cnt[l1[i]] != null) cnt[l1[i]]++;
+    if (cnt[','] > cnt[d]) d = ','; if (cnt['\t'] > cnt[d]) d = '\t';
+    var out = [], fila = [], cel = '', q = false;
+    for (var k = 0; k < txt.length && out.length < 20000; k++) {
+      var ch = txt[k];
+      if (q) { if (ch === '"') { if (txt[k + 1] === '"') { cel += '"'; k++; } else q = false; } else cel += ch; }
+      else if (ch === '"') q = true;
+      else if (ch === d) { fila.push(cel.trim()); cel = ''; }
+      else if (ch === '\n' || ch === '\r') { if (ch === '\r' && txt[k + 1] === '\n') k++; fila.push(cel.trim()); cel = ''; if (fila.some(function(x){ return x; })) out.push(fila); fila = []; }
+      else cel += ch;
+    }
+    if (cel || fila.length) { fila.push(cel.trim()); if (fila.some(function(x){ return x; })) out.push(fila); }
+    return out;
+  }
+  var IMP_CAMPOS = [['nombre', 'Nombre del producto'], ['precio', 'Precio'], ['codigo', 'Referencia o código'], ['stock', 'Existencias'], ['descripcion', 'Descripción']];
+  function adivinar(cab){
+    var usado = {}, map = { nombre: -1, precio: -1, codigo: -1, stock: -1, descripcion: -1 };
+    var reglas = [
+      ['codigo', /(^|\s)(ean|sku|ref|referencia|codigo|cod|barras)(\s|$)|codigo|referencia/],
+      ['precio', /pvp|precio|tarifa|importe|price|venta/],
+      ['stock', /stock|existencia|cantidad|unidades|uds|inventario/],
+      ['nombre', /nombre|producto|articulo|denominacion|designacion|titulo|name/],
+      ['descripcion', /descripcion|detalle|observ|nota|marca|medida/]
+    ];
+    reglas.forEach(function(r){
+      for (var i = 0; i < cab.length; i++) { if (usado[i] || !r[1].test(sinTildes(cab[i]))) continue; map[r[0]] = i; usado[i] = true; break; }
+    });
+    if (map.nombre < 0 && map.descripcion >= 0) { map.nombre = map.descripcion; map.descripcion = -1; }
+    if (map.nombre < 0) { for (var j = 0; j < cab.length; j++) if (!usado[j]) { map.nombre = j; break; } }
+    return map;
+  }
+  function precioTxt(v){
+    v = String(v || '').trim(); if (!v) return '';
+    var t = v.replace(/[^\d.,-]/g, ''); if (!/\d/.test(t)) return v.slice(0, 40);
+    var c = t.lastIndexOf(','), pt = t.lastIndexOf('.');
+    if (c >= 0 && pt >= 0) t = c > pt ? t.replace(/\./g, '').replace(',', '.') : t.replace(/,/g, '');
+    else if (c >= 0) t = t.replace(',', '.');
+    else if (pt >= 0 && /^-?\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, '');
+    var x = parseFloat(t); if (isNaN(x) || x < 0) return '';
+    return (Math.round(x * 100) % 100 === 0 ? String(Math.round(x)) : x.toFixed(2).replace('.', ',')) + ' €';
+  }
+  function itemsDeTabla(){
+    var m = tabla.map, prod = tabCat === 'producto', out = [], validas = 0;
+    for (var i = tabla.primera + 1; i < tabla.filas.length; i++) {
+      var f = tabla.filas[i], g = function(ix){ return ix >= 0 ? String(f[ix] || '').trim() : ''; };
+      var nombre = g(m.nombre); if (!nombre) continue; validas++;
+      if (out.length >= IMP_MAX) continue;
+      var st = g(m.stock), x = parseFloat(st.replace(',', '.'));
+      out.push({ tipo: prod ? 'producto' : 'servicio', nombre: nombre.slice(0, 120), precio: precioTxt(g(m.precio)), duracion: 0, descripcion: g(m.descripcion).slice(0, 400), stock: prod && !isNaN(x) ? String(Math.max(0, Math.round(x))) : '', codigo: prod ? g(m.codigo).replace(/[^0-9A-Za-z-]/g, '').slice(0, 40) : '' });
+    }
+    return { items: out, validas: validas };
+  }
+  function pintarImportar(){
+    var cab = tabla.cab, op = '<option value="-1">— No usar —</option>' + cab.map(function(c, i){ return '<option value="' + i + '">' + esc(c || ('Columna ' + (i + 1))) + '</option>'; }).join('');
+    var prod = tabCat === 'producto';
+    document.getElementById('impCampos').innerHTML = IMP_CAMPOS.filter(function(c){ return prod || (c[0] !== 'stock' && c[0] !== 'codigo'); }).map(function(c){
+      return '<label class="campo"><span>' + c[1] + (c[0] === 'nombre' ? ' *' : '') + '</span><select data-imp="' + c[0] + '">' + op.replace('value="' + tabla.map[c[0]] + '"', 'value="' + tabla.map[c[0]] + '" selected') + '</select></label>';
+    }).join('');
+    var r = itemsDeTabla(), b = document.getElementById('impGuardar');
+    document.getElementById('impVista').innerHTML = r.items.length ? '<p class="ayuda" style="margin:10px 0 4px">Así quedarían los primeros:</p>' + r.items.slice(0, 3).map(function(x){ return '<div class="fila"><span class="txt"><b>' + esc(x.nombre) + '</b><span>' + esc([x.codigo ? 'Ref. ' + x.codigo : '', x.stock !== '' ? 'Stock: ' + x.stock : '', x.descripcion].filter(Boolean).join(' · ')) + '</span></span><span class="precio">' + esc(x.precio) + '</span></div>'; }).join('') + (r.validas > IMP_MAX ? '<p class="ayuda">Hay ' + r.validas + ' filas: se importan las primeras ' + IMP_MAX + '.</p>' : '') : '<p class="vacio">Elige la columna con el nombre.</p>';
+    b.disabled = !r.items.length || impOcupado; b.textContent = r.items.length ? 'Importar ' + r.items.length + (r.items.length === 1 ? ' elemento' : ' elementos') : 'Elige la columna del nombre';
+  }
+  archivoTabla.addEventListener('change', function(){
+    var file = archivoTabla.files && archivoTabla.files[0]; if (!file) return;
+    if (file.size > 15 * 1024 * 1024) { toast('El archivo es muy grande (máx. 15 MB)'); return; }
+    var xlsx = /\.xlsx$/i.test(file.name), viejo = /\.xls$/i.test(file.name);
+    if (viejo) { toast('Los .xls antiguos no se abren. Guárdalo como .xlsx o CSV'); return; }
+    leerBuffer(file).then(function(buf){ return xlsx ? filasXlsx(buf) : filasCsv(buf); }).then(function(filas){
+      var p = 0; for (; p < Math.min(filas.length, 15); p++) if (filas[p].filter(function(x){ return x; }).length >= 2) break;
+      if (!filas.length || p >= Math.min(filas.length, 15) || filas.length < 2) { toast('No he encontrado una tabla con datos en el archivo'); return; }
+      var anchura = 0; filas.forEach(function(f){ if (f.length > anchura) anchura = f.length; });
+      var cab = []; for (var i = 0; i < anchura; i++) cab.push(String(filas[p][i] || '').slice(0, 60));
+      tabla = { filas: filas, cab: cab, primera: p, map: adivinar(cab) };
+      document.getElementById('impAyuda').textContent = 'He leído ' + (filas.length - p - 1) + ' filas de «' + file.name.slice(0, 40) + '». Comprueba qué columna es cada cosa; si ya existe uno con el mismo código o nombre, se actualiza.';
+      impOcupado = false; pintarImportar(); abrirHoja('veloImportar');
+    }).catch(function(e){ toast(e && e.message === 'sin-inflar' ? 'Este móvil no abre .xlsx. Guárdalo como CSV' : 'No he podido leer el archivo. Prueba a guardarlo como CSV'); });
+  });
+  formImp.addEventListener('change', function(e){ var s = e.target.closest('[data-imp]'); if (s && tabla) { tabla.map[s.getAttribute('data-imp')] = parseInt(s.value, 10); pintarImportar(); } });
+  formImp.addEventListener('submit', function(e){
+    e.preventDefault(); if (!tabla || impOcupado) return;
+    var items = itemsDeTabla().items; if (!items.length) return;
+    impOcupado = true; var b = document.getElementById('impGuardar'), nuevos = 0, act = 0, hecho = 0;
+    function parte(){
+      if (hecho >= items.length) {
+        impOcupado = false; cerrarHojas(); pintar();
+        toast('Importados: ' + [nuevos ? nuevos + ' nuevos' : '', act ? act + ' actualizados' : ''].filter(Boolean).join(' y ')); return Promise.resolve();
+      }
+      b.disabled = true; b.textContent = 'Guardando… ' + hecho + ' de ' + items.length;
+      return llamarApp('catalogo-varios', { items: items.slice(hecho, hecho + 200) }).then(function(r){
+        if (!r || !r.ok) { throw new Error((r && r.motivo) || 'fallo'); }
+        info = r.datos; var res = r.resultado || {}; nuevos += res.nuevos || 0; act += res.actualizados || 0; hecho += 200; return parte();
+      });
+    }
+    parte().catch(function(err){
+      impOcupado = false; pintarImportar(); pintar();
+      toast('Se ha parado tras ' + Math.min(hecho, items.length) + ' de ' + items.length + (err && err.message && err.message !== 'fallo' && err.message !== 'Failed to fetch' ? ': ' + err.message : '. Vuelve a importarlo: no se duplica'));
+    });
   });
 
   // ---- Escáner de códigos de barras ----
