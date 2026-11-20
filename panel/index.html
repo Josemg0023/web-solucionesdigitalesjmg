@@ -108,6 +108,8 @@ textarea{min-height:90px;resize:vertical}
 .mod b{font-size:1rem}
 .mod small{color:var(--tenue);font-size:.82rem;line-height:1.35}
 .mod.activo{border-color:rgba(52,211,153,.5)}
+.mod{position:relative}
+.mod-n{position:absolute;top:12px;right:12px;background:var(--rubi);color:#fff;border-radius:999px;min-width:22px;padding:2px 7px;font-size:.75rem;font-weight:700;text-align:center}
 .caja{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:14px}
 .caja p{margin:0 0 10px;font-size:.9rem;color:#CFE9DF;line-height:1.45}
 .caja p b{color:var(--claro)}
@@ -1595,19 +1597,24 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   }
   // 16/11 (Tete): «Herramientas» agrupa lo que el negocio usa para trabajar. Hoy: Presupuestos. Facturas se añadirá aquí cuando existan.
   function vistaHerramientas(){
-    if (!presu) return '<p class="vacio" style="margin-top:16px">Cargando…</p>';
+    presu = presu || { activo: false, tarifa: [], docs: [] };
     var docs = presu.docs || [], env = docs.filter(function(x){ return x.estado === 'enviado' || x.estado === 'sin_respuesta'; }).length, bor = docs.filter(function(x){ return x.estado === 'borrador'; }).length;
     var nFac = docs.filter(prEsFactura).length, pend = docs.filter(function(x){ return prEsFactura(x) && !prEsRect(x) && x.estado === 'emitida'; }).length;
     docs = docs.filter(function(x){ return !prEsFactura(x); });
     var resumen = !docs.length ? 'Aún no has hecho ninguno.' : [env ? env + (env === 1 ? ' enviado sin respuesta' : ' enviados sin respuesta') : '', bor ? bor + (bor === 1 ? ' borrador' : ' borradores') : ''].filter(Boolean).join(' · ') || docs.length + (docs.length === 1 ? ' presupuesto' : ' presupuestos');
     // 20/11 (Tete): módulos en cuadrícula, con el Catálogo primero (los presupuestos salen de él).
-    function mod(attrs, icono, titulo, estado, activo){ return '<button type="button" class="mod' + (activo ? ' activo' : '') + '" ' + attrs + '><span class="ic" aria-hidden="true">' + icono + '</span><b>' + titulo + '</b><small>' + esc(estado) + '</small></button>'; }
+    function mod(attrs, icono, titulo, estado, activo, num){ return '<button type="button" class="mod' + (activo ? ' activo' : '') + '" ' + attrs + '><span class="ic" aria-hidden="true">' + icono + '</span><b>' + titulo + '</b><small>' + esc(estado) + '</small>' + (num ? '<span class="cuenta-n mod-n">' + num + '</span>' : '') + '</button>'; }
+    var pcM = porConfirmar().length, pedM = pedidosOn() ? (pedidos || []).filter(function(p){ return p.estado === 'nuevo'; }).length : 0;
     var nCatM = info ? (info.catalogo || []).length : 0;
     return '<h2>Tus módulos</h2><div class="mod-grid">'
       + mod('data-ir="catalogo"', '📦', 'Catálogo', info ? (nCatM ? nCatM + (nCatM === 1 ? ' elemento' : ' elementos') : 'Sube tus servicios y productos') : 'Cargando…', false)
       + (!presupuestosOn() ? '' : mod('data-ir="presupuestos"', '📋', 'Presupuestos', resumen.replace(/\.$/, ''), env > 0))
       + (!tallerOn() ? '' : mod('data-ir="taller"', '🔧', 'Reparaciones', tallResumen().replace(/\.$/, ''), false))
+      + (!pedidosOn() ? '' : mod('data-ir="pedidos"', '🛒', 'Pedidos', pedM ? pedM + (pedM === 1 ? ' nuevo' : ' nuevos') : 'Ninguno nuevo', pedM > 0, pedM))
       + (!FACTURAS_ON ? '' : mod('data-pr="filtro" data-f="factura" data-go="1"', '🧾', 'Facturas', nFac ? nFac + (nFac === 1 ? ' factura' : ' facturas') + (pend ? ' · ' + pend + ' por cobrar' : '') : 'Aún no hay ninguna', pend > 0))
+      + mod('data-ir="citas"', '🗓️', 'Citas', pcM ? pcM + ' por confirmar' : 'Todas al día', pcM > 0, pcM)
+      + mod('data-ir="empresa"', '🏢', 'Mi empresa', 'Horario, servicios, cuenta', false)
+      + mod('data-ir="ajustes"', '⚙️', 'Ajustes', 'Avisos y preferencias', false)
       + '</div>';
   }
   function vistaCuenta(enEmpresa){
@@ -1650,17 +1657,16 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var cuerpo = { bandeja: vistaBandeja, empresa: vistaEmpresa, memoria: vistaMemoria, comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, presupuestos: vistaPresupuestos, herramientas: vistaHerramientas, taller: vistaTaller, modulos: vistaModulos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
     if (vista === 'pedidos' && !pedidosOn() && pedidos) vista = 'hoy';
     if (vista === 'presupuestos' && presu && !presupuestosOn()) vista = 'hoy';
-    if (vista === 'herramientas' && presu && tall && !modulosOn()) vista = 'hoy';
     if (vista === 'taller' && tall && !tallerOn()) vista = 'hoy';
     if (vista === 'modulos' && !esTete()) vista = 'hoy';
     var y = window.scrollY, hayAviso = porConfirmar().length > 0 || (pedidos || []).some(function(p){ return p.estado === 'nuevo'; });
     app.innerHTML = '<header><div class="cab">'
-      + '<button class="icono-btn" id="abrirMenu" aria-label="Abrir el menú">' + svg('<path d="M4 7h16M4 12h16M4 17h16"/>') + (hayAviso && vista !== 'hoy' && vista !== 'citas' ? '<span class="bolita"></span>' : '') + '</button>'
+      + (esTete() ? '<button class="icono-btn" id="abrirMenu" aria-label="Abrir el menú">' + svg('<path d="M4 7h16M4 12h16M4 17h16"/>') + (hayAviso && vista !== 'hoy' && vista !== 'citas' ? '<span class="bolita"></span>' : '') + '</button>' : '<span class="icono-btn" aria-hidden="true" style="visibility:hidden"></span>')
       + '<div class="titulo"><small>' + esc(vista === 'comercial' || vista === 'numeros' || vista === 'memoria' || vista === 'bandeja' || vista === 'modulos' ? 'Solo tú' : datos.negocio.nombre) + '</small><h1>' + esc(VISTAS[vista].t) + '</h1></div>'
       + '<button class="icono-btn" id="recargar" aria-label="Actualizar">' + svg('<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>') + '</button>'
       + '</div></header><main>' + cuerpo() + '</main>';
     document.getElementById('recargar').addEventListener('click', function(){ cargar(); cargarInfo(); cargarPedidos(); cargarComercial(); if (vista === 'bandeja') cargarBandeja(); if (vista === 'presupuestos' || vista === 'herramientas') cargarPresu(); if (vista === 'taller' || vista === 'herramientas') cargarTaller(); });
-    document.getElementById('abrirMenu').addEventListener('click', abrirMenu);
+    var bMenu = document.getElementById('abrirMenu'); if (bMenu) bMenu.addEventListener('click', abrirMenu);
     document.getElementById('nueva').classList.toggle('oculto', esTete() || ['hoy','calendario','citas'].indexOf(vista) < 0);
     document.getElementById('lanzador').classList.remove('oculto');
     window.scrollTo(0, pintar.vista === vista ? y : 0); pintar.vista = vista;
@@ -1671,9 +1677,8 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (esTete()) return [['hoy', 'Inicio', 0], ['comercial', 'Ventas', pendientesComercial()], ['bandeja', 'Mensajes', sinLeerBandeja()], ['pendientes', 'Tareas', pendientesAbiertos().length], ['cuenta', 'Cuenta', 0]];
     // 16/11 (Tete): «Cuenta» y «Mi empresa» eran casi lo mismo: ahora es una sola pantalla, «Mi empresa» (la cuenta va abajo).
     // 16/11 (Tete): «Herramientas» (presupuestos y, más adelante, facturas) va en la barra y no en el menú. Solo sale si el negocio tiene el módulo; entonces «Pendientes» pasa al menú ☰ para que la barra siga en 5.
-    var cola = [['empresa', 'Mi empresa', 0]];
-    if (modulosOn()) return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['herramientas', 'Módulos', 0]].concat(cola);
-    return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['pendientes', 'Pendientes', pendientesAbiertos().length]].concat(cola);
+    // 20/11 (Tete): sin menú ☰ en los clientes. «Módulos» está siempre en la barra y ahí van Catálogo, Presupuestos, Reparaciones, Pedidos, Citas, Mi empresa y Ajustes.
+    return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['pendientes', 'Pendientes', pendientesAbiertos().length], ['herramientas', 'Módulos', 0]];
   }
   // 12/11: barra de abajo y píldora «Habla con Eris», solo en la cuenta de Tete.
   function pintarTabbar(){
@@ -1682,7 +1687,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     nav.classList.remove('oculto');
     if (tx && tx.nodeType === 3) tx.nodeValue = t ? 'Habla con Eris' : 'Habla con tu Eris';
     items = itemsTabbar();
-    var PADRE = { taller: 'herramientas', presupuestos: 'herramientas', horario: 'empresa', catalogo: 'empresa', cuenta: 'empresa' };
+    var PADRE = { taller: 'herramientas', presupuestos: 'herramientas', horario: 'herramientas', catalogo: 'herramientas', cuenta: 'herramientas', empresa: 'herramientas', citas: 'herramientas', pedidos: 'herramientas', ajustes: 'herramientas' };
     var activa = vista; if (!t && PADRE[vista] && items.some(function(x){ return x[0] === PADRE[vista]; })) activa = PADRE[vista];
     nav.innerHTML = items.map(function(i){
       return '<button type="button" data-ir="' + i[0] + '"' + (activa === i[0] ? ' aria-current="page"' : '') + '>' + svg(VISTAS[i[0]].i) + i[1] + (i[2] ? '<span class="cuenta-n">' + i[2] + '</span>' : '') + '</button>';
