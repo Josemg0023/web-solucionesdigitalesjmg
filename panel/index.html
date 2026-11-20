@@ -1620,6 +1620,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     function mod(attrs, icono, titulo, estado, activo, num){ return '<button type="button" class="mod' + (activo ? ' activo' : '') + '" ' + attrs + '><span class="ic" aria-hidden="true">' + icono + '</span><b>' + titulo + '</b><small>' + esc(estado) + '</small>' + (num ? '<span class="cuenta-n mod-n">' + num + '</span>' : '') + '</button>'; }
     var pcM = porConfirmar().length, pedM = pedidosOn() ? (pedidos || []).filter(function(p){ return p.estado === 'nuevo'; }).length : 0;
     var nCatM = info ? (info.catalogo || []).length : 0;
+    var nCliM = info ? clientesG().length : 0;
     return '<h2>Tus módulos</h2><div class="mod-grid">'
       + mod('data-ir="catalogo"', '📦', 'Catálogo', info ? (nCatM ? nCatM + (nCatM === 1 ? ' elemento' : ' elementos') : 'Sube tus servicios y productos') : 'Cargando…', false)
       + (!presupuestosOn() ? '' : mod('data-ir="presupuestos"', '📋', 'Presupuestos', resumen.replace(/\.$/, ''), env > 0))
@@ -1627,6 +1628,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + (!pedidosOn() ? '' : mod('data-ir="pedidos"', '🛒', 'Pedidos', pedM ? pedM + (pedM === 1 ? ' nuevo' : ' nuevos') : 'Ninguno nuevo', pedM > 0, pedM))
       + (!FACTURAS_ON ? '' : mod('data-pr="filtro" data-f="factura" data-go="1"', '🧾', 'Facturas', nFac ? nFac + (nFac === 1 ? ' factura' : ' facturas') + (pend ? ' · ' + pend + ' por cobrar' : '') : 'Aún no hay ninguna', pend > 0))
       + mod('data-ir="citas"', '🗓️', 'Citas', pcM ? pcM + ' por confirmar' : 'Todas al día', pcM > 0, pcM)
+      + mod('data-ir="clientes"', '👥', 'Clientes', info ? (nCliM ? nCliM + (nCliM === 1 ? ' cliente' : ' clientes') : 'Aún no hay ninguno') : 'Cargando…', false)
       + mod('data-ir="saber"', '🧠', 'Memoria de Eris', info ? (String(info.info || '').trim() ? 'Eris ya sabe cosas de tu negocio' : 'Cuéntale lo que no está en tu horario') : 'Cargando…', false)
       + mod('data-ir="empresa"', '🏢', 'Mi empresa', 'Horario, servicios, cuenta', false)
       + mod('data-ir="ajustes"', '⚙️', 'Ajustes', 'Avisos y preferencias', false)
@@ -1693,7 +1695,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     // 16/11 (Tete): «Cuenta» y «Mi empresa» eran casi lo mismo: ahora es una sola pantalla, «Mi empresa» (la cuenta va abajo).
     // 16/11 (Tete): «Herramientas» (presupuestos y, más adelante, facturas) va en la barra y no en el menú. Solo sale si el negocio tiene el módulo; entonces «Pendientes» pasa al menú ☰ para que la barra siga en 5.
     // 20/11 (Tete): sin menú ☰ en los clientes. «Módulos» está siempre en la barra y ahí van Catálogo, Presupuestos, Reparaciones, Pedidos, Citas, Mi empresa y Ajustes.
-    return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['clientes', 'Clientes', 0], ['pendientes', 'Pendientes', pendientesAbiertos().length], ['herramientas', 'Módulos', 0]];
+    return [['hoy', 'Inicio', porConfirmar().length], ['calendario', 'Agenda', 0], ['pendientes', 'Pendientes', pendientesAbiertos().length], ['herramientas', 'Módulos', 0]];
   }
   // 12/11: barra de abajo y píldora «Habla con Eris», solo en la cuenta de Tete.
   function pintarTabbar(){
@@ -1702,7 +1704,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     nav.classList.remove('oculto');
     if (tx && tx.nodeType === 3) tx.nodeValue = t ? 'Habla con Eris' : 'Habla con tu Eris';
     items = itemsTabbar();
-    var PADRE = { saber: 'herramientas', taller: 'herramientas', presupuestos: 'herramientas', horario: 'herramientas', catalogo: 'herramientas', cuenta: 'herramientas', empresa: 'herramientas', citas: 'herramientas', pedidos: 'herramientas', ajustes: 'herramientas' };
+    var PADRE = { clientes: 'herramientas', saber: 'herramientas', taller: 'herramientas', presupuestos: 'herramientas', horario: 'herramientas', catalogo: 'herramientas', cuenta: 'herramientas', empresa: 'herramientas', citas: 'herramientas', pedidos: 'herramientas', ajustes: 'herramientas' };
     var activa = vista; if (!t && PADRE[vista] && items.some(function(x){ return x[0] === PADRE[vista]; })) activa = PADRE[vista];
     nav.innerHTML = items.map(function(i){
       return '<button type="button" data-ir="' + i[0] + '"' + (activa === i[0] ? ' aria-current="page"' : '') + '>' + svg(VISTAS[i[0]].i) + i[1] + (i[2] ? '<span class="cuenta-n">' + i[2] + '</span>' : '') + '</button>';
