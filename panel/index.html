@@ -1591,9 +1591,6 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     var h = '<h2>Tu negocio</h2><div class="caja"><p style="margin:0"><b>' + esc(neg.nombre || '') + '</b></p><p class="ayuda" style="margin:6px 0 0">¿Quieres cambiar el nombre? <a href="mailto:soporte@euxenos.com?subject=' + encodeURIComponent('Cambiar el nombre de mi negocio · ' + (neg.nombre || '')) + '" style="color:var(--verde-luz)">Escribe a soporte</a>.</p></div>';
     h += '<h2>Horario y cierres</h2><div class="caja"><p style="margin:0 0 10px">' + (info ? (diasAbre ? 'Abres ' + diasAbre + (diasAbre === 1 ? ' día' : ' días') + ' a la semana.' : 'Aún no has puesto tu horario.') : 'Cargando…') + ' Eris no da citas fuera de tu horario ni en tus cierres.</p><button class="btn b-otra ancho" data-ir="horario">Ver y cambiar horario y cierres</button></div>';
     h += '<h2>Servicios y precios</h2><div class="caja"><p style="margin:0 0 10px">' + (info ? (nCat ? nCat + (nCat === 1 ? ' elemento' : ' elementos') + ' en tu lista.' : 'Aún no has puesto tus servicios.') : 'Cargando…') + ' Eris los usa para decir a tus clientes qué haces, cuánto cuesta y cuánto dura.</p><button class="btn b-otra ancho" data-ir="catalogo">Ver y cambiar servicios y precios</button></div>';
-    h += '<h2>Memoria de Eris</h2><form id="formInfo" class="caja"><p>Cuéntale a Eris lo que tus clientes deben saber y no está en los servicios ni en el horario: dirección y cómo llegar, teléfono, aparcamiento, formas de pago, normas, avisos de estos días…</p>'
-      + '<textarea name="texto" maxlength="3000" rows="5" placeholder="Ej.: Estamos en la calle Mayor 12. Aparcamiento gratuito en la calle de atrás. Aceptamos Bizum y tarjeta.">' + esc(info ? info.info : '') + '</textarea>'
-      + '<button class="btn b-ok ancho" type="submit" style="margin-top:10px"' + (info ? '' : ' disabled') + '>Guardar</button></form>';
     return h + vistaCuenta(true); // 16/11: la cuenta (plan, acceso, ayuda) va al final de Mi empresa
   }
   // 16/11 (Tete): «Herramientas» agrupa lo que el negocio usa para trabajar. Hoy: Presupuestos. Facturas se añadirá aquí cuando existan.
@@ -2338,8 +2335,6 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     } else if (f.id === 'formPendiente') {
       var texto = f.texto.value.trim(); if (!texto) { listo(); return; }
       llamarApp('pendiente-crear', { texto: texto }).then(function(r){ listo(); aplicarInfo(r, 'Apuntado'); var i = document.querySelector('#formPendiente input'); if (i) i.focus(); }).catch(function(){ listo(); sinConexion(); });
-    } else if (f.id === 'formInfo') {
-      llamarApp('info-guardar', { texto: f.texto.value }).then(function(r){ listo(); aplicarInfo(r, 'Guardado: Eris ya lo sabe'); }).catch(function(){ listo(); sinConexion(); });
     } else if (f.id === 'formAviso') {
       var aviso = f.texto.value.trim(); if (!aviso) { listo(); toast('Escribe el aviso'); return; }
       llamarDueno('aviso-crear', { texto: aviso, para_clientes: f.clientes.checked, caduca: f.caduca.value }).then(function(r){
