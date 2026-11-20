@@ -1611,7 +1611,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + (!presupuestosOn() ? '' : mod('data-ir="presupuestos"', '📋', 'Presupuestos', resumen.replace(/\.$/, ''), env > 0))
       + (!tallerOn() ? '' : mod('data-ir="taller"', '🔧', 'Reparaciones', tallResumen().replace(/\.$/, ''), false))
       + (!FACTURAS_ON ? '' : mod('data-pr="filtro" data-f="factura" data-go="1"', '🧾', 'Facturas', nFac ? nFac + (nFac === 1 ? ' factura' : ' facturas') + (pend ? ' · ' + pend + ' por cobrar' : '') : 'Aún no hay ninguna', pend > 0))
-      + '</div><p class="ayuda" style="margin:14px 2px 0">Toca un módulo para abrirlo. El catálogo alimenta los presupuestos y lo que Eris sabe de tus precios.</p>';
+      + '</div>';
   }
   function vistaCuenta(enEmpresa){
     var neg = (datos && datos.negocio) || {};
