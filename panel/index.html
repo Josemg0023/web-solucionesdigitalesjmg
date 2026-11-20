@@ -102,6 +102,7 @@ textarea{min-height:90px;resize:vertical}
 .nuevo-p{display:flex;gap:8px;margin-top:12px}
 .nuevo-p input{flex:1}
 .nuevo-p .btn{flex:0 0 auto}
+.ideas-info{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.chip-info{background:var(--tarjeta);color:var(--claro);border:1px solid var(--linea);border-radius:999px;padding:6px 11px;font:inherit;font-size:.82rem;cursor:pointer}
 .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
 .mod{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;min-height:136px;padding:16px 14px;border-radius:18px;background:var(--tarjeta);border:1px solid var(--linea);color:var(--claro);font:inherit;cursor:pointer}
 .mod .ic{font-size:1.7rem;line-height:1;margin-bottom:6px}
@@ -710,6 +711,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     pendientes: { t:'Pendientes', i:'<path d="M9 11l3 3 8-8"/><path d="M20 12v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h9"/>' },
     ajustes: { t:'Ajustes', i:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>' },
     empresa: { t:'Mi empresa', i:'<path d="M3 21h18M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5M9 11h.01M15 11h.01"/>' },
+    saber: { t:'Memoria de Eris', i:'<path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3z"/><path d="M10 22h4"/>' },
     memoria: { t:'Memoria de Eris', i:'<path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3z"/><path d="M10 22h4"/>' },
     cuenta: { t:'Cuenta', i:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>' }
   };
@@ -1596,6 +1598,18 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     return h + vistaCuenta(true); // 16/11: la cuenta (plan, acceso, ayuda) va al final de Mi empresa
   }
   // 16/11 (Tete): «Herramientas» agrupa lo que el negocio usa para trabajar. Hoy: Presupuestos. Facturas se añadirá aquí cuando existan.
+  // 20/11 (Tete): lo que Eris debe saber (dirección, parking, pagos, normas, avisos) pasa de caja dentro de Mi empresa a módulo propio.
+  function vistaSaber(){
+    var txt = info ? String(info.info || '') : '';
+    var ideas = [['📍 Dirección', 'Estamos en '], ['🅿️ Aparcamiento', 'Aparcamiento: '], ['💳 Formas de pago', 'Aceptamos '], ['📞 Teléfono', 'Teléfono: '], ['📋 Normas', 'Normas: '], ['📢 Aviso de estos días', 'Aviso: ']];
+    return '<p class="ayuda" style="margin:14px 0 0"><button class="accion" data-ir="herramientas">← Módulos</button></p><h2>Memoria de Eris</h2>'
+      + '<form id="formInfo" class="caja"><p>Cuéntale a Eris lo que tus clientes deben saber y no está en los servicios ni en el horario. Ella lo usa al momento, en el chat y en WhatsApp.</p>'
+      + '<div class="ideas-info">' + ideas.map(function(x){ return '<button type="button" class="chip-info" data-idea="' + esc(x[1]) + '">' + x[0] + '</button>'; }).join('') + '</div>'
+      + '<textarea name="texto" maxlength="3000" rows="9" placeholder="Ej.: Estamos en la calle Mayor 12. Aparcamiento gratuito en la calle de atrás. Aceptamos Bizum y tarjeta.">' + esc(txt) + '</textarea>'
+      + '<p class="ayuda" id="infoCuenta" style="margin:6px 0 0;text-align:right">' + txt.length + ' / 3000</p>'
+      + '<button class="btn b-ok ancho" type="submit" style="margin-top:10px"' + (info ? '' : ' disabled') + '>Guardar</button></form>'
+      + '<p class="ayuda" style="margin:10px 0 0">También puedes decírselo a Eris en el chat: «apunta que los viernes cerramos a las 2».</p>';
+  }
   function vistaHerramientas(){
     presu = presu || { activo: false, tarifa: [], docs: [] };
     var docs = presu.docs || [], env = docs.filter(function(x){ return x.estado === 'enviado' || x.estado === 'sin_respuesta'; }).length, bor = docs.filter(function(x){ return x.estado === 'borrador'; }).length;
@@ -1613,6 +1627,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
       + (!pedidosOn() ? '' : mod('data-ir="pedidos"', '🛒', 'Pedidos', pedM ? pedM + (pedM === 1 ? ' nuevo' : ' nuevos') : 'Ninguno nuevo', pedM > 0, pedM))
       + (!FACTURAS_ON ? '' : mod('data-pr="filtro" data-f="factura" data-go="1"', '🧾', 'Facturas', nFac ? nFac + (nFac === 1 ? ' factura' : ' facturas') + (pend ? ' · ' + pend + ' por cobrar' : '') : 'Aún no hay ninguna', pend > 0))
       + mod('data-ir="citas"', '🗓️', 'Citas', pcM ? pcM + ' por confirmar' : 'Todas al día', pcM > 0, pcM)
+      + mod('data-ir="saber"', '🧠', 'Memoria de Eris', info ? (String(info.info || '').trim() ? 'Eris ya sabe cosas de tu negocio' : 'Cuéntale lo que no está en tu horario') : 'Cargando…', false)
       + mod('data-ir="empresa"', '🏢', 'Mi empresa', 'Horario, servicios, cuenta', false)
       + mod('data-ir="ajustes"', '⚙️', 'Ajustes', 'Avisos y preferencias', false)
       + '</div>';
@@ -1654,7 +1669,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     if (vista === 'comercial' && !esDueno) vista = 'hoy';
     if (esTete() && (SOLO_DEMO.indexOf(vista) >= 0 || vista === 'herramientas')) vista = 'hoy';
     if ((vista === 'numeros' || vista === 'memoria' || vista === 'bandeja') && !esTete()) vista = 'hoy';
-    var cuerpo = { bandeja: vistaBandeja, empresa: vistaEmpresa, memoria: vistaMemoria, comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, presupuestos: vistaPresupuestos, herramientas: vistaHerramientas, taller: vistaTaller, modulos: vistaModulos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
+    var cuerpo = { saber: vistaSaber, bandeja: vistaBandeja, empresa: vistaEmpresa, memoria: vistaMemoria, comercial: vistaComercial, numeros: vistaNumerosPantalla, pedidos: vistaPedidos, presupuestos: vistaPresupuestos, herramientas: vistaHerramientas, taller: vistaTaller, modulos: vistaModulos, hoy: esTete() ? vistaHoyTete : vistaHoy, calendario: vistaCalendario, citas: vistaCitas, clientes: vistaClientes, catalogo: vistaCatalogo, horario: vistaHorario, pendientes: vistaPendientes, ajustes: vistaAjustes, cuenta: vistaCuenta }[vista] || vistaHoy;
     if (vista === 'pedidos' && !pedidosOn() && pedidos) vista = 'hoy';
     if (vista === 'presupuestos' && presu && !presupuestosOn()) vista = 'hoy';
     if (vista === 'taller' && tall && !tallerOn()) vista = 'hoy';
@@ -1687,12 +1702,19 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     nav.classList.remove('oculto');
     if (tx && tx.nodeType === 3) tx.nodeValue = t ? 'Habla con Eris' : 'Habla con tu Eris';
     items = itemsTabbar();
-    var PADRE = { taller: 'herramientas', presupuestos: 'herramientas', horario: 'herramientas', catalogo: 'herramientas', cuenta: 'herramientas', empresa: 'herramientas', citas: 'herramientas', pedidos: 'herramientas', ajustes: 'herramientas' };
+    var PADRE = { saber: 'herramientas', taller: 'herramientas', presupuestos: 'herramientas', horario: 'herramientas', catalogo: 'herramientas', cuenta: 'herramientas', empresa: 'herramientas', citas: 'herramientas', pedidos: 'herramientas', ajustes: 'herramientas' };
     var activa = vista; if (!t && PADRE[vista] && items.some(function(x){ return x[0] === PADRE[vista]; })) activa = PADRE[vista];
     nav.innerHTML = items.map(function(i){
       return '<button type="button" data-ir="' + i[0] + '"' + (activa === i[0] ? ' aria-current="page"' : '') + '>' + svg(VISTAS[i[0]].i) + i[1] + (i[2] ? '<span class="cuenta-n">' + i[2] + '</span>' : '') + '</button>';
     }).join('');
   }
+  document.addEventListener('click', function(e){
+    var b = e.target.closest && e.target.closest('.chip-info'); if (!b) return;
+    var ta = document.querySelector('#formInfo textarea'); if (!ta) return;
+    var t = ta.value, sep = t && !/\n$/.test(t) ? '\n' : ''; ta.value = t + sep + b.getAttribute('data-idea'); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+    ta.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  document.addEventListener('input', function(e){ var ta = e.target; if (ta && ta.form && ta.form.id === 'formInfo') { var c = document.getElementById('infoCuenta'); if (c) c.textContent = ta.value.length + ' / 3000'; } });
   document.getElementById('tabbar').addEventListener('click', function(e){ var b = e.target.closest('[data-ir]'); if (b) ir(b.getAttribute('data-ir')); });
   function ir(v){
     if (!VISTAS[v]) return;
@@ -2340,6 +2362,8 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
     } else if (f.id === 'formPendiente') {
       var texto = f.texto.value.trim(); if (!texto) { listo(); return; }
       llamarApp('pendiente-crear', { texto: texto }).then(function(r){ listo(); aplicarInfo(r, 'Apuntado'); var i = document.querySelector('#formPendiente input'); if (i) i.focus(); }).catch(function(){ listo(); sinConexion(); });
+    } else if (f.id === 'formInfo') {
+      llamarApp('info-guardar', { texto: f.texto.value }).then(function(r){ listo(); aplicarInfo(r, 'Guardado: Eris ya lo sabe'); }).catch(function(){ listo(); sinConexion(); });
     } else if (f.id === 'formAviso') {
       var aviso = f.texto.value.trim(); if (!aviso) { listo(); toast('Escribe el aviso'); return; }
       llamarDueno('aviso-crear', { texto: aviso, para_clientes: f.clientes.checked, caduca: f.caduca.value }).then(function(r){
