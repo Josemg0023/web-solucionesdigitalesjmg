@@ -556,15 +556,14 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
 
 <!-- Leer un catálogo grande por enlace o PDF, por tandas de páginas (17/11) -->
 <input type="file" id="archivoGrande" accept="application/pdf,.pdf" hidden>
-<div class="velo abajo" id="veloEnlace"><form class="hoja" id="formEnlace" autocomplete="off">
+<div class="velo abajo" id="veloEnlace"><form class="hoja" id="formEnlace" autocomplete="off" novalidate>
 <h3><span>Catálogo por enlace o PDF grande</span> <button type="button" data-cerrar aria-label="Cerrar">×</button></h3>
-<p class="ayuda" style="margin:0 0 10px">Pega el enlace de un PDF (el catálogo o la tarifa de tu proveedor) o elige el PDF del móvil. Eris lo lee por tandas de páginas: pon cuáles y repite con las siguientes. Una tanda con un catálogo enorme puede tardar un par de minutos.</p>
+<p class="ayuda" style="margin:0 0 10px">Pega el enlace de un PDF (el catálogo o la tarifa de tu proveedor) o elige el PDF del móvil. Eris lo lee entero, de principio a fin. Un catálogo grande puede tardar varios minutos: no cierres esta pantalla.</p>
 <input id="enlUrl" type="url" inputmode="url" maxlength="500" placeholder="https://…catalogo.pdf" aria-label="Enlace del PDF">
 <button type="button" class="btn b-otra ancho" id="enlArchivo" style="margin-top:8px">o elegir un PDF del móvil</button>
 <p class="ayuda" id="enlNombre" style="margin:6px 0 0"></p>
-<input id="enlPag" maxlength="20" placeholder="Páginas (ej.: 1-10)" value="1-10" aria-label="Páginas" style="margin-top:8px">
 <p class="ayuda" style="margin:8px 0 0">Los precios de las tarifas suelen ir sin IVA: revísalos antes de guardar. Usa solo catálogos que tengas derecho a usar.</p>
-<button class="btn b-ok ancho" type="submit" id="enlLeer" style="margin-top:14px">Leer estas páginas</button>
+<button class="btn b-ok ancho" type="submit" id="enlLeer" style="margin-top:14px">Leer el catálogo</button>
 </form></div>
 
 <!-- Importar un Excel o CSV (17/11) -->
@@ -2379,7 +2378,7 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
   }
 
   // ---- Hojas ----
-  function abrirHoja(id){ document.getElementById(id).classList.add('abierto'); }
+  function abrirHoja(id){ if (id === 'veloRevisar') document.querySelectorAll('.velo.abajo').forEach(function(v){ if (v.id !== 'veloRevisar') v.classList.remove('abierto'); }); document.getElementById(id).classList.add('abierto'); }
   function cerrarHojas(){ pararCamara(); document.querySelectorAll('.velo.abajo').forEach(function(v){ v.classList.remove('abierto'); }); }
   document.querySelectorAll('.velo.abajo').forEach(function(v){
     v.addEventListener('click', function(e){ if (e.target === v || e.target.closest('[data-cerrar]')) { v.classList.remove('abierto'); if (v.id === 'veloEscaner') { pararCamara(); if (escModo === 'campo') abrirHoja('veloItem'); } } });
@@ -2530,31 +2529,53 @@ button.ban-fila{width:100%;text-align:left;color:var(--claro);cursor:pointer;fon
 
   // === Catálogo por enlace o PDF grande (17/11): manda la URL (o el PDF) y un rango de páginas a catalogo-leer; luego se revisa igual que una foto.
   var archivoGrande = document.getElementById('archivoGrande'), formEnlace = document.getElementById('formEnlace'), enlSiguiente = 11;
-  function abrirEnlace(){ archivoGrande.value = ''; document.getElementById('enlNombre').textContent = ''; document.getElementById('enlPag').value = (enlSiguiente - 10 > 0 && enlSiguiente > 11 ? enlSiguiente + '-' + (enlSiguiente + 9) : '1-10'); abrirHoja('veloEnlace'); }
+  function abrirEnlace(){ archivoGrande.value = ''; document.getElementById('enlNombre').textContent = ''; abrirHoja('veloEnlace'); }
   document.getElementById('enlArchivo').addEventListener('click', function(){ archivoGrande.click(); });
   archivoGrande.addEventListener('change', function(){ var f = archivoGrande.files && archivoGrande.files[0]; document.getElementById('enlNombre').textContent = f ? 'PDF elegido: ' + f.name : ''; if (f) document.getElementById('enlUrl').value = ''; });
   formEnlace.addEventListener('submit', function(e){
     e.preventDefault();
     var url = document.getElementById('enlUrl').value.trim(), file = archivoGrande.files && archivoGrande.files[0];
-    var pag = document.getElementById('enlPag').value.replace(/[^0-9,\- ]/g, '').trim();
     if (!url && !file) { toast('Pega un enlace o elige un PDF'); return; }
     if (url && !/^https:\/\//i.test(url)) { toast('El enlace debe empezar por https://'); return; }
     if (file && file.size > 9 * 1024 * 1024) { toast('El PDF es muy grande (máx. 9 MB). Usa el enlace.'); return; }
-    var m = pag.match(/(\d+)\s*-\s*(\d+)/), fin = m ? +m[2] : (parseInt(pag, 10) || 0);
+    // Eris lee el documento entero: va pidiendo tandas de TANDA páginas hasta que no salen más elementos (o se pulsa «Parar y revisar»).
+    var TANDA = 6, MAX_PAG = 600, desde = 1, todos = [], vistos = {}, parar = false, vacias = 0;
     document.getElementById('revisarTitulo').textContent = 'Leyendo el catálogo…';
     document.getElementById('revisarAyuda').textContent = '';
-    listaRev.innerHTML = '<div class="leyendo"><i></i>Eris está leyendo ' + (pag ? 'las páginas ' + esc(pag) : 'el documento') + '. Con catálogos grandes puede tardar un par de minutos; no cierres esta pantalla.</div>';
     var b = document.getElementById('revisarGuardar'); b.disabled = true; b.textContent = 'Esperando…';
+    function estado(txt){
+      listaRev.innerHTML = '<div class="leyendo"><i></i>' + esc(txt) + ' No cierres esta pantalla.</div><button type="button" class="btn b-otra ancho" id="enlParar" style="margin-top:12px">Parar y revisar lo leído</button>';
+      var bp = document.getElementById('enlParar'); if (bp) bp.addEventListener('click', function(){ parar = true; bp.disabled = true; bp.textContent = 'Terminando la tanda…'; });
+    }
+    function terminar(aviso){
+      if (!todos.length) { cerrarHojas(); toast(aviso || 'No se ha podido leer'); return; }
+      abrirRevision(todos, 'He encontrado ' + todos.length + (todos.length === 1 ? ' elemento' : ' elementos'), 'Revisa nombres y precios (en tarifas suelen ir sin IVA), quita lo que sobre (✓) y guarda.' + (aviso ? ' ' + aviso : ''));
+    }
     abrirHoja('veloRevisar');
+    estado('Eris está leyendo el catálogo.');
     (file ? leerBase64(file) : Promise.resolve(null)).then(function(a){
-      var cuerpo = { n:n, k:k, accion:'catalogo-leer', datos:{ paginas: pag } };
-      if (a) { cuerpo.archivo = a.datos; cuerpo.archivoTipo = a.tipo; } else { cuerpo.datos.url = url; }
-      return post(API_APP, cuerpo);
-    }).then(function(r){
-      if (!r || !r.ok || !r.items || !r.items.length) { cerrarHojas(); toast((r && r.motivo) || 'No se ha podido leer'); return; }
-      if (fin) enlSiguiente = fin + 1;
-      abrirRevision(r.items, 'He encontrado ' + r.items.length + (r.items.length === 1 ? ' elemento' : ' elementos'), 'Revisa nombres y precios (en tarifas suelen ir sin IVA), quita lo que sobre (✓) y guarda. Para seguir, pulsa otra vez «Enlace o PDF grande»: te propongo las páginas siguientes.');
-    }).catch(function(){ cerrarHojas(); toast('No se ha podido leer. Revisa la conexión o prueba menos páginas'); });
+      function tanda(){
+        var hasta = desde + TANDA - 1, cuerpo = { n:n, k:k, accion:'catalogo-leer', datos:{ paginas: desde + '-' + hasta } };
+        if (a) { cuerpo.archivo = a.datos; cuerpo.archivoTipo = a.tipo; } else { cuerpo.datos.url = url; }
+        estado('Leyendo páginas ' + desde + ' a ' + hasta + (todos.length ? ' · llevo ' + todos.length + ' elementos.' : '.'));
+        return post(API_APP, cuerpo).then(function(r){
+          var nuevos = 0;
+          if (r && r.ok && r.items && r.items.length) {
+            r.items.forEach(function(x){
+              var clave = ((x.codigo || '') + '|' + (x.nombre || '') + '|' + (x.precio || '')).toLowerCase();
+              if (!vistos[clave]) { vistos[clave] = 1; todos.push(x); nuevos++; }
+            });
+          }
+          if (desde === 1 && !todos.length && r && !r.ok && r.motivo) return terminar(r.motivo);
+          vacias = nuevos ? 0 : vacias + 1;
+          desde = hasta + 1;
+          if (parar) return terminar('Lectura parada: puede que falten páginas.');
+          if (vacias >= 2 || desde > MAX_PAG) return terminar(desde > MAX_PAG ? 'Se leyeron las primeras ' + MAX_PAG + ' páginas.' : '');
+          return tanda();
+        });
+      }
+      return tanda();
+    }).catch(function(){ terminar(todos.length ? 'Se cortó la conexión: puede que falten páginas.' : 'No se ha podido leer. Revisa la conexión.'); });
   });
 
   // === Importar Excel o CSV (17/11): lee el archivo en el móvil (sin IA), pregunta qué columna es cada cosa y guarda de 200 en 200 (catalogo-varios).
